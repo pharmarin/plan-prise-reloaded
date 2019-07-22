@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'HomeController@index')->name('home');
 
 Auth::routes();
 
@@ -21,13 +19,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/approval', 'HomeController@approval')->name('approval');
 
     Route::middleware(['approved'])->group(function () {
-        Route::get('/home', 'HomeController@index')->name('home');
+        Route::resource('plan-prise', 'PlanPriseController')->except(['create']);
 
         Route::middleware(['admin'])->group(function () {
           Route::get('/users', 'UsersController@index')->name('admin.users.index');
-        Route::get('/users/{user_id}/approve', 'UsersController@approve')->name('admin.users.approve');
-
+          Route::get('/users/{user_id}/approve', 'UsersController@approve')->name('admin.users.approve');
         });
     });
-
 });

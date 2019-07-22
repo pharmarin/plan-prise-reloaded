@@ -17,7 +17,9 @@
 
           <div class="row text-center">
             <div class="col-sm-6">
-              Créer un plan de prise
+              <a href="{{ $_SERVER['SCRIPT_URI'] }}plan-prise">
+                Créer un plan de prise
+              </a>
             </div>
             <div class="col-sm-6">
               Créer un calendrier de prise
