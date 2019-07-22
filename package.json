@@ -15,17 +15,17 @@
         "bootstrap": "^4.0.0",
         "cross-env": "^5.1",
         "jquery": "^3.2",
-        "laravel-mix": "^4.0.7",
-        "lodash": "^4.17.5",
+        "laravel-mix": "^4.1.2",
+        "lodash": "~>4.17.13",
         "popper.js": "^1.12",
         "react": "^16.2.0",
         "react-dom": "^16.2.0",
         "resolve-url-loader": "^2.3.1",
-        "sass": "^1.15.2",
+        "sass": "^1.22.7",
         "sass-loader": "^7.1.0"
     },
     "dependencies": {
-        "@atlaskit/tooltip": "^15.0.1",
+        "@atlaskit/tooltip": "^15.0.6",
         "react-select": "^3.0.4",
         "styled-components": "^4.3.2"
     }
