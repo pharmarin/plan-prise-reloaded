@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 
 import axios from 'axios';
 
@@ -113,8 +112,4 @@ export default class PlanPrise extends React.Component {
       </div>
     );
   }
-}
-
-if (document.getElementById('plan-prise')) {
-  ReactDOM.render(<PlanPrise />, document.getElementById('plan-prise'));
 }

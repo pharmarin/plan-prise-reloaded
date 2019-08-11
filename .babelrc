@@ -1,0 +1,12 @@
+{
+  "plugins": ["transform-class-properties"],
+  "presets": [
+    [
+      "@babel/env",
+      {
+        "modules": false
+      }
+    ],
+      "@babel/react"
+  ]
+}

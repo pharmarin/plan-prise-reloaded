@@ -24,6 +24,10 @@ Route::middleware(['auth'])->group(function () {
         Route::middleware(['admin'])->group(function () {
           Route::get('/users', 'UsersController@index')->name('admin.users.index');
           Route::get('/users/{user_id}/approve', 'UsersController@approve')->name('admin.users.approve');
+          Route::get('medicament/import', 'MedicamentController@importFromOldDatabase');
+          Route::get('medicament/import/{id}', 'MedicamentController@showImportFormByID');
+          Route::post('medicament/import/{id}', 'MedicamentController@showImportFormByID');
+          Route::resource('medicament', 'MedicamentController');
         });
     });
 });

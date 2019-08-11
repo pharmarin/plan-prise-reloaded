@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div id="plan-prise"></div>
+<div id="react-app" data-view="PlanPrise"></div>
 @endsection
 
 @section('scripts')

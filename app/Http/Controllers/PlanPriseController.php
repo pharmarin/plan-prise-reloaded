@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\PlanPrise;
-use App\Medicament;
+use App\Repositories\MedicamentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,16 +14,16 @@ class PlanPriseController extends Controller
 
     private $plan;
 
-    private $medicament;
+    private $medicament_repository;
 
     /**
      * Only accept ajax calls
      */
-    public function __construct (PlanPrise $plan, Medicament $medicament)
+    public function __construct (PlanPrise $plan, MedicamentRepository $medicament_repository)
     {
       $this->middleware('ajax', ['only' => 'create']);
       $this->plan = $plan;
-      $this->medicament = $medicament;
+      $this->medicament_repository = $medicament_repository;
     }
 
     /**
@@ -33,7 +33,7 @@ class PlanPriseController extends Controller
      */
     public function index()
     {
-      return $this->addToPlanPrise(-1, ['value' => '67851855', 'label' => 'test']);
+      //return $this->addToPlanPrise(-1, ['value' => '67851855', 'label' => 'test']);
       return view('plan-prise.plan');
     }
 
@@ -76,7 +76,7 @@ class PlanPriseController extends Controller
 
       $this->plan->pp_id = $pp_id;
       $this->plan->user_id = $this->user_id;
-      $this->plan->bdpm_id = 1;
+      $this->plan->bdpm_id = $medicament;
       $this->plan->save();
 
       //$pp_content = User::find($this->user_id)->plans_prise->where('pp_id', 3);
@@ -101,7 +101,7 @@ class PlanPriseController extends Controller
       if ($medicament->count() > 0) {
         return $medicament->first()->id;
       }
-      $medicament_from_api = $this->getMedicamentFromAPI($codeCIS);
+      //$medicament_from_api = $this->getMedicamentFromAPI($codeCIS);
       /*
       $table->bigInteger('codeCIS')->unsigned();
       $table->string('denomination');
@@ -111,35 +111,18 @@ class PlanPriseController extends Controller
       $table->string('indicationTherapeutiques');
       $table->text('compositions');
       */
-      $this->medicament->codeCIS = $medicament_from_api->codeCIS;
+      /*$this->medicament->codeCIS = $medicament_from_api->codeCIS;
       $this->medicament->denomination = $medicament_from_api->denomination;
       $this->medicament->formePharmaceutique = $medicament_from_api->formePharmaceutique;
-      $this->medicament->homepathie = $medicament_from_api->homeopathie;
+      $this->medicament->voiesAdministration = json_encode($medicament_from_api->voiesAdministration);
+      $this->medicament->homeopathie = $medicament_from_api->homeopathie;
       $this->medicament->etatCommercialisation = $medicament_from_api->etatCommercialisation;
-      $this->medicament->indicationTherapeutiques = $medicament_from_api->indicationsTherapeutiques;
-      $this->medicament->compositions = $medicament_from_api->compositions;
-      $this->medicament->save;
-      //return $this->medicament->id;
-      
-      return $medicament_from_api;
-    }
+      $this->medicament->indicationsTherapeutiques = json_encode($medicament_from_api->indicationsTherapeutiques);
+      $this->medicament->compositions = json_encode($medicament_from_api->compositions);
+      $this->medicament->save();
+      return $this->medicament->id;*/
 
-    private function getMedicamentFromAPI ($codeCIS) {
-      try {
-        $content = file_get_contents('https://www.open-medicaments.fr/api/v1/medicaments/' . $codeCIS);
-
-        if ($content === false) {
-          echo 'API returned null';
-        }
-
-        $json = json_decode($content);
-
-        return $json;
-
-      } catch (Exception $e) {
-          echo 'Get API errored';
-          var_dump($e);
-      }
+      //return $medicament_from_api;
     }
 
     /**

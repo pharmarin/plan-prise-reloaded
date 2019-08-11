@@ -6,9 +6,6 @@
 
 <title>{{ config('app.name', 'Laravel') }}</title>
 
-<!-- Scripts -->
-<script src="{{ asset('js/app.js') }}" defer></script>
-
 <!-- Fonts -->
 <link rel="dns-prefetch" href="//fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
@@ -18,3 +15,6 @@
 
 <!-- Styles -->
 <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+<!-- Scripts -->
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=String.prototype.startsWith,Array.from,Array.prototype.fill,Array.prototype.keys,Array.prototype.findIndex,Number.isInteger&flags=gated"></script>
