@@ -81730,8 +81730,9 @@ function (_React$Component) {
             string.forEach(function (commentaire) {
               result.push({
                 cible: 1,
+                type: 'medicament',
                 voieAdministration: 0,
-                option: commentaire.span,
+                population: commentaire.span,
                 commentaire: commentaire.text
               });
             });
@@ -82224,22 +82225,11 @@ function (_React$Component) {
 
     _this.handleInputChange = function (event) {
       var target = event.target,
-          name = target.getAttribute('name').split('[')[0],
-          parent = target.getAttribute('parent'),
+          name = target.getAttribute('child'),
+          parent = target.getAttribute('name').split('[')[0],
           key = target.getAttribute('index');
       var value = target.type === 'checkbox' ? target.checked : target.value,
           newState = {};
-
-      if (target.type === 'select-multiple') {
-        var options = target.options;
-        value = [];
-
-        for (var i = 0, l = options.length; i < l; i++) {
-          if (options[i].selected) {
-            value.push(options[i].value);
-          }
-        }
-      }
 
       if (key == undefined) {
         newState = _defineProperty({}, name, value);
@@ -82291,6 +82281,7 @@ function (_React$Component) {
         returnComponents.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_GenericInput__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
           key: inputName,
           name: inputName,
+          child: inputName,
           value: inputValues,
           onChange: function onChange(e) {
             return _this.handleInputChange(e);
@@ -82315,7 +82306,7 @@ function (_React$Component) {
         inputLine.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_GenericInput__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
           key: inputName,
           name: inputParent + '[' + index + '][' + inputName + ']',
-          parent: inputParent,
+          child: inputName,
           index: index,
           value: inputObject[inputName],
           onChange: function onChange(e) {
@@ -82348,10 +82339,15 @@ function (_React$Component) {
       var substances = [];
 
       for (var i = 0; i < _this.api_selected_detail[0].compositions[0].substancesActives.length; i++) {
-        var substanceActive = _this.api_selected_detail[0].compositions[0].substancesActives[i];
-        substances = Object.assign(substances, _defineProperty({}, substanceActive.codeSubstance, substanceActive.denominationSubstance + " " + substanceActive.dosageSubstance));
+        var substanceActive = _this.api_selected_detail[0].compositions[0].substancesActives[i],
+            codeSubstance = "S-" + substanceActive.codeSubstance,
+            denominationSubstance = substanceActive.denominationSubstance + " " + substanceActive.dosageSubstance,
+            newSubstance = {};
+        newSubstance[codeSubstance] = denominationSubstance;
+        substances = Object.assign(substances, newSubstance);
       }
 
+      console.log(substances);
       return substances;
     };
 
@@ -82377,6 +82373,7 @@ function (_React$Component) {
     }
 
     _this.state.substancesActives = _this.getSubstancesActives();
+    _this.props.inputs.commentaires.inputs.cible.options = Object.assign(_this.props.inputs.commentaires.inputs.cible.options, _this.state.substancesActives);
     return _this;
   }
 
@@ -82543,7 +82540,7 @@ var inputs = {
         }, voiesAdministration),
         className: 'col-2'
       },
-      option: {
+      population: {
         type: 'text',
         placeholder: 'Option (facultatif)',
         className: 'col-2'
@@ -82556,6 +82553,7 @@ var inputs = {
     },
     defaultValue: [{
       cible: 0,
+      type: 'medicament',
       voieAdministration: 0,
       option: '',
       commentaire: ''

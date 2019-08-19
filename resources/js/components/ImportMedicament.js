@@ -27,9 +27,10 @@ export default class ImportMedicament extends React.Component {
           var result = []
           string.forEach((commentaire) => {
             result.push({
-              cible: 1,
+              cible: 0,
+              type: 'medicament',
               voieAdministration: 0,
-              option: commentaire.span,
+              population: commentaire.span,
               commentaire: commentaire.text
             })
           })

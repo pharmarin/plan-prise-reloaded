@@ -15,12 +15,13 @@ class CreateBdpmMedicsTable extends Migration
     {
         Schema::create('bdpm_medics', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('codeCIS')->unsigned();
+            $table->bigInteger('codeCIS')->unique()->unsigned();
             $table->string('denomination');
             $table->string('formePharmaceutique');
+            $table->string('voiesAdministration');
             $table->boolean('homeopathie');
             $table->boolean('etatCommercialisation');
-            $table->string('indicationTherapeutiques');
+            $table->text('indicationsTherapeutiques');
             $table->text('compositions');
             $table->timestamps();
         });

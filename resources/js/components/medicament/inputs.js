@@ -61,11 +61,11 @@ export const inputs = {
     isRepeated: true,
     label: 'Commentaires par défaut',
     inputs: {
-      cible: {type: 'select', options: {0: 'Cible', 1: 'Ce médicament', 2: 'Tous les médicaments'}, className: 'col-2'},
+      cible: {type: 'select', options: {0: 'Ce médicament'}, className: 'col-2'},
       voieAdministration: {type: 'select', options: {0: 'Toutes voies d\'administration', ...voiesAdministration}, className: 'col-2'},
-      option: {type: 'text', placeholder: 'Option (facultatif)', className: 'col-2'},
+      population: {type: 'text', placeholder: 'Option (facultatif)', className: 'col-2'},
       commentaire: {type: 'textarea', placeholder: 'Commentaire', className: 'col-6'}
     },
-    defaultValue: [{cible: 0, voieAdministration: 0, option: '', commentaire: ''}]
+    defaultValue: [{cible: 0, type: 'medicament', voieAdministration: 0, option: '', commentaire: ''}]
   }
 }

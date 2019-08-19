@@ -14,26 +14,17 @@ export default class MedicamentForm extends React.Component {
       this.state[input] = props.inputs[input].defaultValue
     }
     this.state.substancesActives = this.getSubstancesActives()
+    this.props.inputs.commentaires.inputs.cible.options = Object.assign(this.props.inputs.commentaires.inputs.cible.options, this.state.substancesActives)
 
   }
 
   handleInputChange = (event) => {
     const target = event.target,
-          name = target.getAttribute('name').split('[')[0],
-          parent = target.getAttribute('parent'),
+          name = target.getAttribute('child'),
+          parent = target.getAttribute('name').split('[')[0],
           key = target.getAttribute('index')
     var value = target.type === 'checkbox' ? target.checked : target.value,
         newState = {}
-
-    if (target.type === 'select-multiple') {
-      const options = target.options
-      value = []
-      for (var i = 0, l = options.length; i < l; i++) {
-        if (options[i].selected) {
-          value.push(options[i].value);
-        }
-      }
-    }
 
     if (key == undefined) {
       newState = {
@@ -73,7 +64,7 @@ export default class MedicamentForm extends React.Component {
         </div>
       ])
     } else {
-      returnComponents.push(<GenericInput key={inputName} name={inputName} value={inputValues} onChange={ (e) =>  this.handleInputChange(e) } {...inputProperties.inputs[inputName]} />)
+      returnComponents.push(<GenericInput key={inputName} name={inputName} child={inputName} value={inputValues} onChange={ (e) =>  this.handleInputChange(e) } {...inputProperties.inputs[inputName]} />)
     }
 
     return (
@@ -96,7 +87,7 @@ export default class MedicamentForm extends React.Component {
     const inputProperties = this.props.inputs[inputParent]
     for (var inputName in inputProperties.inputs) {
       inputLine.push(
-        <GenericInput key={inputName} name={inputParent + '[' + index + '][' + inputName + ']'} parent={inputParent} index={index} value={inputObject[inputName]} onChange={ (e) =>  this.handleInputChange(e) } {...inputProperties.inputs[inputName]} />
+        <GenericInput key={inputName} name={inputParent + '[' + index + '][' + inputName + ']'} child={inputName} index={index} value={inputObject[inputName]} onChange={ (e) =>  this.handleInputChange(e) } {...inputProperties.inputs[inputName]} />
       )
     }
     return inputLine
@@ -120,9 +111,14 @@ export default class MedicamentForm extends React.Component {
     if (!this.api_selected_detail) return []
     var substances = []
     for (var i = 0; i < this.api_selected_detail[0].compositions[0].substancesActives.length; i++) {
-      const substanceActive = this.api_selected_detail[0].compositions[0].substancesActives[i]
-      substances = Object.assign(substances, {[substanceActive.codeSubstance]: substanceActive.denominationSubstance + " " + substanceActive.dosageSubstance})
+      const substanceActive = this.api_selected_detail[0].compositions[0].substancesActives[i],
+            codeSubstance = "S-" + substanceActive.codeSubstance,
+            denominationSubstance = substanceActive.denominationSubstance + " " + substanceActive.dosageSubstance,
+            newSubstance = {}
+      newSubstance[codeSubstance] = denominationSubstance
+      substances = Object.assign(substances, newSubstance)
     }
+    console.log(substances)
     return substances
   }
 
