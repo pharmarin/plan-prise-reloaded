@@ -19,4 +19,6 @@ mix.options({
  })
 
 mix.react('resources/js/app.js', 'public/js')
+   .react('resources/js/medicament-import.js', 'public/js')
+   .react('resources/js/medicament-create.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css');

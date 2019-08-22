@@ -1,4 +1,6 @@
 {
     "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/css/app.css": "/css/app.css",
+    "/js/medicament-create.js": "/js/medicament-create.js",
+    "/js/medicament-import.js": "/js/medicament-import.js"
 }

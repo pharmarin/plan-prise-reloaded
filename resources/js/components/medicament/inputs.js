@@ -30,7 +30,7 @@ export const inputs = {
     inputs: {
       customIndications: {type: 'text', placeholder: 'Indication'}
     },
-    defaultValue: [{customIndications: 'test'}]
+    defaultValue: [{customIndications: ''}]
   },
   conservationFrigo: {
     isRepeated: false,
@@ -55,7 +55,7 @@ export const inputs = {
     inputs: {
       voieAdministration: {type: 'select', options: voiesAdministration}
     },
-    defaultValue: [{voieAdministration: null}]
+    defaultValue: ["1"]
   },
   commentaires: {
     isRepeated: true,

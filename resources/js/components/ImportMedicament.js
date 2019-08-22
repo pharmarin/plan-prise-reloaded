@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import { inputs } from './medicament/inputs';
 import MedicamentForm from './medicament/MedicamentForm';
@@ -8,15 +9,14 @@ export default class ImportMedicament extends React.Component {
   constructor (props) {
     super(props)
     this.old_medicament = JSON.parse(this.props.old_medicament)
-    this.api_selected_detail = JSON.parse(this.props.api_selected_detail)
-    console.log('old_medicament', this.old_medicament)
 
-    inputs.customDenomination.defaultValue = this.old_medicament.nomMedicament
-    inputs.customIndications.defaultValue = this.getValueFromOldMedicament('customIndications', this.old_medicament.indication)
-    inputs.conservationFrigo.defaultValue = this.old_medicament.frigo
-    inputs.conservationDuree.defaultValue = this.getValueFromOldMedicament('conservationDuree', this.old_medicament.dureeConservation)
-    inputs.voieAdministration.defaultValue = this.getValueFromOldMedicament('voieAdministration', this.old_medicament.voieAdministration)
-    inputs.commentaires.defaultValue = this.getValueFromOldMedicament('commentaires', this.old_medicament.commentaire)
+    this.newInputs = inputs
+    this.newInputs.customDenomination.defaultValue = this.old_medicament.nomMedicament
+    this.newInputs.customIndications.defaultValue = this.getValueFromOldMedicament('customIndications', this.old_medicament.indication)
+    this.newInputs.conservationFrigo.defaultValue = this.old_medicament.frigo
+    this.newInputs.conservationDuree.defaultValue = this.getValueFromOldMedicament('conservationDuree', this.old_medicament.dureeConservation)
+    this.newInputs.voieAdministration.defaultValue = this.getValueFromOldMedicament('voieAdministration', this.old_medicament.voieAdministration)
+    this.newInputs.commentaires.defaultValue = this.getValueFromOldMedicament('commentaires', this.old_medicament.commentaire)
   }
 
   getValueFromOldMedicament (inputName, string) {
@@ -58,14 +58,19 @@ export default class ImportMedicament extends React.Component {
           case 'IUr': value =  12; break;
           default: value =  null; break;
         }
-        return [{[inputName]: value}]
+        return [value.toString()]
       }
       return [{[inputName]: string}]
     }
   }
 
   render () {
-    return <MedicamentForm inputs={inputs} selected={this.api_selected_detail} {...this.props} />
+    return <MedicamentForm inputs={this.newInputs} {...this.props} />
   }
 
+}
+
+if (document.getElementById('react-import-medicament')) {
+  let app = document.getElementById('react-import-medicament');
+  ReactDOM.render(<ImportMedicament {...(app.dataset)} />, app);
 }

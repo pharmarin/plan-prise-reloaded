@@ -15,7 +15,7 @@ class CreatePivotMedicsTable extends Migration
     {
         Schema::create('pivot_medics', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('CIS')->unsigned();
+            $table->bigInteger('CIS')->unsigned()->unique();
             $table->bigInteger('custom_id')->unsigned();
 
             $table->foreign('CIS')->references('codeCIS')->on('bdpm_medics')->onDelete('cascade');

@@ -26,7 +26,7 @@ Route::middleware(['auth'])->group(function () {
           Route::get('/users/{user_id}/approve', 'UsersController@approve')->name('admin.users.approve');
           Route::get('medicament/import', 'MedicamentController@importFromOldDatabase');
           Route::get('medicament/import/{id}', 'MedicamentController@showImportFormByID');
-          Route::post('medicament/import/{id}', 'MedicamentController@showImportFormByID');
+          Route::post('medicament/api/', 'MedicamentController@getDetailFromCIS')->name('medicament.api');
           Route::resource('medicament', 'MedicamentController');
         });
     });

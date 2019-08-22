@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import axios from 'axios';
 
-import Recherche from './Recherche';
+import Recherche from './generic/Recherche';
 import PPIntro from './plan-prise/PPIntro';
 import PPTable from './plan-prise/PPTable';
 
@@ -15,8 +15,6 @@ export default class PlanPrise extends React.Component {
       currentID: null,
       currentContent: null
     }
-    this.handleSelect = this.handleSelect.bind(this)
-    this.createPlanPrise = this.createPlanPrise.bind(this)
   }
 
   /**
@@ -65,7 +63,7 @@ export default class PlanPrise extends React.Component {
    * @param  {string} action Action dispatched by React-Select
    * @return {null} Update state to display the change
    */
-  handleSelect (selectedOption, action) {
+  handleSelect = (selectedOption, action) => {
     if (action.action === "select-option") {
       this.setState({
         loading: true
@@ -85,7 +83,7 @@ export default class PlanPrise extends React.Component {
    * Create a new Plan de prise localy
    * @return {state} Set the currentID state to -1 when creating a new Plan de prise -> the server will return the new ID after the first adding
    */
-  createPlanPrise () {
+  createPlanPrise = () => {
     this.setState({
       currentID: -1
     })

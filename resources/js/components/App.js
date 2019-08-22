@@ -12,10 +12,6 @@ export default class App extends React.Component {
           <PlanPrise {...this.props} />
         )
         break;
-      case "ImportMedicament":
-        return (
-          <ImportMedicament {...this.props} />
-        )
       default:
         return null
     }

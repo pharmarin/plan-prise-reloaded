@@ -1,20 +1,24 @@
 import React from 'react';
-import {Select as ReactSelect} from 'react-select';
 
+import Selectrix from 'react-selectrix';
+import Alert from '../generic/Alert';
 import GenericInput from '../generic/GenericInput';
 
 export default class MedicamentForm extends React.Component {
 
   constructor (props) {
     super(props)
-    this.api_selected_detail = this.props.selected
-    this.state = {}
+
+    this.state = {
+      inputs: props.inputs,
+      button_disabled: true,
+      selected_from_api: [],
+      api_selected_detail: null
+    }
 
     for (let input in props.inputs) {
       this.state[input] = props.inputs[input].defaultValue
     }
-    this.state.substancesActives = this.getSubstancesActives()
-    this.props.inputs.commentaires.inputs.cible.options = Object.assign(this.props.inputs.commentaires.inputs.cible.options, this.state.substancesActives)
 
   }
 
@@ -41,12 +45,33 @@ export default class MedicamentForm extends React.Component {
         [parent]: oldState
       }
     }
-    this.setState(newState)
+    this.setState(newState, () => this.populateDetails())
+  }
+
+  populateDetails = () => {
+    var newInputs = this.state.inputs
+    let options = newInputs.voieAdministration.inputs.voieAdministration.options
+    let allowed = this.state.voieAdministration
+    var voiesAdministration = Object.keys(options)
+                              .filter(key => allowed.includes(key))
+                              .reduce((obj, key) => {
+                                obj[key] = options[key];
+                                return obj;
+                              }, {})
+    newInputs.commentaires.inputs.voieAdministration.options = {
+      0: 'Toutes voies d\'administration', ...voiesAdministration
+    }
+    newInputs.commentaires.inputs.cible.options = {
+      0: 'Ce médicament', ...this.state.substancesActives
+    }
+    this.setState({
+      inputs: newInputs
+    })
   }
 
   getInputList = (inputName) => {
     const inputValues = this.state[inputName],
-          inputProperties = this.props.inputs[inputName]
+          inputProperties = this.state.inputs[inputName]
     var returnComponents = []
 
     if (inputProperties.isRepeated) {
@@ -84,10 +109,10 @@ export default class MedicamentForm extends React.Component {
 
   getInputLine = (inputObject, inputParent, index) => {
     var inputLine = []
-    const inputProperties = this.props.inputs[inputParent]
+    const inputProperties = this.state.inputs[inputParent]
     for (var inputName in inputProperties.inputs) {
       inputLine.push(
-        <GenericInput key={inputName} name={inputParent + '[' + index + '][' + inputName + ']'} child={inputName} index={index} value={inputObject[inputName]} onChange={ (e) =>  this.handleInputChange(e) } {...inputProperties.inputs[inputName]} />
+        <GenericInput key={inputParent + '-' +inputName} name={inputParent + '[' + index + '][' + inputName + ']'} child={inputName} index={index} value={inputObject[inputName]} onChange={ (e) =>  this.handleInputChange(e) } {...inputProperties.inputs[inputName]} />
       )
     }
     return inputLine
@@ -107,18 +132,16 @@ export default class MedicamentForm extends React.Component {
     })
   }
 
-  getSubstancesActives = () => {
-    if (!this.api_selected_detail) return []
+  getSubstancesActives = (api_selected_detail) => {
     var substances = []
-    for (var i = 0; i < this.api_selected_detail[0].compositions[0].substancesActives.length; i++) {
-      const substanceActive = this.api_selected_detail[0].compositions[0].substancesActives[i],
+    for (var i = 0; i < api_selected_detail[0].compositions[0].substancesActives.length; i++) {
+      const substanceActive = api_selected_detail[0].compositions[0].substancesActives[i],
             codeSubstance = "S-" + substanceActive.codeSubstance,
             denominationSubstance = substanceActive.denominationSubstance + " " + substanceActive.dosageSubstance,
             newSubstance = {}
       newSubstance[codeSubstance] = denominationSubstance
       substances = Object.assign(substances, newSubstance)
     }
-    console.log(substances)
     return substances
   }
 
@@ -127,15 +150,49 @@ export default class MedicamentForm extends React.Component {
     var first = true
     for (var substance in this.state.substancesActives) {
       const substancesActives = this.state.substancesActives
-      const suffix = (first && this.api_selected_detail[0].compositions[0].substancesActives.length > 1) ? " + " : ""
+      const suffix = (first && this.state.api_selected_detail[0].compositions[0].substancesActives.length > 1) ? " + " : ""
       first = false
       dciString = dciString + substancesActives[substance] + " (" + substance + ")" + suffix
     }
     return dciString
   }
 
-  render () {
+  storeCISFromAPI = (values) => {
+    this.setState({
+      selected_from_api: values,
+      button_disabled: false
+    })
+  }
 
+  getDetailFromCIS = (e) => {
+    e.preventDefault()
+    axios.post(this.props.api, {
+      data: this.state.selected_from_api
+    })
+    .then((response) => {
+      if (response.data.status === 'success') {
+        let jsonResponse = JSON.parse(response.data.data)
+        this.setState({
+          api_selected_detail: jsonResponse,
+          substancesActives: this.getSubstancesActives(jsonResponse),
+          button_disabled: true
+        }, () => this.populateDetails())
+      } else {
+        this.setState({
+          alert: {
+            type: 'warning',
+            message: response.data.data
+          },
+          button_disabled: true
+        }, () => {
+          setTimeout(() => this.setState({alert: null}), 3000)
+        })
+      }
+    })
+  }
+
+  renderCard = () => {
+    if (!this.state.api_selected_detail) return null // GUARD
     return (
       <div className="card">
         <div className="card-header">Ajout d'un nouveau médicament</div>
@@ -145,7 +202,7 @@ export default class MedicamentForm extends React.Component {
           <h6>Correspondance dans la Base de Données Publique des Médicaments</h6>
           <ul>
             {
-              this.api_selected_detail.map(function (api_selected_medicament, index) {
+              this.state.api_selected_detail.map((api_selected_medicament, index) => {
                 return (
                   <li key={index}>{ api_selected_medicament.denomination } ({ api_selected_medicament.codeCIS })</li>
                 )
@@ -160,7 +217,11 @@ export default class MedicamentForm extends React.Component {
             <input type="hidden" name="_token" value={this.props.csrf} />
 
             {
-              this.api_selected_detail.map((api_selected_medicament, index) => <input key={index} type="hidden" name="api_selected[]" value={ api_selected_medicament.codeCIS } />)
+              this.props.old ? <input type="hidden" name="old_medicament" value={ this.props.old } /> : null
+            }
+
+            {
+              this.state.api_selected_detail.map((api_selected_medicament, index) => <input key={index} type="hidden" name="api_selected[]" value={ api_selected_medicament.codeCIS } />)
             }
 
             {
@@ -192,6 +253,41 @@ export default class MedicamentForm extends React.Component {
           </form>
 
         </div>
+      </div>
+    )
+  }
+
+  render () {
+    return (
+      <div>
+        <div className="d-flex flex-row mb-4">
+          <Selectrix
+            ajax={{
+              url: "https://cors-anywhere.herokuapp.com/https://www.open-medicaments.fr/api/v1/medicaments",
+              fetchOnSearch: true,
+              q: "?query={q}",
+              minLength: 3,
+            }}
+            className={"flex-fill"}
+          	customKeys={{
+          		key: "codeCIS",
+          		label: "denomination"
+          	}}
+          	multiple={true}
+            onChange={(values) => this.storeCISFromAPI(values)}
+            placeholder={"Importer depuis la base de données publique des médicaments"}
+          	stayOpen={true}
+          />
+        <button className="btn btn-primary ml-1" onClick={(e) => this.getDetailFromCIS(e)} disabled={this.state.button_disabled}>
+            Envoyer
+          </button>
+        </div>
+        {
+          this.state.alert ? <Alert type="warning" message={this.state.alert.message} /> : null
+        }
+        {
+          this.state.api_selected_detail ? this.renderCard() : null
+        }
       </div>
     )
   }

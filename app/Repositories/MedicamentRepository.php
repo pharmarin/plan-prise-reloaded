@@ -58,17 +58,18 @@ class MedicamentRepository {
   }
 
   public function setMedicamentFromAPI ($medicament_from_api) {
-    $this->medicament->codeCIS = $medicament_from_api->codeCIS;
-    $this->medicament->denomination = $medicament_from_api->denomination;
-    $this->medicament->formePharmaceutique = $medicament_from_api->formePharmaceutique;
-    $this->medicament->voiesAdministration = json_encode($medicament_from_api->voiesAdministration);
-    $this->medicament->homeopathie = $medicament_from_api->homeopathie;
-    $this->medicament->etatCommercialisation = $medicament_from_api->etatCommercialisation;
-    $this->medicament->indicationsTherapeutiques = json_encode($medicament_from_api->indicationsTherapeutiques);
-    $this->medicament->compositions = json_encode($medicament_from_api->compositions);
-    $this->medicament->save();
+    $medicament = new Medicament();
+    $medicament->codeCIS = $medicament_from_api->codeCIS;
+    $medicament->denomination = $medicament_from_api->denomination;
+    $medicament->formePharmaceutique = $medicament_from_api->formePharmaceutique;
+    $medicament->voiesAdministration = json_encode($medicament_from_api->voiesAdministration);
+    $medicament->homeopathie = $medicament_from_api->homeopathie;
+    $medicament->etatCommercialisation = $medicament_from_api->etatCommercialisation;
+    $medicament->indicationsTherapeutiques = json_encode($medicament_from_api->indicationsTherapeutiques);
+    $medicament->compositions = json_encode($medicament_from_api->compositions);
+    $medicament->save();
     Log::info('Imported ' . $medicament_from_api->denomination . ' (' . $medicament_from_api->codeCIS . ')');
-    return $this->medicament;
+    return $medicament;
   }
 
   public function getMedicamentDetailFromAPI ($codeCIS) {
