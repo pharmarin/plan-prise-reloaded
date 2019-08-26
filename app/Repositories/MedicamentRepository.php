@@ -2,27 +2,31 @@
 
 namespace App\Repositories;
 
+use App\MedicamentAPI;
 use App\Medicament;
-use App\MedicamentCustom;
 use App\MedicamentPrecaution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class MedicamentRepository {
-  protected $medicament;
-  protected $custom;
+  protected $medicamentAPI;
+  protected $medicamentCustom;
 
-  public function __construct (Medicament $medicament, MedicamentCustom $custom) {
-    $this->medicament = $medicament;
-    $this->custom = $custom;
+  public function __construct (MedicamentAPI $medicamentAPI, Medicament $medicamentCustom) {
+    $this->medicamentAPI = $medicamentAPI;
+    $this->medicamentCustom = $medicamentCustom;
+  }
+
+  public function getAll () {
+    return Medicament::orderBy('customDenomination')->get();
   }
 
   public function getMedicamentFromOld ($old_medicament) {
-    return $this->medicament;
+    return $this->medicamentAPI;
   }
 
   public function getMedicamentByCIS ($codeCIS) {
-    $medicament = $this->medicament->where('codeCIS', $codeCIS);
+    $medicament = $this->medicamentAPI->where('codeCIS', $codeCIS);
     if ($medicament->count() > 0) {
       return $medicament->first();
     } else {
@@ -58,7 +62,7 @@ class MedicamentRepository {
   }
 
   public function setMedicamentFromAPI ($medicament_from_api) {
-    $medicament = new Medicament();
+    $medicament = new MedicamentAPI();
     $medicament->codeCIS = $medicament_from_api->codeCIS;
     $medicament->denomination = $medicament_from_api->denomination;
     $medicament->formePharmaceutique = $medicament_from_api->formePharmaceutique;
@@ -89,15 +93,16 @@ class MedicamentRepository {
   }
 
   public function saveFromForm (Request $request) {
-    $this->custom->customDenomination = $request->input('customDenomination');
-    $this->custom->customIndications = json_encode($request->input('customIndications'));
-    $this->custom->conservationFrigo = $request->input('conservationFrigo');
-    $this->custom->conservationDuree = json_encode($request->input('conservationDuree'));
-    $this->custom->voiesAdministration = json_encode($request->input('voieAdministration'));
-    $this->custom->save();
-    $this->custom->apiMedic()->attach($request->input('api_selected'));
-    $this->saveCommentairesFromForm($request->input('commentaires'), $this->custom->id);
-    return $this->custom->id;
+    $this->medicamentCustom->customDenomination = $request->input('customDenomination');
+    $this->medicamentCustom->customIndications = json_encode($request->input('customIndications'));
+    $this->medicamentCustom->conservationFrigo = $request->input('conservationFrigo');
+    $this->medicamentCustom->conservationDuree = json_encode($request->input('conservationDuree'));
+    $this->medicamentCustom->voiesAdministration = json_encode($request->input('voieAdministration'));
+    $this->medicamentCustom->save();
+    $fromAPI = $this->medicamentAPI::whereIn('codeCIS', $request->input('api_selected'))->get();
+    $this->medicamentCustom->medicamentAPI()->saveMany($fromAPI);
+    $this->saveCommentairesFromForm($request->input('commentaires'), $this->medicamentCustom->id);
+    return $this->medicamentCustom->id;
   }
 
   public function saveCommentairesFromForm ($commentaires, $id) {

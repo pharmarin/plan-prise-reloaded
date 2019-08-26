@@ -21,6 +21,8 @@ class CreateMedicamentPrecautionsTable extends Migration
             $table->string('population')->nullable();
             $table->text('commentaire');
             $table->timestamps();
+
+            $table->foreign('cible_id')->references('id')->on('custom_medics')->onDelete('cascade');
         });
     }
 
@@ -31,6 +33,9 @@ class CreateMedicamentPrecautionsTable extends Migration
      */
     public function down()
     {
+        Schema::table('medicament_precautions', function(Blueprint $table) {
+          $table->dropForeign('medicament_precautions_cible_id_foreign');
+        });
         Schema::dropIfExists('medicament_precautions');
     }
 }

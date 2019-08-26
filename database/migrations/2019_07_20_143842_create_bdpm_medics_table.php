@@ -23,7 +23,10 @@ class CreateBdpmMedicsTable extends Migration
             $table->boolean('etatCommercialisation');
             $table->text('indicationsTherapeutiques');
             $table->text('compositions');
+            $table->bigInteger('medicament_id')->unsigned()->nullable();
             $table->timestamps();
+
+            $table->foreign('medicament_id')->references('id')->on('custom_medics')->onDelete('set null');
         });
     }
 
@@ -34,6 +37,9 @@ class CreateBdpmMedicsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bdpm_medics');
+      Schema::table('bdpm_medics', function(Blueprint $table) {
+        $table->dropForeign('bdpm_medics_medicament_id_foreign');
+      });
+      Schema::dropIfExists('bdpm_medics');
     }
 }

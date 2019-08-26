@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\OldMedicament;
+use App\MedicamentAPI;
 use App\Medicament;
 use App\Repositories\MedicamentRepository;
 use Illuminate\Http\Request;
@@ -21,13 +22,14 @@ class MedicamentController extends Controller
      */
     public function index()
     {
-        //
+      $medicaments = $this->medicament_repository->getAll();
+      return view('medicament.index')->with(compact('medicaments'));
     }
 
     public function importFromOldDatabase () {
       $old_medicaments = OldMedicament::where('import', false)->paginate(20);
       //var_dump($old_medicament);
-      return view('medicament.import-choose')->with('old_medicaments', $old_medicaments);
+      return view('medicament.import-choose')->with(compact('old_medicaments'));
     }
 
     public function showImportFormByID (Request $request, $id) {
@@ -114,7 +116,7 @@ class MedicamentController extends Controller
      */
     public function show(Medicament $medicament)
     {
-      return var_dump($medicament);
+      return view('medicament.show')->with(compact('medicament'));
     }
 
     /**
@@ -125,7 +127,7 @@ class MedicamentController extends Controller
      */
     public function edit(Request $request, Medicament $medicament)
     {
-        var_dump($medicament);
+      var_dump($medicament);
     }
 
     /**
