@@ -3,17 +3,30 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\MedicamentPrecaution;
 
 class Medicament extends Model
 {
     protected $table = 'custom_medics';
 
-    public function medicamentAPI () {
+    protected $appends = ['precautions'];
+
+    public function bdpm () {
       return $this->hasMany('App\MedicamentAPI');
     }
 
-    public function precautions () {
-      return $this->hasMany('App\MedicamentPrecaution', 'cible_id');
+    public function getPrecautionsAttribute () {
+      $voiesAdministration = $this->voiesAdministrationArray;
+      //dd($voiesAdministration);
+      array_push($voiesAdministration, 0);
+      return MedicamentPrecaution::whereIn('voie_administration', $voiesAdministration)
+        ->where(function ($query) {
+          $query->where('cible', 'medicament')
+          ->where('cible_id', 'M-' . $this->id)
+          ->orWhere('cible', 'substance')
+          ->whereIn('cible_id', array_keys($this->getCompositionAttribute()));
+        })
+        ->get();
     }
 
     // Edit attribute
@@ -26,7 +39,7 @@ class Medicament extends Model
 
     // Add attribute
     public function getCompositionAttribute () {
-      $substancesActives = $this->medicamentAPI()->first()->compositions[0]->substancesActives;
+      $substancesActives = $this->bdpm()->first()->compositions[0]->substancesActives;
       $substancesArray = [];
       foreach ($substancesActives as $substanceActive) {
         $substancesArray["S-" . $substanceActive->codeSubstance] = $substanceActive->denominationSubstance . ' ' . $substanceActive->dosageSubstance;
@@ -44,7 +57,7 @@ class Medicament extends Model
     }
 
     // Add attribute
-    public function getVoieAdministrationStringAttribute () {
+    public function getVoiesAdministrationStringAttribute () {
       $voiesAdministrationArray = json_decode($this->voiesAdministration);
       $voiesAdministrationValues = [
         1 => 'Orale',
@@ -61,7 +74,15 @@ class Medicament extends Model
         12 => 'Intra-urétrale'
       ];
       return array_map(function ($voieAdministration) use ($voiesAdministrationValues) {
-        return $voiesAdministrationValues[$voieAdministration->voieAdministration];
+        return $voiesAdministrationValues[$voieAdministration->voiesAdministration];
+      }, $voiesAdministrationArray);
+    }
+
+    // Add attribute
+    public function getVoiesAdministrationArrayAttribute () {
+      $voiesAdministrationArray = json_decode($this->voiesAdministration);
+      return array_map(function ($voieAdministration) {
+        return $voieAdministration->voiesAdministration;
       }, $voiesAdministrationArray);
     }
 }

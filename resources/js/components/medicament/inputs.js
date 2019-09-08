@@ -14,6 +14,13 @@ const voiesAdministration = {
 }
 
 export const inputs = {
+  old_medicament: {
+    isRepeated: false,
+    inputs: {
+      old_medicament: {type: 'hidden'}
+    },
+    emptyObject: ''
+  },
   customDenomination: {
     isRepeated: false,
     label: 'Nom du médicament',
@@ -21,7 +28,7 @@ export const inputs = {
     inputs: {
       customDenomination: {type: 'text', placeholder: 'Nom du médicament'}
     },
-    defaultValue: ''
+    emptyObject: ''
   },
   customIndications: {
     isRepeated: true,
@@ -30,7 +37,7 @@ export const inputs = {
     inputs: {
       customIndications: {type: 'text', placeholder: 'Indication'}
     },
-    defaultValue: [{customIndications: ''}]
+    emptyObject: [{customIndications: ''}]
   },
   conservationFrigo: {
     isRepeated: false,
@@ -38,34 +45,35 @@ export const inputs = {
     inputs: {
       conservationFrigo: {type: 'select', options: {0: 'Température ambiante', 1: 'Frigo'}}
     },
-    defaultValue: 0
+    emptyObject: 0
   },
   conservationDuree: {
     isRepeated: true,
-    label: 'Durée de conservation',
+    label: 'Durée de conservation après ouverture',
     inputs: {
       laboratoire: {type: 'text', placeholder: 'Laboratoire'},
       duree: {type: 'text', placeholder: 'Durée de conservation'}
     },
-    defaultValue: [{laboratoire: '', duree: ''}]
+    emptyObject: [{laboratoire: '', duree: ''}]
   },
-  voieAdministration: {
+  voiesAdministration: {
     isRepeated: true,
     label: 'Voie d\'administration',
     inputs: {
-      voieAdministration: {type: 'select', options: voiesAdministration}
+      voiesAdministration: {type: 'select', options: voiesAdministration}
     },
-    defaultValue: ["1"]
+    emptyObject: ["1"]
   },
   commentaires: {
     isRepeated: true,
     label: 'Commentaires par défaut',
     inputs: {
-      cible: {type: 'select', options: {0: 'Ce médicament'}, className: 'col-2'},
-      voieAdministration: {type: 'select', options: {0: 'Toutes voies d\'administration', ...voiesAdministration}, className: 'col-2'},
-      population: {type: 'text', placeholder: 'Option (facultatif)', className: 'col-2'},
-      commentaire: {type: 'textarea', placeholder: 'Commentaire', className: 'col-6'}
+      id: {type: 'hidden'},
+      cible_id: {type: 'select', options: {0: 'Ce médicament'}, className: 'col-8'},
+      voie_administration: {type: 'select', options: {0: 'Toutes voies d\'administration', ...voiesAdministration}, className: 'col-4'},
+      commentaire: {type: 'textarea', placeholder: 'Commentaire', className: 'col-8'},
+      population: {type: 'text', placeholder: 'Option (facultatif)', className: 'col-4'}
     },
-    defaultValue: [{cible: 0, type: 'medicament', voieAdministration: 0, option: '', commentaire: ''}]
+    emptyObject: [{id: '', cible_id: 0, voieAdministration: 0, option: '', commentaire: ''}]
   }
 }

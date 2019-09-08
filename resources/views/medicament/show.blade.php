@@ -40,7 +40,7 @@
                         </div>
 
                         @if ($medicament->conservationDuree !== null)
-                          <div class="col-sm-4 text-secondary text-right">Durée de conservation</div>
+                          <div class="col-sm-4 text-secondary text-right">Durée de conservation après ouverture</div>
                           <div class="col-sm-8">
                             @foreach ($medicament->conservationDuree as $conservation)
                               {{ $conservation->duree }} ({{ $conservation->laboratoire }})
@@ -51,7 +51,7 @@
                         <div class="col-sm-4 text-secondary text-right">Voie d'administration</div>
                         <div class="col-sm-8">
                           <ul class="list-unstyled">
-                            @foreach ($medicament->voieAdministrationString as $voieAdministration)
+                            @foreach ($medicament->voiesAdministrationString as $voieAdministration)
                               <li>{{ $voieAdministration }}</li>
                             @endforeach
                           </ul>
@@ -68,7 +68,21 @@
                             @endforeach
                           </ul>
                         </div>
+
+                        <div class="col-sm-4 text-secondary text-right">CIP</div>
+                        <div class="col-sm-8">
+                          <ul class="list-unstyled">
+                            @foreach ($medicament->bdpm as $medicamentAPI)
+                              @foreach ($medicamentAPI->cip as $cip)
+                                <li>
+                                  {{ $cip->CIP7 }}, {{ $cip->CIP13 }} ({{ $medicamentAPI->titulaire }})
+                                </li>
+                              @endforeach
+                            @endforeach
+                          </ul>
+                        </div>
                     </div>
+
                     <a href="{{ route('medicament.edit', $medicament->id) }}" class="btn btn-warning btn-sm float-right">Modifier</a>
                   </div>
                 </div>

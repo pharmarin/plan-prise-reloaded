@@ -26,16 +26,21 @@ class MedicamentController extends Controller
       return view('medicament.index')->with(compact('medicaments'));
     }
 
-    public function importFromOldDatabase () {
-      $old_medicaments = OldMedicament::where('import', false)->paginate(20);
-      //var_dump($old_medicament);
+    public function importFromOldDatabase (Request $request) {
+      if ($request->input('get') === "all") {
+        $old_medicaments = OldMedicament::where('import', false)->orderBy('nomGenerique')->paginate(20);
+      } elseif ($request->input('get') === "search") {
+        $old_medicaments = OldMedicament::where('import', false)->where('nomMedicament', 'like', $request->input('query') . "%")->paginate(20);
+      } else {
+        $old_medicaments = null;
+      }
       return view('medicament.import-choose')->with(compact('old_medicaments'));
     }
 
     public function showImportFormByID (Request $request, $id) {
       $old_medicament = OldMedicament::where('id', $id)->first();
 
-      return view('medicament.import-form')->with(compact('old_medicament'));
+      return view('medicament.form')->withAction('IMPORT')->with(compact('old_medicament'));
     }
 
     /**
@@ -44,12 +49,12 @@ class MedicamentController extends Controller
      * @return [Medicament] Array of medicaments
      */
     public function getDetailFromCIS (Request $request) {
-      $api_selected = $request->input('data');
+      $api_selected_array = $request->input('data');
       $api_selected_detail = [];
       $composition = null;
 
-      foreach ($api_selected as $api_selected_cis) {
-        $api_medicament = $this->medicament_repository->getMedicamentByCIS($api_selected_cis['key']);
+      foreach ($api_selected_array as $api_selected) {
+        $api_medicament = $this->medicament_repository->getMedicamentByCIS($api_selected);
 
         // Check if compositions are the same or return error
         if (!$composition) {
@@ -59,11 +64,13 @@ class MedicamentController extends Controller
           // If the array > 1, I need to edit composition[0] to handle the multiple compositions
           if (count($composition) > 1) return 'Long Array Compositions !!';
         } else {
-          if ($composition[0]->substancesActives != $api_medicament->compositions[0]->substancesActives) {
+          $compositionReference = array_map([$this, 'getSubstancesActivesArray'], $composition[0]->substancesActives);
+          $compositionComparer = array_map([$this, 'getSubstancesActivesArray'], $api_medicament->compositions[0]->substancesActives);
+          if ($compositionComparer != $compositionReference) {
             return json_encode(
               [
                 'status' => 'error',
-                'data' => 'Les compositions ne sont pas équivalentes.'
+                'data' => 'Les compositions ne sont pas équivalentes.' . var_export(array_map([$this, 'getSubstancesActivesArray'], $composition[0]->substancesActives)) . '<br />' . var_export()
               ]
             );
           }
@@ -80,6 +87,10 @@ class MedicamentController extends Controller
       );
     }
 
+    private function getSubstancesActivesArray ($substanceActiveObject) {
+      return $substanceActiveObject->codeSubstance;
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -87,7 +98,7 @@ class MedicamentController extends Controller
      */
     public function create(Request $request)
     {
-      return view('medicament.create-form');
+      return view('medicament.form')->withAction('CREATE');
     }
 
     /**
@@ -100,12 +111,12 @@ class MedicamentController extends Controller
     {
       $this->medicament_repository->saveFromForm($request);
       if (!empty($request->input('old_medicament'))) {
-        $old_medicament = OldMedicament::where('id', $request->input('old_medicament'))->first();
+        $old_medicament = OldMedicament::find($request->input('old_medicament'));
         $old_medicament->import = \Carbon\Carbon::now()->toDateTimeString();
         $old_medicament->save();
-        return view('medicament.import-choose');
+        return redirect()->route('medicament.import.search');
       }
-      return view('medicament.create-form');
+      return redirect()->route('medicament.create');
     }
 
     /**
@@ -127,7 +138,8 @@ class MedicamentController extends Controller
      */
     public function edit(Request $request, Medicament $medicament)
     {
-      var_dump($medicament);
+      $medicament->load('bdpm');
+      return view('medicament.form')->withAction('EDIT')->with(compact('medicament'));
     }
 
     /**
@@ -139,7 +151,8 @@ class MedicamentController extends Controller
      */
     public function update(Request $request, Medicament $medicament)
     {
-        //
+      $this->medicament_repository->updateFromForm($request, $medicament);
+      return redirect()->route('medicament.show', $medicament->id);
     }
 
     /**
@@ -150,6 +163,7 @@ class MedicamentController extends Controller
      */
     public function destroy(Medicament $medicament)
     {
-        //
+      $this->medicament_repository->delete($medicament);
+      return redirect()->route('medicament.index');
     }
 }

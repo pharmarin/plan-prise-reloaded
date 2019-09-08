@@ -9,17 +9,23 @@
 
         <div class="card-body">
 
-          @foreach ($old_medicaments as $old_medicament)
-
-            <a href="{{ url()->current() . '/' . $old_medicament->id }}">{{ $old_medicament->nomMedicament }}</a>
-            <br />
-
-
-          @endforeach
-
-          {{ $old_medicaments->links() }}
-
-          {{ var_dump($old_medicaments->first()) }}
+          @if (isset($old_medicaments))
+            <ul class="list-unstyled">
+              @foreach ($old_medicaments as $old_medicament)
+                <li>
+                  <a href="{{ route('medicament.import.form', ['id' => $old_medicament->id, 'query' => app('request')->all()]) }}">{{ $old_medicament->nomMedicament }}</a>
+                </li>
+              @endforeach
+            </ul>
+            {{ $old_medicaments->appends(request()->input())->links() }}
+          @else
+            <form method="get" action="{{ route('medicament.import.search') }}" class="form-inline">
+              <input type="text" name="query" class="form-control flex-fill" placeholder="Rechercher un médicament" />
+              <button type="submit" name="get" value="search" class="mx-2 btn btn-primary">Rechercher</button>
+              OU
+              <button type="submit" name="get" value="all" class="mx-2 btn btn-primary">Tout rechercher</button>
+            </form>
+          @endif
 
         </div>
       </div>

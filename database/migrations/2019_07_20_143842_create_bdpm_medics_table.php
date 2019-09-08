@@ -17,6 +17,7 @@ class CreateBdpmMedicsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('codeCIS')->unique()->unsigned();
             $table->string('denomination');
+            $table->string('titulaire')->nullable();
             $table->string('formePharmaceutique');
             $table->string('voiesAdministration');
             $table->boolean('homeopathie');

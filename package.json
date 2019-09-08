@@ -33,6 +33,7 @@
     },
     "dependencies": {
         "@atlaskit/tooltip": "^15.0.10",
+        "is-url": "^1.2.4",
         "styled-components": "^4.3.2"
     }
 }

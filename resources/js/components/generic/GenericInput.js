@@ -3,21 +3,36 @@ import React from 'react';
 export default class GenericInput extends React.Component {
   render () {
     var props = this.props
+    let defaultDivClassName = " flex-fill px-0 pb-1"
+    let defaultInputClassName = "form-control mr-1"
     if (this.props.type === 'select') {
       return (
-        <select {...this.props} className={this.props.className + " form-control flex-fill mr-1"} >
-          {
-            Object.keys(this.props.options).map((value, i) => (
-              <option key={i} value={value}>{this.props.options[value]}</option>
-            ))
-          }
-        </select>
+        <div className={[this.props.className + defaultDivClassName]}>
+          <select {...this.props} className={defaultInputClassName}>
+            {
+              Object.keys(this.props.options).map((value, i) => (
+                <option key={i} value={value}>{this.props.options[value]}</option>
+              ))
+            }
+          </select>
+        </div>
       )
     } else if (this.props.type === 'textarea') {
-      return <textarea {...this.props} className={this.props.className + " form-control flex-fill mr-1"} ></textarea>
+      return (
+        <div className={[this.props.className + defaultDivClassName]}>
+          <textarea {...this.props} className={defaultInputClassName}></textarea>
+            <button type="button" className="btn btn-link p-0" data-toggle="modal" data-target="#helpModal">
+              <small className="form-text text-muted">
+              Aide sur le fonctionnement du champ de texte
+              </small>
+            </button>
+        </div>
+      )
     } else {
       return (
-        <input {...this.props} className={this.props.className + " form-control flex-fill mr-1"} />
+        <div className={[this.props.className + defaultDivClassName]}>
+          <input {...this.props} className={defaultInputClassName}/>
+        </div>
       )
     }
   }

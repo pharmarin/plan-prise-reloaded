@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import PlanPrise from './PlanPrise';
-import ImportMedicament from './ImportMedicament';
 
 export default class App extends React.Component {
   render () {

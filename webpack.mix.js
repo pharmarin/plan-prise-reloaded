@@ -11,14 +11,7 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.options({
-     hmrOptions: {
-         host: '192.168.1.15',
-         port: 8080
-     }
- })
-
 mix.react('resources/js/app.js', 'public/js')
-   .react('resources/js/medicament-import.js', 'public/js')
-   .react('resources/js/medicament-create.js', 'public/js')
+   .react('resources/js/medicament.js', 'public/js')
+   .react('resources/js/medicament-update.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css');
