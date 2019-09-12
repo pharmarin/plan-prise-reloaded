@@ -41,11 +41,7 @@ export default class MedicamentForm extends React.Component {
       }
     } else {
       var oldState = this.state[parent]
-      /*if (parent == name) {
-        oldState[key] = value
-      } else {*/
-        oldState[key][name] = value
-      //}
+      oldState[key][name] = value
       newState = {
         [parent]: oldState
       }
@@ -92,8 +88,15 @@ export default class MedicamentForm extends React.Component {
                     "border rounded border-success" :
                   ""
                 )
-                console.log(inputName, this.state.voiesAdministration.map((voie) => voie.voiesAdministration), inputObject.voie_administration)
-                if (inputName === 'commentaires' && inputObject.voie_administration && !this.state.voiesAdministration.map((voie) => Number(voie.voiesAdministration)).includes(Number(inputObject.voie_administration))) return null
+              if (
+                inputName === 'commentaires'
+                && inputObject.voie_administration
+                && (!this.state.voiesAdministration.map((voie) => Number(voie.voiesAdministration)).includes(Number(inputObject.voie_administration))
+                && !Number(inputObject.voie_administration) === 0)
+              ) {
+                console.log(!this.state.voiesAdministration.map((voie) => Number(voie.voiesAdministration)).includes(Number(inputObject.voie_administration)), !Number(inputObject.voie_administration) === 0)
+                return null
+              }
               return (
                 <div key={index} className={"d-flex mb-1 p-1" + classColor}>
                   <div className="d-flex flex-fill flex-wrap">
@@ -101,7 +104,15 @@ export default class MedicamentForm extends React.Component {
                   </div>
                   <button
                     className="btn btn-primary align-self-start ml-1"
-                    onClick={(event) => this.removeInputLine(event, inputName, index)}
+                    onClick={ (event) => {
+                      event.preventDefault()
+                      if (inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S') {
+                        if (!confirm ("La suppression de cette ligne affectera tous les médicaments contenant cette substance. Voulez-vous continuer ? ")) {
+                          return
+                        }
+                      }
+                      this.removeInputLine(event, inputName, index)
+                    }}
                     >
                     <i className="fa fa-minus"></i>
                   </button>
@@ -180,15 +191,18 @@ export default class MedicamentForm extends React.Component {
   getSubstancesActives = (api_selected_detail) => {
     if (api_selected_detail.length === 0) return
     var substances = []
-    for (var i = 0; i < api_selected_detail[0].compositions[0].substancesActives.length; i++) {
-      let substanceActive = api_selected_detail[0].compositions[0].substancesActives[i]
-      let newSubstance = {
-        code: "S-" + substanceActive.codeSubstance,
-        denomination: substanceActive.denominationSubstance,
-        dosage: substanceActive.dosageSubstance
+    for (var i = 0; i < api_selected_detail[0].compositions.length; i++) {
+      for (var j = 0; j < api_selected_detail[0].compositions[i].substancesActives.length; j++) {
+        let substanceActive = api_selected_detail[0].compositions[i].substancesActives[j]
+        let newSubstance = {
+          code: "S-" + substanceActive.codeSubstance,
+          denomination: substanceActive.denominationSubstance,
+          dosage: substanceActive.dosageSubstance
+        }
+        substances.push(newSubstance)
       }
-      substances.push(newSubstance)
     }
+
     return substances
   }
 
@@ -210,9 +224,9 @@ export default class MedicamentForm extends React.Component {
     var first = true
     for (let key in this.state.substancesActives) {
       let substanceActive = this.state.substancesActives[key]
-      let suffix = (first && this.state.substancesActives.length > 1) ? " + " : ""
+      let prefix = first ? "" : " + "
       first = false
-      dciString = dciString + substanceActive.denomination + " " + substanceActive.dosage + " (" + substanceActive.code + ")" + suffix
+      dciString = dciString + prefix + substanceActive.denomination + " " + substanceActive.dosage + " (" + substanceActive.code + ")"
     }
     return dciString
   }
@@ -297,7 +311,7 @@ export default class MedicamentForm extends React.Component {
             <h6>Correspondance dans la Base de Données Publique des Médicaments</h6>
             <ul className="list-unstyled">
               {
-                this.state.api_selected_detail.map((api_selected_medicament, index) => <li key={index}><button className="btn btn-link p-1" onClick={(e) => this.removeAPILine(e, api_selected_medicament.codeCIS)}><i className="fa fa-minus-circle"></i></button> { api_selected_medicament.denomination } ({ api_selected_medicament.codeCIS })</li>
+                this.state.api_selected_detail.map((api_selected_medicament, index) => <li key={index}><button className="btn btn-link p-1" onClick={(e) => this.removeAPILine(e, api_selected_medicament.codeCIS)}><i className="fa fa-minus-circle"></i></button> { api_selected_medicament.denomination } (<a href={`http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=${api_selected_medicament.codeCIS}&typedoc=R`} target="_blank">{ api_selected_medicament.codeCIS }</a>)</li>
                 )
               }
               <li key="add">

@@ -8,9 +8,9 @@ export default class Alert extends React.Component {
       if (alert.message === "") return null
       return (
         <div key={Math.random()} className={"alert alert-" + alert.type}>
-            <button type="button" className="close" data-dismiss="alert">x</button>
+            <button type="button" className="close" onClick={() => this.props.dismiss()}>x</button>
             {
-              alert.message
+              alert.message.replace("\\n", "<br/>")
             }
         </div>
       )

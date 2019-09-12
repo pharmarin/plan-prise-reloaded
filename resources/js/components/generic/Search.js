@@ -14,6 +14,7 @@ export default class Search extends React.Component {
     super(props)
     this.state = {
       isLoading: false,
+      isSearching: false,
       alert: [],
       query: '',
       results: [],
@@ -44,9 +45,11 @@ export default class Search extends React.Component {
   }
 
   getInfo = () => {
-    axios.get(`${this.props.url}?query=${this.state.query}&limit=30`)
+    this.setState({ isSearching: true })
+    axios.get(`${this.props.url}?query=${this.state.query}&limit=50`)
     .then((response) => {
       this.setState({
+        isSearching: false,
         results: response.data
       })
     })
@@ -73,15 +76,26 @@ export default class Search extends React.Component {
                 message: response.data.data
               }]
             }, () => {
-              setTimeout(() => this.setState({ alert: [] }), 3000)
+              //setTimeout(() => this.setState({ alert: [] }), 3000)
             })
           }
-
-          this.setState({
-            isLoading: false
-          })
+          // Dans tous les cas
+          let selected = this.state.selected
+          if (response.data.deselect && response.data.deselect.length > 0) {
+            selected = selected.filter((cis) =>
+              !response.data.deselect.map((code) => Number(code))
+                .includes(Number(cis))
+            )
+            this.setState({
+              selected: selected
+            })
+          }
+          this.setState({ isLoading: false })
         })
       } catch (error) {
+        this.setState({
+          isLoading: false
+        })
         console.log(error)
       }
 
@@ -93,10 +107,7 @@ export default class Search extends React.Component {
       query: this.searchInput.value
     }, () => {
       if (this.state.query && this.state.query.length > 3) {
-        if (this.state.query.length % 2 === 0) {
-          this.getInfo()
-        }
-      } else if (!this.state.query) {
+        this.getInfo()
       }
     })
   }
@@ -160,6 +171,18 @@ export default class Search extends React.Component {
     )
   }
 
+  isSuppressed = (codeCIS) => {
+    if (this.state.retrieved.length > 0) {
+      for (var key in this.state.retrieved) {
+        if (this.state.retrieved.hasOwnProperty(key) && this.state.retrieved[key].codeCIS == codeCIS) {
+          return !this.state.retrieved[key].etatCommercialisation
+        }
+      }
+    } else {
+      return false
+    }
+  }
+
   renderSaveButton = () => {
     let retrieved = this.state.retrieved.map((medic) => Number(medic.codeCIS)),
         selected = this.state.selected.map((cis) => Number(cis))
@@ -209,8 +232,18 @@ export default class Search extends React.Component {
   renderForm = () => {
     return (
       <form>
-        <div className="d-flex mb-3">
+        <div className="input-group mb-3">
+          <div className="input-group-prepend">
+            <span className="input-group-text">
+              {
+                this.state.isSearching ?
+                  <i className="fa fa-circle-notch fa-spin"></i>
+                : <i className="fa fa-search"></i>
+              }
+            </span>
+          </div>
           <input
+            type="text"
             className="form-control"
             onChange={this.handleSearchChange}
             placeholder="Rechercher un médicament dans la base de données publique"
@@ -221,18 +254,18 @@ export default class Search extends React.Component {
             this.props.modal ? null : this.renderSaveButton()
           }
         </div>
-        <Alert alert={this.state.alert} />
+        <Alert alert={this.state.alert} dismiss={() => this.setState({ alert: []})} />
         {
           this.state.results.length > 0 ?
           <div className="p-1">
-            <p className="text-muted text-italic mb-0"><small>Suggestions</small></p>
+            <a href="#" className="text-muted text-italic mb-0" onClick={() => this.setState({ selected: this.state.results.map((result) => Number(result.codeCIS))})}><small>Suggestions ({ this.state.results.length })</small></a>
             <ul className="list-unstyled">
               {
                 this.state.results.map((result) =>
                 <li key={result.codeCIS}>
                   <div className="form-check">
                     <input type="checkbox" checked={this.state.selected.includes(Number(result.codeCIS))} className="form-check-input" onChange={(e) => this.handleSearchSelect(e)} id={result.codeCIS}/>
-                    <label className={"form-check-label" + (this.state.selected.includes(Number(result.codeCIS)) ? " font-weight-bold" : "")} htmlFor={result.codeCIS}>{result.denomination} ({result.codeCIS})</label>
+                    <label className={"form-check-label" + (this.state.selected.includes(Number(result.codeCIS)) ? " font-weight-bold" : "")} htmlFor={result.codeCIS}>{result.denomination} (<a href={`https://open-medicaments.fr/api/v1/medicaments/${result.codeCIS}` } target="_blank">{result.codeCIS}</a>) {this.isSuppressed(result.codeCIS) ? "Supprimé" : ""}</label>
                   </div>
                 </li>
               )

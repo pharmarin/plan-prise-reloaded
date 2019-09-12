@@ -62,6 +62,10 @@ export default class Medicament extends React.Component {
               voie_administration: 0,
               population: commentaire.span,
               commentaire: commentaire.text
+                .replace('<br>', '**')
+                .replace('<br/>', '**')
+                .replace('<sup>', '')
+                .replace('</sup>', '')
             })
           })
           return result
@@ -97,7 +101,7 @@ export default class Medicament extends React.Component {
             case 'Intra-musculaire': value =  10; break;
             case 'Intra-veineux': value = 11; break;
             case 'Intra-urétrale': value =  12; break;
-            default: value =  null; break;
+            default: value =  0; break;
           }
           return [{[inputName]: value.toString()}]
           break;

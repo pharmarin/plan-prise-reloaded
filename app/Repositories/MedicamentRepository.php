@@ -34,7 +34,7 @@ class MedicamentRepository {
 
   public function getAll () {
 
-    return Medicament::orderBy('customDenomination')->get();
+    return Medicament::orderBy('customDenomination')->paginate(20);
 
   }
 
@@ -290,9 +290,11 @@ class MedicamentRepository {
 
   public function saveOrUpdateCommentairesFromForm ($commentaires, $medicament_id) {
 
-      if (!$commentaires) return;
+    if (!$commentaires) return;
 
     foreach ($commentaires as $commentaire) {
+
+      if (empty($commentaire['commentaire'])) return;
 
       if (!empty($commentaire['id'])) {
 
@@ -399,7 +401,6 @@ class MedicamentRepository {
 
   }
 
-
   public function delete (Medicament $medicament) {
 
     $medicament->delete();
@@ -408,5 +409,16 @@ class MedicamentRepository {
 
   }
 
+  static function getArrayFromComposition ($compositionObject) {
+    $compositionArray = [];
+    foreach ($compositionObject as $composition) {
+      $substancesActives = $composition->substancesActives;
+      $substancesArray = array_map(function ($substance) {
+        return $substance->codeSubstance;
+      }, $substancesActives);
+      $compositionArray = array_merge($compositionArray, $substancesArray);
+    }
+    return $compositionArray;
+  }
 
 }

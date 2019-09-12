@@ -5,7 +5,7 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
-        <div class="card-header">Import de médicaments</div>
+        <div class="card-header">Import de médicaments @isset($old_medicaments) ({{ $old_medicaments->total() }}) @endisset</div>
 
         <div class="card-body">
 

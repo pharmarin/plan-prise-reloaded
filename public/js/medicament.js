@@ -31218,7 +31218,7 @@ function (_React$Component) {
                 cible: 'medicament',
                 voie_administration: 0,
                 population: commentaire.span,
-                commentaire: commentaire.text
+                commentaire: commentaire.text.replace('<br>', '**').replace('<br/>', '**').replace('<sup>', '').replace('</sup>', '')
               });
             });
             return result;
@@ -31301,7 +31301,7 @@ function (_React$Component) {
                 break;
 
               default:
-                value = null;
+                value = 0;
                 break;
             }
 
@@ -31385,6 +31385,8 @@ function (_React$Component) {
   _createClass(Alert, [{
     key: "render",
     value: function render() {
+      var _this = this;
+
       if (!this.props.alert) return null;
       return this.props.alert.map(function (alert) {
         if (alert.message === "") return null;
@@ -31394,8 +31396,10 @@ function (_React$Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           type: "button",
           className: "close",
-          "data-dismiss": "alert"
-        }, "x"), alert.message);
+          onClick: function onClick() {
+            return _this.props.dismiss();
+          }
+        }, "x"), alert.message.replace("\\n", "<br/>"));
       });
     }
   }]);
@@ -31580,8 +31584,13 @@ function (_React$Component) {
     };
 
     _this.getInfo = function () {
-      axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("".concat(_this.props.url, "?query=").concat(_this.state.query, "&limit=30")).then(function (response) {
+      _this.setState({
+        isSearching: true
+      });
+
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("".concat(_this.props.url, "?query=").concat(_this.state.query, "&limit=50")).then(function (response) {
         _this.setState({
+          isSearching: false,
           results: response.data
         });
       });
@@ -31607,12 +31616,22 @@ function (_React$Component) {
                   type: 'warning',
                   message: response.data.data
                 }])
-              }, function () {
-                setTimeout(function () {
-                  return _this.setState({
-                    alert: []
-                  });
-                }, 3000);
+              }, function () {//setTimeout(() => this.setState({ alert: [] }), 3000)
+              });
+            } // Dans tous les cas
+
+
+            var selected = _this.state.selected;
+
+            if (response.data.deselect && response.data.deselect.length > 0) {
+              selected = selected.filter(function (cis) {
+                return !response.data.deselect.map(function (code) {
+                  return Number(code);
+                }).includes(Number(cis));
+              });
+
+              _this.setState({
+                selected: selected
               });
             }
 
@@ -31621,6 +31640,10 @@ function (_React$Component) {
             });
           });
         } catch (error) {
+          _this.setState({
+            isLoading: false
+          });
+
           console.log(error);
         }
       });
@@ -31631,10 +31654,8 @@ function (_React$Component) {
         query: _this.searchInput.value
       }, function () {
         if (_this.state.query && _this.state.query.length > 3) {
-          if (_this.state.query.length % 2 === 0) {
-            _this.getInfo();
-          }
-        } else if (!_this.state.query) {}
+          _this.getInfo();
+        }
       });
     };
 
@@ -31709,6 +31730,18 @@ function (_React$Component) {
       }));
     };
 
+    _this.isSuppressed = function (codeCIS) {
+      if (_this.state.retrieved.length > 0) {
+        for (var key in _this.state.retrieved) {
+          if (_this.state.retrieved.hasOwnProperty(key) && _this.state.retrieved[key].codeCIS == codeCIS) {
+            return !_this.state.retrieved[key].etatCommercialisation;
+          }
+        }
+      } else {
+        return false;
+      }
+    };
+
     _this.renderSaveButton = function () {
       var retrieved = _this.state.retrieved.map(function (medic) {
         return Number(medic.codeCIS);
@@ -31781,8 +31814,17 @@ function (_React$Component) {
 
     _this.renderForm = function () {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "d-flex mb-3"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        className: "input-group mb-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "input-group-prepend"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "input-group-text"
+      }, _this.state.isSearching ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-circle-notch fa-spin"
+      }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "fa fa-search"
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "text",
         className: "form-control",
         onChange: _this.handleSearchChange,
         placeholder: "Rechercher un m\xE9dicament dans la base de donn\xE9es publique",
@@ -31791,12 +31833,25 @@ function (_React$Component) {
         },
         value: _this.state.query
       }), _this.props.modal ? null : _this.renderSaveButton()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Alert__WEBPACK_IMPORTED_MODULE_3__["default"], {
-        alert: _this.state.alert
+        alert: _this.state.alert,
+        dismiss: function dismiss() {
+          return _this.setState({
+            alert: []
+          });
+        }
       }), _this.state.results.length > 0 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "p-1"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
-        className: "text-muted text-italic mb-0"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, "Suggestions")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        href: "#",
+        className: "text-muted text-italic mb-0",
+        onClick: function onClick() {
+          return _this.setState({
+            selected: _this.state.results.map(function (result) {
+              return Number(result.codeCIS);
+            })
+          });
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, "Suggestions (", _this.state.results.length, ")")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
         className: "list-unstyled"
       }, _this.state.results.map(function (result) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
@@ -31814,12 +31869,16 @@ function (_React$Component) {
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
           className: "form-check-label" + (_this.state.selected.includes(Number(result.codeCIS)) ? " font-weight-bold" : ""),
           htmlFor: result.codeCIS
-        }, result.denomination, " (", result.codeCIS, ")")));
+        }, result.denomination, " (", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "https://open-medicaments.fr/api/v1/medicaments/".concat(result.codeCIS),
+          target: "_blank"
+        }, result.codeCIS), ") ", _this.isSuppressed(result.codeCIS) ? "Supprimé" : "")));
       }))) : null);
     };
 
     _this.state = {
       isLoading: false,
+      isSearching: false,
       alert: [],
       query: '',
       results: [],
@@ -32015,12 +32074,7 @@ function (_React$Component) {
         newState = _defineProperty({}, name, value);
       } else {
         var oldState = _this.state[parent];
-        /*if (parent == name) {
-          oldState[key] = value
-        } else {*/
-
-        oldState[key][name] = value; //}
-
+        oldState[key][name] = value;
         newState = _defineProperty({}, parent, oldState);
       }
 
@@ -32066,12 +32120,16 @@ function (_React$Component) {
       if (inputProperties.isRepeated) {
         returnComponents = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, inputValues.map(function (inputObject, index) {
           var classColor = " " + (inputName === 'commentaires' ? inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S' ? "border rounded border-warning" : "border rounded border-success" : "");
-          console.log(inputName, _this.state.voiesAdministration.map(function (voie) {
-            return voie.voiesAdministration;
-          }), inputObject.voie_administration);
+
           if (inputName === 'commentaires' && inputObject.voie_administration && !_this.state.voiesAdministration.map(function (voie) {
             return Number(voie.voiesAdministration);
-          }).includes(Number(inputObject.voie_administration))) return null;
+          }).includes(Number(inputObject.voie_administration)) && !Number(inputObject.voie_administration) === 0) {
+            console.log(!_this.state.voiesAdministration.map(function (voie) {
+              return Number(voie.voiesAdministration);
+            }).includes(Number(inputObject.voie_administration)), !Number(inputObject.voie_administration) === 0);
+            return null;
+          }
+
           return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
             key: index,
             className: "d-flex mb-1 p-1" + classColor
@@ -32080,7 +32138,15 @@ function (_React$Component) {
           }, _this.getInputLine(inputObject, inputName, index)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
             className: "btn btn-primary align-self-start ml-1",
             onClick: function onClick(event) {
-              return _this.removeInputLine(event, inputName, index);
+              event.preventDefault();
+
+              if (inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S') {
+                if (!confirm("La suppression de cette ligne affectera tous les médicaments contenant cette substance. Voulez-vous continuer ? ")) {
+                  return;
+                }
+              }
+
+              _this.removeInputLine(event, inputName, index);
             }
           }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
             className: "fa fa-minus"
@@ -32171,14 +32237,16 @@ function (_React$Component) {
       if (api_selected_detail.length === 0) return;
       var substances = [];
 
-      for (var i = 0; i < api_selected_detail[0].compositions[0].substancesActives.length; i++) {
-        var substanceActive = api_selected_detail[0].compositions[0].substancesActives[i];
-        var newSubstance = {
-          code: "S-" + substanceActive.codeSubstance,
-          denomination: substanceActive.denominationSubstance,
-          dosage: substanceActive.dosageSubstance
-        };
-        substances.push(newSubstance);
+      for (var i = 0; i < api_selected_detail[0].compositions.length; i++) {
+        for (var j = 0; j < api_selected_detail[0].compositions[i].substancesActives.length; j++) {
+          var substanceActive = api_selected_detail[0].compositions[i].substancesActives[j];
+          var newSubstance = {
+            code: "S-" + substanceActive.codeSubstance,
+            denomination: substanceActive.denominationSubstance,
+            dosage: substanceActive.dosageSubstance
+          };
+          substances.push(newSubstance);
+        }
       }
 
       return substances;
@@ -32202,9 +32270,9 @@ function (_React$Component) {
 
       for (var key in _this.state.substancesActives) {
         var substanceActive = _this.state.substancesActives[key];
-        var suffix = first && _this.state.substancesActives.length > 1 ? " + " : "";
+        var prefix = first ? "" : " + ";
         first = false;
-        dciString = dciString + substanceActive.denomination + " " + substanceActive.dosage + " (" + substanceActive.code + ")" + suffix;
+        dciString = dciString + prefix + substanceActive.denomination + " " + substanceActive.dosage + " (" + substanceActive.code + ")";
       }
 
       return dciString;
@@ -32325,7 +32393,10 @@ function (_React$Component) {
             }
           }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
             className: "fa fa-minus-circle"
-          })), " ", api_selected_medicament.denomination, " (", api_selected_medicament.codeCIS, ")");
+          })), " ", api_selected_medicament.denomination, " (", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+            href: "http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=".concat(api_selected_medicament.codeCIS, "&typedoc=R"),
+            target: "_blank"
+          }, api_selected_medicament.codeCIS), ")");
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
           key: "add"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_Search__WEBPACK_IMPORTED_MODULE_1__["default"], {
@@ -32460,7 +32531,7 @@ var inputs = {
   },
   conservationDuree: {
     isRepeated: true,
-    label: 'Durée de conservation',
+    label: 'Durée de conservation après ouverture',
     inputs: {
       laboratoire: {
         type: 'text',

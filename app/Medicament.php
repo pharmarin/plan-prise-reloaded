@@ -17,7 +17,6 @@ class Medicament extends Model
 
     public function getPrecautionsAttribute () {
       $voiesAdministration = $this->voiesAdministrationArray;
-      //dd($voiesAdministration);
       array_push($voiesAdministration, 0);
       return MedicamentPrecaution::whereIn('voie_administration', $voiesAdministration)
         ->where(function ($query) {
@@ -39,12 +38,13 @@ class Medicament extends Model
 
     // Add attribute
     public function getCompositionAttribute () {
-      $substancesActives = $this->bdpm()->first()->compositions[0]->substancesActives;
       $substancesArray = [];
-      foreach ($substancesActives as $substanceActive) {
-        $substancesArray["S-" . $substanceActive->codeSubstance] = $substanceActive->denominationSubstance . ' ' . $substanceActive->dosageSubstance;
+      $compositions = $this->bdpm()->first()->compositions;
+      foreach ($compositions as $composition) {
+        foreach ($composition->substancesActives as $substanceActive) {
+          $substancesArray["S-" . $substanceActive->codeSubstance] = $substanceActive->denominationSubstance . ' ' . $substanceActive->dosageSubstance;
+        }
       }
-
       return $substancesArray;
     }
 

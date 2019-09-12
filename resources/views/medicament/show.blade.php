@@ -14,11 +14,13 @@
 
                 <div class="card">
                     <div class="card-header">
-                      <h3>{{ $medicament->customDenomination }}</h3>
-                      <p class="text-muted font-italic mb-0">
+                      <h4>{{ $medicament->customDenomination }}</h4>
+                      <p class="mb-0">
+                        <ul class="list-unstyled">
                           @foreach ($medicament->composition as $code => $substance)
-                              {{ $substance }} ({{ $code }})
+                              <li class="text-muted font-italic">{{ $substance }} ({{ $code }})</li>
                           @endforeach
+                        </ul>
                       </p>
                     </div>
 

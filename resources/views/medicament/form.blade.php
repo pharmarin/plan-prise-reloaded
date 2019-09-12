@@ -19,9 +19,9 @@
               </h5>
       <div id="react-medicament"
         data-api="{{ route('medicament.api.get') }}"
-      @if ($action == 'test')
-        data-route="{{ route('medicament.store') }}&{{ /*http_build_query(app('request')->input('query'))*/ }}"
-        @elseif ($action == 'CREATE' || $action == 'IMPORT')
+      @if ($action == 'test' || $action == 'IMPORT')
+        data-route="{{ route('medicament.store') }}?{{ http_build_query(app('request')->input('query')) }}"
+        @elseif ($action == 'CREATE')
             data-route="{{ route('medicament.store') }}"
       @elseif ($action == 'EDIT')
         data-route="{{ route('medicament.update', $medicament->id) }}"
@@ -37,5 +37,5 @@
 @endsection
 
 @section('scripts')
-  <script type="text/javascript" src="{{ asset('js/medicament.js') }}@isset($debug)?rand={{ rand() }}@endisset"></script>
+  <script type="text/javascript" src="{{ asset('js/medicament.js') }}@if (isset($debug) && $debug === true)?rand={{ rand() }}@endif"></script>
 @endsection

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 class MedicamentController extends Controller
 {
     protected $medicament_repository;
+    protected $DEBUG = false;
 
     public function __construct (MedicamentRepository $medicament_repository) {
       $this->medicament_repository = $medicament_repository;
@@ -40,7 +41,7 @@ class MedicamentController extends Controller
     public function showImportFormByID (Request $request, $id) {
       $old_medicament = OldMedicament::where('id', $id)->first();
 
-      return view('medicament.form')->withAction('IMPORT')->with(compact('old_medicament'));
+      return view('medicament.form')->withAction('IMPORT')->with(compact('old_medicament'))->withDebug($this->DEBUG);
     }
 
     /**
@@ -56,27 +57,35 @@ class MedicamentController extends Controller
       foreach ($api_selected_array as $api_selected) {
         $api_medicament = $this->medicament_repository->getMedicamentByCIS($api_selected);
 
+        if ($api_medicament->etatCommercialisation == false) {
+          $deselect[] = $api_medicament->codeCIS;
+        }
+
         // Check if compositions are the same or return error
         if (!$composition) {
           $composition = $api_medicament->compositions;
-
-          // Count the array length
-          // If the array > 1, I need to edit composition[0] to handle the multiple compositions
-          if (count($composition) > 1) return 'Long Array Compositions !!';
         } else {
-          $compositionReference = array_map([$this, 'getSubstancesActivesArray'], $composition[0]->substancesActives);
-          $compositionComparer = array_map([$this, 'getSubstancesActivesArray'], $api_medicament->compositions[0]->substancesActives);
+          $compositionReference = MedicamentRepository::getArrayFromComposition($composition);
+          $compositionComparer = MedicamentRepository::getArrayFromComposition($api_medicament->compositions);
           if ($compositionComparer != $compositionReference) {
-            return json_encode(
-              [
-                'status' => 'error',
-                'data' => 'Les compositions ne sont pas équivalentes.' . var_export(array_map([$this, 'getSubstancesActivesArray'], $composition[0]->substancesActives)) . '<br />' . var_export()
-              ]
-            );
+            if (explode(" ", $composition[0]->substancesActives[0]->denominationSubstance)[0] != explode(" ", $api_medicament->compositions[0]->substancesActives[0]->denominationSubstance)[0]) {
+              $message = 'Problème de PA pour ' . $api_medicament->denomination . '(' . var_export($compositionComparer, true) . ' vs. ' . var_export($compositionReference, true) . ')\n';
+              $deselect = [];
+            }
           }
         }
         // If OK, add the medicament to the array
         $api_selected_detail[] = $api_medicament;
+      }
+
+      if (isset($deselect)) {
+        return json_encode(
+          [
+            'status' => 'error',
+            'data' => (isset($message) ? $message : "") . 'Nous avons déselectionné les médicaments non commercialisés. Merci de réessayer. ',
+            'deselect' => $deselect
+          ]
+        );
       }
 
       return json_encode(
@@ -87,10 +96,6 @@ class MedicamentController extends Controller
       );
     }
 
-    private function getSubstancesActivesArray ($substanceActiveObject) {
-      return $substanceActiveObject->codeSubstance;
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -98,7 +103,7 @@ class MedicamentController extends Controller
      */
     public function create(Request $request)
     {
-      return view('medicament.form')->withAction('CREATE');
+      return view('medicament.form')->withAction('CREATE')->withDebug($this->DEBUG);
     }
 
     /**
@@ -114,7 +119,7 @@ class MedicamentController extends Controller
         $old_medicament = OldMedicament::find($request->input('old_medicament'));
         $old_medicament->import = \Carbon\Carbon::now()->toDateTimeString();
         $old_medicament->save();
-        return redirect()->route('medicament.import.search');
+        return redirect()->route('medicament.import.search', $request->query());
       }
       return redirect()->route('medicament.create');
     }
@@ -139,7 +144,7 @@ class MedicamentController extends Controller
     public function edit(Request $request, Medicament $medicament)
     {
       $medicament->load('bdpm');
-      return view('medicament.form')->withAction('EDIT')->with(compact('medicament'));
+      return view('medicament.form')->withAction('EDIT')->with(compact('medicament'))->withDebug($this->DEBUG);
     }
 
     /**

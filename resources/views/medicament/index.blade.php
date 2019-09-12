@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">Médicaments</div>
+                    <div class="card-header">Médicaments ({{ $medicaments->total() }})</div>
 
                     <div class="card-body">
 
@@ -35,6 +35,7 @@
                                 </tr>
                             @endforelse
                         </table>
+                        {{ $medicaments->links() }}
                     </div>
                 </div>
             </div>
