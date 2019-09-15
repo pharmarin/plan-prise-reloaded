@@ -3,12 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\MedicamentPrecaution;
+use App\Repositories\MedicamentRepository;
+use App\Repositories\CompositionRepository;
 
 class MedicamentAPI extends Model
 {
     protected $table = 'bdpm_medics';
 
-    protected $appends = ['associatedPrecautions'];
+    protected $appends = ['associatedPrecautions', 'compositionsArray', 'compositionsString'];
 
     public function customValues () {
       return $this->belongsToMany('App\Medicament');
@@ -19,23 +22,25 @@ class MedicamentAPI extends Model
     }
 
     public function getCompositionsAttribute ($compositions_json) {
-      return json_decode($compositions_json);
+      $composition = json_decode($compositions_json);
+      return new CompositionRepository($composition);
     }
 
     public function getAssociatedPrecautionsAttribute () {
       return MedicamentPrecaution::where('cible', 'substance')
-        ->whereIn('cible_id', array_keys($this->getCompositionArrayAttribute()))
+        ->whereIn('cible_id', array_map(function ($composition) {
+          return $composition->codeSubstance;
+        }, $this->compositionsArray))
         ->get();
     }
 
     // Add attribute
-    public function getCompositionArrayAttribute () {
-      $substancesActives = $this->compositions[0]->substancesActives;
-      $substancesArray = [];
-      foreach ($substancesActives as $substanceActive) {
-        $substancesArray["S-" . $substanceActive->codeSubstance] = $substanceActive->denominationSubstance . ' ' . $substanceActive->dosageSubstance;
-      }
+    public function getCompositionsArrayAttribute () {
+      return $this->compositions->getArray();
+    }
 
-      return $substancesArray;
+    // Add attribute
+    public function getCompositionsStringAttribute () {
+      return $this->compositions->getString();
     }
 }

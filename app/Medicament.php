@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\MedicamentPrecaution;
+use App\Repositories\CompositionRepository;
 
 class Medicament extends Model
 {
@@ -23,7 +24,9 @@ class Medicament extends Model
           $query->where('cible', 'medicament')
           ->where('cible_id', 'M-' . $this->id)
           ->orWhere('cible', 'substance')
-          ->whereIn('cible_id', array_keys($this->getCompositionAttribute()));
+          ->whereIn('cible_id', array_map(function ($composition) {
+            return $composition->codeSubstance;
+          }, $this->bdpm()->first()->compositionsArray));
         })
         ->get();
     }
@@ -35,17 +38,13 @@ class Medicament extends Model
       return $conservationArray;
     }
 
-
     // Add attribute
-    public function getCompositionAttribute () {
-      $substancesArray = [];
-      $compositions = $this->bdpm()->first()->compositions;
-      foreach ($compositions as $composition) {
-        foreach ($composition->substancesActives as $substanceActive) {
-          $substancesArray["S-" . $substanceActive->codeSubstance] = $substanceActive->denominationSubstance . ' ' . $substanceActive->dosageSubstance;
-        }
-      }
-      return $substancesArray;
+    public function getCompositionsAttribute () {
+      return $medicamentAPI = $this->bdpm()->first()->compositions;
+    }
+
+    public function getDCIAttribute () {
+      return $medicamentAPI = $this->bdpm()->first()->compositionsString;
     }
 
     // Add attribute

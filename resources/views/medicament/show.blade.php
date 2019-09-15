@@ -17,8 +17,8 @@
                       <h4>{{ $medicament->customDenomination }}</h4>
                       <p class="mb-0">
                         <ul class="list-unstyled">
-                          @foreach ($medicament->composition as $code => $substance)
-                              <li class="text-muted font-italic">{{ $substance }} ({{ $code }})</li>
+                          @foreach ($medicament->compositions as $substance)
+                              <li class="text-muted font-italic">{{ $substance->denomination }} ({{ $substance->id }})</li>
                           @endforeach
                         </ul>
                       </p>

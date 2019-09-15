@@ -6,6 +6,7 @@ use App\OldMedicament;
 use App\MedicamentAPI;
 use App\Medicament;
 use App\Repositories\MedicamentRepository;
+use App\Repositories\CompositionRepository;
 use Illuminate\Http\Request;
 
 class MedicamentController extends Controller
@@ -52,7 +53,7 @@ class MedicamentController extends Controller
     public function getDetailFromCIS (Request $request) {
       $api_selected_array = $request->input('data');
       $api_selected_detail = [];
-      $composition = null;
+      $compositionReference = null;
 
       foreach ($api_selected_array as $api_selected) {
         $api_medicament = $this->medicament_repository->getMedicamentByCIS($api_selected);
@@ -62,16 +63,13 @@ class MedicamentController extends Controller
         }
 
         // Check if compositions are the same or return error
-        if (!$composition) {
-          $composition = $api_medicament->compositions;
+        if (!$compositionReference) {
+          $compositionReference = $api_medicament->compositions;
         } else {
-          $compositionReference = MedicamentRepository::getArrayFromComposition($composition);
-          $compositionComparer = MedicamentRepository::getArrayFromComposition($api_medicament->compositions);
-          if ($compositionComparer != $compositionReference) {
-            if (explode(" ", $composition[0]->substancesActives[0]->denominationSubstance)[0] != explode(" ", $api_medicament->compositions[0]->substancesActives[0]->denominationSubstance)[0]) {
-              $message = 'Problème de PA pour ' . $api_medicament->denomination . '(' . var_export($compositionComparer, true) . ' vs. ' . var_export($compositionReference, true) . ')\n';
-              $deselect = [];
-            }
+          $compositionComparer = $api_medicament->compositions;
+          if ($compositionComparer->getArray() != $compositionReference->getArray()) {
+            $message = 'Problème de PA pour ' . $api_medicament->denomination . '(' . var_export($compositionComparer->getArray(), true) . ' vs. ' . var_export($compositionReference->getArray(), true) . ')\n';
+            $deselect = [];
           }
         }
         // If OK, add the medicament to the array

@@ -13,18 +13,28 @@ export default class MedicamentForm extends React.Component {
       api_selected_detail: []
     }
 
-    if (this.props.fromAPI) {
-      this.state.api_selected_detail = this.props.fromAPI
-      this.state.substancesActives =  this.getSubstancesActives(this.props.fromAPI)
-    }
-
     for (let input in props.inputs) {
       this.state[input] = props.inputs[input].defaultValue
     }
+
+    if (this.props.fromAPI) {
+      this.state.api_selected_detail = this.props.fromAPI
+      this.state.inputs.commentaires.inputs.cible_id.options = this.getSubstancesActivesObject(this.props.fromAPI[0].compositionsArray)
+    }
   }
 
-  componentDidMount () {
-    this.populateDetails()
+  componentDidUpdate = (prevProps, prevState) => {
+    if (this.state.inputs) {
+      if (!(prevState.api_selected_detail.length > 0)) {
+        let substancesActivesObject = this.getSubstancesActivesObject(this.state.api_selected_detail[0].compositionsArray),
+          newInputs = this.state.inputs
+        console.log(substancesActivesObject, this.state.api_selected_detail[0].compositionsArray)
+        newInputs.commentaires.inputs.cible_id.options = substancesActivesObject
+        this.setState({
+          inputs: newInputs
+        })
+      }
+    }
   }
 
   handleInputChange = (event) => {
@@ -46,29 +56,7 @@ export default class MedicamentForm extends React.Component {
         [parent]: oldState
       }
     }
-    this.setState(newState, () => this.populateDetails())
-  }
-
-  populateDetails = () => {
-    var newInputs = this.state.inputs
-    let options = newInputs.voiesAdministration.inputs.voiesAdministration.options
-    let allowed = this.state.voiesAdministration.map((object) => object.voiesAdministration)
-    var voiesAdministration = Object.keys(options)
-                              .filter(key => allowed.includes(key))
-                              .reduce((obj, key) => {
-                                obj[key] = options[key];
-                                return obj;
-                              }, {})
-    let substancesActives = this.getSubstancesActivesObject(this.state.substancesActives)
-    newInputs.commentaires.inputs.voie_administration.options = {
-      0: 'Toutes voies d\'administration', ...voiesAdministration
-    }
-    newInputs.commentaires.inputs.cible_id.options = {
-      0: 'Ce médicament', ...substancesActives
-    }
-    this.setState({
-      inputs: newInputs
-    })
+    this.setState(newState)
   }
 
   getInputList = (inputName) => {
@@ -94,7 +82,6 @@ export default class MedicamentForm extends React.Component {
                 && (!this.state.voiesAdministration.map((voie) => Number(voie.voiesAdministration)).includes(Number(inputObject.voie_administration))
                 && !Number(inputObject.voie_administration) === 0)
               ) {
-                console.log(!this.state.voiesAdministration.map((voie) => Number(voie.voiesAdministration)).includes(Number(inputObject.voie_administration)), !Number(inputObject.voie_administration) === 0)
                 return null
               }
               return (
@@ -188,47 +175,14 @@ export default class MedicamentForm extends React.Component {
     })
   }
 
-  getSubstancesActives = (api_selected_detail) => {
-    if (api_selected_detail.length === 0) return
-    var substances = []
-    for (var i = 0; i < api_selected_detail[0].compositions.length; i++) {
-      for (var j = 0; j < api_selected_detail[0].compositions[i].substancesActives.length; j++) {
-        let substanceActive = api_selected_detail[0].compositions[i].substancesActives[j]
-        let newSubstance = {
-          code: "S-" + substanceActive.codeSubstance,
-          denomination: substanceActive.denominationSubstance,
-          dosage: substanceActive.dosageSubstance
-        }
-        substances.push(newSubstance)
-      }
-    }
-
-    return substances
-  }
-
   getSubstancesActivesObject = (substancesArray) => {
-      if (substancesArray !== undefined) {
-          var substancesObject = {}
-    substancesArray.forEach((substance) => substancesObject = Object.assign(substancesObject, {
-      [substance.code]: substance.denomination + " " + substance.dosage
-    }))
-    return substancesObject
-      } else {
-          return {}
-      }
-
-  }
-
-  getDCIString = () => {
-    var dciString = ""
-    var first = true
-    for (let key in this.state.substancesActives) {
-      let substanceActive = this.state.substancesActives[key]
-      let prefix = first ? "" : " + "
-      first = false
-      dciString = dciString + prefix + substanceActive.denomination + " " + substanceActive.dosage + " (" + substanceActive.code + ")"
+    let substancesObject = {}
+    if (substancesArray !== undefined) {
+      substancesArray.forEach((substance) => substancesObject = Object.assign(substancesObject, {
+        [substance.codeSubstance]: substance.denominationSubstance + " " + substance.dosageSubstance
+      }))
     }
-    return dciString
+    return {0: 'Ce médicament', ...substancesObject}
   }
 
   renderHelpModal = () => {
@@ -282,9 +236,8 @@ export default class MedicamentForm extends React.Component {
           newCommentaires = newCommentaires.concat(values[0].associatedPrecautions)
           this.setState({
             api_selected_detail: values,
-            substancesActives: this.getSubstancesActives(values),
             commentaires: newCommentaires
-          }, () => this.populateDetails())
+          })
         }}
         url="https://cors-anywhere.herokuapp.com/https://www.open-medicaments.fr/api/v1/medicaments/" api={this.props.api} />
     } else {
@@ -319,7 +272,7 @@ export default class MedicamentForm extends React.Component {
               </li>
             </ul>
 
-            <p>DCI : { this.getDCIString() }</p>
+            <p>DCI : { this.state.api_selected_detail[0].compositionsString }</p>
 
             <form action={this.props.route} method="POST">
 

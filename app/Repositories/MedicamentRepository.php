@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Repositories;
 
 
@@ -409,16 +408,15 @@ class MedicamentRepository {
 
   }
 
-  static function getArrayFromComposition ($compositionObject) {
-    $compositionArray = [];
-    foreach ($compositionObject as $composition) {
-      $substancesActives = $composition->substancesActives;
-      $substancesArray = array_map(function ($substance) {
-        return $substance->codeSubstance;
-      }, $substancesActives);
-      $compositionArray = array_merge($compositionArray, $substancesArray);
-    }
-    return $compositionArray;
-  }
+}
 
+function array_flatten($items)
+{
+    if (! is_array($items)) {
+        return [$items];
+    }
+
+    return array_reduce($items, function ($carry, $item) {
+        return array_merge($carry, array_flatten($item));
+    }, []);
 }

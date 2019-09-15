@@ -68,7 +68,7 @@ export default class Search extends React.Component {
             let jsonResponse = JSON.parse(response.data.data)
             this.setState({
               retrieved: jsonResponse
-            })
+            }, () => this.saveValues())
           } else {
             this.setState({
               alert: [...this.state.alert, {
