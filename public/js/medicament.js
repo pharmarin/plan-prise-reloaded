@@ -49972,6 +49972,7 @@ function (_React$Component) {
         }) : null;
 
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          key: index,
           href: "#",
           className: "list-group-item list-group-item-action py-2" + noBorderClass,
           onClick: function onClick(e) {
@@ -49980,19 +49981,19 @@ function (_React$Component) {
         }, _this.props.multiple ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           type: "checkbox",
           checked: selected,
-          className: "form-check-input d-none mt-1",
+          className: "d-none mt-1",
           onChange: function onChange(e) {
             return _this.handleSearchSelect(e, result.codeCIS, selected);
           },
           id: result.codeCIS
         }) : null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-          className: "form-check-label" + (_this.state.selected.includes(Number(result.codeCIS)) ? " font-weight-bold" : ""),
+          className: "d-flex m-0" + (_this.state.selected.includes(Number(result.codeCIS)) ? " font-weight-bold" : ""),
           htmlFor: result.codeCIS
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "d-flex"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, checkboxIcon), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "text-truncate flex-fill"
-        }, result.denomination), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "(", result.codeCIS, ")"), " ", _this.isSuppressed(result.codeCIS) ? "Supprimé" : "")));
+          className: "text-truncate flex-grow-1"
+        }, result.denomination), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "ml-2"
+        }, "(", result.codeCIS, ")"), _this.isSuppressed(result.codeCIS) ? "Supprimé" : ""));
       }))) : null);
     };
 
@@ -50244,7 +50245,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _generic_Search__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../generic/Search */ "./resources/js/components/generic/Search.js");
-/* harmony import */ var _generic_GenericInput__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../generic/GenericInput */ "./resources/js/components/generic/GenericInput.js");
+/* harmony import */ var _MedicamentInput__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MedicamentInput */ "./resources/js/components/medicament/MedicamentInput.js");
 /* harmony import */ var _params__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../params */ "./resources/js/components/params.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -50252,9 +50253,15 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -50305,131 +50312,59 @@ function (_React$Component) {
       }
     };
 
-    _this.handleInputChange = function (event) {
-      var target = event.target,
-          name = target.getAttribute('child'),
-          parent = target.getAttribute('name').split('[')[0],
-          key = target.getAttribute('index');
-      var value = target.type === 'checkbox' ? target.checked : target.value,
-          newState = {};
-
-      if (key == undefined) {
-        newState = _defineProperty({}, name, value);
-      } else {
-        var oldState = _this.state[parent];
-        oldState[key][name] = value;
-        newState = _defineProperty({}, parent, oldState);
-      }
-
-      _this.setState(newState);
-    };
-
-    _this.getInputList = function (inputName) {
-      var inputValues = _this.state[inputName],
-          inputProperties = _this.state.inputs[inputName];
-      var returnComponents = [];
-
-      if (inputProperties.isRepeated) {
-        returnComponents = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, inputValues.map(function (inputObject, index) {
-          var classColor = " " + (inputName === 'commentaires' ? inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S' ? "border rounded border-warning" : "border rounded border-success" : "");
-
-          if (inputName === 'commentaires' && inputObject.voie_administration && !_this.state.voies_administration.map(function (voie) {
-            return Number(voie.voies_administration);
-          }).includes(Number(inputObject.voie_administration)) && !(Number(inputObject.voie_administration) === 0)) {
-            return null;
-          }
-
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-            key: index,
-            className: "d-flex mb-1 p-1" + classColor
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-            className: "d-flex flex-fill flex-wrap"
-          }, _this.getInputLine(inputObject, inputName, index)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-            className: "btn btn-primary align-self-start ml-1",
-            onClick: function onClick(event) {
-              event.preventDefault();
-
-              if (inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S') {
-                if (!confirm("La suppression de cette ligne affectera tous les médicaments contenant cette substance. Voulez-vous continuer ? ")) {
-                  return;
-                }
-              }
-
-              _this.removeInputLine(event, inputName, index);
-            }
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-            className: "fa fa-minus"
-          })));
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          key: -1,
-          className: "d-flex flex-row-reverse mr-1"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          className: "btn btn-primary float-right",
-          onClick: function onClick(event) {
-            return _this.addInputLine(event, inputName);
-          }
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-          className: "fa fa-plus"
-        }))));
-      } else {
-        var inputValueOrEmptyString = inputValues !== null ? inputValues : "";
-        returnComponents.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          key: inputName,
-          className: "p-1"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_GenericInput__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
-          name: inputName,
-          child: inputName,
-          value: inputValueOrEmptyString,
-          onChange: function onChange(e) {
-            return _this.handleInputChange(e);
-          }
-        }, inputProperties.inputs[inputName]))));
-      }
-
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, inputProperties.label ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        htmlFor: inputName
-      }, inputProperties.label) : null, returnComponents, inputProperties.hint ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
-        className: "form-text text-muted mt-0 mr-1"
-      }, inputProperties.hint) : null);
-    };
-
-    _this.getInputLine = function (inputObject, inputParent, index) {
-      var inputLine = [];
-      var inputProperties = _this.state.inputs[inputParent];
-
-      for (var inputName in inputProperties.inputs) {
-        var inputValueOrEmptyString = inputObject[inputName] !== null ? inputObject[inputName] : "";
-        inputLine.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_GenericInput__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
-          key: inputParent + '-' + inputName,
-          name: inputParent + '[' + index + '][' + inputName + ']',
-          child: inputName,
-          index: index,
-          value: inputValueOrEmptyString,
-          onChange: function onChange(e) {
-            return _this.handleInputChange(e);
-          }
-        }, inputProperties.inputs[inputName])));
-      }
-
-      return inputLine;
-    };
-
-    _this.addInputLine = function (event, inputName) {
-      event.preventDefault();
-
+    _this.handleSearchSelect = function (selected) {
       _this.setState({
-        inputName: _this.state[inputName].push(_this.state.inputs[inputName].emptyObject)
+        isLoading: true
+      }, function () {
+        return new Promise(function (resolve) {
+          return getAPIFromCIS(selected, function (response, deselect) {
+            _this.setState({
+              retrieved: response
+            }, function () {
+              _this.props.modal ? null : _this.saveValues();
+            });
+
+            _this.deselectValues(deselect);
+
+            resolve();
+          }, function (response, deselect) {
+            _this.setState({
+              alert: [].concat(_toConsumableArray(_this.state.alert), [{
+                type: 'warning',
+                message: response
+              }])
+            });
+
+            _this.deselectValues(deselect);
+
+            resolve();
+          });
+        }).then(function () {
+          _this.setState({
+            isLoading: false
+          });
+        });
       });
     };
 
-    _this.removeInputLine = function (event, inputName, key) {
-      event.preventDefault();
+    _this.deselectValues = function (deselect) {
+      var selected = _this.state.selected;
 
-      _this.setState({
-        inputName: _this.state[inputName].splice(key, 1)
-      });
+      if (deselect && deselect.length > 0) {
+        selected = selected.filter(function (cis) {
+          return !deselect.map(function (code) {
+            return Number(code);
+          }).includes(Number(cis));
+        });
+
+        if (_this.state.isMounted) {
+          _this.setState({
+            selected: selected
+          });
+        }
+      }
+
+      return true;
     };
 
     _this.removeAPILine = function (event, codeCIS) {
@@ -50488,6 +50423,7 @@ function (_React$Component) {
     };
 
     _this.state = {
+      isLoading: false,
       inputs: props.inputs,
       api_selected_detail: []
     };
@@ -50510,112 +50446,296 @@ function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
-      if (!(this.state.api_selected_detail.length > 0)) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_Search__WEBPACK_IMPORTED_MODULE_1__["default"], {
-          multiple: true,
-          selected: this.state.api_selected_detail,
-          defaultValue: this.state.inputs.custom_denomination.defaultValue,
-          modal: false,
-          onSave: function onSave(values) {
-            var newCommentaires = _this2.state.commentaires;
-            newCommentaires = newCommentaires.concat(values[0].associated_precautions);
+      var cardTitle, submitButton;
 
-            _this2.setState({
-              api_selected_detail: values,
-              commentaires: newCommentaires
-            });
-          },
-          url: _params__WEBPACK_IMPORTED_MODULE_3__["API_URL"],
-          api: this.props.api
-        });
-      } else {
-        var cardTitle;
-        var submitButton;
+      switch (this.props.method) {
+        case 'EDIT':
+          cardTitle = "Modification d'un médicament";
+          submitButton = "Modifier";
+          break;
 
-        switch (this.props.method) {
-          case 'EDIT':
-            cardTitle = "Modification d'un médicament";
-            submitButton = "Modifier";
-            break;
+        case 'IMPORT':
+          cardTitle = "Importation d'un médicament";
+          submitButton = "Importer";
+          break;
 
-          case 'IMPORT':
-            cardTitle = "Importation d'un médicament";
-            submitButton = "Importer";
-
-          default:
-            cardTitle = "Ajout d'un nouveau médicament";
-            submitButton = "Ajouter";
-        }
-
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "card"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "card-header"
-        }, cardTitle), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "card-body"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h6", null, "Correspondance dans la Base de Donn\xE9es Publique des M\xE9dicaments"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
-          className: "list-unstyled"
-        }, this.state.api_selected_detail.map(function (api_selected_medicament, index) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-            key: index
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-            className: "btn btn-link p-1",
-            onClick: function onClick(e) {
-              return _this2.removeAPILine(e, api_selected_medicament.code_cis);
-            }
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-            className: "fa fa-minus-circle"
-          })), " ", api_selected_medicament.denomination, " (", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-            href: "http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=".concat(api_selected_medicament.code_cis, "&typedoc=R"),
-            target: "_blank"
-          }, api_selected_medicament.code_cis), ")");
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-          key: "add"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_Search__WEBPACK_IMPORTED_MODULE_1__["default"], {
-          multiple: true,
-          selected: this.state.api_selected_detail,
-          onSave: function onSave(values) {
-            return _this2.setState({
-              api_selected_detail: values
-            });
-          },
-          url: _params__WEBPACK_IMPORTED_MODULE_3__["API_URL"],
-          api: this.props.api
-        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "DCI : ", this.state.api_selected_detail[0].compositions_string), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
-          action: this.props.route,
-          method: "POST"
-        }, this.props.method === "EDIT" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-          type: "hidden",
-          name: "_method",
-          value: "PUT"
-        }) : null, this.props.method === "IMPORT" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-          type: "hidden",
-          name: "old_medicament",
-          value: this.state.inputs.old_medicament.defaultValue
-        }) : null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-          type: "hidden",
-          name: "_token",
-          value: document.head.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }), this.props.old ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-          type: "hidden",
-          name: "old_medicament",
-          value: this.props.old
-        }) : null, this.state.api_selected_detail.map(function (api_selected_medicament, index) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-            key: index,
-            type: "hidden",
-            name: "api_selected[]",
-            value: api_selected_medicament.code_cis
-          });
-        }), this.getInputList('custom_denomination'), this.getInputList('custom_indications'), this.getInputList('conservation_frigo'), this.getInputList('conservation_duree'), this.getInputList('voies_administration'), this.getInputList('commentaires'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          type: "submit",
-          className: "btn btn-primary"
-        }, submitButton))), this.renderHelpModal());
+        default:
+          cardTitle = "Ajout d'un nouveau médicament";
+          submitButton = "Ajouter";
       }
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card-header"
+      }, cardTitle), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card-body"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h6", null, "Correspondance dans la Base de Donn\xE9es Publique des M\xE9dicaments"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+        className: "list-unstyled"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+        key: "add"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_Search__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        multiple: true,
+        selected: this.state.api_selected_detail,
+        defaultValue: this.state.inputs.custom_denomination.defaultValue,
+        modal: this.state.api_selected_detail.length > 0,
+        onSave: function onSave(values) {
+          //return this.handleSearchSelect(values)
+          var newCommentaires = _this2.state.commentaires;
+          newCommentaires = newCommentaires.concat(values[0].associated_precautions);
+
+          _this2.setState({
+            api_selected_detail: values,
+            commentaires: newCommentaires
+          });
+        },
+        url: _params__WEBPACK_IMPORTED_MODULE_3__["API_URL"],
+        api: this.props.api
+      })), this.state.api_selected_detail.length > 0 && this.state.api_selected_detail.map(function (api_selected_medicament, index) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+          key: index
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-link p-1",
+          onClick: function onClick(e) {
+            return _this2.removeAPILine(e, api_selected_medicament.code_cis);
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fa fa-minus-circle"
+        })), " ", api_selected_medicament.denomination, " (", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          href: "http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=".concat(api_selected_medicament.code_cis, "&typedoc=R"),
+          target: "_blank"
+        }, api_selected_medicament.code_cis), ")");
+      })), this.state.api_selected_detail.length > 0 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "DCI : ", this.state.api_selected_detail[0].compositions_string), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        action: this.props.route,
+        method: "POST"
+      }, this.props.method === "EDIT" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "hidden",
+        name: "_method",
+        value: "PUT"
+      }) : null, this.props.method === "IMPORT" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "hidden",
+        name: "old_medicament",
+        value: this.state.inputs.old_medicament.defaultValue
+      }) : null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "hidden",
+        name: "_token",
+        value: document.head.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      }), this.props.old ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "hidden",
+        name: "old_medicament",
+        value: this.props.old
+      }) : null, this.state.api_selected_detail.map(function (api_selected_medicament, index) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          key: index,
+          type: "hidden",
+          name: "api_selected[]",
+          value: api_selected_medicament.code_cis
+        });
+      }), Object.keys(this.state.inputs).map(function (inputName) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_MedicamentInput__WEBPACK_IMPORTED_MODULE_2__["default"], {
+          key: inputName,
+          inputName: inputName,
+          inputValues: _this2.state[inputName],
+          inputProperties: _this2.state.inputs[inputName],
+          setState: function setState(newState) {
+            return _this2.setState(_defineProperty({}, inputName, newState));
+          },
+          voiesAdministration: _this2.state.voies_administration
+        });
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "submit",
+        className: "btn btn-primary"
+      }, submitButton))) : null), this.renderHelpModal());
     }
   }]);
 
   return MedicamentForm;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/medicament/MedicamentInput.js":
+/*!***************************************************************!*\
+  !*** ./resources/js/components/medicament/MedicamentInput.js ***!
+  \***************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return MedicamentInput; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _generic_GenericInput__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../generic/GenericInput */ "./resources/js/components/generic/GenericInput.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+var MedicamentInput =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(MedicamentInput, _React$Component);
+
+  function MedicamentInput() {
+    var _getPrototypeOf2;
+
+    var _temp, _this;
+
+    _classCallCheck(this, MedicamentInput);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _possibleConstructorReturn(_this, (_temp = _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(MedicamentInput)).call.apply(_getPrototypeOf2, [this].concat(args))), _this.handleInputChange = function (event) {
+      var target = event.target,
+          name = target.getAttribute('child'),
+          parent = target.getAttribute('name').split('[')[0],
+          key = target.getAttribute('index'),
+          value = target.type === 'checkbox' ? target.checked : target.value,
+          newState = {};
+
+      if (key == undefined) {
+        newState = value;
+      } else {
+        var oldState = _this.props.inputValues;
+        oldState[key][name] = value;
+        newState = oldState;
+      }
+
+      _this.props.setState(newState);
+    }, _this.getInputLine = function (inputObject, inputParent, index) {
+      var inputLine = [];
+      var inputProperties = _this.props.inputProperties;
+
+      for (var inputName in inputProperties.inputs) {
+        var inputValueOrEmptyString = inputObject[inputName] !== null ? inputObject[inputName] : "";
+        inputLine.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_GenericInput__WEBPACK_IMPORTED_MODULE_1__["default"], _extends({
+          key: inputParent + '-' + inputName,
+          name: inputParent + '[' + index + '][' + inputName + ']',
+          child: inputName,
+          index: index,
+          value: inputValueOrEmptyString,
+          onChange: function onChange(e) {
+            return _this.handleInputChange(e);
+          }
+        }, inputProperties.inputs[inputName])));
+      }
+
+      return inputLine;
+    }, _this.addInputLine = function (event, inputName) {
+      event.preventDefault();
+
+      _this.props.setState(_this.props.inputValues.concat(_this.props.inputProperties.emptyObject));
+    }, _this.removeInputLine = function (event, inputName, key) {
+      event.preventDefault();
+      var inputValues = _this.props.inputValues;
+      inputValues.splice(key, 1);
+      console.log(inputValues, key);
+
+      _this.props.setState(inputValues);
+    }, _temp));
+  }
+
+  _createClass(MedicamentInput, [{
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      var inputName = this.props.inputName,
+          inputValues = this.props.inputValues,
+          inputProperties = this.props.inputProperties,
+          returnComponents = [];
+
+      if (inputProperties.isRepeated) {
+        returnComponents = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, inputValues.map(function (inputObject, index) {
+          var classColor = " " + (inputName === 'commentaires' ? inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S' ? "border rounded border-warning" : "border rounded border-success" : "");
+
+          if (inputName === 'commentaires' && inputObject.voie_administration && !_this2.props.voiesAdministration.map(function (voie) {
+            return Number(voie.voies_administration);
+          }).includes(Number(inputObject.voie_administration)) && !(Number(inputObject.voie_administration) === 0)) {
+            return null;
+          }
+
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            key: index,
+            className: "d-flex mb-1 p-1" + classColor
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: "d-flex flex-fill flex-wrap"
+          }, _this2.getInputLine(inputObject, inputName, index)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            className: "btn btn-primary align-self-start ml-1",
+            onClick: function onClick(event) {
+              event.preventDefault();
+
+              if (inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S') {
+                if (!confirm("La suppression de cette ligne affectera tous les médicaments contenant cette substance. Voulez-vous continuer ? ")) {
+                  return;
+                }
+              }
+
+              _this2.removeInputLine(event, inputName, index);
+            }
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+            className: "fa fa-minus"
+          })));
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          key: -1,
+          className: "d-flex flex-row-reverse mr-1"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "btn btn-primary float-right",
+          onClick: function onClick(event) {
+            return _this2.addInputLine(event, inputName);
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+          className: "fa fa-plus"
+        }))));
+      } else {
+        var inputValueOrEmptyString = inputValues !== null ? inputValues : "";
+        returnComponents.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          key: inputName,
+          className: "p-1"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_GenericInput__WEBPACK_IMPORTED_MODULE_1__["default"], _extends({
+          name: inputName,
+          child: inputName,
+          value: inputValueOrEmptyString,
+          onChange: function onChange(e) {
+            return _this2.handleInputChange(e);
+          }
+        }, inputProperties.inputs[inputName]))));
+      }
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group"
+      }, inputProperties.label ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: inputName
+      }, inputProperties.label) : null, returnComponents, inputProperties.hint ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
+        className: "form-text text-muted mt-0 mr-1"
+      }, inputProperties.hint) : null);
+    }
+  }]);
+
+  return MedicamentInput;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
 
@@ -50729,7 +50849,9 @@ var inputs = {
         options: voiesAdministration
       }
     },
-    emptyObject: ["1"]
+    emptyObject: [{
+      voies_administration: '1'
+    }]
   },
   commentaires: {
     isRepeated: true,

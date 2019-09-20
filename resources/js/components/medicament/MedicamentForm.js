@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Search from '../generic/Search';
-import GenericInput from '../generic/GenericInput';
+import MedicamentInput from './MedicamentInput';
 
 import { API_URL } from '../params';
 
@@ -11,6 +11,7 @@ export default class MedicamentForm extends React.Component {
     super(props)
 
     this.state = {
+      isLoading: false,
       inputs: props.inputs,
       api_selected_detail: []
     }
@@ -40,133 +41,53 @@ export default class MedicamentForm extends React.Component {
     }
   }
 
-  handleInputChange = (event) => {
-    let target = event.target,
-        name = target.getAttribute('child'),
-        parent = target.getAttribute('name').split('[')[0],
-        key = target.getAttribute('index')
-    var value = target.type === 'checkbox' ? target.checked : target.value,
-        newState = {}
-
-    if (key == undefined) {
-      newState = {
-        [name]: value
-      }
-    } else {
-      var oldState = this.state[parent]
-      oldState[key][name] = value
-      newState = {
-        [parent]: oldState
-      }
-    }
-    this.setState(newState)
-  }
-
-  getInputList = (inputName) => {
-    let inputValues = this.state[inputName],
-        inputProperties = this.state.inputs[inputName]
-    var returnComponents = []
-
-    if (inputProperties.isRepeated) {
-      returnComponents = (
-        <div>
-          {
-            inputValues.map((inputObject, index) => {
-              let classColor = " " + (
-                  inputName === 'commentaires' ?
-                  inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S' ?
-                    "border rounded border-warning" :
-                    "border rounded border-success" :
-                  ""
-                )
-              if (
-                inputName === 'commentaires'
-                && inputObject.voie_administration
-                && !(this.state.voies_administration.map((voie) => Number(voie.voies_administration)).includes(Number(inputObject.voie_administration)))
-                && !(Number(inputObject.voie_administration) === 0)
-              ) {
-                return null
-              }
-              return (
-                <div key={index} className={"d-flex mb-1 p-1" + classColor}>
-                  <div className="d-flex flex-fill flex-wrap">
-                    { this.getInputLine(inputObject, inputName, index) }
-                  </div>
-                  <button
-                    className="btn btn-primary align-self-start ml-1"
-                    onClick={ (event) => {
-                      event.preventDefault()
-                      if (inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S') {
-                        if (!confirm ("La suppression de cette ligne affectera tous les médicaments contenant cette substance. Voulez-vous continuer ? ")) {
-                          return
-                        }
-                      }
-                      this.removeInputLine(event, inputName, index)
-                    }}
-                    >
-                    <i className="fa fa-minus"></i>
-                  </button>
-                </div>
-              )
+  handleSearchSelect = (selected) => {
+    this.setState(
+      { isLoading: true },
+      () => (new Promise((resolve) =>
+        getAPIFromCIS(
+          selected,
+          (response, deselect) => {
+            this.setState({
+              retrieved: response
+            }, () => {
+              this.props.modal ? null : this.saveValues()
             })
+            this.deselectValues(deselect)
+            resolve()
+          },
+          (response, deselect) => {
+            this.setState({
+              alert: [...this.state.alert, {
+                type: 'warning',
+                message: response
+              }]
+            })
+            this.deselectValues(deselect)
+            resolve()
           }
-          <div key={-1} className="d-flex flex-row-reverse mr-1">
-            <button className="btn btn-primary float-right"
-              onClick={(event) => this.addInputLine(event, inputName)}
-              >
-              <i className="fa fa-plus"></i>
-            </button>
-          </div>
-        </div>
-      )
-    } else {
-      let inputValueOrEmptyString = inputValues !== null ? inputValues : ""
-      returnComponents.push(
-        <div key={inputName} className="p-1">
-          <GenericInput name={inputName} child={inputName} value={inputValueOrEmptyString} onChange={ (e) =>  this.handleInputChange(e) } {...inputProperties.inputs[inputName]} />
-        </div>
-      )
-    }
-
-    return (
-      <div className="form-group">
-        {
-          inputProperties.label ? <label htmlFor={ inputName }>{inputProperties.label}</label> : null
-        }
-        {
-          returnComponents
-        }
-        {
-          inputProperties.hint ? <small className="form-text text-muted mt-0 mr-1">{ inputProperties.hint }</small> : null
-        }
-      </div>
+        )
+      ))
+      .then(() => {
+        this.setState({ isLoading: false })
+      })
     )
   }
 
-  getInputLine = (inputObject, inputParent, index) => {
-    var inputLine = []
-    let inputProperties = this.state.inputs[inputParent]
-    for (var inputName in inputProperties.inputs) {
-      let inputValueOrEmptyString = inputObject[inputName] !== null ? inputObject[inputName] : ""
-      inputLine.push(
-        <GenericInput key={inputParent + '-' +inputName} name={inputParent + '[' + index + '][' + inputName + ']'} child={inputName} index={index} value={inputValueOrEmptyString} onChange={ (e) =>  this.handleInputChange(e) } {...inputProperties.inputs[inputName]} />
+  deselectValues = (deselect) => {
+    let selected = this.state.selected
+    if (deselect && deselect.length > 0) {
+      selected = selected.filter((cis) =>
+        !deselect.map((code) => Number(code))
+          .includes(Number(cis))
       )
+      if (this.state.isMounted) {
+        this.setState({
+          selected: selected
+        })
+      }
     }
-    return inputLine
-  }
-
-  addInputLine = (event, inputName) => {
-    event.preventDefault()
-    this.setState({
-      inputName: this.state[inputName].push(this.state.inputs[inputName].emptyObject)
-    })
-  }
-
-  removeInputLine = (event, inputName, key) => {
-    event.preventDefault()
-    this.setState({
-      inputName: this.state[inputName].splice(key, 1)
-    })
+    return true
   }
 
   removeAPILine = (event, codeCIS) => {
@@ -186,6 +107,103 @@ export default class MedicamentForm extends React.Component {
       }))
     }
     return {0: 'Ce médicament', ...substancesObject}
+  }
+
+  render () {
+    let cardTitle, submitButton
+    switch (this.props.method) {
+      case 'EDIT':
+        cardTitle = "Modification d'un médicament"
+        submitButton = "Modifier"
+        break;
+      case 'IMPORT':
+        cardTitle = "Importation d'un médicament"
+        submitButton = "Importer"
+        break;
+      default:
+        cardTitle = "Ajout d'un nouveau médicament"
+        submitButton = "Ajouter"
+    }
+    return (
+      <div className="card">
+        <div className="card-header">{ cardTitle }</div>
+
+        <div className="card-body">
+
+          <h6>Correspondance dans la Base de Données Publique des Médicaments</h6>
+          <ul className="list-unstyled">
+            <li key="add">
+              <Search multiple={true} selected={this.state.api_selected_detail}
+                defaultValue={this.state.inputs.custom_denomination.defaultValue}
+                modal={this.state.api_selected_detail.length > 0}
+                onSave={(values) => {
+                  //return this.handleSearchSelect(values)
+                  let newCommentaires = this.state.commentaires
+                  newCommentaires = newCommentaires.concat(values[0].associated_precautions)
+                  this.setState({
+                    api_selected_detail: values,
+                    commentaires: newCommentaires
+                  })
+                }}
+                url={API_URL}
+                api={this.props.api} />
+            </li>
+            {
+              this.state.api_selected_detail.length > 0 && this.state.api_selected_detail.map((api_selected_medicament, index) => <li key={index}><button className="btn btn-link p-1" onClick={(e) => this.removeAPILine(e, api_selected_medicament.code_cis)}><i className="fa fa-minus-circle"></i></button> { api_selected_medicament.denomination } (<a href={`http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=${api_selected_medicament.code_cis}&typedoc=R`} target="_blank">{ api_selected_medicament.code_cis }</a>)</li>
+              )
+            }
+          </ul>
+
+          {
+            this.state.api_selected_detail.length > 0 ?
+            <>
+              <p>DCI : { this.state.api_selected_detail[0].compositions_string }</p>
+
+              <form action={this.props.route} method="POST">
+
+                {
+                  this.props.method === "EDIT" ? <input type="hidden" name="_method" value="PUT" /> : null
+                }
+
+                {
+                  this.props.method === "IMPORT" ? <input type="hidden" name="old_medicament" value={this.state.inputs.old_medicament.defaultValue} /> : null
+                }
+
+                <input type="hidden" name="_token" value={document.head.querySelector('meta[name="csrf-token"]').getAttribute('content')} />
+
+                {
+                  this.props.old ? <input type="hidden" name="old_medicament" value={ this.props.old } /> : null
+                }
+
+                {
+                  this.state.api_selected_detail.map((api_selected_medicament, index) =>
+                    <input key={index} type="hidden" name="api_selected[]" value={ api_selected_medicament.code_cis } />
+                  )
+                }
+
+                {
+                  Object.keys(this.state.inputs).map(inputName =>
+                    <MedicamentInput
+                      key={inputName}
+                      inputName={inputName}
+                      inputValues={this.state[inputName]}
+                      inputProperties={this.state.inputs[inputName]}
+                      setState={newState => this.setState({ [inputName]: newState })}
+                      voiesAdministration={this.state.voies_administration}
+                      />)
+                }
+
+                <button type="submit" className="btn btn-primary">{ submitButton }</button>
+
+              </form>
+            </> : null
+          }
+        </div>
+        {
+          this.renderHelpModal()
+        }
+      </div>
+    )
   }
 
   renderHelpModal = () => {
@@ -227,110 +245,5 @@ export default class MedicamentForm extends React.Component {
         </div>
       </div>
     )
-  }
-
-  render () {
-    if (!(this.state.api_selected_detail.length > 0)) {
-      return <Search multiple={true} selected={this.state.api_selected_detail}
-        defaultValue={this.state.inputs.custom_denomination.defaultValue}
-        modal={false}
-        onSave={(values) => {
-          let newCommentaires = this.state.commentaires
-          newCommentaires = newCommentaires.concat(values[0].associated_precautions)
-          this.setState({
-            api_selected_detail: values,
-            commentaires: newCommentaires
-          })
-        }}
-        url={API_URL} api={this.props.api} />
-    } else {
-      let cardTitle
-      let submitButton
-      switch (this.props.method) {
-        case 'EDIT':
-          cardTitle = "Modification d'un médicament"
-          submitButton = "Modifier"
-          break;
-        case 'IMPORT':
-          cardTitle = "Importation d'un médicament"
-          submitButton = "Importer"
-        default:
-          cardTitle = "Ajout d'un nouveau médicament"
-          submitButton = "Ajouter"
-      }
-      return (
-        <div className="card">
-          <div className="card-header">{ cardTitle }</div>
-
-          <div className="card-body">
-
-            <h6>Correspondance dans la Base de Données Publique des Médicaments</h6>
-            <ul className="list-unstyled">
-              {
-                this.state.api_selected_detail.map((api_selected_medicament, index) => <li key={index}><button className="btn btn-link p-1" onClick={(e) => this.removeAPILine(e, api_selected_medicament.code_cis)}><i className="fa fa-minus-circle"></i></button> { api_selected_medicament.denomination } (<a href={`http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=${api_selected_medicament.code_cis}&typedoc=R`} target="_blank">{ api_selected_medicament.code_cis }</a>)</li>
-                )
-              }
-              <li key="add">
-                <Search multiple={true} selected={this.state.api_selected_detail} onSave={(values) => this.setState({ api_selected_detail: values })} url={API_URL} api={this.props.api} />
-              </li>
-            </ul>
-
-            <p>DCI : { this.state.api_selected_detail[0].compositions_string }</p>
-
-            <form action={this.props.route} method="POST">
-
-              {
-                this.props.method === "EDIT" ? <input type="hidden" name="_method" value="PUT" /> : null
-              }
-
-              {
-                this.props.method === "IMPORT" ? <input type="hidden" name="old_medicament" value={this.state.inputs.old_medicament.defaultValue} /> : null
-              }
-
-              <input type="hidden" name="_token" value={document.head.querySelector('meta[name="csrf-token"]').getAttribute('content')} />
-
-              {
-                this.props.old ? <input type="hidden" name="old_medicament" value={ this.props.old } /> : null
-              }
-
-              {
-                this.state.api_selected_detail.map((api_selected_medicament, index) => <input key={index} type="hidden" name="api_selected[]" value={ api_selected_medicament.code_cis } />)
-              }
-
-              {
-                this.getInputList('custom_denomination')
-              }
-
-              {
-                this.getInputList('custom_indications')
-              }
-
-              {
-                this.getInputList('conservation_frigo')
-              }
-
-              {
-                this.getInputList('conservation_duree')
-              }
-
-              {
-                this.getInputList('voies_administration')
-              }
-
-              {
-                this.getInputList('commentaires')
-              }
-
-              <button type="submit" className="btn btn-primary">{ submitButton }</button>
-
-            </form>
-
-          </div>
-          {
-            this.renderHelpModal()
-          }
-        </div>
-      )
-    }
   }
 }

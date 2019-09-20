@@ -62,7 +62,7 @@ const voiesAdministration = {
     inputs: {
       voies_administration: {type: 'select', options: voiesAdministration}
     },
-    emptyObject: ["1"]
+    emptyObject: [{voies_administration: '1'}]
   },
   commentaires: {
     isRepeated: true,

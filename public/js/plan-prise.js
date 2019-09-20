@@ -49817,6 +49817,7 @@ function (_React$Component) {
         }) : null;
 
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          key: index,
           href: "#",
           className: "list-group-item list-group-item-action py-2" + noBorderClass,
           onClick: function onClick(e) {
@@ -49825,19 +49826,19 @@ function (_React$Component) {
         }, _this.props.multiple ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           type: "checkbox",
           checked: selected,
-          className: "form-check-input d-none mt-1",
+          className: "d-none mt-1",
           onChange: function onChange(e) {
             return _this.handleSearchSelect(e, result.codeCIS, selected);
           },
           id: result.codeCIS
         }) : null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-          className: "form-check-label" + (_this.state.selected.includes(Number(result.codeCIS)) ? " font-weight-bold" : ""),
+          className: "d-flex m-0" + (_this.state.selected.includes(Number(result.codeCIS)) ? " font-weight-bold" : ""),
           htmlFor: result.codeCIS
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "d-flex"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, checkboxIcon), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "text-truncate flex-fill"
-        }, result.denomination), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "(", result.codeCIS, ")"), " ", _this.isSuppressed(result.codeCIS) ? "Supprimé" : "")));
+          className: "text-truncate flex-grow-1"
+        }, result.denomination), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "ml-2"
+        }, "(", result.codeCIS, ")"), _this.isSuppressed(result.codeCIS) ? "Supprimé" : ""));
       }))) : null);
     };
 
