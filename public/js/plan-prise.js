@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -49180,33 +49180,27 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./resources/js/components/Medicament.js":
-/*!***********************************************!*\
-  !*** ./resources/js/components/Medicament.js ***!
-  \***********************************************/
+/***/ "./resources/js/components/PlanPrise.js":
+/*!**********************************************!*\
+  !*** ./resources/js/components/PlanPrise.js ***!
+  \**********************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Medicament; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PlanPrise; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _medicament_inputs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./medicament/inputs */ "./resources/js/components/medicament/inputs.js");
-/* harmony import */ var _medicament_MedicamentForm__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./medicament/MedicamentForm */ "./resources/js/components/medicament/MedicamentForm.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/es/index.js");
+/* harmony import */ var _generic_Search__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./generic/Search */ "./resources/js/components/generic/Search.js");
+/* harmony import */ var _plan_prise_PPSelect__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./plan-prise/PPSelect */ "./resources/js/components/plan-prise/PPSelect.js");
+/* harmony import */ var _plan_prise_PPTable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./plan-prise/PPTable */ "./resources/js/components/plan-prise/PPTable.js");
+/* harmony import */ var _params__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./params */ "./resources/js/components/params.js");
+/* harmony import */ var _generic_functions__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./generic/functions */ "./resources/js/components/generic/functions.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -49228,184 +49222,130 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-var Medicament =
+
+
+
+
+
+var PlanPrise =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(Medicament, _React$Component);
+  _inherits(PlanPrise, _React$Component);
 
-  function Medicament(props) {
+  function PlanPrise(props) {
     var _this;
 
-    _classCallCheck(this, Medicament);
+    _classCallCheck(this, PlanPrise);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Medicament).call(this, props));
-    _this.newInputs = _medicament_inputs__WEBPACK_IMPORTED_MODULE_1__["inputs"];
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(PlanPrise).call(this, props));
 
-    for (var key in _this.newInputs) {
-      if (_this.newInputs.hasOwnProperty(key)) {
-        _this.newInputs[key].defaultValue = _this.newInputs[key].emptyObject;
-      }
-    }
+    _this.addToPP = function (event) {
+      console.log(event.params.data);
+      var medicament = {
+        codeCIS: event.params.data.id,
+        denomination: event.params.data.text,
+        data: null
+      },
+          content = _this.state.currentContent;
+      content.push(medicament);
 
-    _this.method = 'CREATE';
+      _this.setState({
+        currentContent: content
+      }, _this.loadDetails(medicament.codeCIS));
+    };
 
-    if (_this.props.old_medicament) {
-      _this.method = 'IMPORT';
-      var old_medicament = JSON.parse(_this.props.old_medicament);
-      _this.newInputs.old_medicament.defaultValue = old_medicament.id;
-      _this.newInputs.custom_denomination.defaultValue = old_medicament.nomMedicament;
-      _this.newInputs.custom_indications.defaultValue = _this.getValueFromOldMedicament('custom_indications', old_medicament.indication);
-      _this.newInputs.conservation_frigo.defaultValue = old_medicament.frigo;
-      _this.newInputs.conservation_duree.defaultValue = _this.getValueFromOldMedicament('conservation_duree', old_medicament.dureeConservation);
-      _this.newInputs.voies_administration.defaultValue = _this.getValueFromOldMedicament('voies_administration', old_medicament.voieAdministration);
-      _this.newInputs.commentaires.defaultValue = _this.getValueFromOldMedicament('commentaires', old_medicament.commentaire);
-    }
+    _this.loadDetails = function (cis) {
+      Object(_generic_functions__WEBPACK_IMPORTED_MODULE_7__["getMedicamentFromCIS"])(cis, function (response) {
+        var newState = _this.state.currentContent.map(function (medic) {
+          if (Number(medic.codeCIS) !== Number(cis)) return medic;
+          medic.data = response[0];
+          return medic;
+        });
 
-    if (_this.props.edit) {
-      _this.method = 'EDIT';
-      var edit = JSON.parse(_this.props.edit);
-      _this.medicFromAPI = edit.bdpm;
-      _this.newInputs.custom_denomination.defaultValue = edit.custom_denomination;
-      _this.newInputs.custom_indications.defaultValue = JSON.parse(edit.custom_indications);
-      _this.newInputs.conservation_frigo.defaultValue = edit.conservation_frigo;
-      _this.newInputs.conservation_duree.defaultValue = edit.conservation_duree;
-      _this.newInputs.voies_administration.defaultValue = JSON.parse(edit.voies_administration);
-      _this.newInputs.commentaires.defaultValue = edit.precautions;
-    }
+        _this.setState({
+          currentContent: newState
+        });
+      });
+    };
 
+    _this.state = {
+      loading: false,
+      currentID: null,
+      currentContent: []
+    };
     return _this;
   }
 
-  _createClass(Medicament, [{
-    key: "getValueFromOldMedicament",
-    value: function getValueFromOldMedicament(inputName, string) {
-      try {
-        var string = JSON.parse(string);
-        var result;
+  _createClass(PlanPrise, [{
+    key: "getTitle",
 
-        switch (inputName) {
-          case 'commentaires':
-            result = [];
-            string.forEach(function (commentaire) {
-              result.push({
-                id: '',
-                cible_id: 0,
-                cible: 'medicament',
-                voie_administration: 0,
-                population: commentaire.span,
-                commentaire: commentaire.text.replace('/<br>/g', '**').replace('/<br/>/g', '**').replace('/<sup>/g', '').replace('/</sup>/g', '')
-              });
-            });
-            return result;
-            break;
+    /**
+     * Switch title for Plan Prise
+     * @param  {int|null} id ID in the state
+     * @return {string} Title for the card
+     */
+    value: function getTitle(id) {
+      switch (id) {
+        case -1:
+          return "Nouveau Plan de Prise";
+          break;
 
-          case 'conservation_duree':
-            result = [];
+        case null:
+          return "Que voulez-vous faire ? ";
+          break;
 
-            for (var _i = 0, _Object$entries = Object.entries(string); _i < _Object$entries.length; _i++) {
-              var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
-                  labo = _Object$entries$_i[0],
-                  duree = _Object$entries$_i[1];
+        default:
+          return "Plan de prise n°" + id;
+      }
+    }
+    /**
+     * Switch content for Plan de prise
+     * @param  {int|null} id ID in the state
+     * @return {Component} Component to display (Search +- Table)
+     */
 
-              result.push({
-                laboratoire: labo,
-                duree: duree
+  }, {
+    key: "getContent",
+    value: function getContent(id) {
+      var _this2 = this;
+
+      switch (id) {
+        case null:
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_plan_prise_PPSelect__WEBPACK_IMPORTED_MODULE_4__["default"], {
+            onSelect: function onSelect(selectedID) {
+              return _this2.setState({
+                currentID: selectedID
               });
             }
+          });
+          break;
 
-            return result;
-            break;
-
-          default:
-            return string;
-        }
-      } catch (e) {
-        console.log(inputName + ' field in database contains invalid json');
-
-        switch (inputName) {
-          case 'voies_administration':
-            var value = 0;
-
-            switch (string) {
-              case 'Orale':
-                value = 1;
-                break;
-
-              case 'Cutanée':
-                value = 2;
-                break;
-
-              case 'Auriculaire':
-                value = 3;
-                break;
-
-              case 'Nasale':
-                value = 4;
-                break;
-
-              case 'Inhalée':
-                value = 5;
-                break;
-
-              case 'Vaginale':
-                value = 6;
-                break;
-
-              case 'Oculaire':
-                value = 7;
-                break;
-
-              case 'Rectale':
-                value = 8;
-                break;
-
-              case 'Sous-cutanée':
-                value = 9;
-                break;
-
-              case 'Intra-musculaire':
-                value = 10;
-                break;
-
-              case 'Intra-veineux':
-                value = 11;
-                break;
-
-              case 'Intra-urétrale':
-                value = 12;
-                break;
-
-              default:
-                value = 0;
-                break;
-            }
-
-            return [_defineProperty({}, inputName, value.toString())];
-            break;
-
-          case 'custom_indications':
-            return string.split(' OU ').map(function (indication) {
-              return _defineProperty({}, inputName, indication);
-            });
-            break;
-
-          default:
-            return [_defineProperty({}, inputName, string)];
-        }
+        default:
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, this.state.currentContent ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_plan_prise_PPTable__WEBPACK_IMPORTED_MODULE_5__["default"], {
+            data: this.state.currentContent
+          }) : null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_Search__WEBPACK_IMPORTED_MODULE_3__["default"], {
+            modal: false,
+            multiple: false,
+            onSave: function onSave(values) {
+              console.log(values);
+            },
+            type: "cis",
+            url: _params__WEBPACK_IMPORTED_MODULE_6__["API_URL"]
+          }));
       }
     }
   }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_medicament_MedicamentForm__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
-        method: this.method,
-        inputs: this.newInputs,
-        fromAPI: this.medicFromAPI
-      }, this.props));
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Container"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Row"], {
+        className: "justify-content-center"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Col"], {
+        xl: 8
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Card"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Card"].Header, null, this.getTitle(this.state.currentID)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_2__["Card"].Body, null, this.getContent(this.state.currentID))))));
     }
   }]);
 
-  return Medicament;
+  return PlanPrise;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
 
@@ -49478,101 +49418,6 @@ function (_React$Component) {
   }]);
 
   return Alert;
-}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
-
-
-
-/***/ }),
-
-/***/ "./resources/js/components/generic/GenericInput.js":
-/*!*********************************************************!*\
-  !*** ./resources/js/components/generic/GenericInput.js ***!
-  \*********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return GenericInput; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-var GenericInput =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(GenericInput, _React$Component);
-
-  function GenericInput() {
-    _classCallCheck(this, GenericInput);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(GenericInput).apply(this, arguments));
-  }
-
-  _createClass(GenericInput, [{
-    key: "render",
-    value: function render() {
-      var _this = this;
-
-      var props = this.props;
-      var defaultDivClassName = " flex-fill px-0 pb-1";
-      var defaultInputClassName = "form-control mr-1";
-
-      if (this.props.type === 'select') {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: [this.props.className + defaultDivClassName]
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", _extends({}, this.props, {
-          className: defaultInputClassName
-        }), Object.keys(this.props.options).map(function (value, i) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
-            key: i,
-            value: value
-          }, _this.props.options[value]);
-        })));
-      } else if (this.props.type === 'textarea') {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: [this.props.className + defaultDivClassName]
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", _extends({}, this.props, {
-          className: defaultInputClassName
-        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          type: "button",
-          className: "btn btn-link p-0",
-          "data-toggle": "modal",
-          "data-target": "#helpModal"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
-          className: "form-text text-muted"
-        }, "Aide sur le fonctionnement du champ de texte")));
-      } else {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: [this.props.className + defaultDivClassName]
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", _extends({}, this.props, {
-          className: defaultInputClassName
-        })));
-      }
-    }
-  }]);
-
-  return GenericInput;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
 
@@ -50231,30 +50076,137 @@ function isEqual(value, other) {
 
 /***/ }),
 
-/***/ "./resources/js/components/medicament/MedicamentForm.js":
-/*!**************************************************************!*\
-  !*** ./resources/js/components/medicament/MedicamentForm.js ***!
-  \**************************************************************/
+/***/ "./resources/js/components/params.js":
+/*!*******************************************!*\
+  !*** ./resources/js/components/params.js ***!
+  \*******************************************/
+/*! exports provided: API_URL, SPINNER */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "API_URL", function() { return API_URL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SPINNER", function() { return SPINNER; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+var API_URL = 'https://cors-anywhere.herokuapp.com/https://www.open-medicaments.fr/api/v1/medicaments/';
+var SPINNER = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+  className: "fas fa-spinner fa-pulse"
+});
+
+/***/ }),
+
+/***/ "./resources/js/components/plan-prise/PPSelect.js":
+/*!********************************************************!*\
+  !*** ./resources/js/components/plan-prise/PPSelect.js ***!
+  \********************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return MedicamentForm; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PPIntro; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _generic_Search__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../generic/Search */ "./resources/js/components/generic/Search.js");
-/* harmony import */ var _generic_GenericInput__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../generic/GenericInput */ "./resources/js/components/generic/GenericInput.js");
-/* harmony import */ var _params__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../params */ "./resources/js/components/params.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+var PPIntro =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(PPIntro, _React$Component);
+
+  function PPIntro(props) {
+    var _this;
+
+    _classCallCheck(this, PPIntro);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(PPIntro).call(this, props));
+
+    _this.handleSelect = function (event, id) {
+      event.preventDefault();
+
+      _this.props.onSelect(id);
+    };
+
+    _this.state = {
+      dataPP: []
+    };
+    return _this;
+  }
+
+  _createClass(PPIntro, [{
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row text-center"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6 offset-md-3"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "list-group"
+      }, this.state.dataPP.map(function (result, index) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+          className: "list-group-item list-group-item-action",
+          "data-id": result.id,
+          href: "#",
+          onClick: function onClick(event) {
+            return _this2.handleSelect(event, -1);
+          }
+        }, "Plan de prise n\xB0", result.id);
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+        className: "list-group-item list-group-item-action list-group-item-success",
+        "data-id": "-1",
+        href: "#",
+        onClick: function onClick(event) {
+          return _this2.handleSelect(event, -1);
+        }
+      }, "Cr\xE9er un plan de prise")))));
+    }
+  }]);
+
+  return PPIntro;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/plan-prise/PPTable.js":
+/*!*******************************************************!*\
+  !*** ./resources/js/components/plan-prise/PPTable.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PPTable; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap */ "./node_modules/react-bootstrap/es/index.js");
+/* harmony import */ var _inputs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./inputs */ "./resources/js/components/plan-prise/inputs.js");
+/* harmony import */ var _params__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../params */ "./resources/js/components/params.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -50277,354 +50229,72 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
-var MedicamentForm =
+var PPTable =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(MedicamentForm, _React$Component);
+  _inherits(PPTable, _React$Component);
 
-  function MedicamentForm(props) {
-    var _this;
+  function PPTable() {
+    var _getPrototypeOf2;
 
-    _classCallCheck(this, MedicamentForm);
+    var _temp, _this;
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MedicamentForm).call(this, props));
+    _classCallCheck(this, PPTable);
 
-    _this.componentDidUpdate = function (prevProps, prevState) {
-      if (_this.state.inputs) {
-        if (!(prevState.api_selected_detail.length > 0)) {
-          var substancesActivesObject = _this.getSubstancesActivesObject(_this.state.api_selected_detail[0].compositions_array),
-              newInputs = _this.state.inputs;
-
-          console.log(substancesActivesObject, _this.state.api_selected_detail[0].compositions);
-          newInputs.commentaires.inputs.cible_id.options = substancesActivesObject;
-
-          _this.setState({
-            inputs: newInputs
-          });
-        }
-      }
-    };
-
-    _this.handleInputChange = function (event) {
-      var target = event.target,
-          name = target.getAttribute('child'),
-          parent = target.getAttribute('name').split('[')[0],
-          key = target.getAttribute('index');
-      var value = target.type === 'checkbox' ? target.checked : target.value,
-          newState = {};
-
-      if (key == undefined) {
-        newState = _defineProperty({}, name, value);
-      } else {
-        var oldState = _this.state[parent];
-        oldState[key][name] = value;
-        newState = _defineProperty({}, parent, oldState);
-      }
-
-      _this.setState(newState);
-    };
-
-    _this.getInputList = function (inputName) {
-      var inputValues = _this.state[inputName],
-          inputProperties = _this.state.inputs[inputName];
-      var returnComponents = [];
-
-      if (inputProperties.isRepeated) {
-        returnComponents = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, inputValues.map(function (inputObject, index) {
-          var classColor = " " + (inputName === 'commentaires' ? inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S' ? "border rounded border-warning" : "border rounded border-success" : "");
-
-          if (inputName === 'commentaires' && inputObject.voie_administration && !_this.state.voies_administration.map(function (voie) {
-            return Number(voie.voies_administration);
-          }).includes(Number(inputObject.voie_administration)) && !(Number(inputObject.voie_administration) === 0)) {
-            return null;
-          }
-
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-            key: index,
-            className: "d-flex mb-1 p-1" + classColor
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-            className: "d-flex flex-fill flex-wrap"
-          }, _this.getInputLine(inputObject, inputName, index)), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-            className: "btn btn-primary align-self-start ml-1",
-            onClick: function onClick(event) {
-              event.preventDefault();
-
-              if (inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S') {
-                if (!confirm("La suppression de cette ligne affectera tous les médicaments contenant cette substance. Voulez-vous continuer ? ")) {
-                  return;
-                }
-              }
-
-              _this.removeInputLine(event, inputName, index);
-            }
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-            className: "fa fa-minus"
-          })));
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          key: -1,
-          className: "d-flex flex-row-reverse mr-1"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          className: "btn btn-primary float-right",
-          onClick: function onClick(event) {
-            return _this.addInputLine(event, inputName);
-          }
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-          className: "fa fa-plus"
-        }))));
-      } else {
-        var inputValueOrEmptyString = inputValues !== null ? inputValues : "";
-        returnComponents.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          key: inputName,
-          className: "p-1"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_GenericInput__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
-          name: inputName,
-          child: inputName,
-          value: inputValueOrEmptyString,
-          onChange: function onChange(e) {
-            return _this.handleInputChange(e);
-          }
-        }, inputProperties.inputs[inputName]))));
-      }
-
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "form-group"
-      }, inputProperties.label ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
-        htmlFor: inputName
-      }, inputProperties.label) : null, returnComponents, inputProperties.hint ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
-        className: "form-text text-muted mt-0 mr-1"
-      }, inputProperties.hint) : null);
-    };
-
-    _this.getInputLine = function (inputObject, inputParent, index) {
-      var inputLine = [];
-      var inputProperties = _this.state.inputs[inputParent];
-
-      for (var inputName in inputProperties.inputs) {
-        var inputValueOrEmptyString = inputObject[inputName] !== null ? inputObject[inputName] : "";
-        inputLine.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_GenericInput__WEBPACK_IMPORTED_MODULE_2__["default"], _extends({
-          key: inputParent + '-' + inputName,
-          name: inputParent + '[' + index + '][' + inputName + ']',
-          child: inputName,
-          index: index,
-          value: inputValueOrEmptyString,
-          onChange: function onChange(e) {
-            return _this.handleInputChange(e);
-          }
-        }, inputProperties.inputs[inputName])));
-      }
-
-      return inputLine;
-    };
-
-    _this.addInputLine = function (event, inputName) {
-      event.preventDefault();
-
-      _this.setState({
-        inputName: _this.state[inputName].push(_this.state.inputs[inputName].emptyObject)
-      });
-    };
-
-    _this.removeInputLine = function (event, inputName, key) {
-      event.preventDefault();
-
-      _this.setState({
-        inputName: _this.state[inputName].splice(key, 1)
-      });
-    };
-
-    _this.removeAPILine = function (event, codeCIS) {
-      event.preventDefault();
-
-      _this.setState({
-        api_selected_detail: _this.state.api_selected_detail.filter(function (medicament) {
-          return medicament.code_cis !== codeCIS;
-        })
-      });
-    };
-
-    _this.getSubstancesActivesObject = function (substancesArray) {
-      var substancesObject = {};
-
-      if (substancesArray !== undefined) {
-        substancesArray.forEach(function (substance) {
-          return substancesObject = Object.assign(substancesObject, _defineProperty({}, substance.codeSubstance, substance.denominationSubstance));
-        });
-      }
-
-      return _objectSpread({
-        0: 'Ce médicament'
-      }, substancesObject);
-    };
-
-    _this.renderHelpModal = function () {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        id: "helpModal",
-        className: "modal fade",
-        tabIndex: "-1",
-        role: "info",
-        "aria-hidden": "true"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "modal-dialog"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "modal-content"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "modal-header"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
-        className: "modal-title"
-      }, "Aide"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        type: "button",
-        className: "close",
-        "data-dismiss": "modal",
-        "aria-label": "Close"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        "aria-hidden": "true"
-      }, "\xD7"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "modal-body"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
-        className: "table table-bordered"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", {
-        className: "thead-light"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Element"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Markdown Syntax"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Bold"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("code", null, "**bold text**"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Italic"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("code", null, "*italicized text*"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Link"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("code", null, "[title](https://www.example.com)")))))))));
-    };
-
-    _this.state = {
-      inputs: props.inputs,
-      api_selected_detail: []
-    };
-
-    for (var input in props.inputs) {
-      _this.state[input] = props.inputs[input].defaultValue;
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
     }
 
-    if (_this.props.fromAPI) {
-      _this.state.api_selected_detail = _this.props.fromAPI;
-      _this.state.inputs.commentaires.inputs.cible_id.options = _this.getSubstancesActivesObject(_this.props.fromAPI[0].compositions_array);
-      console.log(_this.getSubstancesActivesObject(_this.props.fromAPI[0].compositions_array));
-    }
-
-    return _this;
+    return _possibleConstructorReturn(_this, (_temp = _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(PPTable)).call.apply(_getPrototypeOf2, [this].concat(args))), _this.isLoading = function (medicament) {
+      return medicament.data === null;
+    }, _temp));
   }
 
-  _createClass(MedicamentForm, [{
+  _createClass(PPTable, [{
     key: "render",
     value: function render() {
       var _this2 = this;
 
-      if (!(this.state.api_selected_detail.length > 0)) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_Search__WEBPACK_IMPORTED_MODULE_1__["default"], {
-          multiple: true,
-          selected: this.state.api_selected_detail,
-          defaultValue: this.state.inputs.custom_denomination.defaultValue,
-          modal: false,
-          onSave: function onSave(values) {
-            var newCommentaires = _this2.state.commentaires;
-            newCommentaires = newCommentaires.concat(values[0].associated_precautions);
-
-            _this2.setState({
-              api_selected_detail: values,
-              commentaires: newCommentaires
-            });
-          },
-          url: _params__WEBPACK_IMPORTED_MODULE_3__["API_URL"],
-          api: this.props.api
-        });
-      } else {
-        var cardTitle;
-        var submitButton;
-
-        switch (this.props.method) {
-          case 'EDIT':
-            cardTitle = "Modification d'un médicament";
-            submitButton = "Modifier";
-            break;
-
-          case 'IMPORT':
-            cardTitle = "Importation d'un médicament";
-            submitButton = "Importer";
-
-          default:
-            cardTitle = "Ajout d'un nouveau médicament";
-            submitButton = "Ajouter";
-        }
-
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "card"
+      return this.props.data.map(function (medicament) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Card"], {
+          key: medicament.codeCIS,
+          className: "mt-1"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Card"].Header, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "d-flex"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "card-header"
-        }, cardTitle), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-          className: "card-body"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h6", null, "Correspondance dans la Base de Donn\xE9es Publique des M\xE9dicaments"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
-          className: "list-unstyled"
-        }, this.state.api_selected_detail.map(function (api_selected_medicament, index) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-            key: index
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-            className: "btn btn-link p-1",
-            onClick: function onClick(e) {
-              return _this2.removeAPILine(e, api_selected_medicament.code_cis);
-            }
-          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-            className: "fa fa-minus-circle"
-          })), " ", api_selected_medicament.denomination, " (", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-            href: "http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=".concat(api_selected_medicament.code_cis, "&typedoc=R"),
-            target: "_blank"
-          }, api_selected_medicament.code_cis), ")");
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-          key: "add"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_generic_Search__WEBPACK_IMPORTED_MODULE_1__["default"], {
-          multiple: true,
-          selected: this.state.api_selected_detail,
-          onSave: function onSave(values) {
-            return _this2.setState({
-              api_selected_detail: values
-            });
-          },
-          url: _params__WEBPACK_IMPORTED_MODULE_3__["API_URL"],
-          api: this.props.api
-        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "DCI : ", this.state.api_selected_detail[0].compositions_string), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
-          action: this.props.route,
-          method: "POST"
-        }, this.props.method === "EDIT" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-          type: "hidden",
-          name: "_method",
-          value: "PUT"
-        }) : null, this.props.method === "IMPORT" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-          type: "hidden",
-          name: "old_medicament",
-          value: this.state.inputs.old_medicament.defaultValue
-        }) : null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-          type: "hidden",
-          name: "_token",
-          value: document.head.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }), this.props.old ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-          type: "hidden",
-          name: "old_medicament",
-          value: this.props.old
-        }) : null, this.state.api_selected_detail.map(function (api_selected_medicament, index) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-            key: index,
-            type: "hidden",
-            name: "api_selected[]",
-            value: api_selected_medicament.code_cis
-          });
-        }), this.getInputList('custom_denomination'), this.getInputList('custom_indications'), this.getInputList('conservation_frigo'), this.getInputList('conservation_duree'), this.getInputList('voies_administration'), this.getInputList('commentaires'), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          type: "submit",
-          className: "btn btn-primary"
-        }, submitButton))), this.renderHelpModal());
-      }
+          className: "text-truncate flex-fill"
+        }, medicament.denomination), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "ml-1"
+        }, _this2.isLoading(medicament) ? _params__WEBPACK_IMPORTED_MODULE_3__["SPINNER"] : null)), !_this2.isLoading(medicament) && medicament.data.bdpm && medicament.data.bdpm[0] ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "text-muted"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", null, medicament.data.bdpm[0].compositions_string)) : null), _this2.isLoading(medicament) ? null : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Card"].Body, {
+          className: "p-1"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "d-flex"
+        }, _inputs__WEBPACK_IMPORTED_MODULE_2__["inputs"].map(function (input) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            key: input.id,
+            className: "flex-fill border border-light rounded m-1"
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+            type: "text",
+            className: "form-control",
+            value: medicament.data[input.id]
+          }));
+        }))));
+      });
     }
   }]);
 
-  return MedicamentForm;
+  return PPTable;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
 
 
 /***/ }),
 
-/***/ "./resources/js/components/medicament/inputs.js":
+/***/ "./resources/js/components/plan-prise/inputs.js":
 /*!******************************************************!*\
-  !*** ./resources/js/components/medicament/inputs.js ***!
+  !*** ./resources/js/components/plan-prise/inputs.js ***!
   \******************************************************/
 /*! exports provided: inputs */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -50632,173 +50302,25 @@ function (_React$Component) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "inputs", function() { return inputs; });
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var voiesAdministration = {
-  1: 'Orale',
-  2: 'Cutanée',
-  3: 'Auriculaire',
-  4: 'Nasale',
-  5: 'Inhalée',
-  6: 'Vaginale',
-  7: 'Oculaire',
-  8: 'Rectale',
-  9: 'Sous-cutanée',
-  10: 'Intra-musculaire',
-  11: 'Intra-veineux',
-  12: 'Intra-urétrale'
-};
-var inputs = {
-  old_medicament: {
-    isRepeated: false,
-    inputs: {
-      old_medicament: {
-        type: 'hidden'
-      }
-    },
-    emptyObject: ''
-  },
-  custom_denomination: {
-    isRepeated: false,
-    label: 'Nom du médicament',
-    hint: 'Nom du médicament qui sera affiché sur le plan de prise. ',
-    inputs: {
-      custom_denomination: {
-        type: 'text',
-        placeholder: 'Nom du médicament'
-      }
-    },
-    emptyObject: ''
-  },
-  custom_indications: {
-    isRepeated: true,
-    label: 'Indications',
-    hint: 'Indications qui seront affichées par défaut dans le plan de prise. ',
-    inputs: {
-      custom_indications: {
-        type: 'text',
-        placeholder: 'Indication'
-      }
-    },
-    emptyObject: [{
-      custom_indications: ''
-    }]
-  },
-  conservation_frigo: {
-    isRepeated: false,
-    label: 'Température de conservation',
-    inputs: {
-      conservation_frigo: {
-        type: 'select',
-        options: {
-          0: 'Température ambiante',
-          1: 'Frigo'
-        }
-      }
-    },
-    emptyObject: 0
-  },
-  conservation_duree: {
-    isRepeated: true,
-    label: 'Durée de conservation après ouverture',
-    inputs: {
-      laboratoire: {
-        type: 'text',
-        placeholder: 'Laboratoire'
-      },
-      duree: {
-        type: 'text',
-        placeholder: 'Durée de conservation'
-      }
-    },
-    emptyObject: [{
-      laboratoire: '',
-      duree: ''
-    }]
-  },
-  voies_administration: {
-    isRepeated: true,
-    label: 'Voie d\'administration',
-    inputs: {
-      voies_administration: {
-        type: 'select',
-        options: voiesAdministration
-      }
-    },
-    emptyObject: ["1"]
-  },
-  commentaires: {
-    isRepeated: true,
-    label: 'Commentaires par défaut',
-    inputs: {
-      id: {
-        type: 'hidden'
-      },
-      cible_id: {
-        type: 'select',
-        options: {
-          0: 'Ce médicament'
-        },
-        className: 'col-sm-8'
-      },
-      voie_administration: {
-        type: 'select',
-        options: _objectSpread({
-          0: 'Toutes voies d\'administration'
-        }, voiesAdministration),
-        className: 'col-sm-4'
-      },
-      commentaire: {
-        type: 'textarea',
-        placeholder: 'Commentaire',
-        className: 'col-sm-8'
-      },
-      population: {
-        type: 'text',
-        placeholder: 'Option (facultatif)',
-        className: 'col-sm-4'
-      }
-    },
-    emptyObject: [{
-      id: '',
-      cible_id: 0,
-      voie_administration: 0,
-      option: '',
-      commentaire: ''
-    }]
-  }
-};
+var inputs = [{
+  id: "custom_indications",
+  label: "Indication"
+}, {
+  id: "poso_matin",
+  label: "Matin"
+}, {
+  id: "poso_midi",
+  label: "Midi"
+}, {
+  id: "poso_soir",
+  label: "Soir"
+}];
 
 /***/ }),
 
-/***/ "./resources/js/components/params.js":
-/*!*******************************************!*\
-  !*** ./resources/js/components/params.js ***!
-  \*******************************************/
-/*! exports provided: API_URL, SPINNER */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "API_URL", function() { return API_URL; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SPINNER", function() { return SPINNER; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-
-var API_URL = 'https://cors-anywhere.herokuapp.com/https://www.open-medicaments.fr/api/v1/medicaments/';
-var SPINNER = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
-  className: "fas fa-spinner fa-pulse"
-});
-
-/***/ }),
-
-/***/ "./resources/js/medicament.js":
+/***/ "./resources/js/plan-prise.js":
 /*!************************************!*\
-  !*** ./resources/js/medicament.js ***!
+  !*** ./resources/js/plan-prise.js ***!
   \************************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -50809,26 +50331,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _components_Medicament__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Medicament */ "./resources/js/components/Medicament.js");
+/* harmony import */ var _components_PlanPrise__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/PlanPrise */ "./resources/js/components/PlanPrise.js");
 
 
 
 
-if (document.getElementById('react-medicament')) {
-  var app = document.getElementById('react-medicament');
-  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Medicament__WEBPACK_IMPORTED_MODULE_2__["default"], app.dataset), app);
+if (document.getElementById('react-plan-prise')) {
+  var app = document.getElementById('react-plan-prise');
+  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_PlanPrise__WEBPACK_IMPORTED_MODULE_2__["default"], app.dataset), app);
 }
 
 /***/ }),
 
-/***/ 1:
+/***/ 3:
 /*!******************************************!*\
-  !*** multi ./resources/js/medicament.js ***!
+  !*** multi ./resources/js/plan-prise.js ***!
   \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/pi/sites/plan-prise/resources/js/medicament.js */"./resources/js/medicament.js");
+module.exports = __webpack_require__(/*! /home/pi/sites/plan-prise/resources/js/plan-prise.js */"./resources/js/plan-prise.js");
 
 
 /***/ })

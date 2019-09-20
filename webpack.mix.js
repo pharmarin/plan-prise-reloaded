@@ -14,4 +14,5 @@ const mix = require('laravel-mix');
 mix.react('resources/js/app.js', 'public/js')
    .react('resources/js/medicament.js', 'public/js')
    .react('resources/js/medicament-update.js', 'public/js')
+   .react('resources/js/plan-prise.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css');

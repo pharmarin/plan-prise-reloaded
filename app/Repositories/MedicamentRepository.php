@@ -33,188 +33,35 @@ class MedicamentRepository {
 
   public function getAll () {
 
-    return Medicament::orderBy('customDenomination')->paginate(20);
+    return $this->medicamentCustom::orderBy('custom_denomination')->paginate(20);
 
   }
 
 
-  public function getMedicamentFromOld ($old_medicament) {
+  /*public function getMedicamentFromOld ($old_medicament) {
 
     return $this->medicamentAPI;
 
+  }*/
+
+  public function getMedicamentByCIS ($cis) {
+    return optional($this->medicamentAPI::where('code_cis', $cis)->first())->customValues;
   }
 
 
-  public function getMedicamentByCIS ($codeCIS) {
-
-    $medicament = $this->medicamentAPI->where('codeCIS', $codeCIS);
-
-    if ($medicament->count() > 0) {
-
-      return $medicament->first();
-
-    } else {
-
-      $medicament_from_api = $this->getMedicamentDetailFromAPI($codeCIS);
-
-      return $this->setMedicamentFromAPI($medicament_from_api, 'CREATE');
-
-    }
-
-  }
-
-
-  public function updateMedicamentByCIS ($codeCIS) {
-
-    $medicament_from_api = $this->getMedicamentDetailFromAPI($codeCIS);
-
-    return $this->setMedicamentFromAPI($medicament_from_api, 'UPDATE', $codeCIS);
-
-  }
-
-
-  public function getMedicamentListFromAPI ($query, $isRetrying = false) {
-
-    $url = 'https://www.open-medicaments.fr/api/v1/medicaments/?query=' . urlencode(stripslashes($query)) . '&limit=100';
-
-
-    try {
-
-      $content = file_get_contents($url);
-
-
-      if ($content === false) {
-
-        echo 'API returned null';
-
-        return null;
-
-      }
-
-
-      $json = json_decode($content);
-
-
-      if (count($json) == 0) {
-
-        echo $url;
-
-        if (!$isRetrying) return $this->getMedicamentListFromAPI(explode(' ', trim($query))[0], true);
-
-      }
-
-
-      return json_decode($content);
-
-    } catch (Exception $e) {
-
-      echo 'Get API errored';
-
-      var_dump($e);
-
-      return null;
-
-    }
-
-  }
-
-
-  public function setMedicamentFromAPI ($medicament_from_api, $action = 'CREATE', $codeCIS = 0) {
-
-    switch ($action) {
-
-      case 'CREATE':
-
-        $medicament = new MedicamentAPI();
-
-        $log = 'Imported';
-
-        break;
-
-      case 'UPDATE':
-
-        $medicament = MedicamentAPI::where('codeCIS', $codeCIS)->first();
-
-        $log = 'Updated';
-
-        break;
-
-      default:
-
-        echo 'Error in switch setMedicamentFromAPI'; exit;
-
-    }
-
-    $medicament->codeCIS = $medicament_from_api->codeCIS;
-
-    $medicament->denomination = $medicament_from_api->denomination;
-    $medicament->titulaire = $medicament_from_api->titulaires[0];
-
-    $medicament->formePharmaceutique = $medicament_from_api->formePharmaceutique;
-
-    $medicament->voiesAdministration = json_encode($medicament_from_api->voiesAdministration);
-
-    $medicament->homeopathie = $medicament_from_api->homeopathie;
-
-    $medicament->etatCommercialisation = $medicament_from_api->etatCommercialisation;
-
-    $medicament->indicationsTherapeutiques = json_encode($medicament_from_api->indicationsTherapeutiques);
-
-    $medicament->compositions = json_encode($medicament_from_api->compositions);
-
-    $medicament->save();
-    $codeCIPArray = array_map(function ($presentation) use ($medicament_from_api) {
-      return MedicamentCIP::updateOrCreate(
-        ['CIP13' => $presentation->codeCIP13],
-        ['CIP7' => $presentation->codeCIP7]
-      );
-    }, $medicament_from_api->presentations);
-    $medicament->cip()->saveMany($codeCIPArray);
-
-    Log::info($log . ' ' . $medicament_from_api->denomination . ' (' . $medicament_from_api->codeCIS . ')');
-
-    return $medicament;
-
-  }
-
-
-  public function getMedicamentDetailFromAPI ($codeCIS) {
-
-    try {
-
-      $content = file_get_contents('https://www.open-medicaments.fr/api/v1/medicaments/' . urlencode($codeCIS));
-
-
-      if ($content === false) {
-
-        echo 'API returned null';
-
-        return null;
-
-      }
-
-      return json_decode($content);
-
-    } catch (Exception $e) {
-
-      echo 'Get API errored';
-
-      var_dump($e);
-
-      return null;
-
-    }
-
-  }
-
-
+  /**
+   * Créé un médicament depuis le formulaire de création ou d'import
+   * @method saveFromForm
+   * @param  Request $request Données du formulaire
+   * @return integer id du nouveau médicament
+   */
   public function saveFromForm (Request $request) {
 
     $this->medicamentCustom = $this->populateModelFromForm($request, $this->medicamentCustom);
 
     $this->medicamentCustom->save();
 
-    $fromAPI = $this->medicamentAPI::whereIn('codeCIS', $request->input('api_selected'))->get();
+    $fromAPI = $this->medicamentAPI::whereIn('code_cis', $request->input('api_selected'))->get();
 
     $this->medicamentCustom->bdpm()->saveMany($fromAPI);
 
@@ -225,6 +72,13 @@ class MedicamentRepository {
   }
 
 
+  /**
+   * Met à jout un médicament depuis le formulaire de modification
+   * @method updateFromForm
+   * @param  Request $request [description]
+   * @param  Medicament $medicament [description]
+   * @return boolean True if OK
+   */
   public function updateFromForm (Request $request, Medicament $medicament) {
 
     if ($request->input('_method') == 'PUT') {
@@ -234,16 +88,12 @@ class MedicamentRepository {
       $commentaires = collect($request->input('commentaires'));
 
       $commentaires_reference = $reference->precautions->map(function ($commentaire) {
-
         return $commentaire->id;
-
       });
 
       if ($commentaires_reference->isNotEmpty()) {
         $commentaires_comparaison = $commentaires->map(function ($commentaire) {
-
           return $commentaire['id'];
-
         });
 
         $to_delete = $commentaires_reference->diff($commentaires_comparaison);
@@ -261,32 +111,48 @@ class MedicamentRepository {
 
     $medicament->save();
 
-    $fromAPI = $this->medicamentAPI::whereIn('codeCIS', $request->input('api_selected'))->get();
+    $fromAPI = $this->medicamentAPI::whereIn('code_cis', $request->input('api_selected'))->get();
 
     $medicament->bdpm()->saveMany($fromAPI);
 
     $this->saveOrUpdateCommentairesFromForm($request->input('commentaires'), $medicament->id);
 
+    return true;
+
   }
 
 
+  /**
+   * Populate le modèle Medicament avec les données du formulaire
+   * @method populateModelFromForm
+   * @param  Request $request Données du formulaire
+   * @param  Medicament $medicament Médicament à modifier (créé précédemment ou existant)
+   * @return Medicament Médicament modifié
+   */
   public function populateModelFromForm (Request $request, Medicament $medicament) {
 
-    $medicament->customDenomination = $request->input('customDenomination');
+    $medicament->custom_denomination = $request->input('custom_denomination');
 
-    $medicament->customIndications = json_encode($request->input('customIndications'));
+    $medicament->custom_indications = json_encode($request->input('custom_indications'));
 
-    $medicament->conservationFrigo = $request->input('conservationFrigo');
+    $medicament->conservation_frigo = $request->input('conservation_frigo');
 
-    $medicament->conservationDuree = json_encode($request->input('conservationDuree'));
+    $medicament->conservation_duree = json_encode($request->input('conservation_duree'));
 
-    $medicament->voiesAdministration = json_encode($request->input('voiesAdministration'));
+    $medicament->voies_administration = json_encode($request->input('voies_administration'));
 
     return $medicament;
 
   }
 
 
+  /**
+   * Créé ou met à jour les commentaires
+   * @method saveOrUpdateCommentairesFromForm
+   * @param  object $commentaires Données du formulaire ($request->input('commentaires'))
+   * @param  integer $medicament_id ID du médicament (intervient dans la cible du commentaire)
+   * @return boolean True if OK
+   */
   public function saveOrUpdateCommentairesFromForm ($commentaires, $medicament_id) {
 
     if (!$commentaires) return;
@@ -307,9 +173,18 @@ class MedicamentRepository {
 
     }
 
+    return true;
+
   }
 
 
+  /**
+   * Ajoute un nouveau commentaire depuis les données du formulaire
+   * @method saveCommentaire
+   * @param  object $commentaire Données transmises depuis le formulaire
+   * @param  integer $medicament_id ID du médicament (pour la cible)
+   * @return boolean True if OK
+   */
   protected function saveCommentaire ($commentaire, $medicament_id) {
 
     $toSave = new MedicamentPrecaution();
@@ -328,9 +203,18 @@ class MedicamentRepository {
 
     $toSave->save();
 
+    return true;
+
   }
 
 
+  /**
+   * Modifie le commentaire depuis les données du formulaire
+   * @method updateCommentaire
+   * @param  object $commentaire Données transmises depuis le formulaire
+   * @param  integer $medicament_id ID du médicament (pour la cible)
+   * @return boolean True if OK
+   */
   protected function updateCommentaire ($commentaire, $medicament_id) {
 
     $toUpdate = MedicamentPrecaution::find($commentaire['id']);
@@ -349,9 +233,18 @@ class MedicamentRepository {
 
     $toUpdate->save();
 
+    return true;
+
   }
 
 
+  /**
+   * Pour obtenir la cible du commentaire
+   * @method getCible
+   * @param  string $cible Cible du médicament (M-{ID} ou S-{codeSubstance})
+   * @param  integer $medicament_id ID du médicament
+   * @return array Array contenant la cible du commentaire et l'id de la cible
+   */
   public function getCible ($cible, $medicament_id) {
 
     $substanceOrMedicament = explode('-', $cible);
@@ -400,23 +293,20 @@ class MedicamentRepository {
 
   }
 
+  /**
+   * Supprime le médicament
+   * @method delete
+   * @param  Medicament $medicament Médicament transmis par Laravel
+   * @return boolean True if OK
+   */
   public function delete (Medicament $medicament) {
 
     $medicament->delete();
 
     MedicamentPrecaution::where('cible', 'medicament')->where('cible_id', 'M-' . $medicament->id)->delete();
 
+    return true;
+
   }
 
-}
-
-function array_flatten($items)
-{
-    if (! is_array($items)) {
-        return [$items];
-    }
-
-    return array_reduce($items, function ($carry, $item) {
-        return array_merge($carry, array_flatten($item));
-    }, []);
 }

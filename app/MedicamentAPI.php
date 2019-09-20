@@ -11,14 +11,18 @@ class MedicamentAPI extends Model
 {
     protected $table = 'bdpm_medics';
 
-    protected $appends = ['associatedPrecautions', 'compositionsArray', 'compositionsString'];
+    protected $appends = ['associated_precautions', 'compositions_array', 'compositions_string'];
 
     public function customValues () {
-      return $this->belongsToMany('App\Medicament');
+      return $this->belongsTo('App\Medicament', 'medicament_id');
     }
 
     public function cip () {
       return $this->hasMany('App\CIP', 'medicament_id');
+    }
+
+    public function getIndicationsTherapeutiquesAttribute ($indications) {
+      return stripslashes($indications);
     }
 
     public function getCompositionsAttribute ($compositions_json) {
@@ -30,7 +34,7 @@ class MedicamentAPI extends Model
       return MedicamentPrecaution::where('cible', 'substance')
         ->whereIn('cible_id', array_map(function ($composition) {
           return $composition->codeSubstance;
-        }, $this->compositionsArray))
+        }, $this->compositions_array))
         ->get();
     }
 

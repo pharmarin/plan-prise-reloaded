@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', $medicament->custom_denomination)
+
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
@@ -14,14 +16,12 @@
 
                 <div class="card">
                     <div class="card-header">
-                      <h4>{{ $medicament->customDenomination }}</h4>
-                      <p class="mb-0">
-                        <ul class="list-unstyled">
-                          @foreach ($medicament->compositions as $substance)
-                              <li class="text-muted font-italic">{{ $substance->denomination }} ({{ $substance->id }})</li>
-                          @endforeach
-                        </ul>
-                      </p>
+                      <h4>{{ $medicament->custom_denomination }}</h4>
+                      <ul class="list-unstyled mb-0">
+                        @foreach ($medicament->compositions->getArray() as $substance)
+                            <li class="text-muted font-italic">{{ $substance->denominationSubstance }} ({{ $substance->codeSubstance }})</li>
+                        @endforeach
+                      </ul>
                     </div>
 
                     <div class="card-body">
@@ -38,15 +38,17 @@
 
                         <div class="col-sm-4 text-secondary text-right">Température de conservation</div>
                         <div class="col-sm-8">
-                          {{ $medicament->conservationFrigo ? "Au frigo" : "Température ambiante" }}
+                          {{ $medicament->conservation_frigo ? "Au frigo" : "Température ambiante" }}
                         </div>
 
-                        @if ($medicament->conservationDuree !== null)
+                        @if ($medicament->conservation_duree !== null)
                           <div class="col-sm-4 text-secondary text-right">Durée de conservation après ouverture</div>
                           <div class="col-sm-8">
-                            @foreach ($medicament->conservationDuree as $conservation)
-                              {{ $conservation->duree }} ({{ $conservation->laboratoire }})
-                            @endforeach
+                            <ul class="list-unstyled">
+                              @foreach ($medicament->conservation_duree as $conservation)
+                                <li>{{ $conservation->duree }} ({{ $conservation->laboratoire }})</li>
+                              @endforeach
+                            </ul>
                           </div>
                         @endif
 

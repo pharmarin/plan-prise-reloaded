@@ -3,6 +3,8 @@ import React from 'react';
 import Search from '../generic/Search';
 import GenericInput from '../generic/GenericInput';
 
+import { API_URL } from '../params';
+
 export default class MedicamentForm extends React.Component {
 
   constructor (props) {
@@ -19,16 +21,17 @@ export default class MedicamentForm extends React.Component {
 
     if (this.props.fromAPI) {
       this.state.api_selected_detail = this.props.fromAPI
-      this.state.inputs.commentaires.inputs.cible_id.options = this.getSubstancesActivesObject(this.props.fromAPI[0].compositionsArray)
+      this.state.inputs.commentaires.inputs.cible_id.options = this.getSubstancesActivesObject(this.props.fromAPI[0].compositions_array)
+      console.log(this.getSubstancesActivesObject(this.props.fromAPI[0].compositions_array))
     }
   }
 
   componentDidUpdate = (prevProps, prevState) => {
     if (this.state.inputs) {
       if (!(prevState.api_selected_detail.length > 0)) {
-        let substancesActivesObject = this.getSubstancesActivesObject(this.state.api_selected_detail[0].compositionsArray),
+        let substancesActivesObject = this.getSubstancesActivesObject(this.state.api_selected_detail[0].compositions_array),
           newInputs = this.state.inputs
-        console.log(substancesActivesObject, this.state.api_selected_detail[0].compositionsArray)
+        console.log(substancesActivesObject, this.state.api_selected_detail[0].compositions)
         newInputs.commentaires.inputs.cible_id.options = substancesActivesObject
         this.setState({
           inputs: newInputs
@@ -38,10 +41,10 @@ export default class MedicamentForm extends React.Component {
   }
 
   handleInputChange = (event) => {
-    const target = event.target,
-          name = target.getAttribute('child'),
-          parent = target.getAttribute('name').split('[')[0],
-          key = target.getAttribute('index')
+    let target = event.target,
+        name = target.getAttribute('child'),
+        parent = target.getAttribute('name').split('[')[0],
+        key = target.getAttribute('index')
     var value = target.type === 'checkbox' ? target.checked : target.value,
         newState = {}
 
@@ -60,8 +63,8 @@ export default class MedicamentForm extends React.Component {
   }
 
   getInputList = (inputName) => {
-    const inputValues = this.state[inputName],
-          inputProperties = this.state.inputs[inputName]
+    let inputValues = this.state[inputName],
+        inputProperties = this.state.inputs[inputName]
     var returnComponents = []
 
     if (inputProperties.isRepeated) {
@@ -79,8 +82,8 @@ export default class MedicamentForm extends React.Component {
               if (
                 inputName === 'commentaires'
                 && inputObject.voie_administration
-                && (!this.state.voiesAdministration.map((voie) => Number(voie.voiesAdministration)).includes(Number(inputObject.voie_administration))
-                && !Number(inputObject.voie_administration) === 0)
+                && !(this.state.voies_administration.map((voie) => Number(voie.voies_administration)).includes(Number(inputObject.voie_administration)))
+                && !(Number(inputObject.voie_administration) === 0)
               ) {
                 return null
               }
@@ -117,7 +120,7 @@ export default class MedicamentForm extends React.Component {
         </div>
       )
     } else {
-      const inputValueOrEmptyString = inputValues !== null ? inputValues : ""
+      let inputValueOrEmptyString = inputValues !== null ? inputValues : ""
       returnComponents.push(
         <div key={inputName} className="p-1">
           <GenericInput name={inputName} child={inputName} value={inputValueOrEmptyString} onChange={ (e) =>  this.handleInputChange(e) } {...inputProperties.inputs[inputName]} />
@@ -170,7 +173,7 @@ export default class MedicamentForm extends React.Component {
     event.preventDefault()
     this.setState({
       api_selected_detail: this.state.api_selected_detail.filter((medicament) => {
-        return medicament.codeCIS !== codeCIS
+        return medicament.code_cis !== codeCIS
       })
     })
   }
@@ -179,7 +182,7 @@ export default class MedicamentForm extends React.Component {
     let substancesObject = {}
     if (substancesArray !== undefined) {
       substancesArray.forEach((substance) => substancesObject = Object.assign(substancesObject, {
-        [substance.codeSubstance]: substance.denominationSubstance + " " + substance.dosageSubstance
+        [substance.codeSubstance]: substance.denominationSubstance
       }))
     }
     return {0: 'Ce médicament', ...substancesObject}
@@ -228,18 +231,18 @@ export default class MedicamentForm extends React.Component {
 
   render () {
     if (!(this.state.api_selected_detail.length > 0)) {
-      return <Search selected={this.state.api_selected_detail}
-        defaultValue={this.state.inputs.customDenomination.defaultValue}
+      return <Search multiple={true} selected={this.state.api_selected_detail}
+        defaultValue={this.state.inputs.custom_denomination.defaultValue}
         modal={false}
         onSave={(values) => {
           let newCommentaires = this.state.commentaires
-          newCommentaires = newCommentaires.concat(values[0].associatedPrecautions)
+          newCommentaires = newCommentaires.concat(values[0].associated_precautions)
           this.setState({
             api_selected_detail: values,
             commentaires: newCommentaires
           })
         }}
-        url="https://cors-anywhere.herokuapp.com/https://www.open-medicaments.fr/api/v1/medicaments/" api={this.props.api} />
+        url={API_URL} api={this.props.api} />
     } else {
       let cardTitle
       let submitButton
@@ -264,15 +267,15 @@ export default class MedicamentForm extends React.Component {
             <h6>Correspondance dans la Base de Données Publique des Médicaments</h6>
             <ul className="list-unstyled">
               {
-                this.state.api_selected_detail.map((api_selected_medicament, index) => <li key={index}><button className="btn btn-link p-1" onClick={(e) => this.removeAPILine(e, api_selected_medicament.codeCIS)}><i className="fa fa-minus-circle"></i></button> { api_selected_medicament.denomination } (<a href={`http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=${api_selected_medicament.codeCIS}&typedoc=R`} target="_blank">{ api_selected_medicament.codeCIS }</a>)</li>
+                this.state.api_selected_detail.map((api_selected_medicament, index) => <li key={index}><button className="btn btn-link p-1" onClick={(e) => this.removeAPILine(e, api_selected_medicament.code_cis)}><i className="fa fa-minus-circle"></i></button> { api_selected_medicament.denomination } (<a href={`http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=${api_selected_medicament.code_cis}&typedoc=R`} target="_blank">{ api_selected_medicament.code_cis }</a>)</li>
                 )
               }
               <li key="add">
-                <Search selected={this.state.api_selected_detail} onSave={(values) => this.setState({ api_selected_detail: values })} url="https://cors-anywhere.herokuapp.com/https://www.open-medicaments.fr/api/v1/medicaments/" api={this.props.api} />
+                <Search multiple={true} selected={this.state.api_selected_detail} onSave={(values) => this.setState({ api_selected_detail: values })} url={API_URL} api={this.props.api} />
               </li>
             </ul>
 
-            <p>DCI : { this.state.api_selected_detail[0].compositionsString }</p>
+            <p>DCI : { this.state.api_selected_detail[0].compositions_string }</p>
 
             <form action={this.props.route} method="POST">
 
@@ -291,27 +294,27 @@ export default class MedicamentForm extends React.Component {
               }
 
               {
-                this.state.api_selected_detail.map((api_selected_medicament, index) => <input key={index} type="hidden" name="api_selected[]" value={ api_selected_medicament.codeCIS } />)
+                this.state.api_selected_detail.map((api_selected_medicament, index) => <input key={index} type="hidden" name="api_selected[]" value={ api_selected_medicament.code_cis } />)
               }
 
               {
-                this.getInputList('customDenomination')
+                this.getInputList('custom_denomination')
               }
 
               {
-                this.getInputList('customIndications')
+                this.getInputList('custom_indications')
               }
 
               {
-                this.getInputList('conservationFrigo')
+                this.getInputList('conservation_frigo')
               }
 
               {
-                this.getInputList('conservationDuree')
+                this.getInputList('conservation_duree')
               }
 
               {
-                this.getInputList('voiesAdministration')
+                this.getInputList('voies_administration')
               }
 
               {

@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 
 import axios from 'axios';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 
-import Recherche from './generic/Recherche';
-import PPIntro from './plan-prise/PPIntro';
+import Search from './generic/Search';
+import PPSelect from './plan-prise/PPSelect';
 import PPTable from './plan-prise/PPTable';
+
+import { API_URL } from './params';
+import { getMedicamentFromCIS } from './generic/functions';
 
 export default class PlanPrise extends React.Component {
 
@@ -13,8 +17,34 @@ export default class PlanPrise extends React.Component {
     this.state = {
       loading: false,
       currentID: null,
-      currentContent: null
+      currentContent: []
     }
+  }
+
+  addToPP = (event) => {
+    console.log(event.params.data)
+    let medicament = {
+          codeCIS: event.params.data.id,
+          denomination: event.params.data.text,
+          data: null
+        },
+        content = this.state.currentContent
+    content.push(medicament)
+    this.setState({ currentContent: content }, this.loadDetails(medicament.codeCIS))
+  }
+
+  loadDetails = (cis) => {
+    getMedicamentFromCIS(
+      cis,
+      (response) => {
+        let newState = this.state.currentContent.map((medic) => {
+          if (Number(medic.codeCIS) !== Number(cis)) return medic
+          medic.data = response[0]
+          return medic
+        })
+        this.setState({ currentContent: newState })
+      }
+    )
   }
 
   /**
@@ -43,71 +73,47 @@ export default class PlanPrise extends React.Component {
   getContent (id) {
     switch (id) {
       case null:
-        return <PPIntro onCreate={this.createPlanPrise} />
+        return <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} />
         break;
       default:
         return (
           <div>
-            <Recherche onChange={this.handleSelect} />
             {
-              this.state.currentContent ? <PPTable /> : null
+              this.state.currentContent ? <PPTable data={this.state.currentContent} /> : null
             }
+            <Search
+              modal={false}
+              multiple={false}
+              onSave={(values) => {
+                console.log(values)
+              }}
+              type="cis"
+              url={API_URL}
+              />
           </div>
         )
     }
   }
 
-  /**
-   * Handle selection of an option in the search select
-   * @param  {string} selectedOption Selected option by the client
-   * @param  {string} action Action dispatched by React-Select
-   * @return {null} Update state to display the change
-   */
-  handleSelect = (selectedOption, action) => {
-    if (action.action === "select-option") {
-      this.setState({
-        loading: true
-      }, () => {
-        axios.post('plan-prise', {
-          id: this.state.currentID,
-          data: selectedOption
-        })
-        .then((response) => {
-          console.log(response)
-        })
-      })
-    }
-  }
-
-  /**
-   * Create a new Plan de prise localy
-   * @return {state} Set the currentID state to -1 when creating a new Plan de prise -> the server will return the new ID after the first adding
-   */
-  createPlanPrise = () => {
-    this.setState({
-      currentID: -1
-    })
-  }
-
   render() {
     return (
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-md-8">
-            <div className="card">
+      <Container>
+        <Row className="justify-content-center">
+          <Col xl={8}>
+            <Card>
 
-              <div className="card-header">
+              <Card.Header>
                 { this.getTitle(this.state.currentID) }
-              </div>
+              </Card.Header>
 
-              <div className="card-body">
+              <Card.Body>
                 { this.getContent(this.state.currentID) }
-              </div>
+              </Card.Body>
 
-            </div>
-          </div>
-        </div>
-      </div>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }

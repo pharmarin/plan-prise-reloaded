@@ -33,9 +33,22 @@ class CompositionRepository
   }
 
   public function getString () {
-    return array_map(function ($composition, $index) {
-      return $index === 0 ? $composition->denominationSubstance . " " . $composition->dosageSubstance : " + " . $composition->denominationSubstance . " " . $composition->dosageSubstance;
-    }, $this->compositionArray, array_keys($this->compositionArray));
+    return implode(array_map(function ($composition, $index) {
+      return ($index === 0 ? "" : " + ") . implode(array_map(function ($word) {
+        $word = mb_strtolower($word);
+        switch ($word) {
+          case 'de': case'(de': case'de)':
+            return $word;
+            break;
+          case "base":
+            return "";
+            break;
+          default:
+            return str_replace('( ', '(', ucwords(str_replace('(', '( ', $word)));
+            break;
+        }
+      }, explode(" ", $composition->denominationSubstance)), " ") . " (" . $composition->codeSubstance . ")";
+    }, $this->compositionArray, array_keys($this->compositionArray)));
   }
 
   private function parseObject ()

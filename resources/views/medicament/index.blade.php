@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Tous les médicaments')
+
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
@@ -18,7 +20,7 @@
                         <table class="table">
                             @forelse ($medicaments as $medicament)
                                 <tr>
-                                    <td>{{ $medicament->customDenomination }}</td>
+                                    <td>{{ $medicament->custom_denomination }}</td>
                                     <td class="d-flex justify-content-end">
                                       <a href="{{ route('medicament.show', $medicament->id) }}" class="btn btn-success btn-sm ml-1">Voir</a>
                                       <a href="{{ route('medicament.edit', $medicament->id) }}" class="btn btn-warning btn-sm ml-1">Modifier</a>

@@ -97,32 +97,10 @@ class PlanPriseController extends Controller
     }
 
     private function getMedicamentID ($codeCIS) {
-      $medicament = Medicament::where('codeCIS', $codeCIS);
+      $medicament = Medicament::where('code_cis', $codeCIS);
       if ($medicament->count() > 0) {
         return $medicament->first()->id;
       }
-      //$medicament_from_api = $this->getMedicamentFromAPI($codeCIS);
-      /*
-      $table->bigInteger('codeCIS')->unsigned();
-      $table->string('denomination');
-      $table->string('formePharmaceutique');
-      $table->boolean('homeopathie');
-      $table->boolean('etatCommercialisation');
-      $table->string('indicationTherapeutiques');
-      $table->text('compositions');
-      */
-      /*$this->medicament->codeCIS = $medicament_from_api->codeCIS;
-      $this->medicament->denomination = $medicament_from_api->denomination;
-      $this->medicament->formePharmaceutique = $medicament_from_api->formePharmaceutique;
-      $this->medicament->voiesAdministration = json_encode($medicament_from_api->voiesAdministration);
-      $this->medicament->homeopathie = $medicament_from_api->homeopathie;
-      $this->medicament->etatCommercialisation = $medicament_from_api->etatCommercialisation;
-      $this->medicament->indicationsTherapeutiques = json_encode($medicament_from_api->indicationsTherapeutiques);
-      $this->medicament->compositions = json_encode($medicament_from_api->compositions);
-      $this->medicament->save();
-      return $this->medicament->id;*/
-
-      //return $medicament_from_api;
     }
 
     /**

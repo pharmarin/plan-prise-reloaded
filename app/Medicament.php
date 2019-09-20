@@ -10,14 +10,15 @@ class Medicament extends Model
 {
     protected $table = 'custom_medics';
 
-    protected $appends = ['precautions'];
+    protected $appends = ['precautions', 'indications', 'voies_administration_string', 'voies_administration_array'];
 
     public function bdpm () {
       return $this->hasMany('App\MedicamentAPI');
     }
 
     public function getPrecautionsAttribute () {
-      $voiesAdministration = $this->voiesAdministrationArray;
+      $voiesAdministration = $this->voies_administration_array;
+      if (empty($voiesAdministration)) return [];
       array_push($voiesAdministration, 0);
       return MedicamentPrecaution::whereIn('voie_administration', $voiesAdministration)
         ->where(function ($query) {
@@ -26,16 +27,17 @@ class Medicament extends Model
           ->orWhere('cible', 'substance')
           ->whereIn('cible_id', array_map(function ($composition) {
             return $composition->codeSubstance;
-          }, $this->bdpm()->first()->compositionsArray));
+          }, $this->bdpm()->first()->compositions_array));
         })
         ->get();
     }
 
     // Edit attribute
-    public function getConservationDureeAttribute ($conservationArray) {
-      $conservationArray = json_decode($conservationArray);
-      if ($conservationArray[0]->laboratoire === null && $conservationArray[0]->duree === null) return null;
-      return $conservationArray;
+    public function getConservationDureeAttribute ($conservation_array) {
+      $conservation_array = json_decode($conservation_array);
+      return array_filter($conservation_array, function ($conservation) use ($conservation_array) {
+        return count($conservation_array) < 2 || !($conservation->laboratoire === null) && !($conservation->duree === null);
+      });
     }
 
     // Add attribute
@@ -44,44 +46,59 @@ class Medicament extends Model
     }
 
     public function getDCIAttribute () {
-      return $medicamentAPI = $this->bdpm()->first()->compositionsString;
+      return $medicamentAPI = $this->bdpm()->first()->compositions_string;
     }
 
     // Add attribute
     public function getIndicationsAttribute () {
-      $customIndications = json_decode($this->customIndications);
-      return array_map(function ($indication) {
-        return $indication->customIndications;
-      }, $customIndications);
+      if ($customIndications = json_decode($this->custom_indications)) {
+        return array_map(function ($indication) {
+          return $indication->custom_indications;
+        }, $customIndications);
+      } else {
+        return [];
+      }
     }
 
     // Add attribute
     public function getVoiesAdministrationStringAttribute () {
-      $voiesAdministrationArray = json_decode($this->voiesAdministration);
-      $voiesAdministrationValues = [
-        1 => 'Orale',
-        2 => 'Cutanée',
-        3 => 'Auriculaire',
-        4 => 'Nasale',
-        5 => 'Inhalée',
-        6 => 'Vaginale',
-        7 => 'Oculaire',
-        8 => 'Rectale',
-        9 => 'Sous-cutanée',
-        10 => 'Intra-musculaire',
-        11 => 'Intra-veineux',
-        12 => 'Intra-urétrale'
-      ];
-      return array_map(function ($voieAdministration) use ($voiesAdministrationValues) {
-        return $voiesAdministrationValues[$voieAdministration->voiesAdministration];
-      }, $voiesAdministrationArray);
+      if ($voiesAdministrationArray = json_decode($this->voies_administration)) {
+        $voiesAdministrationValues = [
+          1 => 'Orale',
+          2 => 'Cutanée',
+          3 => 'Auriculaire',
+          4 => 'Nasale',
+          5 => 'Inhalée',
+          6 => 'Vaginale',
+          7 => 'Oculaire',
+          8 => 'Rectale',
+          9 => 'Sous-cutanée',
+          10 => 'Intra-musculaire',
+          11 => 'Intra-veineux',
+          12 => 'Intra-urétrale'
+        ];
+        return array_map(function ($voieAdministration) use ($voiesAdministrationValues) {
+          return $voiesAdministrationValues[$voieAdministration->voies_administration];
+        }, $voiesAdministrationArray);
+      } else {
+        return [];
+      }
     }
 
     // Add attribute
     public function getVoiesAdministrationArrayAttribute () {
-      $voiesAdministrationArray = json_decode($this->voiesAdministration);
-      return array_map(function ($voieAdministration) {
-        return $voieAdministration->voiesAdministration;
-      }, $voiesAdministrationArray);
+      if ($voiesAdministrationArray = json_decode($this->voies_administration)) {
+        return array_map(function ($voieAdministration) {
+          return $voieAdministration->voies_administration;
+        }, $voiesAdministrationArray);
+      } else {
+        return [];
+      }
+    }
+
+    public function getEmpty () {
+      return tap($this, function ($medicament) {
+        $medicament->forceFill(array_fill_keys(array_merge(\Schema::getColumnListing($medicament->getTable()), $this->appends, ["bdpm"]), null));
+      });
     }
 }

@@ -1,45 +1,56 @@
 import React, { Component } from 'react';
-//import AsyncSelect from 'react-select/async';
-//import { components } from 'react-select';
-import Tooltip from '@atlaskit/tooltip';
+
 import axios from 'axios';
+import Select2 from 'react-select2-wrapper';
+import 'react-select2-wrapper/css/select2.css';
+
+import { API_URL } from '../params';
 
 export default class Recherche extends React.Component {
 
-  loadOptions = (inputValue, callback) => {
-    if (inputValue.length < 3) return
-    axios.get('https://cors-anywhere.herokuapp.com/https://www.open-medicaments.fr/api/v1/medicaments?query=' + inputValue)
-      .then(response => response.data.map(function (item) {
-        return {
-          'value': item.codeCIS,
-          'label': item.denomination
-        }
-      }))
-      .then(data => callback(data))
-  }
-
-  loadingMessage (query) {
-    return 'Recherche en cours...'
-  }
-
-  noOptionsMessage (query) {
-    return 'Aucun médicament ne correspond à votre recherche.'
+  static defaultProps = {
+    limit: "20",
+    mutliple: false,
+    paginate: false,
+    searchAPI: API_URL
   }
 
   render() {
-    let closeMenuOnSelect = this.props.closeMenuOnSelect !== null ? this.props.closeMenuOnSelect : true
-    return null /* (
-      <AsyncSelect
-        cacheOptions={true}
-        closeMenuOnSelect={closeMenuOnSelect}
-        defaultOptions
-        isMulti={this.props.isMulti || false}
-        loadingMessage={this.loadingMessage}
-        loadOptions={this.loadOptions}
-        onChange={this.props.onChange}
-        onSelectResetsInput={closeMenuOnSelect}
-        placeholder={'Recherchez un médicament'}
-      />
-    );*/
+    return (
+      <div className="d-flex">
+        <Select2
+          className="flex-fill"
+          multiple={this.props.multiple}
+          onSelect={this.props.onSelect}
+          options={
+            {
+              placeholder: 'Rechercher un médicament',
+              closeOnSelect: !this.props.multiple,
+              ajax: {
+                url: this.props.searchAPI,
+                data: (params) => {
+                  let query = {
+                    query: params.term,
+                    limit: this.props.limit
+                  }
+                  return query
+                },
+                dataType: 'json',
+                processResults: (data) => {
+                  return {
+                    results: data.map(item => {
+                      return {
+                        id: item.codeCIS,
+                        text: item.denomination
+                      }
+                    })
+                  };
+                }
+              }
+            }
+          }
+        />
+      </div>
+    )
   }
 }

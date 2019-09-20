@@ -2,5 +2,6 @@
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
     "/js/medicament.js": "/js/medicament.js",
-    "/js/medicament-update.js": "/js/medicament-update.js"
+    "/js/medicament-update.js": "/js/medicament-update.js",
+    "/js/plan-prise.js": "/js/plan-prise.js"
 }

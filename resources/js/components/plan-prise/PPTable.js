@@ -1,37 +1,53 @@
 import React, { Component } from 'react';
 
-export default class PPTable extends React.Component {
+import { Card, Input } from 'react-bootstrap';
+
+import { inputs } from './inputs';
+import { SPINNER } from '../params';
+
+export default class PPTable extends React.Component
+{
+
+  isLoading = (medicament) => {
+    return medicament.data === null
+  }
+
   render () {
     return (
-      <table class="table table-bordered table-sm">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td colspan="2">Larry the Bird</td>
-            <td>@twitter</td>
-          </tr>
-        </tbody>
-      </table>
+      this.props.data.map((medicament) => {
+        return (
+          <Card key={medicament.codeCIS} className="mt-1">
+            <Card.Header>
+              <div className="d-flex">
+                <div className="text-truncate flex-fill">
+                  { medicament.denomination }
+                </div>
+                <div className="ml-1">
+                  { this.isLoading(medicament) ? SPINNER : null }
+                </div>
+              </div>
+              {
+                !this.isLoading(medicament) && medicament.data.bdpm && medicament.data.bdpm[0] ? <div className="text-muted"><small>{ medicament.data.bdpm[0].compositions_string }</small></div> : null
+              }
+            </Card.Header>
+            {
+              this.isLoading(medicament) ? null :
+              <Card.Body className="p-1">
+                <div className="d-flex">
+                  {
+                    inputs.map((input) =>
+                      <div key={input.id} className="flex-fill border border-light rounded m-1">
+                        <input type="text" className="form-control" value={medicament.data[input.id]} />
+                      </div>
+                    )
+                  }
+                </div>
+              </Card.Body>
+            }
+          </Card>
+        )
+      })
     )
   }
+
 }
