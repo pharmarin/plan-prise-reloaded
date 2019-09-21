@@ -40,7 +40,11 @@ class MedicamentAPIController extends Controller
         $deselect[] = $api_medicament->code_cis;
       }
 
-      $compositionArray[$api_medicament->code_cis] = $api_medicament->compositions->getCISArray();
+      $compositionArray[] = (object) [
+        "code_cis" => $api_medicament->code_cis,
+        "code_substance" => $api_medicament->compositions->getCodeSubstanceArray(),
+        "code_string" => $api_medicament->compositions->getString()
+      ];
 
       // Check if compositions are the same or return error
       if (!$compositionReference) {
@@ -48,8 +52,8 @@ class MedicamentAPIController extends Controller
         $denominationReference = $api_medicament->denomination;
       } else {
         $compositionComparer = $api_medicament->compositions;
-        if ($compositionComparer->getCISArray() != $compositionReference->getCISArray()) {
-          $message = 'Problème de PA pour ' . $api_medicament->denomination . ' vs. ' . $denominationReference . '(' . var_export($compositionComparer->getCISArray(), true) . ' vs. ' . var_export($compositionReference->getCISArray(), true) . ')\n';
+        if ($compositionComparer->getCodeSubstanceArray() != $compositionReference->getCodeSubstanceArray()) {
+          $message = 'Problème de PA pour ' . $api_medicament->denomination . ' vs. ' . $denominationReference . '(' . var_export($compositionComparer->getCodeSubstanceArray(), true) . ' vs. ' . var_export($compositionReference->getCodeSubstanceArray(), true) . ')\n';
           $deselect = [];
         }
       }
@@ -57,7 +61,7 @@ class MedicamentAPIController extends Controller
       $detail[] = $api_medicament;
     }
 
-    //sleep(5);
+    sleep(10);
 
     if (isset($deselect)) {
       return json_encode(

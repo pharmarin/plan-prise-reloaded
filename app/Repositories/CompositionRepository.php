@@ -14,7 +14,7 @@ class CompositionRepository
     $this->compositionArray = $this->parseObject($compositionObject);
   }
 
-  public function getCISArray ()
+  public function getCodeSubstanceArray ()
   {
     return array_map(function ($composition) {
       return $composition->codeSubstance;

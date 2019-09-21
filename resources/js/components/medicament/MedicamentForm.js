@@ -2,8 +2,10 @@ import React from 'react';
 
 import Search from '../generic/Search';
 import MedicamentInput from './MedicamentInput';
+import Alert from '../generic/Alert';
 
-import { API_URL } from '../params';
+import { getAPIFromCIS } from '../generic/functions';
+import { API_URL, SPINNER } from '../params';
 
 export default class MedicamentForm extends React.Component {
 
@@ -11,6 +13,7 @@ export default class MedicamentForm extends React.Component {
     super(props)
 
     this.state = {
+      alert: [],
       isLoading: false,
       inputs: props.inputs,
       api_selected_detail: []
@@ -29,7 +32,7 @@ export default class MedicamentForm extends React.Component {
 
   componentDidUpdate = (prevProps, prevState) => {
     if (this.state.inputs) {
-      if (!(prevState.api_selected_detail.length > 0)) {
+      if (!(prevState.api_selected_detail.length > 0) && this.state.api_selected_detail[0]) {
         let substancesActivesObject = this.getSubstancesActivesObject(this.state.api_selected_detail[0].compositions_array),
           newInputs = this.state.inputs
         console.log(substancesActivesObject, this.state.api_selected_detail[0].compositions)
@@ -48,12 +51,18 @@ export default class MedicamentForm extends React.Component {
         getAPIFromCIS(
           selected,
           (response, deselect) => {
+            console.log("Response", response)
+            let newCommentaires = this.state.commentaires
+            newCommentaires = newCommentaires.concat(response[0].associated_precautions)
+            console.log("Commentaires", newCommentaires)
             this.setState({
-              retrieved: response
-            }, () => {
-              this.props.modal ? null : this.saveValues()
+                commentaires: newCommentaires,
+              api_selected_detail: response.sort((a, b) => {
+                if (a.denomination < b.denomination) return -1
+                if (a.denomination > b.denomination) return 1
+                return 0
+              })
             })
-            this.deselectValues(deselect)
             resolve()
           },
           (response, deselect) => {
@@ -130,23 +139,25 @@ export default class MedicamentForm extends React.Component {
 
         <div className="card-body">
 
+          <Alert alert={this.state.alert} dismiss={() => this.setState({ alert: []})} />
+
           <h6>Correspondance dans la Base de Données Publique des Médicaments</h6>
           <ul className="list-unstyled">
             <li key="add">
-              <Search multiple={true} selected={this.state.api_selected_detail}
+              <div className={this.state.isLoading ? "mb-1" : "d-none"}>
+                { SPINNER }
+                <span className="ml-2">Import des médicaments sélectionnés en cours...</span>
+              </div>
+              <Search
+                disabled={this.state.isLoading}
+                multiple={true}
+                selected={this.state.api_selected_detail}
                 defaultValue={this.state.inputs.custom_denomination.defaultValue}
                 modal={this.state.api_selected_detail.length > 0}
-                onSave={(values) => {
-                  //return this.handleSearchSelect(values)
-                  let newCommentaires = this.state.commentaires
-                  newCommentaires = newCommentaires.concat(values[0].associated_precautions)
-                  this.setState({
-                    api_selected_detail: values,
-                    commentaires: newCommentaires
-                  })
-                }}
+                onSave={(values) => this.handleSearchSelect(values)}
                 url={API_URL}
-                api={this.props.api} />
+                api={this.props.api}
+                />
             </li>
             {
               this.state.api_selected_detail.length > 0 && this.state.api_selected_detail.map((api_selected_medicament, index) => <li key={index}><button className="btn btn-link p-1" onClick={(e) => this.removeAPILine(e, api_selected_medicament.code_cis)}><i className="fa fa-minus-circle"></i></button> { api_selected_medicament.denomination } (<a href={`http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=${api_selected_medicament.code_cis}&typedoc=R`} target="_blank">{ api_selected_medicament.code_cis }</a>)</li>
