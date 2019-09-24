@@ -61,7 +61,7 @@ export default class MedicamentForm extends React.Component {
               return 0
             })
           })
-          resolve({ action: 'success' })
+          resolve()
         },
         (response, deselect) => {
           this.setState({
