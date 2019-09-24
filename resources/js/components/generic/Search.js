@@ -91,7 +91,7 @@ export default class Search extends React.Component {
   }
 
   saveValues = () => {
-    this.props.onSave([...new Set(this.state.selected)])
+    Promise.resolve(this.props.onSave([...new Set(this.state.selected)]))
     .then((resolve) => {
       if (resolve && resolve.action == 'deselect') {
         this.deselectValues(resolve.values)
