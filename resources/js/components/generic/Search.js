@@ -45,13 +45,25 @@ export default class Search extends React.Component {
   }
 
   getInfo = () => {
+    this.axiosSource && this.axiosSource.cancel('Cancel previous request')
+    this.axiosSource = axios.CancelToken.source()
     this.setState({ isSearching: true })
-    axios.get(`${this.props.url}?query=${this.state.query}&limit=50`)
+    let url = `${this.props.url}?query=${this.state.query}&limit=50`
+    axios.get(url, {
+      cancelToken: this.axiosSource.token
+    })
     .then((response) => {
       this.setState({
         isSearching: false,
         results: response.data
       })
+    })
+    .catch((thrown) => {
+      if (axios.isCancel(thrown)) {
+        console.log('Request canceled', thrown.message);
+      } else {
+        console.log(thrown)
+      }
     })
   }
 
