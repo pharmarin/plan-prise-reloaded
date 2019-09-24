@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', "Importer des médicaments")
+
 @section('content')
 <div class="container">
   <div class="row justify-content-center">
