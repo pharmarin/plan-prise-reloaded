@@ -61,10 +61,10 @@ class MedicamentAPIController extends Controller
       $detail[] = $api_medicament;
     }
 
-    sleep(10);
+    //sleep(10);
 
     if (isset($deselect)) {
-      return json_encode(
+      return response()->json(
         [
           'status' => 'error',
           'data' => (isset($message) ? $message : "") . 'Nous avons déselectionné les médicaments non commercialisés. Merci de réessayer. ',
@@ -74,7 +74,7 @@ class MedicamentAPIController extends Controller
       );
     }
 
-    return json_encode(
+    return response()->json(
       [
         'status' => 'success',
         'data' => json_encode($detail)
@@ -99,7 +99,7 @@ class MedicamentAPIController extends Controller
 
       $update_list = \App\MedicamentAPI::where('updated_at', '<', $date)->first()->pluck('codeCIS')->toJson();
 
-      return json_encode([
+      return response()->json([
 
         'status' => 'success',
 
@@ -114,7 +114,7 @@ class MedicamentAPIController extends Controller
       $this->medicament_api_repository->updateMedicamentAPIByCIS($request->input('data'));
 
 
-      return json_encode([
+      return response()->json([
 
         'status' => 'success'
 
@@ -122,7 +122,7 @@ class MedicamentAPIController extends Controller
 
       default:
 
-      return json_encode([
+      return response()->json([
 
         'status' => 'error'
 

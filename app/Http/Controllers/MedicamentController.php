@@ -94,7 +94,7 @@ class MedicamentController extends Controller
         }
       }
 
-      return json_encode(
+      return response()->json(
         [
           'status' => 'success',
           'data' => json_encode($detail)
