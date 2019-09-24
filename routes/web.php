@@ -19,7 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/approval', 'HomeController@approval')->name('approval');
 
     Route::middleware(['approved'])->group(function () {
-        Route::any('medicament/custom/get', 'MedicamentController@getDetailFromCIS')->name('medicament.custom.get'); //post
+        Route::post('medicament/custom/get', 'MedicamentController@getDetailFromCIS')->name('medicament.custom.get');
         Route::resource('plan-prise', 'PlanPriseController')->except(['create']);
 
         Route::middleware(['admin'])->group(function () {
