@@ -31,18 +31,15 @@ class MedicamentRepository {
   }
 
 
-  public function getAll () {
-
+  public function getAll ()
+  {
     return $this->medicamentCustom::orderBy('custom_denomination')->paginate(20);
-
   }
 
-
-  /*public function getMedicamentFromOld ($old_medicament) {
-
-    return $this->medicamentAPI;
-
-  }*/
+  public function getLike ($string)
+  {
+    return $this->medicamentCustom::where('custom_denomination', 'LIKE', '%' . $string . '%')->paginate(20);
+  }
 
   public function getMedicamentByCIS ($cis) {
     return optional($this->medicamentAPI::where('code_cis', $cis)->first())->customValues;

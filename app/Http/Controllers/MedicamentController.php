@@ -27,6 +27,15 @@ class MedicamentController extends Controller
       return view('medicament.index')->with(compact('medicaments'));
     }
 
+    public function search (Request $request)
+    {
+      if (!$request->input('query')) {
+        return view('medicament.search');
+      }
+      $medicaments = $this->medicament_repository->getLike($request->input('query'));
+      return view('medicament.index')->with(compact('medicaments'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *

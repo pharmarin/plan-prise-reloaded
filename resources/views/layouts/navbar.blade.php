@@ -21,6 +21,9 @@
                 <a class="dropdown-item" href="{{ route('medicament.index') }}">
                   {{ __('Voir tous') }}
                 </a>
+                <a class="dropdown-item" href="{{ route('medicament.search') }}">
+                  {{ __('Rechercher') }}
+                </a>
                 <a class="dropdown-item" href="{{ route('medicament.create') }}">
                   {{ __('Ajouter') }}
                 </a>

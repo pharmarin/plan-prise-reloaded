@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
           Route::post('medicament/refresh', 'MedicamentAPIController@update')->name('medicament.api.update');
           Route::post('medicament/api/get', 'MedicamentAPIController@getDetailFromCIS')->name('medicament.api.get');
           // Medicament
+          Route::get('medicament/search', 'MedicamentController@search')->name('medicament.search');
           Route::resource('medicament', 'MedicamentController');
         });
     });
