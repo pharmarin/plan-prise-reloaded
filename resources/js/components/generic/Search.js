@@ -101,8 +101,6 @@ export default class Search extends React.Component {
 
   deselectValues = (deselect) => {
     let selected = this.state.selected
-    console.log("Deselect", deselect)
-    console.log("Selected", selected)
     if (deselect && deselect.length > 0) {
       let newSelected = selected.filter((cis) =>
         !deselect.map((code) => Number(code))
