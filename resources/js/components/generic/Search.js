@@ -97,6 +97,7 @@ export default class Search extends React.Component {
         this.deselectValues(resolve.values)
       }
     })
+    if (!this.props.multiple) this.setState({ selected: [] })
   }
 
   deselectValues = (deselect) => {
