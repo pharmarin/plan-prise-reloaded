@@ -1,6 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
-
 import { ListGroup } from 'react-bootstrap';
 
 import { getAPIFromCIS } from './functions';
@@ -34,7 +34,6 @@ export default class Search extends React.Component {
   }
 
   wakeUp = () => {
-    console.log("Search selected", this.props.selected)
     if (this.props.selected.length > 0) {
       this.setState({
         query: '',
@@ -76,7 +75,7 @@ export default class Search extends React.Component {
     }
     this.setState({
       selected: newSelected
-    })
+    }, () => !this.props.multiple ? this.saveValues() : null)
   }
 
   saveValues = () => {
@@ -137,61 +136,71 @@ export default class Search extends React.Component {
                 this.state.isSearching ?
                 SPINNER
                 : <i className="fa fa-search"></i>
-            }
-          </span>
-        </div>
-        <input
-          disabled={this.props.disabled}
-          type="text"
-          className="form-control"
-          onChange={this.handleSearchChange}
-          placeholder="Rechercher un médicament dans la base de données publique"
-          ref={(input) => this.searchInput = input}
-          value={this.state.query}
-          />
-        {
-          this.props.modal ? null : this.renderSaveButton(noBottomRadiusRight)
-        }
-      </div>
-      {
-        this.state.results.length > 0 ?
-        <div>
+              }
+            </span>
+          </div>
+          <input
+            disabled={this.props.disabled}
+            type="text"
+            className="form-control"
+            onChange={this.handleSearchChange}
+            placeholder="Rechercher un médicament dans la base de données publique"
+            ref={(input) => this.searchInput = input}
+            value={this.state.query}
+            />
           {
-            this.props.multiple ? <a href="#" className="text-muted text-italic mb-0" onClick={() => this.setState({ selected: this.state.results.map((result) => Number(result.codeCIS))})}><small>Suggestions ({ this.state.results.length })</small></a> : null
+            this.props.modal ? null : this.renderSaveButton(noBottomRadiusRight)
           }
-          <ListGroup>
-            { !this.props.multiple ? <ListGroup.Item className="d-none"></ListGroup.Item> : null }
+        </div>
+        {
+          this.state.results.length > 0 ?
+          <div>
             {
-              this.state.results.map((result, index) => {
-                let selected = this.state.selected.includes(Number(result.codeCIS)),
-                noBorderClass = index === 0 && !this.props.multiple ? " border-top-0" : "",
-                checkboxIcon = this.props.multiple ? selected ? <i className="fas fa-circle mr-2"></i> : <i className="far fa-circle mr-2"></i> : null
-                return (
-                  <a key={index} href="#" className={"list-group-item list-group-item-action py-2" + noBorderClass} onClick={(e) => this.handleSearchSelect(e, result.codeCIS, selected)} >
-                    {
-                      this.props.multiple ? <input type="checkbox" checked={selected} className="d-none mt-1" onChange={(e) => this.handleSearchSelect(e, result.codeCIS, selected)} id={result.codeCIS}/> : null
-                    }
-                    <label className={"d-flex m-0" + (this.state.selected.includes(Number(result.codeCIS)) ? " font-weight-bold" : "")} htmlFor={result.codeCIS}>
-                      <div>{checkboxIcon}</div>
-                      <div className="text-truncate flex-grow-1">{result.denomination}</div>
-                      <div className="ml-2">({result.codeCIS})</div>
-                    </label>
-                  </a>
-                )
-              })
+              this.props.multiple ? <a href="#" className="text-muted text-italic mb-0" onClick={() => this.setState({ selected: this.state.results.map((result) => Number(result.codeCIS))})}><small>Suggestions ({ this.state.results.length })</small></a> : null
             }
-          </ListGroup>
-        </div> : null
-      }
-    </form>
-  )
-}
+            <ListGroup>
+              { !this.props.multiple ? <ListGroup.Item className="d-none"></ListGroup.Item> : null }
+              {
+                this.state.results.map((result, index) => {
+                  let selected = this.state.selected.includes(Number(result.codeCIS)),
+                  noBorderClass = index === 0 && !this.props.multiple ? " border-top-0" : "",
+                  checkboxIcon = this.props.multiple ? selected ? <i className="fas fa-circle mr-2"></i> : <i className="far fa-circle mr-2"></i> : null
+                  return (
+                    <a key={index} href="#" className={"list-group-item list-group-item-action py-2" + noBorderClass} onClick={(e) => this.handleSearchSelect(e, result.codeCIS, selected)} >
+                      {
+                        this.props.multiple ? <input type="checkbox" checked={selected} className="d-none mt-1" onChange={(e) => this.handleSearchSelect(e, result.codeCIS, selected)} id={result.codeCIS}/> : null
+                      }
+                      <label className={"d-flex m-0" + (this.state.selected.includes(Number(result.codeCIS)) ? " font-weight-bold" : "")} htmlFor={result.codeCIS}>
+                        <div>{checkboxIcon}</div>
+                        <div className="text-truncate flex-grow-1">{result.denomination}</div>
+                        <div className="ml-2">({result.codeCIS})</div>
+                      </label>
+                    </a>
+                  )
+                })
+              }
+            </ListGroup>
+          </div> : null
+        }
+      </form>
+    )
+  }
 
-render () {
-  if (this.props.modal) {
-    return this.renderModal()
-  } else {
-    return this.renderForm()
+  render () {
+    if (this.props.modal) {
+      return this.renderModal()
+    } else {
+      return this.renderForm()
+    }
   }
 }
+
+Search.propTypes = {
+  defaultValue: PropTypes.string,
+  disabled: PropTypes.bool,
+  onSave: PropTypes.func,
+  modal: PropTypes.bool,
+  multiple: PropTypes.bool,
+  selected: PropTypes.array,
+  url: PropTypes.string
 }
