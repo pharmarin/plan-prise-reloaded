@@ -92,6 +92,27 @@ export default class Search extends React.Component {
 
   saveValues = () => {
     this.props.onSave([...new Set(this.state.selected)])
+    .then((resolve) => {
+      if (resolve && resolve.action == 'deselect') {
+        this.deselectValues(resolve.values)
+      }
+    })
+  }
+
+  deselectValues = (deselect) => {
+    let selected = this.state.selected
+    console.log("Deselect", deselect)
+    console.log("Selected", selected)
+    if (deselect && deselect.length > 0) {
+      let newSelected = selected.filter((cis) =>
+        !deselect.map((code) => Number(code))
+          .includes(Number(cis))
+      )
+      this.setState({
+        selected: newSelected
+      })
+    }
+    return true
   }
 
   renderSaveButton = () => {

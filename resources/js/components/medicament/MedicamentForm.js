@@ -44,59 +44,42 @@ export default class MedicamentForm extends React.Component {
     }
   }
 
-  handleSearchSelect = (selected) => {
-    this.setState(
-      { isLoading: true },
-      () => (new Promise((resolve) =>
-        getAPIFromCIS(
-          selected,
-          (response, deselect) => {
-            console.log("Response", response)
-            let newCommentaires = this.state.commentaires
-            newCommentaires = newCommentaires.concat(response[0].associated_precautions)
-            console.log("Commentaires", newCommentaires)
-            this.setState({
-                commentaires: newCommentaires,
+  handleSearchSelect = async (selected) => {
+    return await new Promise((resolve) => {
+      this.setState({ isLoading: true })
+      getAPIFromCIS(
+        selected,
+        (response, deselect) => {
+          console.log("Response", response)
+          let newCommentaires = this.state.commentaires
+          newCommentaires = newCommentaires.concat(response[0].associated_precautions)
+          this.setState({
+              commentaires: newCommentaires,
               api_selected_detail: response.sort((a, b) => {
-                if (a.denomination < b.denomination) return -1
-                if (a.denomination > b.denomination) return 1
-                return 0
-              })
+              if (a.denomination < b.denomination) return -1
+              if (a.denomination > b.denomination) return 1
+              return 0
             })
-            resolve()
-          },
-          (response, deselect) => {
-            this.setState({
-              alert: [...this.state.alert, {
-                type: 'warning',
-                message: response
-              }]
-            })
-            this.deselectValues(deselect)
-            resolve()
-          }
-        )
-      ))
+          })
+          resolve({ action: 'success' })
+        },
+        (response, deselect) => {
+          this.setState({
+            alert: [...this.state.alert, {
+              type: 'warning',
+              message: response
+            }]
+          })
+          resolve({
+            action: 'deselect',
+            values: deselect
+          })
+        }
+      )
       .then(() => {
         this.setState({ isLoading: false })
       })
-    )
-  }
-
-  deselectValues = (deselect) => {
-    let selected = this.state.selected
-    if (deselect && deselect.length > 0) {
-      selected = selected.filter((cis) =>
-        !deselect.map((code) => Number(code))
-          .includes(Number(cis))
-      )
-      if (this.state.isMounted) {
-        this.setState({
-          selected: selected
-        })
-      }
-    }
-    return true
+    })
   }
 
   removeAPILine = (event, codeCIS) => {

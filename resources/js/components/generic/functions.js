@@ -19,10 +19,10 @@ export async function getAPIFromCIS (cisArray, onSuccessCallback, onErrorCallbac
   }
 }
 
-export function getMedicamentFromCIS (cisArray, onSuccessCallback, onErrorCallback) {
+export async function getMedicamentFromCIS (cisArray, onSuccessCallback, onErrorCallback) {
   let route = document.head.querySelector('meta[name="medicament-custom"]').getAttribute('content')
   try {
-    axios.post(route, {
+    await axios.post(route, {
       data: cisArray
     })
     .then((response) => {
