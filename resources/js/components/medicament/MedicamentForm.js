@@ -26,7 +26,6 @@ export default class MedicamentForm extends React.Component {
     if (this.props.fromAPI) {
       this.state.api_selected_detail = this.props.fromAPI
       this.state.inputs.commentaires.inputs.cible_id.options = this.getSubstancesActivesObject(this.props.fromAPI[0].compositions_array)
-      console.log(this.getSubstancesActivesObject(this.props.fromAPI[0].compositions_array))
     }
   }
 
@@ -35,7 +34,6 @@ export default class MedicamentForm extends React.Component {
       if (!(prevState.api_selected_detail.length > 0) && this.state.api_selected_detail[0]) {
         let substancesActivesObject = this.getSubstancesActivesObject(this.state.api_selected_detail[0].compositions_array),
           newInputs = this.state.inputs
-        console.log(substancesActivesObject, this.state.api_selected_detail[0].compositions)
         newInputs.commentaires.inputs.cible_id.options = substancesActivesObject
         this.setState({
           inputs: newInputs
@@ -50,7 +48,6 @@ export default class MedicamentForm extends React.Component {
       getAPIFromCIS(
         selected.map(selected => selected.codeCIS),
         (response, deselect) => {
-          console.log("Response", response)
           let newCommentaires = this.state.commentaires
           newCommentaires = newCommentaires.concat(response[0].associated_precautions)
           this.setState({
