@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { Card, Input } from 'react-bootstrap';
+import ContentEditable from 'react-contenteditable';
 
 import { inputs } from './inputs';
 import { SPINNER } from '../params';
@@ -37,7 +38,7 @@ export default class PPTable extends React.Component
                   {
                     inputs.map((input) =>
                       <div key={input.id} className="flex-fill border border-light rounded m-1">
-                        <input type="text" className="form-control" value={medicament.data[input.id]} />
+                        <ContentEditable html={medicament.data[input.id]} />
                       </div>
                     )
                   }

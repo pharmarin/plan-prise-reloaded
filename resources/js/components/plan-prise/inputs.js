@@ -1,7 +1,8 @@
 export const inputs = [
   {
     id: "custom_indications",
-    label: "Indication"
+    label: "Indication",
+    isRepeated: true
   },
   {
     id: "poso_matin",
