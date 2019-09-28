@@ -82,6 +82,7 @@ class MedicamentController extends Controller
     */
     public function getDetailFromCIS (Request $request) {
       $cis_array = array_wrap($request->input('data'));
+
       $detail = [];
 
       foreach ($cis_array as $cis) {

@@ -21,11 +21,9 @@ export default class PlanPrise extends React.Component {
     }
   }
 
-  addToPP = (event) => {
-    console.log(event.params.data)
+  addToPP = (values) => {
     let medicament = {
-          codeCIS: event.params.data.id,
-          denomination: event.params.data.text,
+          ...values[0],
           data: null
         },
         content = this.state.currentContent
@@ -43,7 +41,8 @@ export default class PlanPrise extends React.Component {
           return medic
         })
         this.setState({ currentContent: newState })
-      }
+      },
+      (response) => console.log('Error retrieving medic', response)
     )
   }
 
@@ -84,9 +83,7 @@ export default class PlanPrise extends React.Component {
             <Search
               modal={false}
               multiple={false}
-              onSave={(values) => {
-                console.log(values)
-              }}
+              onSave={this.addToPP}
               type="cis"
               url={API_URL}
               />
