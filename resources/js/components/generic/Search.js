@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { ListGroup } from 'react-bootstrap';
+import { Button, Form, FormControl, InputGroup, ListGroup, Modal } from 'react-bootstrap';
 
 import { getAPIFromCIS } from './functions';
 import { isEqual, removeDuplicates } from './utils';
@@ -19,7 +19,8 @@ export default class Search extends React.Component {
     isSearching: false,
     query: '',
     results: [],
-    selected: []
+    selected: [],
+    showModal: false
   }
 
   constructor (props) {
@@ -104,128 +105,120 @@ export default class Search extends React.Component {
       }
     })
     if (!this.props.multiple) this.wakeUp()
+    if (this.props.modal) this.setState({ showModal: false })
   }
 
   deselectValues = (deselect) => {
     let selected = this.state.selected
     if (deselect && deselect.length > 0) {
-      let newSelected = selected.filter((medicament) =>
-      !deselect.map((code) => Number(code))
-      .includes(Number(medicament.codeCIS))
-    )
-    this.setState({
-      selected: newSelected
-    })
-  }
-  return true
-}
-
-renderSaveButton = () => {
-  if (this.props.multiple) {
-    let styleObject = !this.props.modal ? { borderTopLeftRadius: 0, borderBottomLeftRadius: 0 } : {}
-    return (
-      <button
-        type="button"
-        className="btn btn-sm btn-primary"
-        onClick={() => this.saveValues()}
-        style={styleObject}
-        disabled={this.props.disabled}
-        data-dismiss="modal"
-        >
-        Importer
-      </button>
-    )
-  } else {
-    return null
-  }
-}
-
-renderModal = () => {
-  return (
-    <>
-    <button type="button" onClick={() => this.wakeUp()} className="btn btn-link px-0" data-toggle="modal" data-target="#searchModal">
-      <i className="fa fa-plus-circle p-1"></i> Importer des médicaments
-      </button>
-      <div className="modal fade" id="searchModal" tabIndex="-1" role="dialog" aria-hidden="true">
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title flex-fill">Importer un médicament</h5>
-              { this.renderSaveButton() }
-              <button type="button" className="btn btn-sm btn-secondary ml-1" data-dismiss="modal" aria-label="Close">
-                Annuler
-              </button>
-            </div>
-            <div className="modal-body">
-              { this.renderForm() }
-            </div>
-          </div>
-        </div>
-      </div>
-      </>
-  )
-}
-
-renderForm = () => {
-  let noBottomRadiusLeft = this.state.results.length > 0 && !this.props.multiple ? { borderBottomLeftRadius: 0 } : {},
-  noBottomRadiusRight = this.state.results.length > 0 && !this.props.multiple ? { borderBottomRightRadius: 0 } : {}
-  return (
-    <form className="mb-3">
-      <div className="input-group">
-        <div className="input-group-prepend">
-          <span className="input-group-text" style={noBottomRadiusLeft}>
-            {
-              this.state.isSearching ?
-              SPINNER
-              : <i className="fa fa-search"></i>
-          }
-        </span>
-      </div>
-      <input
-        disabled={this.props.disabled}
-        type="text"
-        className="form-control"
-        onChange={this.handleSearchChange}
-        placeholder="Rechercher un médicament dans la base de données publique"
-        ref={(input) => this.searchInput = input}
-        value={this.state.query}
-        />
-      {
-        this.props.modal ? null : this.renderSaveButton(noBottomRadiusRight)
-      }
-    </div>
-    {
-      this.state.results.length > 0 ?
-      <div>
-        {
-          this.props.multiple ? <a href="#" className="text-muted text-italic mb-0" onClick={() => this.setState({ selected: this.state.results.map((result) => Number(result.codeCIS))})}><small>Suggestions ({ this.state.results.length })</small></a> : null
-        }
-        <ListGroup>
-          { !this.props.multiple ? <ListGroup.Item className="d-none"></ListGroup.Item> : null }
-          {
-            this.state.results.map((result, index) => {
-              let selected = this.state.selected.map(selected => Number(selected.codeCIS)).includes(Number(result.codeCIS)),
-              noBorderClass = index === 0 && !this.props.multiple ? " border-top-0" : "",
-              checkboxIcon = this.props.multiple ? selected ? <i className="fas fa-circle mr-2"></i> : <i className="far fa-circle mr-2"></i> : null
-              return (
-                <a key={index} href="#" className={"list-group-item list-group-item-action py-2" + noBorderClass} onClick={(e) => this.handleSearchSelect(e, result, selected)} >
-                  {
-                    this.props.multiple ? <input type="checkbox" checked={selected} className="d-none mt-1" onChange={(e) => this.handleSearchSelect(e, result, selected)} id={result.codeCIS}/> : null
-                  }
-                  <label className={"d-flex m-0" + (selected ? " font-weight-bold" : "")} htmlFor={result.codeCIS}>
-                    <div>{checkboxIcon}</div>
-                    <div className="text-truncate flex-grow-1">{result.denomination}</div>
-                    <div className="ml-2">({result.codeCIS})</div>
-                  </label>
-                </a>
-              )
-            })
-          }
-        </ListGroup>
-      </div> : null
+      let newSelected = selected.filter(
+        (medicament) => !deselect.map((code) => Number(code)).includes(Number(medicament.codeCIS))
+      )
+      this.setState({
+        selected: newSelected
+      })
     }
-  </form>
-)
+    return true
+  }
+
+  renderSaveButton = () => {
+    if (this.props.multiple) {
+      return (
+        <InputGroup.Append>
+          <Button
+            type="button"
+            variant="primary"
+            onClick={() => this.saveValues()}
+            disabled={this.props.disabled}
+            >
+            Importer
+          </Button>
+        </InputGroup.Append>
+      )
+    } else {
+      return null
+    }
+  }
+
+  renderModal = () => {
+    const showModal = (value) => this.setState({ showModal: value })
+    return (
+      <>
+        <Button type="button" variant="link" className="px-0" onClick={() => showModal(true)}>
+          <i className="fa fa-plus-circle p-1"></i> Importer des médicaments
+        </Button>
+        <Modal show={this.state.showModal} onHide={() => showModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Importer un médicament</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            { this.renderForm() }
+          </Modal.Body>
+        </Modal>
+      </>
+    )
+  }
+
+  renderForm = () => {
+    let noBottomRadiusLeft = this.state.results.length > 0 && !this.props.multiple ? { borderBottomLeftRadius: 0 } : {},
+    noBottomRadiusRight = this.state.results.length > 0 && !this.props.multiple ? { borderBottomRightRadius: 0 } : {}
+    return (
+      <Form className="mb-3">
+        <InputGroup>
+          <InputGroup.Prepend>
+            <InputGroup.Text style={noBottomRadiusLeft}>
+              {
+                this.state.isSearching ?
+                SPINNER
+                : <i className="fa fa-search"></i>
+            }
+          </InputGroup.Text>
+        </InputGroup.Prepend>
+        <FormControl
+          disabled={this.props.disabled}
+          type="text"
+          onChange={this.handleSearchChange}
+          placeholder="Rechercher un médicament dans la base de données publique"
+          ref={(input) => this.searchInput = input}
+          style={noBottomRadiusRight}
+          value={this.state.query}
+          />
+        {
+          this.renderSaveButton()
+        }
+      </InputGroup>
+      {
+        this.state.results.length > 0 ?
+        <div>
+          {
+            this.props.multiple ? <a href="#" className="text-muted text-italic mb-0" onClick={() => this.setState({ selected: this.state.results.map((result) => Number(result.codeCIS))})}><small>Suggestions ({ this.state.results.length })</small></a> : null
+          }
+          <ListGroup>
+            { !this.props.multiple ? <ListGroup.Item className="d-none"></ListGroup.Item> : null }
+            {
+              this.state.results.map((result, index) => {
+                let selected = this.state.selected.map(selected => Number(selected.codeCIS)).includes(Number(result.codeCIS)),
+                noBorderClass = index === 0 && !this.props.multiple ? " border-top-0" : "",
+                checkboxIcon = this.props.multiple ? selected ? <i className="fas fa-circle mr-2"></i> : <i className="far fa-circle mr-2"></i> : null
+                return (
+                  <a key={index} href="#" className={"list-group-item list-group-item-action py-2" + noBorderClass} onClick={(e) => this.handleSearchSelect(e, result, selected)} >
+                    {
+                      this.props.multiple ? <input type="checkbox" checked={selected} className="d-none mt-1" onChange={(e) => this.handleSearchSelect(e, result, selected)} id={result.codeCIS}/> : null
+                    }
+                    <label className={"d-flex m-0" + (selected ? " font-weight-bold" : "")} htmlFor={result.codeCIS}>
+                      <div>{checkboxIcon}</div>
+                      <div className="text-truncate flex-grow-1">{result.denomination}</div>
+                      <div className="ml-2">({result.codeCIS})</div>
+                    </label>
+                  </a>
+                )
+              })
+            }
+          </ListGroup>
+        </div> : null
+      }
+    </Form>
+  )
 }
 
 render () {
