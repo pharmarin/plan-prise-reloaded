@@ -15,14 +15,16 @@ export default class Search extends React.Component {
     selected: [],
   }
 
+  static initialState = {
+    isSearching: false,
+    query: '',
+    results: [],
+    selected: []
+  }
+
   constructor (props) {
     super(props)
-    this.state = {
-      isSearching: false,
-      query: '',
-      results: [],
-      selected: []
-    }
+    this.state = Search.initialState
   }
 
   componentDidMount () {
@@ -34,10 +36,9 @@ export default class Search extends React.Component {
   }
 
   wakeUp = () => {
+    this.setState(Search.initialState)
     if (this.props.selected.length > 0) {
       this.setState({
-        query: '',
-        results: [],
         selected: this.props.selected.map((medic) => {
           return {
             codeCIS: medic.code_cis,
@@ -102,7 +103,7 @@ export default class Search extends React.Component {
         this.deselectValues(resolve.values)
       }
     })
-    if (!this.props.multiple) this.setState({ selected: [] })
+    if (!this.props.multiple) this.wakeUp()
   }
 
   deselectValues = (deselect) => {
