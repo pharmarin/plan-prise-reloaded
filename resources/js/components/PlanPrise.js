@@ -24,7 +24,8 @@ export default class PlanPrise extends React.Component {
   addToPP = (values) => {
     let medicament = {
           ...values[0],
-          data: null
+          data: null,
+          customData: null
         },
         content = this.state.currentContent
     content.push(medicament)

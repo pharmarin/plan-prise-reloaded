@@ -10,10 +10,15 @@ class Medicament extends Model
 {
     protected $table = 'custom_medics';
 
-    protected $appends = ['precautions', 'indications', 'voies_administration_string', 'voies_administration_array'];
+    protected $appends = ['precautions', 'voies_administration_string', 'voies_administration_array'];
 
     public function bdpm () {
       return $this->hasMany('App\MedicamentAPI');
+    }
+
+    // Add attribute
+    public function getCustomIndicationsAttribute ($custom_indications) {
+      return json_decode($custom_indications);
     }
 
     public function getPrecautionsAttribute () {
@@ -47,17 +52,6 @@ class Medicament extends Model
 
     public function getDCIAttribute () {
       return $medicamentAPI = $this->bdpm()->first()->compositions_string;
-    }
-
-    // Add attribute
-    public function getIndicationsAttribute () {
-      if ($customIndications = json_decode($this->custom_indications)) {
-        return array_map(function ($indication) {
-          return $indication->custom_indications;
-        }, $customIndications);
-      } else {
-        return [];
-      }
     }
 
     // Add attribute

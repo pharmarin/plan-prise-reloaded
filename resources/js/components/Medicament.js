@@ -40,7 +40,7 @@ export default class Medicament extends React.Component {
       this.medicFromAPI = edit.bdpm
 
       this.newInputs.custom_denomination.defaultValue = edit.custom_denomination
-      this.newInputs.custom_indications.defaultValue = JSON.parse(edit.custom_indications)
+      this.newInputs.custom_indications.defaultValue = edit.custom_indications
       this.newInputs.conservation_frigo.defaultValue = edit.conservation_frigo
       this.newInputs.conservation_duree.defaultValue = edit.conservation_duree
       this.newInputs.voies_administration.defaultValue = JSON.parse(edit.voies_administration)
