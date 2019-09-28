@@ -48,7 +48,7 @@ export default class MedicamentForm extends React.Component {
     return await new Promise((resolve) => {
       this.setState({ isLoading: true })
       getAPIFromCIS(
-        selected,
+        selected.map(selected => selected.codeCIS),
         (response, deselect) => {
           console.log("Response", response)
           let newCommentaires = this.state.commentaires
