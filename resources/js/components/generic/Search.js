@@ -120,19 +120,23 @@ export default class Search extends React.Component {
 }
 
 renderSaveButton = () => {
-  let styleObject = !this.props.modal ? { borderTopLeftRadius: 0, borderBottomLeftRadius: 0 } : {}
-  return (
-    <button
-      type="button"
-      className="btn btn-sm btn-primary"
-      onClick={() => this.saveValues()}
-      style={styleObject}
-      disabled={this.props.disabled}
-      data-dismiss="modal"
-      >
-      Importer
-    </button>
-  )
+  if (this.props.multiple) {
+    let styleObject = !this.props.modal ? { borderTopLeftRadius: 0, borderBottomLeftRadius: 0 } : {}
+    return (
+      <button
+        type="button"
+        className="btn btn-sm btn-primary"
+        onClick={() => this.saveValues()}
+        style={styleObject}
+        disabled={this.props.disabled}
+        data-dismiss="modal"
+        >
+        Importer
+      </button>
+    )
+  } else {
+    return null
+  }
 }
 
 renderModal = () => {
