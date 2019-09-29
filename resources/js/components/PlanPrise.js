@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 
+import Alert from './generic/Alert';
 import Search from './generic/Search';
 import PPSelect from './plan-prise/PPSelect';
 import PPTable from './plan-prise/PPTable';
@@ -19,6 +20,7 @@ export default class PlanPrise extends React.Component {
       currentID: null,
       currentContent: []
     }
+    this.alert = React.createRef()
   }
 
   addToPP = (values) => {
@@ -79,9 +81,10 @@ export default class PlanPrise extends React.Component {
         return (
           <div>
             {
-              this.state.currentContent ? <PPTable data={this.state.currentContent} /> : null
+              this.state.currentContent ? <PPTable data={this.state.currentContent} alert={this.alert.current.addAlert} /> : null
             }
             <Search
+               alert={this.alert.current.addAlert}
               modal={false}
               multiple={false}
               onSave={this.addToPP}
@@ -95,23 +98,26 @@ export default class PlanPrise extends React.Component {
 
   render() {
     return (
-      <Container>
-        <Row className="justify-content-center">
-          <Col xl={8}>
-            <Card>
+      <>
+        <Alert ref={this.alert} />
+        <Container>
+          <Row className="justify-content-center">
+            <Col xl={8}>
+              <Card>
 
-              <Card.Header>
-                { this.getTitle(this.state.currentID) }
-              </Card.Header>
+                <Card.Header>
+                  { this.getTitle(this.state.currentID) }
+                </Card.Header>
 
-              <Card.Body>
-                { this.getContent(this.state.currentID) }
-              </Card.Body>
+                <Card.Body>
+                  { this.getContent(this.state.currentID) }
+                </Card.Body>
 
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    );
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </>
+    )
   }
 }

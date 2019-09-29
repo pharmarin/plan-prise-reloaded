@@ -44,7 +44,6 @@ export default class MedicamentInput extends React.Component
     event.preventDefault()
     let inputValues = this.props.inputValues
     inputValues.splice(key, 1)
-    console.log(inputValues, key)
     this.props.setState(inputValues)
   }
 
