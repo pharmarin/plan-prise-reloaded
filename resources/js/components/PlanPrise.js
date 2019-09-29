@@ -27,7 +27,7 @@ export default class PlanPrise extends React.Component {
     let medicament = {
           ...values[0],
           data: null,
-          customData: null
+          customData: {}
         },
         content = this.state.currentContent
     content.push(medicament)
@@ -49,51 +49,38 @@ export default class PlanPrise extends React.Component {
     )
   }
 
-  /**
-   * Switch title for Plan Prise
-   * @param  {int|null} id ID in the state
-   * @return {string} Title for the card
-   */
-  getTitle (id) {
-    switch (id) {
-      case -1:
-        return "Nouveau Plan de Prise"
-        break;
-      case null:
-        return "Que voulez-vous faire ? "
-        break;
-      default:
-        return "Plan de prise n°" + id
-    }
-  }
-
-  /**
-   * Switch content for Plan de prise
-   * @param  {int|null} id ID in the state
-   * @return {Component} Component to display (Search +- Table)
-   */
-  getContent (id) {
-    switch (id) {
-      case null:
-        return <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} />
-        break;
-      default:
-        return (
-          <div>
-            {
-              this.state.currentContent ? <PPTable data={this.state.currentContent} alert={this.alert.current.addAlert} /> : null
+  handleCustomDataChange = (input, value, codeCIS) => {
+    this.setState((state) => {
+      state.currentContent.map((medicament) => {
+        if (medicament.codeCIS === codeCIS) {
+          let parent = input.parent,
+              child = input.child,
+              id = input.id
+          if (parent === "precautions") {
+            let commentaires = medicament.customData[parent] || {}
+            if (value.action === "value") {
+              commentaires[id] = {
+                ...commentaires[id],
+                commentaire: value.value
+              }
+            } else if (value.action === "check") {
+              commentaires[id] = {
+                ...commentaires[id],
+                checked: value.value
+              }
             }
-            <Search
-               alert={this.alert.current.addAlert}
-              modal={false}
-              multiple={false}
-              onSave={this.addToPP}
-              type="cis"
-              url={API_URL}
-              />
-          </div>
-        )
-    }
+            medicament.customData[parent] = commentaires
+          } else {
+            medicament.customData[parent] = value.value
+          }
+          return medicament
+        } else {
+          return medicament
+        }
+      })
+      console.log(state)
+      return state
+    })
   }
 
   render() {
@@ -106,11 +93,29 @@ export default class PlanPrise extends React.Component {
               <Card>
 
                 <Card.Header>
-                  { this.getTitle(this.state.currentID) }
+                  {
+                    this.state.currentID === -1 ? "Nouveau Plan de Prise" : this.state.currentID === null ? "Que voulez-vous faire ? " : "Plan de prise n°" + this.state.currentID
+                  }
                 </Card.Header>
 
                 <Card.Body>
-                  { this.getContent(this.state.currentID) }
+                  {
+                    this.state.currentID === null ?
+                    <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} /> :
+                    <div>
+                      {
+                        this.state.currentContent ? <PPTable data={this.state.currentContent} setCustomData={this.handleCustomDataChange} alert={this.alert.current.addAlert} /> : null
+                      }
+                      <Search
+                        alert={this.alert.current.addAlert}
+                        modal={false}
+                        multiple={false}
+                        onSave={this.addToPP}
+                        type="cis"
+                        url={API_URL}
+                        />
+                    </div>
+                  }
                 </Card.Body>
 
               </Card>

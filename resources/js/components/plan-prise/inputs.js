@@ -12,7 +12,8 @@ export const inputs = [
         id: "conservation_duree",
         label: "Conservation après ouverture",
         display: "duree",
-        type: 'radio'
+        type: 'radio',
+        readOnly: true
       }
     ]
   },

@@ -15,39 +15,59 @@ export default class PPTable extends React.Component
 
   renderInput = (medicament, input) => {
     let data = medicament.data[input.id],
-        customData = medicament.customData ? medicament.customData[input.id] ? medicament.customData[input.id] : null : null,
-        needChoice = input.multiple || (!customData && Array.isArray(data))
+        customData = medicament.customData && medicament.customData[input.id] ? medicament.customData[input.id] : null,
+        needChoice = input.multiple || (!customData && Array.isArray(data)),
+        codeCIS = medicament.codeCIS
     if (needChoice) {
       if (data.length > 1) {
         return (
-          <Form className="p-1">
+          <div className="p-1">
             {
               data.map((item, index) => {
+                let customItemData = item.id && customData && customData[item.id] ? customData[item.id] : null,
+                customItemChecked = customItemData && customItemData.checked !== undefined ? customItemData.checked : item.population === null
                 return <div key={index}>
                   {
                     (input.help && item[input.help]) ? <p className="text-muted font-italic ml-4 mb-0" style={{fontSize: ".8em"}}>{item[input.help]}</p> : null
                   }
-                  <Form.Check type={input.type || 'radio'} className="flex-fill" label={this.renderContentEditable(input, customData, item, needChoice)} checked={item.population === null} />
+                  <Form>
+                    <Form.Check type={input.type || 'radio'} className="flex-fill mb-2" label={this.renderContentEditable(
+                        { input: input, needChoice: needChoice },
+                        { customData: customItemData, data: item, codeCIS: codeCIS }
+                      )} checked={customItemChecked} onChange={(event) => this.props.setCustomData({ parent: input.id, child: input.display, id: item.id }, { action: 'check', value: event.target.checked }, codeCIS)} />
+                  </Form>
                 </div>
               })
             }
-          </Form>
+          </div>
         )
       } else {
-        return this.renderContentEditable(input, customData, data[0], needChoice)
+        return this.renderContentEditable(
+            { input: input, needChoice: needChoice },
+            { customData: customData, data: data[0], codeCIS: codeCIS }
+          )
       }
     } else {
-      return this.renderContentEditable(input, customData, data, needChoice)
+      return this.renderContentEditable(
+          { input: input, needChoice: needChoice },
+          { customData: customData, data: data, codeCIS: codeCIS }
+        )
     }
   }
 
-  renderContentEditable = (input, customData, data, needChoice) => {
-    let display = input.display ? input.display : input.id,
-        html
+  renderContentEditable = (inputProperties, dataObject) => {
+    let input = inputProperties.input,
+        needChoice = inputProperties.needChoice,
+        data = dataObject.data,
+        customData = dataObject.customData,
+        codeCIS = dataObject.codeCIS,
+        display = input.display ? input.display : input.id,
+        html = input.multiple && customData && customData[display] ? (customData[display] || data || "") : needChoice ? (data[display] || "") : (customData || data || "")
+    if (input.readOnly === true) {
+      return <span>{ html }</span>
+    }
     return (
-      <div className="px-1 mb-2">
-        <ContentEditable className="flex-fill" html={needChoice ? (data[display] || "") : (customData || data || "")} />
-      </div>
+      <ContentEditable className="flex-fill" html={html} onChange={(event) => this.props.setCustomData({ parent: input.id, child: display, id: (data ? data.id : null), readOnly: input.readOnly }, { action: 'value', value: event.target.value }, codeCIS)} />
     )
   }
 
