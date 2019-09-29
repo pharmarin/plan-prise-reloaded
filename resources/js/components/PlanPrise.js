@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 
+import Alert from './generic/Alert';
 import Search from './generic/Search';
 import PPSelect from './plan-prise/PPSelect';
 import PPTable from './plan-prise/PPTable';
@@ -19,14 +20,14 @@ export default class PlanPrise extends React.Component {
       currentID: null,
       currentContent: []
     }
+    this.alert = React.createRef()
   }
 
-  addToPP = (event) => {
-    console.log(event.params.data)
+  addToPP = (values) => {
     let medicament = {
-          codeCIS: event.params.data.id,
-          denomination: event.params.data.text,
-          data: null
+          ...values[0],
+          data: null,
+          customData: null
         },
         content = this.state.currentContent
     content.push(medicament)
@@ -43,7 +44,8 @@ export default class PlanPrise extends React.Component {
           return medic
         })
         this.setState({ currentContent: newState })
-      }
+      },
+      (response) => console.log('Error retrieving medic', response)
     )
   }
 
@@ -79,14 +81,13 @@ export default class PlanPrise extends React.Component {
         return (
           <div>
             {
-              this.state.currentContent ? <PPTable data={this.state.currentContent} /> : null
+              this.state.currentContent ? <PPTable data={this.state.currentContent} alert={this.alert.current.addAlert} /> : null
             }
             <Search
+               alert={this.alert.current.addAlert}
               modal={false}
               multiple={false}
-              onSave={(values) => {
-                console.log(values)
-              }}
+              onSave={this.addToPP}
               type="cis"
               url={API_URL}
               />
@@ -97,23 +98,26 @@ export default class PlanPrise extends React.Component {
 
   render() {
     return (
-      <Container>
-        <Row className="justify-content-center">
-          <Col xl={8}>
-            <Card>
+      <>
+        <Alert ref={this.alert} />
+        <Container>
+          <Row className="justify-content-center">
+            <Col xl={8}>
+              <Card>
 
-              <Card.Header>
-                { this.getTitle(this.state.currentID) }
-              </Card.Header>
+                <Card.Header>
+                  { this.getTitle(this.state.currentID) }
+                </Card.Header>
 
-              <Card.Body>
-                { this.getContent(this.state.currentID) }
-              </Card.Body>
+                <Card.Body>
+                  { this.getContent(this.state.currentID) }
+                </Card.Body>
 
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    );
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </>
+    )
   }
 }
