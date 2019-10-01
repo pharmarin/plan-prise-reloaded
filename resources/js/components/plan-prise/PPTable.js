@@ -18,39 +18,32 @@ export default class PPTable extends React.Component
         customData = medicament.customData && medicament.customData[input.id] ? medicament.customData[input.id] : null,
         needChoice = input.multiple || (!customData && Array.isArray(data)),
         codeCIS = medicament.codeCIS
-    if (needChoice) {
-      if (data.length > 1) {
-        return (
-          <div className="p-1">
-            {
-              data.map((item, index) => {
-                let customItemData = item.id && customData && customData[item.id] ? customData[item.id] : null,
-                customItemChecked = customItemData && customItemData.checked !== undefined ? customItemData.checked : item.population === null
-                return <div key={index}>
-                  {
-                    (input.help && item[input.help]) ? <p className="text-muted font-italic ml-4 mb-0" style={{fontSize: ".8em"}}>{item[input.help]}</p> : null
-                  }
-                  <Form>
-                    <Form.Check type={input.type || 'radio'} className="flex-fill mb-2" label={this.renderContentEditable(
-                        { input: input, needChoice: needChoice },
-                        { customData: customItemData, data: item, codeCIS: codeCIS }
-                      )} checked={customItemChecked} onChange={(event) => this.props.setCustomData({ parent: input.id, child: input.display, id: item.id }, { action: 'check', value: event.target.checked }, codeCIS)} />
-                  </Form>
-                </div>
-              })
-            }
-          </div>
-        )
-      } else {
-        return this.renderContentEditable(
-            { input: input, needChoice: needChoice },
-            { customData: customData, data: data[0], codeCIS: codeCIS }
-          )
-      }
+    if (input.multiple || (needChoice && data.length > 1)) {
+      return (
+        <div className="p-1">
+          {
+            data.map((item, index) => {
+              let customItemData = item.id && customData && customData[item.id] ? customData[item.id] : null,
+              customItemChecked = customItemData && customItemData.checked !== undefined ? customItemData.checked : item.population === null
+              return <div key={index}>
+                {
+                  (input.help && item[input.help]) ? <p className="text-muted font-italic ml-4 mb-0" style={{fontSize: ".8em"}}>{item[input.help]}</p> : null
+                }
+                <Form>
+                  <Form.Check type={input.multiple ? 'checkbox' : 'radio'} className="flex-fill mb-2" label={this.renderContentEditable(
+                      { input: input, needChoice: needChoice },
+                      { customData: customItemData, data: item, codeCIS: codeCIS }
+                    )} checked={customItemChecked} onChange={(event) => this.props.setCustomData({ parent: input.id, child: input.display, id: item.id }, { action: 'check', value: event.target.checked }, codeCIS)} />
+                </Form>
+              </div>
+            })
+          }
+        </div>
+      )
     } else {
       return this.renderContentEditable(
           { input: input, needChoice: needChoice },
-          { customData: customData, data: data, codeCIS: codeCIS }
+          { customData: customData, data: (needChoice ? data[0] : data), codeCIS: codeCIS }
         )
     }
   }

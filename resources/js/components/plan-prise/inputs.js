@@ -6,13 +6,11 @@ export const inputs = [
       {
         id: "custom_indications",
         label: "Indication",
-        type: 'radio'
       },
       {
         id: "conservation_duree",
         label: "Conservation après ouverture",
         display: "duree",
-        type: 'radio',
         readOnly: true
       }
     ]
@@ -45,7 +43,6 @@ export const inputs = [
         display: 'commentaire',
         help: 'population',
         multiple: true,
-        type: 'checkbox',
         class: {
           population:'col-md-4',
           commentaire: 'col-md-8'
