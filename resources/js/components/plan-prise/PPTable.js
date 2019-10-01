@@ -55,7 +55,20 @@ export default class PPTable extends React.Component
         customData = dataObject.customData,
         codeCIS = dataObject.codeCIS,
         display = input.display ? input.display : input.id,
-        html = input.multiple && customData && customData[display] ? (customData[display] || data || "") : needChoice ? (data[display] || "") : (customData || data || "")
+        html
+    if (data || customData) {
+      if (input.multiple && customData && customData[display]) {
+        // Permet de récupérer les customData des commentaires (car needChoice mais on veut quand même les customData)
+        html = customData[display]
+      } else if (needChoice) {
+        // Si needChoice -> Pas de customData
+        html = data[display] || ""
+      } else {
+        html = customData || data || ""
+      }
+    } else {
+      html = ""
+    }
     if (input.readOnly === true) {
       return <span>{ html }</span>
     }
@@ -91,13 +104,17 @@ export default class PPTable extends React.Component
                     <div key={section.id} className={section.class}>
                       {
                         section.inputs.map(
-                          (input) =>
-                          <div key={input.id} className="flex-fill">
-                            <p className="text-muted mb-0 ml-1" style={{fontSize: ".8em"}}>{input.label}</p>
-                            <div className="flex-fill border border-light rounded mb-2 py-1 px-2">
-                              { this.renderInput(medicament, input) }
-                            </div>
-                          </div>
+                          (input) => {
+                            console.log(medicament.data[input.id])
+                            return !(input.readOnly && (!medicament.data[input.id] || medicament.data[input.id].length === 0)) ? (
+                                <div key={input.id} className="flex-fill">
+                                  <p className="text-muted mb-0 ml-1" style={{fontSize: ".8em"}}>{input.label}</p>
+                                  <div className="flex-fill border border-light rounded mb-2 py-1 px-2">
+                                    { this.renderInput(medicament, input) }
+                                  </div>
+                                </div>
+                              ) : null
+                          }
                         )
                       }
                     </div>

@@ -40,9 +40,9 @@ class Medicament extends Model
     // Edit attribute
     public function getConservationDureeAttribute ($conservation_array) {
       $conservation_array = json_decode($conservation_array);
-      return array_filter($conservation_array, function ($conservation) use ($conservation_array) {
-        return count($conservation_array) < 2 || !($conservation->laboratoire === null) && !($conservation->duree === null);
-      });
+      return array_filter(array_map(function ($conservation) {
+        return ($conservation->laboratoire === null && $conservation->duree === null) ? null : $conservation;
+      }, $conservation_array));
     }
 
     // Add attribute
