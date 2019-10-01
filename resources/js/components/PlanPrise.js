@@ -30,6 +30,7 @@ export default class PlanPrise extends React.Component {
       let currentpp = JSON.parse(props.currentpp)
       defaultState.currentID = currentpp.pp_id
       defaultState.currentContent =  currentpp.medic_data_detail.map((medicament) => {
+        medicament.custom_data.bdpm = [medicament.data]
         return {
           codeCIS: medicament.data.code_cis,
           denomination: medicament.data.denomination,
