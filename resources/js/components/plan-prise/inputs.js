@@ -2,6 +2,7 @@ export const inputs = [
   {
     id: 'properties',
     class: 'col-md-3',
+    collapse: true,
     inputs: [
       {
         id: "custom_indications",
@@ -18,6 +19,7 @@ export const inputs = [
   {
     id: 'posologies',
     class: 'col-md-3',
+    collapse: false,
     inputs: [
       {
         id: "poso_matin",
@@ -36,6 +38,7 @@ export const inputs = [
   {
     id: 'commentaires',
     class: 'col-md-6',
+    collapse: true,
     inputs: [
       {
         id: "precautions",

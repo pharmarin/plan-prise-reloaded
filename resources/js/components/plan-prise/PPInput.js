@@ -10,6 +10,12 @@ class PPInput extends React.Component {
     this.textarea.forEach((textarea) => autosize(textarea))
   }
 
+  componentDidUpdate (prevProps) {
+    if (prevProps.isShowed !== this.props.isShowed) {
+      setTimeout(() => this.textarea.forEach((textarea) => autosize.update(textarea)), 300)
+    }
+  }
+
   renderContentEditable = (inputProperties, dataObject) => {
     let input = inputProperties.input,
         needChoice = inputProperties.needChoice,
@@ -48,7 +54,7 @@ class PPInput extends React.Component {
         codeCIS = medicament.codeCIS
     if (input.readOnly && (!medicament.data[input.id] || medicament.data[input.id].length === 0)) return null
     return (
-      <div key={input.id} className="flex-fill">
+      <div key={input.id}>
         <p className="text-muted mb-0 ml-1" style={{fontSize: ".8em"}}>{input.label}</p>
         <div className="flex-fill mb-2 py-1">
           {

@@ -101,7 +101,6 @@ class PlanPrise extends React.Component {
         },
         (response) => {
           this.props.alert.removeAlert(alert)
-          console.log('saved')
         },
         (response) => {
           this.props.alert.removeAlert(alert)
