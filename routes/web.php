@@ -20,7 +20,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['approved'])->group(function () {
         Route::post('medicament/custom/get', 'MedicamentController@getDetailFromCIS')->name('medicament.custom.get');
-        Route::resource('plan-prise', 'PlanPriseController')->except(['create']);
+        // PlanPrise
+        Route::get('plan-prise/{pp_id?}', 'PlanPriseController@index');
+        Route::post('plan-prise/api', 'PlanPriseController@api')->name('plan-prise.api');
 
         Route::middleware(['admin'])->group(function () {
           // Users

@@ -75,7 +75,7 @@ export default class PPTable extends React.Component
     return (
       this.props.data.map((medicament) => {
         return (
-          <Card key={medicament.codeCIS} className="mt-1">
+          <Card key={medicament.codeCIS} className="mb-3">
             <Card.Header>
               <div className="d-flex">
                 <div className="text-truncate flex-fill">

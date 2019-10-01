@@ -8,19 +8,37 @@ import Search from './generic/Search';
 import PPSelect from './plan-prise/PPSelect';
 import PPTable from './plan-prise/PPTable';
 
+import MESSAGES from './messages.js';
 import { API_URL } from './params';
-import { getMedicamentFromCIS } from './generic/functions';
+import { managePP } from './generic/functions';
 
 export default class PlanPrise extends React.Component {
 
   constructor (props) {
     super(props)
-    this.state = {
+    this.state = this.initStateWithProps(props)
+    this.alert = React.createRef()
+  }
+
+  initStateWithProps = (props) => {
+    let defaultState = {
       loading: false,
       currentID: null,
       currentContent: []
     }
-    this.alert = React.createRef()
+    if (props.currentpp) {
+      let currentpp = JSON.parse(props.currentpp)
+      defaultState.currentID = currentpp.pp_id
+      defaultState.currentContent =  currentpp.medic_data_detail.map((medicament) => {
+        return {
+          codeCIS: medicament.data.code_cis,
+          denomination: medicament.data.denomination,
+          data: medicament.custom_data,
+          customData: currentpp.custom_data[medicament.data.code_cis] || {}
+        }
+      })
+    }
+    return defaultState
   }
 
   addToPP = (values) => {
@@ -31,22 +49,66 @@ export default class PlanPrise extends React.Component {
         },
         content = this.state.currentContent
     content.push(medicament)
-    this.setState({ currentContent: content }, this.loadDetails(medicament.codeCIS))
+    this.setState({ currentContent: content }, this.loadDetails(medicament.codeCIS, medicament.denomination))
   }
 
-  loadDetails = (cis) => {
-    getMedicamentFromCIS(
-      cis,
+  loadDetails = (cis, denomination = null) => {
+    let alert = this.alert.current.addAlert({
+      body: MESSAGES.planPrise.addToPP(denomination)
+    })
+    managePP(
+      this.state.currentID,
+      {
+        action: 'store',
+        value: cis
+      },
       (response) => {
         let newState = this.state.currentContent.map((medic) => {
           if (Number(medic.codeCIS) !== Number(cis)) return medic
-          medic.data = response[0]
+          medic.data = response.data
           return medic
         })
         this.setState({ currentContent: newState })
+        if (this.state.currentID === -1) this.setState({ currentID: response.pp_id })
+        this.alert.current.removeAlert(alert)
       },
-      (response) => console.log('Error retrieving medic', response)
+      (response) => {
+        this.alert.current.removeAlert(alert)
+        console.log('Error saving pp', response)
+      }
     )
+  }
+
+  saveModification = () => {
+    this.apiCall ? clearTimeout(this.apiCall) : null
+    let modifications = this.state.currentContent.reduce((request, medic) => {
+      let customData = medic.customData
+      if (Object.keys(customData).length > 0) {
+        return Object.assign(request, { [medic.codeCIS]: customData })
+      } else {
+        return request
+      }
+    }, {})
+    this.apiCall = setTimeout(() => {
+      let alert = this.alert.current.addAlert({
+        body: MESSAGES.planPrise.editPP
+      })
+      managePP(
+        this.state.currentID,
+        {
+          action: 'edit',
+          value: modifications
+        },
+        (response) => {
+          this.alert.current.removeAlert(alert)
+          console.log('saved')
+        },
+        (response) => {
+          this.alert.current.removeAlert(alert)
+          console.log('Error saving pp', response)
+        }
+      )
+    }, 1000)
   }
 
   handleCustomDataChange = (input, value, codeCIS) => {
@@ -78,12 +140,12 @@ export default class PlanPrise extends React.Component {
           return medicament
         }
       })
-      console.log(state)
+      this.saveModification()
       return state
     })
   }
 
-  render() {
+  render () {
     return (
       <>
         <Alert ref={this.alert} />
@@ -104,10 +166,10 @@ export default class PlanPrise extends React.Component {
                     <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} /> :
                     <div>
                       {
-                        this.state.currentContent ? <PPTable data={this.state.currentContent} setCustomData={this.handleCustomDataChange} alert={this.alert.current.addAlert} /> : null
+                        this.state.currentContent ? <PPTable data={this.state.currentContent} setCustomData={this.handleCustomDataChange} alert={this.alert.current ? this.alert.current.addAlert : null} /> : null
                       }
                       <Search
-                        alert={this.alert.current.addAlert}
+                        alert={this.alert.current ? this.alert.current.addAlert : null}
                         modal={false}
                         multiple={false}
                         onSave={this.addToPP}
