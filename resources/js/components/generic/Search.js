@@ -15,17 +15,19 @@ export default class Search extends React.Component {
     selected: [],
   }
 
-  static initialState = {
-    isSearching: false,
-    query: '',
-    results: [],
-    selected: [],
-    showModal: false
+  get initialState () {
+    return {
+      isSearching: false,
+      query: '',
+      results: [],
+      selected: [],
+      showModal: false
+    }
   }
 
   constructor (props) {
     super(props)
-    this.state = Search.initialState
+    this.state = this.initialState
   }
 
   componentDidMount () {
@@ -37,7 +39,8 @@ export default class Search extends React.Component {
   }
 
   wakeUp = () => {
-    this.setState(Search.initialState)
+    this.setState(this.initialState)
+    console.log('default state', this.initialState)
     if (this.props.selected.length > 0) {
       this.setState({
         selected: this.props.selected.map((medic) => {
@@ -163,7 +166,7 @@ export default class Search extends React.Component {
     let noBottomRadiusLeft = this.state.results.length > 0 && !this.props.multiple ? { borderBottomLeftRadius: 0 } : {},
     noBottomRadiusRight = this.state.results.length > 0 && !this.props.multiple ? { borderBottomRightRadius: 0 } : {}
     return (
-      <Form className="mb-3">
+      <Form>
         <InputGroup>
           <InputGroup.Prepend>
             <InputGroup.Text style={noBottomRadiusLeft}>
