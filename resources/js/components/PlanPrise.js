@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 
-import Alert from './generic/Alert';
+import alertManager from './generic/Alert';
 import Search from './generic/Search';
 import PPSelect from './plan-prise/PPSelect';
 import PPTable from './plan-prise/PPTable';
@@ -12,12 +12,11 @@ import MESSAGES from './messages.js';
 import { API_URL } from './params';
 import { managePP } from './generic/functions';
 
-export default class PlanPrise extends React.Component {
+class PlanPrise extends React.Component {
 
   constructor (props) {
     super(props)
     this.state = this.initStateWithProps(props)
-    this.alert = React.createRef()
   }
 
   initStateWithProps = (props) => {
@@ -54,7 +53,7 @@ export default class PlanPrise extends React.Component {
   }
 
   loadDetails = (cis, denomination = null) => {
-    let alert = this.alert.current.addAlert({
+    let alert = this.props.alert.addAlert({
       body: MESSAGES.planPrise.addToPP(denomination)
     })
     managePP(
@@ -71,10 +70,10 @@ export default class PlanPrise extends React.Component {
         })
         this.setState({ currentContent: newState })
         if (this.state.currentID === -1) this.setState({ currentID: response.pp_id })
-        this.alert.current.removeAlert(alert)
+        this.props.alert.removeAlert(alert)
       },
       (response) => {
-        this.alert.current.removeAlert(alert)
+        this.props.alert.removeAlert(alert)
         console.log('Error saving pp', response)
       }
     )
@@ -91,7 +90,7 @@ export default class PlanPrise extends React.Component {
       }
     }, {})
     this.apiCall = setTimeout(() => {
-      let alert = this.alert.current.addAlert({
+      let alert = this.props.alert.addAlert({
         body: MESSAGES.planPrise.editPP
       })
       managePP(
@@ -101,11 +100,11 @@ export default class PlanPrise extends React.Component {
           value: modifications
         },
         (response) => {
-          this.alert.current.removeAlert(alert)
+          this.props.alert.removeAlert(alert)
           console.log('saved')
         },
         (response) => {
-          this.alert.current.removeAlert(alert)
+          this.props.alert.removeAlert(alert)
           console.log('Error saving pp', response)
         }
       )
@@ -148,44 +147,43 @@ export default class PlanPrise extends React.Component {
 
   render () {
     return (
-      <>
-        <Alert ref={this.alert} />
-        <Container>
-          <Row className="justify-content-center">
-            <Col xl={8}>
-              <Card>
+      <Container>
+        <Row className="justify-content-center">
+          <Col xl={8}>
+            <Card>
 
-                <Card.Header>
-                  {
-                    this.state.currentID === -1 ? "Nouveau Plan de Prise" : this.state.currentID === null ? "Que voulez-vous faire ? " : "Plan de prise n°" + this.state.currentID
-                  }
-                </Card.Header>
+              <Card.Header>
+                {
+                  this.state.currentID === -1 ? "Nouveau Plan de Prise" : this.state.currentID === null ? "Que voulez-vous faire ? " : "Plan de prise n°" + this.state.currentID
+                }
+              </Card.Header>
 
-                <Card.Body>
-                  {
-                    this.state.currentID === null ?
-                    <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} /> :
-                    <div>
-                      {
-                        this.state.currentContent ? <PPTable data={this.state.currentContent} setCustomData={this.handleCustomDataChange} alert={this.alert.current ? this.alert.current.addAlert : null} /> : null
-                      }
-                      <Search
-                        alert={this.alert.current ? this.alert.current.addAlert : null}
-                        modal={false}
-                        multiple={false}
-                        onSave={this.addToPP}
-                        type="cis"
-                        url={API_URL}
-                        />
-                    </div>
-                  }
-                </Card.Body>
+              <Card.Body>
+                {
+                  this.state.currentID === null ?
+                  <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} /> :
+                  <div>
+                    {
+                      this.state.currentContent ? <PPTable data={this.state.currentContent} setCustomData={this.handleCustomDataChange} /> : null
+                    }
+                    <Search
+                      alert={this.props.alert}
+                      modal={false}
+                      multiple={false}
+                      onSave={this.addToPP}
+                      type="cis"
+                      url={API_URL}
+                      />
+                  </div>
+                }
+              </Card.Body>
 
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      </>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     )
   }
 }
+
+export default alertManager(PlanPrise)

@@ -2,7 +2,6 @@ import React from 'react';
 
 import Search from '../generic/Search';
 import MedicamentInput from './MedicamentInput';
-import Alert from '../generic/Alert';
 
 import { getAPIFromCIS } from '../generic/functions';
 import { API_URL, SPINNER } from '../params';
@@ -13,7 +12,6 @@ export default class MedicamentForm extends React.Component {
     super(props)
 
     this.state = {
-      alert: [],
       isLoading: false,
       inputs: props.inputs,
       api_selected_detail: []
@@ -61,11 +59,9 @@ export default class MedicamentForm extends React.Component {
           resolve()
         },
         (response, deselect) => {
-          this.setState({
-            alert: [...this.state.alert, {
-              type: 'warning',
-              message: response
-            }]
+          this.props.alert.addAlert({
+            header: 'warning',
+            body: response
           })
           resolve({
             action: 'deselect',
@@ -118,8 +114,6 @@ export default class MedicamentForm extends React.Component {
         <div className="card-header">{ cardTitle }</div>
 
         <div className="card-body">
-
-          <Alert alert={this.state.alert} dismiss={() => this.setState({ alert: []})} />
 
           <h6>Correspondance dans la Base de Données Publique des Médicaments</h6>
           <ul className="list-unstyled">

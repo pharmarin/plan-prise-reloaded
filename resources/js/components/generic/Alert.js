@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Toast } from 'react-bootstrap';
 
-export default class Alert extends React.Component {
+class AlertWrapper extends React.Component {
 
   constructor (props) {
     super(props)
@@ -111,3 +111,34 @@ export default class Alert extends React.Component {
   }
 
 }
+
+function alertManager(WrappedComponent) {
+  return class extends React.Component {
+
+    constructor (props) {
+      super(props)
+      this.alert = React.createRef()
+    }
+
+    manageAlert = {
+      addAlert: (alert) => {
+        return this.alert.current.addAlert(alert)
+      },
+      removeAlert: (id) => {
+        return this.alert.current.removeAlert(id)
+      }
+    }
+
+    render() {
+      return (
+        <>
+          <AlertWrapper ref={this.alert} />
+          <WrappedComponent alert={this.manageAlert} {...this.props} />
+        </>
+      )
+    }
+
+  }
+}
+
+export default alertManager
