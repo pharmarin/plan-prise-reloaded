@@ -5,7 +5,7 @@
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "watch": "npm run development -- --watch",
         "watch-poll": "npm run watch -- --watch-poll",
-        "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js --disable-host-check",
         "prod": "npm run production",
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
@@ -33,9 +33,11 @@
     "dependencies": {
         "arrow-keys-react": "^1.0.6",
         "autosize": "^4.0.2",
+        "classnames": "^2.2.6",
         "is-json": "^2.0.1",
         "react-bootstrap": "^1.0.0-beta.12",
         "react-contenteditable": "^3.3.2",
+        "react-hot-loader": "^4.12.14",
         "styled-components": "^4.4.0"
     }
 }

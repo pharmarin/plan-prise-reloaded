@@ -13,8 +13,8 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
-.list-group-action {
-  &.hover, .focus {
-    @extend .list-group-action, :hover;
+.list-group-item-action {
+  &.hover, &.focus {
+    @extend .list-group-item-action, :focus;
   }
 }

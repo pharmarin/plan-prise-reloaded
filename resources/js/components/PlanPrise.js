@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-
-import axios from 'axios';
 import { Container, Row, Col, Card } from 'react-bootstrap';
+import axios from 'axios';
 
 import alertManager from './generic/Alert';
 import Search from './generic/Search';
