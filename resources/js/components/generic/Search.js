@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import { Button, Form, FormControl, InputGroup, ListGroup, Modal } from 'react-bootstrap';
+import axios from 'axios';
+import ArrowKeysReact from 'arrow-keys-react';
 
 import { getAPIFromCIS } from './functions';
 import { isEqual, removeDuplicates } from './utils';
@@ -17,6 +18,7 @@ export default class Search extends React.Component {
 
   get initialState () {
     return {
+      hover: null,
       isSearching: false,
       query: '',
       results: [],
@@ -28,6 +30,21 @@ export default class Search extends React.Component {
   constructor (props) {
     super(props)
     this.state = this.initialState
+
+    ArrowKeysReact.config({
+      left: () => {
+        console.log('left key detected.');
+      },
+      right: () => {
+        console.log('right key detected.');
+      },
+      up: () => {
+        console.log('up key detected.');
+      },
+      down: () => {
+        console.log('down key detected.');
+      }
+    })
   }
 
   componentDidMount () {
@@ -185,6 +202,7 @@ export default class Search extends React.Component {
           ref={(input) => this.searchInput = input}
           style={noBottomRadiusRight}
           value={this.state.query}
+          {...ArrowKeysReact.events}
           />
         {
           this.renderSaveButton()
