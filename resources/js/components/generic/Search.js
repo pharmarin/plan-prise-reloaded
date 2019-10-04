@@ -191,7 +191,7 @@ export default class Search extends React.Component {
         this.state.results.length > 0 ?
         <div>
           {
-            this.props.multiple ? <a href="#" className="text-muted text-italic mb-0" onClick={() => this.setState({ selected: this.state.results.map((result) => Number(result.codeCIS))})}><small>Suggestions ({ this.state.results.length })</small></a> : null
+            this.props.multiple ? <a href="#" className="text-muted text-italic mb-0" onClick={() => this.setState({ selected: this.state.results })}><small>Suggestions ({ this.state.results.length })</small></a> : null
           }
           <ListGroup>
             { !this.props.multiple ? <ListGroup.Item className="d-none"></ListGroup.Item> : null }
@@ -207,7 +207,7 @@ export default class Search extends React.Component {
                     }
                     <label className={"d-flex m-0" + (selected ? " font-weight-bold" : "")} htmlFor={result.codeCIS}>
                       <div>{checkboxIcon}</div>
-                      <div className="text-truncate flex-grow-1">{result.denomination}</div>
+                      <div className="text-truncate- flex-grow-1">{result.denomination}</div>
                       <div className="ml-2">({result.codeCIS})</div>
                     </label>
                   </a>
