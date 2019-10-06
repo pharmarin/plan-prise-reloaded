@@ -1,8 +1,14 @@
 import React from 'react';
-import { Form, FormCheck } from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import { Button, Form, FormCheck } from 'react-bootstrap';
 import autosize from 'autosize';
 
 class PPInput extends React.Component {
+
+  static propTypes = {
+    input: PropTypes.object, 
+    medicament: PropTypes.object
+  }
 
   textarea = []
 
@@ -57,47 +63,52 @@ class PPInput extends React.Component {
       <div key={input.id}>
         <p className="text-muted mb-0 ml-1" style={{fontSize: ".8em"}}>{input.label}</p>
         <div className="flex-fill mb-2 py-1">
-          {
-            (input.multiple || (needChoice && data.length > 1)) ?
-            data.map((item, index) => {
-              let customItemData = item.id && customData && customData[item.id] ? customData[item.id] : null,
-              customItemChecked = customItemData && customItemData.checked !== undefined ? customItemData.checked : item.population === null
-              return <div key={index}>
-                {
-                  (input.help && item[input.help]) ? <p className="text-muted font-italic ml-4 mb-0" style={{fontSize: ".8em"}}>{item[input.help]}</p> : null
-                }
-                <Form>
-                  <Form.Check
-                    type={input.multiple ? 'checkbox' : 'radio'}
-                    className="flex-fill mb-2"
-                    children={
-                      <>
-                        <FormCheck.Input
-                          type={input.multiple ? 'checkbox' : 'radio'}
-                          checked={customItemChecked}
-                          onChange={(event) => this.props.setCustomData({ parent: input.id, child: input.display, id: item.id }, { action: 'check', value: event.target.checked }, codeCIS)}
-                          />
-                        <FormCheck.Label className="d-flex">{
-                          this.renderContentEditable(
-                            { input: input, needChoice: needChoice },
-                            { customData: customItemData, data: item, codeCIS: codeCIS }
-                          )
-                        }</FormCheck.Label>
-                      </>
-                    }
-                    label={this.renderContentEditable(
-                      { input: input, needChoice: needChoice },
-                      { customData: customItemData, data: item, codeCIS: codeCIS }
-                    )}
-                    />
-                </Form>
-              </div>
-            }) :
-            this.renderContentEditable(
-              { input: input, needChoice: needChoice },
-              { customData: customData, data: (needChoice ? data[0] : data), codeCIS: codeCIS }
-            )
-          }
+          <>
+            {
+              (input.multiple || (needChoice && data.length > 1)) ?
+              data.map((item, index) => {
+                let customItemData = item.id && customData && customData[item.id] ? customData[item.id] : null,
+                    customItemChecked = customItemData && customItemData.checked !== undefined ? customItemData.checked : item.population === null
+                return <div key={index}>
+                  {
+                    (input.help && item[input.help]) ? <p className="text-muted font-italic ml-4 mb-0" style={{fontSize: ".8em"}}>{item[input.help]}</p> : null
+                  }
+                  <Form>
+                    <Form.Check
+                      type={input.multiple ? 'checkbox' : 'radio'}
+                      className="flex-fill mb-2"
+                      children={
+                        <>
+                          <FormCheck.Input
+                            type={input.multiple ? 'checkbox' : 'radio'}
+                            checked={customItemChecked}
+                            onChange={(event) => this.props.setCustomData({ parent: input.id, child: input.display, id: item.id }, { action: 'check', value: event.target.checked }, codeCIS)}
+                            />
+                          <FormCheck.Label className="d-flex">{
+                            this.renderContentEditable(
+                              { input: input, needChoice: needChoice },
+                              { customData: customItemData, data: item, codeCIS: codeCIS }
+                            )
+                          }</FormCheck.Label>
+                        </>
+                      }
+                      label={this.renderContentEditable(
+                        { input: input, needChoice: needChoice },
+                        { customData: customItemData, data: item, codeCIS: codeCIS }
+                      )}
+                      />
+                  </Form>
+                </div>
+              }) :
+              this.renderContentEditable(
+                { input: input, needChoice: needChoice },
+                { customData: customData, data: (needChoice ? data[0] : data), codeCIS: codeCIS }
+              )
+            }
+            {
+              input.multiple ? <Button variant="link">Ajouter une ligne</Button> : null
+            }
+          </>
         </div>
       </div>
     )
