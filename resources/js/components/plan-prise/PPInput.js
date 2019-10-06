@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Form, FormCheck, Input } from 'react-bootstrap';
+import { Form, FormCheck } from 'react-bootstrap';
 import autosize from 'autosize';
 
 class PPInput extends React.Component {
