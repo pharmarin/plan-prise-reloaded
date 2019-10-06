@@ -19,16 +19,21 @@ export default class PPCard extends React.Component {
   }
 
   render () {
-    let medicament = this.props.medicament
+    let { medicament, deleteLine, setCustomData } = this.props
     return (
       <Card className="mb-3">
         <Card.Header className="d-flex">
-          <Button variant="link" className="pl-0" onClick={() => this.setState({ isOpened: !this.state.isOpened })}>
-            {
-              this.state.isOpened ? <i className="far fa-caret-square-up"></i> : <i className="far fa-caret-square-down"></i>
-            }
-          </Button>
-          <div>
+          <div className="d-flex flex-column mr-2">
+            <Button variant="link" className="p-0" onClick={() => deleteLine(medicament.codeCIS, medicament.denomination)}>
+              <i className="fa fa-trash"></i>
+            </Button>
+            <Button variant="link" className="p-0" onClick={() => this.setState({ isOpened: !this.state.isOpened })}>
+              {
+                this.state.isOpened ? <i className="far fa-caret-square-up"></i> : <i className="far fa-caret-square-down"></i>
+              }
+            </Button>
+          </div>
+          <div className="w-100">
             <div className="d-flex">
               <div className="text-truncate flex-fill">
                 { medicament.denomination }
@@ -52,7 +57,7 @@ export default class PPCard extends React.Component {
                     return (
                       <div key={section.id} className={!this.state.isOpened && !section.collapse ? "col-md-12 d-flex justify-content-around" : section.class}>
                         {
-                          section.inputs.map((input) => <PPInput key={input.id} input={input} medicament={medicament} setCustomData={this.props.setCustomData} isShowed={section.collapse ? this.state.isOpened : true} />)
+                          section.inputs.map((input) => <PPInput key={input.id} input={input} medicament={medicament} setCustomData={setCustomData} isShowed={section.collapse ? this.state.isOpened : true} />)
                         }
                       </div>
                     )

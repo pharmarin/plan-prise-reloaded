@@ -50,6 +50,10 @@ class PlanPriseRepository
     $medicament = $this->medicament_repository->getMedicamentByCIS($value);
     $pp_exists = $this->initiatePP($pp_id);
 
+    if (in_array($value, $this->plan_prise->medic_data)) {
+      return $this->getReturnArray('error', ['data' => 'Ce médicament est déjà dans le plan de prise.']);
+    }
+
     $medic_data = array_merge($this->plan_prise->medic_data, array_wrap($value));
     $this->plan_prise->medic_data = $medic_data;
 
@@ -62,6 +66,20 @@ class PlanPriseRepository
   {
     if ($this->initiatePP($pp_id)) {
       $this->plan_prise->custom_data = array_filter($modifications);
+      $this->plan_prise->save();
+      return $this->getReturnArray('success');
+    } else {
+      return $this->getReturnArray('error', ['data' => 'PP not exists']);
+    }
+  }
+
+  public function deletePP ($pp_id, $value)
+  {
+    if ($this->initiatePP($pp_id)) {
+      $medic_data = $this->plan_prise->medic_data;
+      $this->plan_prise->medic_data = array_values(array_filter($medic_data, function ($cis) use ($value) {
+        return $cis != $value;
+      }));
       $this->plan_prise->save();
       return $this->getReturnArray('success');
     } else {

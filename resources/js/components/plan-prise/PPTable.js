@@ -6,8 +6,9 @@ export default class PPTable extends React.Component
 {
 
   render () {
+    let { data, ...props } = this.props
     return (
-      this.props.data.map((medicament) => <PPCard key={medicament.codeCIS} medicament={medicament} setCustomData={this.props.setCustomData} />)
+      this.props.data.map(medicament => <PPCard key={medicament.codeCIS} medicament={medicament} { ...props } />)
     )
   }
 

@@ -26,6 +26,7 @@ class PlanPrise extends React.Component {
     }
     if (props.currentpp) {
       let currentpp = JSON.parse(props.currentpp)
+      console.log(currentpp)
       defaultState.currentID = currentpp.pp_id
       defaultState.currentContent =  currentpp.medic_data_detail.map((medicament) => {
         medicament.custom_data.bdpm = [medicament.data]
@@ -74,6 +75,34 @@ class PlanPrise extends React.Component {
       (response) => {
         this.props.alert.removeAlert(alert)
         console.log('Error saving pp', response)
+      }
+    )
+  }
+
+  deleteLine = (cis, denomination = null) => {
+    let alert = this.props.alert.addAlert({
+      body: MESSAGES.planPrise.removeFromPP(denomination)
+    })
+    this.setState((state) => {
+      return {
+        currentContent: state.currentContent.filter(medicament => medicament.codeCIS != cis)
+      }
+    })
+    managePP(
+      this.state.currentID,
+      {
+        action: 'delete',
+        value: cis
+      },
+      (response) => {
+        this.props.alert.removeAlert(alert)
+      },
+      (response) => {
+        this.props.alert.removeAlert(alert)
+        this.props.alert.addAlert({
+          header: 'Error deleting line'
+        })
+        console.log('Error deleting line', response)
       }
     )
   }
@@ -162,7 +191,7 @@ class PlanPrise extends React.Component {
                   <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} /> :
                   <div>
                     {
-                      this.state.currentContent ? <PPTable data={this.state.currentContent} setCustomData={this.handleCustomDataChange} /> : null
+                      this.state.currentContent ? <PPTable data={this.state.currentContent} setCustomData={this.handleCustomDataChange} deleteLine={this.deleteLine} /> : null
                     }
                     <Search
                       alert={this.props.alert}

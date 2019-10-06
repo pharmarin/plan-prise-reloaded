@@ -46,6 +46,11 @@ class PlanPriseController extends Controller
             $this->pp_repository->editPP($pp_id, $request['value'])
           );
           break;
+        case 'delete':
+          return response()->json(
+            $this->pp_repository->deletePP($pp_id, $request['value'])
+          );
+          break;
         default:
           // code...
           break;
