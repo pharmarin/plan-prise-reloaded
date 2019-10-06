@@ -23,11 +23,11 @@ export default class PPCard extends React.Component {
     return (
       <Card className="mb-3">
         <Card.Header className="d-flex">
-          <div className="d-flex flex-column mr-2">
-            <Button variant="link" className="p-0" onClick={() => deleteLine(medicament.codeCIS, medicament.denomination)}>
+          <div className="d-flex flex-column mr-3">
+            <Button variant="link" className="p-0 text-danger" onClick={() => deleteLine(medicament.codeCIS, medicament.denomination)}>
               <i className="fa fa-trash"></i>
             </Button>
-            <Button variant="link" className="p-0" onClick={() => this.setState({ isOpened: !this.state.isOpened })}>
+            <Button variant="link" className="p-0 text-secondary" onClick={() => this.setState({ isOpened: !this.state.isOpened })}>
               {
                 this.state.isOpened ? <i className="far fa-caret-square-up"></i> : <i className="far fa-caret-square-down"></i>
               }
