@@ -3,5 +3,27 @@
 		{
 			"path": "/Users/Marin/Sites/plan-prise"
 		}
-	]
+	],
+	"settings": {
+    "files.associations": {
+      "*.js": "javascriptreact"
+		},
+		"search.exclude": {
+			"**/vendor": true
+		},
+		"files.watcherExclude": {
+			"**/vendor/**": true
+		},
+		"intelephense.files.exclude": [
+			"**/.git/**",
+			"**/.svn/**",
+			"**/.hg/**",
+			"**/CVS/**",
+			"**/.DS_Store/**",
+			"**/node_modules/**",
+			"**/bower_components/**",
+			"**/vendor/**/{Test,test,Tests,tests}/**",
+			"**/vendor/**"
+		],
+  }
 }
