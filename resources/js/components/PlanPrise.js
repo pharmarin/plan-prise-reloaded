@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import axios from 'axios';
 
 import alertManager from './generic/Alert';
 import Search from './generic/Search';
@@ -9,6 +8,7 @@ import PPTable from './plan-prise/PPTable';
 
 import MESSAGES from './messages.js';
 import { API_URL } from './params';
+import { inputs } from './plan-prise/inputs';
 import { managePP } from './generic/functions';
 
 class PlanPrise extends React.Component {
@@ -26,15 +26,14 @@ class PlanPrise extends React.Component {
     }
     if (props.currentpp) {
       let currentpp = JSON.parse(props.currentpp)
-      console.log(currentpp)
       defaultState.currentID = currentpp.pp_id
       defaultState.currentContent =  currentpp.medic_data_detail.map((medicament) => {
         medicament.custom_data.bdpm = [medicament.data]
         return {
           codeCIS: medicament.data.code_cis,
           denomination: medicament.data.denomination,
-          data: medicament.custom_data,
-          customData: currentpp.custom_data[medicament.data.code_cis] || {}
+          data: medicament.custom_data, //custom_data est une propriété de l'objet medic_data
+          customData: currentpp.custom_data && currentpp.custom_data[medicament.data.code_cis] ? currentpp.custom_data[medicament.data.code_cis] : {}
         }
       })
     }
@@ -138,27 +137,36 @@ class PlanPrise extends React.Component {
     }, 1000)
   }
 
-  handleCustomDataChange = (input, value, codeCIS) => {
+  handleCustomDataChange = (input, value, codeCIS, multiple = false) => {
     this.setState((state) => {
-      state.currentContent.map((medicament) => {
+      let currentContent = state.currentContent.map((medicament) => {
         if (medicament.codeCIS === codeCIS) {
           let parent = input.parent,
               child = input.child,
-              id = input.id
-          if (parent === "precautions") {
-            let commentaires = medicament.customData[parent] || {}
+            id = input.id
+          if (input.multiple === true) {
+            let currentState = medicament.customData[parent] || {}
             if (value.action === "value") {
-              commentaires[id] = {
-                ...commentaires[id],
-                commentaire: value.value
+              currentState[id] = {
+                ...currentState[id],
+                [child]: value.value
               }
             } else if (value.action === "check") {
-              commentaires[id] = {
-                ...commentaires[id],
+              currentState[id] = {
+                ...currentState[id],
                 checked: value.value
               }
+            } else if (value.action === "create") {
+              currentState = Object.assign(
+                currentState,
+                {
+                  [id]: {
+                    [child]: value.value
+                  }
+                }
+              )
             }
-            medicament.customData[parent] = commentaires
+            medicament.customData[parent] = currentState
           } else {
             medicament.customData[parent] = value.value
           }
@@ -168,7 +176,9 @@ class PlanPrise extends React.Component {
         }
       })
       this.saveModification()
-      return state
+      return {
+        currentContent: currentContent
+      }
     })
   }
 

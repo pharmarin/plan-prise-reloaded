@@ -12,7 +12,8 @@ class PlanPrise extends Model
   protected $appends = ['medic_data_detail'];
 
   protected $attributes = [
-    'medic_data' => '[]'
+    'medic_data' => '[]',
+    'custom_data' => '{}'
   ];
 
   protected $casts = [
