@@ -23,7 +23,7 @@ class PlanPriseRepository
     if ($this->initiatePP($pp_id) === true) {
       return $this->plan_prise;
     } else {
-      return null;
+      return abort(404);
     }
   }
 
@@ -31,6 +31,7 @@ class PlanPriseRepository
   {
     if ($pp_id > 0) {
       $this->plan_prise = PlanPrise::where('pp_id', $pp_id)->where('user_id', Auth::id())->first();
+      if (!$this->plan_prise) abort(404);
       return true;
     } else {
       $this->plan_prise->pp_id = $this->getNextID();
@@ -40,7 +41,7 @@ class PlanPriseRepository
   }
 
   private function getNextID () {
-    $max_id = PlanPrise::where('user_id', Auth::id())->max('pp_id');
+    $max_id = PlanPrise::where('user_id', Auth::id())->withTrashed()->max('pp_id');
     $max_id = $max_id ?: 0;
     return $max_id + 1;
   }
@@ -81,6 +82,15 @@ class PlanPriseRepository
         return $cis != $value;
       }));
       $this->plan_prise->save();
+      return $this->getReturnArray('success');
+    } else {
+      return $this->getReturnArray('error', ['data' => 'PP not exists']);
+    }
+  }
+
+  public function destroyPP ($pp_id) {
+    if ($this->initiatePP($pp_id)) {
+      $this->plan_prise->delete();
       return $this->getReturnArray('success');
     } else {
       return $this->getReturnArray('error', ['data' => 'PP not exists']);

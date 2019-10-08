@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card } from 'react-bootstrap';
 
 import alertManager from './generic/Alert';
 import Search from './generic/Search';
@@ -7,7 +7,7 @@ import PPSelect from './plan-prise/PPSelect';
 import PPCard from './plan-prise/PPCard';
 
 import MESSAGES from './messages.js';
-import { API_URL } from './params';
+import { API_URL, SPINNER } from './params';
 import { managePP } from './generic/functions';
 
 class PlanPrise extends React.Component {
@@ -19,7 +19,12 @@ class PlanPrise extends React.Component {
 
   initStateWithProps = (props) => {
     let defaultState = {
-      loading: false,
+      isLoading: {
+        state: false,
+        message: "",
+        startLoading: function (message = "") { this.state = true; this.message = message; return this; },
+        stopLoading: function () { this.state = false; this.message = ""; return this; }
+      },
       currentID: null,
       currentContent: []
     }
@@ -39,6 +44,7 @@ class PlanPrise extends React.Component {
     return defaultState
   }
 
+  // #region PPCard methods
   addToPP = (values) => {
     let medicament = {
           ...values[0],
@@ -180,6 +186,38 @@ class PlanPrise extends React.Component {
       }
     })
   }
+  //#endregion
+
+  // #region PP methods
+  deletePP = (event) => {
+    event.preventDefault()
+    this.setState({ isLoading: this.state.isLoading.startLoading("Suppression du plan de prise en cours... ") })
+    managePP(
+      this.state.currentID,
+      {
+        action: 'destroy',
+      },
+      (response) => {
+        this.setState({
+          isLoading: this.state.isLoading.stopLoading(),
+          currentID: null,
+          currentContent: []
+        })
+      },
+      (response) => {
+        this.setState({
+          isLoading: this.state.isLoading.stopLoading()
+        })
+        this.props.alert.addAlert({
+          header: "Erreur",
+          body: "Impossible de supprimer le plan de prise, veuillez réessayer. ",
+          delay: 10000
+        })
+        console.log('Error destroying pp', response)
+      }
+    )
+  }
+  // #endregion
 
   render () {
     return (
@@ -188,35 +226,48 @@ class PlanPrise extends React.Component {
           <Col xl={8}>
             <Card>
 
-              <Card.Header>
-                {
-                  this.state.currentID === -1 ? "Nouveau Plan de Prise" : this.state.currentID === null ? "Que voulez-vous faire ? " : "Plan de prise n°" + this.state.currentID
-                }
+              <Card.Header className="d-flex">
+                <div className="flex-fill">
+                  {
+                    this.state.currentID === -1 ? "Nouveau Plan de Prise" : this.state.currentID === null ? "Que voulez-vous faire ? " : "Plan de prise n°" + this.state.currentID
+                  }
+                </div>
+                <div>
+                  {
+                    this.state.currentID > 0 && !this.state.isLoading.state ?
+                      <Button variant="link" className="text-danger py-0" onClick={this.deletePP}>
+                        <i className="fa fa-trash"></i>
+                      </Button> :
+                      null
+                  }
+                </div>
               </Card.Header>
 
               <Card.Body>
                 {
-                  this.state.currentID === null ?
-                  <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} /> :
-                  <div>
-                    {
-                        this.state.currentContent ? this.state.currentContent.map(medicament =>
-                        <PPCard
-                            key={medicament.codeCIS}
-                            medicament={medicament}
-                            setCustomData={this.handleCustomDataChange} deleteLine={this.deleteLine}
-                          />
-                        ) : null
-                    }
-                    <Search
-                      alert={this.props.alert}
-                      modal={false}
-                      multiple={false}
-                      onSave={this.addToPP}
-                      type="cis"
-                      url={API_URL}
-                      />
-                  </div>
+                  this.state.isLoading.state ?
+                    <div>{SPINNER}<span className="ml-3">{this.state.isLoading.message}</span></div> :
+                    this.state.currentID === null ?
+                    <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} /> :
+                    <div>
+                      {
+                          this.state.currentContent ? this.state.currentContent.map(medicament =>
+                          <PPCard
+                              key={medicament.codeCIS}
+                              medicament={medicament}
+                              setCustomData={this.handleCustomDataChange} deleteLine={this.deleteLine}
+                            />
+                          ) : null
+                      }
+                      <Search
+                        alert={this.props.alert}
+                        modal={false}
+                        multiple={false}
+                        onSave={this.addToPP}
+                        type="cis"
+                        url={API_URL}
+                        />
+                    </div>
                 }
               </Card.Body>
 

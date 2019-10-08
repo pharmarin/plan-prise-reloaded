@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PlanPrise extends Model
 {
+
+  use SoftDeletes;
 
   protected $table = 'plans_prise';
 
@@ -24,7 +27,7 @@ class PlanPrise extends Model
   public $api_repository;
 
   public function __construct () {
-    $this->api_repository = resolve('App\Repositories\MedicamentAPIRepository');
+    $this->api_repository = resolve('App\Repositories\MedicamentAPIRepository');parent::__construct();
   }
 
   public function user_id ()

@@ -20,6 +20,7 @@ class CreatePlansPriseTable extends Migration
             $table->text('medic_data');
             $table->text('custom_data')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::table('plans_prise', function ($table) {

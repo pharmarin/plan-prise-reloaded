@@ -51,6 +51,11 @@ class PlanPriseController extends Controller
             $this->pp_repository->deletePP($pp_id, $request['value'])
           );
           break;
+        case 'destroy':
+          return response()->json(
+            $this->pp_repository->destroyPP($pp_id)
+          );
+          break;
         default:
           // code...
           break;
