@@ -4,11 +4,10 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 import alertManager from './generic/Alert';
 import Search from './generic/Search';
 import PPSelect from './plan-prise/PPSelect';
-import PPTable from './plan-prise/PPTable';
+import PPCard from './plan-prise/PPCard';
 
 import MESSAGES from './messages.js';
 import { API_URL } from './params';
-import { inputs } from './plan-prise/inputs';
 import { managePP } from './generic/functions';
 
 class PlanPrise extends React.Component {
@@ -201,7 +200,13 @@ class PlanPrise extends React.Component {
                   <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} /> :
                   <div>
                     {
-                      this.state.currentContent ? <PPTable data={this.state.currentContent} setCustomData={this.handleCustomDataChange} deleteLine={this.deleteLine} /> : null
+                        this.state.currentContent ? this.state.currentContent.map(medicament =>
+                        <PPCard
+                            key={medicament.codeCIS}
+                            medicament={medicament}
+                            setCustomData={this.handleCustomDataChange} deleteLine={this.deleteLine}
+                          />
+                        ) : null
                     }
                     <Search
                       alert={this.props.alert}
