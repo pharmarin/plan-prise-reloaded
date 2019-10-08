@@ -29,7 +29,7 @@ export default class PPInput extends React.Component {
       return <span>{value}</span>
     }
     return (
-      <Form.Control as="textarea" rows={1} className="flex-fill border-light" value={value} ref={(input) => this.textarea = input} onChange={(event) => this.props.setCustomData({ parent: input.id, child: display, id: (data ? data.id : null), readOnly: input.readOnly, multiple: input.multiple }, { action: 'value', value: event.target.value }, codeCIS)} />
+      <Form.Control as="textarea" rows={1} className="flex-fill" value={value} ref={(input) => this.textarea = input} onChange={(event) => this.props.setCustomData({ parent: input.id, child: display, id: (data ? data.id : null), readOnly: input.readOnly, multiple: input.multiple }, { action: 'value', value: event.target.value }, codeCIS)} />
     )
   }
 
