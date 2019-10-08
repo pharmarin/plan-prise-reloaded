@@ -1,5 +1,5 @@
 import React from 'react';
-
+import uniqid from 'uniqid';
 import { Toast } from 'react-bootstrap';
 
 class AlertWrapper extends React.Component {
@@ -28,7 +28,7 @@ class AlertWrapper extends React.Component {
   }
 
   addAlert = (alert) => {
-    let id = Math.floor(Math.random() * 100000)
+    let id = uniqid()
     alert.id = id
     alert.time = (new Date()).getTime()
     alert.show = false
@@ -42,7 +42,7 @@ class AlertWrapper extends React.Component {
             return alert
           })
         }
-      })
+      }, () => setTimeout(() => this.removeAlert(id), alert.delay))
     })
     return alert.id
   }
@@ -93,11 +93,13 @@ class AlertWrapper extends React.Component {
         {
           this.state.alerts.map(
             (alert) =>
-            <Toast key={alert.id} className="ml-auto" show={alert.show} onClose={() => this.removeAlert(alert.id)} autohide={!(alert.delay === undefined)} delay={alert.delay}>
+            <Toast key={alert.id} className="ml-auto" show={alert.show} onClose={() => this.removeAlert(alert.id)}>
               {
                 alert.header ? <Toast.Header>
                   <strong className="mr-auto">{ alert.header }</strong>
-                  <small>{ this.getTime(this.state.currentTime - alert.time) }</small>
+                    {
+                      alert.delay ? null : <small>{this.getTime(this.state.currentTime - alert.time)}</small>
+                    }
                 </Toast.Header> : null
               }
               {
