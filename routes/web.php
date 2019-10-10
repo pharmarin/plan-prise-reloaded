@@ -21,7 +21,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['approved'])->group(function () {
         Route::post('medicament/custom/get', 'MedicamentController@getDetailFromCIS')->name('medicament.custom.get');
         // PlanPrise
-        Route::get('plan-prise/{pp_id?}', 'PlanPriseController@index');
+        Route::get('plan-prise/{pp_id?}', 'PlanPriseController@index')->name('plan-prise.index');
         Route::post('plan-prise/api', 'PlanPriseController@api')->name('plan-prise.api');
 
         Route::middleware(['admin'])->group(function () {

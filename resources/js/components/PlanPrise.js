@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Container, Row, Col, Card } from 'react-bootstrap';
+import { createBrowserHistory } from 'history';
 
 import alertManager from './generic/Alert';
 import Search from './generic/Search';
@@ -15,6 +16,9 @@ class PlanPrise extends React.Component {
   constructor (props) {
     super(props)
     this.state = this.initStateWithProps(props)
+    this.history = createBrowserHistory({
+      basename: document.head.querySelector('meta[name="plan-prise-base-url"]').getAttribute('content')
+    })
   }
 
   initStateWithProps = (props) => {
@@ -198,11 +202,7 @@ class PlanPrise extends React.Component {
         action: 'destroy',
       },
       (response) => {
-        this.setState({
-          isLoading: this.state.isLoading.stopLoading(),
-          currentID: null,
-          currentContent: []
-        })
+        this.resetPP()
       },
       (response) => {
         this.setState({
@@ -218,6 +218,14 @@ class PlanPrise extends React.Component {
     )
   }
   // #endregion
+
+  resetPP = () => {
+    this.setState({
+      isLoading: this.state.isLoading.stopLoading(),
+      currentID: null,
+      currentContent: []
+    }, () => this.history.push('/'))
+  }
 
   render () {
     return (
