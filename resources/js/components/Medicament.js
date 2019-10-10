@@ -2,6 +2,7 @@ import React from 'react';
 
 import { inputs } from './medicament/inputs';
 import MedicamentForm from './medicament/MedicamentForm';
+import alertManager from './generic/Alert';
 
 export default class Medicament extends React.Component {
 
@@ -40,7 +41,7 @@ export default class Medicament extends React.Component {
       this.medicFromAPI = edit.bdpm
 
       this.newInputs.custom_denomination.defaultValue = edit.custom_denomination
-      this.newInputs.custom_indications.defaultValue = JSON.parse(edit.custom_indications)
+      this.newInputs.custom_indications.defaultValue = edit.custom_indications
       this.newInputs.conservation_frigo.defaultValue = edit.conservation_frigo
       this.newInputs.conservation_duree.defaultValue = edit.conservation_duree
       this.newInputs.voies_administration.defaultValue = JSON.parse(edit.voies_administration)
@@ -118,7 +119,7 @@ export default class Medicament extends React.Component {
   }
 
   render () {
-    return <MedicamentForm method={this.method} inputs={this.newInputs} fromAPI={this.medicFromAPI} {...this.props} />
+    return <MedicamentForm method={this.method} inputs={this.newInputs} fromAPI={this.medicFromAPI} {...this.props} alert={this.props.alert} />
   }
 
 }

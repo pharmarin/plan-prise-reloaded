@@ -1,5 +1,12 @@
 const mix = require('laravel-mix');
 
+mix.options({
+    hmrOptions: {
+        host: '192.168.1.15',
+        port: 8090,
+    }
+})
+
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management

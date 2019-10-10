@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ruleset name="Selective Standard">
+
+ <rule ref="Squiz">
+  <!-- Indentation doit être d'au moins 4 espaces -->
+  <exclude name="Generic.WhiteSpace.ScopeIndent"/>
+  <!-- Les fichiers contenant des classes doivent être nommés .inc -->
+  <exclude name="Squiz.Files.FileExtension.ClassFound"/>
+  <!-- Chaque fichier doit avoir un commentaire explicatif (doublon avec commentaire de classe) -->
+  <exclude name="PEAR.Commenting.FileComment.Missing"/>
+ </rule>
+
+</ruleset>

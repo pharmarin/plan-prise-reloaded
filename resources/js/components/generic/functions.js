@@ -19,7 +19,7 @@ export async function getAPIFromCIS (cisArray, onSuccessCallback, onErrorCallbac
   }
 }
 
-export async function getMedicamentFromCIS (cisArray, onSuccessCallback, onErrorCallback) {
+/*export async function getMedicamentFromCIS (cisArray, onSuccessCallback, onErrorCallback) {
   let route = document.head.querySelector('meta[name="medicament-custom"]').getAttribute('content')
   try {
     await axios.post(route, {
@@ -31,6 +31,30 @@ export async function getMedicamentFromCIS (cisArray, onSuccessCallback, onError
         onSuccessCallback(jsonResponse, response.data.deselect)
       } else {
         onErrorCallback(response.data.data, response.data.deselect)
+      }
+      return true
+    })
+  } catch (error) {
+    console.log(error)
+    return true
+  }
+}*/
+
+export async function managePP (pp_id, pp_data, onSuccessCallback, onErrorCallback) {
+  let route = document.head.querySelector('meta[name="plan-prise-api"]').getAttribute('content')
+  try {
+    await axios.post(route, {
+      pp_id: pp_id,
+      request: {
+        action: pp_data.action,
+        value: pp_data.value
+      }
+    })
+    .then((response) => {
+      if (response.data.status === 'success') {
+        onSuccessCallback(response.data.data)
+      } else {
+        onErrorCallback(response.data.data)
       }
       return true
     })

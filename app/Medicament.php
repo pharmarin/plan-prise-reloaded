@@ -10,10 +10,15 @@ class Medicament extends Model
 {
     protected $table = 'custom_medics';
 
-    protected $appends = ['precautions', 'indications', 'voies_administration_string', 'voies_administration_array'];
+    protected $appends = ['precautions', 'voies_administration_string', 'voies_administration_array'];
 
     public function bdpm () {
       return $this->hasMany('App\MedicamentAPI');
+    }
+
+    // Add attribute
+    public function getCustomIndicationsAttribute ($custom_indications) {
+      return json_decode($custom_indications);
     }
 
     public function getPrecautionsAttribute () {
@@ -35,9 +40,9 @@ class Medicament extends Model
     // Edit attribute
     public function getConservationDureeAttribute ($conservation_array) {
       $conservation_array = json_decode($conservation_array);
-      return array_filter($conservation_array, function ($conservation) use ($conservation_array) {
-        return count($conservation_array) < 2 || !($conservation->laboratoire === null) && !($conservation->duree === null);
-      });
+      return array_filter(array_map(function ($conservation) {
+        return ($conservation->laboratoire === null && $conservation->duree === null) ? null : $conservation;
+      }, $conservation_array));
     }
 
     // Add attribute
@@ -47,17 +52,6 @@ class Medicament extends Model
 
     public function getDCIAttribute () {
       return $medicamentAPI = $this->bdpm()->first()->compositions_string;
-    }
-
-    // Add attribute
-    public function getIndicationsAttribute () {
-      if ($customIndications = json_decode($this->custom_indications)) {
-        return array_map(function ($indication) {
-          return $indication->custom_indications;
-        }, $customIndications);
-      } else {
-        return [];
-      }
     }
 
     // Add attribute

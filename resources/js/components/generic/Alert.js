@@ -1,8 +1,8 @@
 import React from 'react';
-
+import uniqid from 'uniqid';
 import { Toast } from 'react-bootstrap';
 
-export default class Alert extends React.Component {
+class AlertWrapper extends React.Component {
 
   constructor (props) {
     super(props)
@@ -28,19 +28,39 @@ export default class Alert extends React.Component {
   }
 
   addAlert = (alert) => {
-    alert.id = Math.floor(Math.random() * 100000)
+    let id = uniqid()
+    alert.id = id
     alert.time = (new Date()).getTime()
+    alert.show = false
     this.setState({
       alerts: [...this.state.alerts, alert]
+    }, () => {
+      this.setState((state) => {
+        return {
+          alerts: state.alerts.map((alert) => {
+            if (alert.id === id) alert.show = true
+            return alert
+          })
+        }
+      }, () => setTimeout(() => this.removeAlert(id), alert.delay))
     })
+    return alert.id
   }
 
   removeAlert = (id) => {
     this.setState((state) => {
       return {
-        alerts: state.alerts.filter((alert) => alert.id !== id)
+        alerts: state.alerts.map((alert) => {
+          if (alert.id === id) alert.show = false
+          return alert
+        })
       }
     })
+    setTimeout(() => this.setState((state) => {
+      return {
+        alerts: state.alerts.filter((alert) => alert.id !== id)
+      }
+    }), 500)
   }
 
   getTime = (diff) => {
@@ -63,8 +83,8 @@ export default class Alert extends React.Component {
         aria-live="polite"
         aria-atomic="true"
         style={{
-          position: 'absolute',
-          top: 60,
+          position: 'fixed',
+          top: 5,
           right: 5,
           width: '100%',
           zIndex: 1000
@@ -73,11 +93,13 @@ export default class Alert extends React.Component {
         {
           this.state.alerts.map(
             (alert) =>
-            <Toast key={alert.id} className="ml-auto" onClose={() => this.removeAlert(alert.id)} autohide={!(alert.delay === undefined)} delay={alert.delay}>
+            <Toast key={alert.id} className="ml-auto" show={alert.show} onClose={() => this.removeAlert(alert.id)}>
               {
                 alert.header ? <Toast.Header>
                   <strong className="mr-auto">{ alert.header }</strong>
-                  <small>{ this.getTime(this.state.currentTime - alert.time) }</small>
+                    {
+                      alert.delay ? null : <small>{this.getTime(this.state.currentTime - alert.time)}</small>
+                    }
                 </Toast.Header> : null
               }
               {
@@ -91,3 +113,34 @@ export default class Alert extends React.Component {
   }
 
 }
+
+function alertManager(WrappedComponent) {
+  return class extends React.Component {
+
+    constructor (props) {
+      super(props)
+      this.alert = React.createRef()
+    }
+
+    manageAlert = {
+      addAlert: (alert) => {
+        return this.alert.current.addAlert(alert)
+      },
+      removeAlert: (id) => {
+        return this.alert.current.removeAlert(id)
+      }
+    }
+
+    render() {
+      return (
+        <>
+          <AlertWrapper ref={this.alert} />
+          <WrappedComponent alert={this.manageAlert} {...this.props} />
+        </>
+      )
+    }
+
+  }
+}
+
+export default alertManager

@@ -15,20 +15,18 @@ class CreatePlansPriseTable extends Migration
     {
         Schema::create('plans_prise', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('pp_id')->unsigned();
             $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('pp_id');
-            $table->bigInteger('bdpm_id')->unsigned();
+            $table->text('medic_data');
+            $table->text('custom_data')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::table('plans_prise', function ($table) {
             $table->foreign('user_id')
               ->references('id')
               ->on('users')
-              ->onDelete('cascade');
-            $table->foreign('bdpm_id')
-              ->references('id')
-              ->on('bdpm_medics')
               ->onDelete('cascade');
         });
     }
@@ -42,7 +40,6 @@ class CreatePlansPriseTable extends Migration
     {
       Schema::table('plans_prise', function(Blueprint $table) {
         $table->dropForeign('plans_prise_user_id_foreign');
-        $table->dropForeign('plans_prise_bdpm_id_foreign');
       });
       Schema::drop('plans_prise');
     }

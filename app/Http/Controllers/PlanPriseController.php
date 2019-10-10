@@ -2,28 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
 use App\PlanPrise;
-use App\Repositories\MedicamentRepository;
+use App\Repositories\PlanPriseRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PlanPriseController extends Controller
 {
-    private $user_id;
-
-    private $plan;
-
-    private $medicament_repository;
+    private $pp_repository;
 
     /**
      * Only accept ajax calls
      */
-    public function __construct (PlanPrise $plan, MedicamentRepository $medicament_repository)
+    public function __construct (PlanPriseRepository $pp_repository)
     {
       $this->middleware('ajax', ['only' => 'create']);
-      $this->plan = $plan;
-      $this->medicament_repository = $medicament_repository;
+      $this->pp_repository = $pp_repository;
     }
 
     /**
@@ -31,120 +24,41 @@ class PlanPriseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index ($pp_id = null)
     {
-      //return $this->addToPlanPrise(-1, ['value' => '67851855', 'label' => 'test']);
-      return view('plan-prise.plan');
+      $current_pp = $pp_id > 0 ? $this->pp_repository->getPP($pp_id) : null;
+      return view('plan-prise.plan')->with(compact('current_pp'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    /*public function create()
+    public function api (Request $request)
     {
-        //
-    }*/
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-      $id = $request->input('id');
-      $data = $request->input('data');
-      $this->addToPlanPrise($id, $data);
-    }
-
-    /**
-     * Add to Plan de prise or Create a new Plan de prise and add the medicine to it
-     * @param int $id ID of the current plan de prise or -1 to create a new one
-     * @param array $data Array with the CIS number of the medicine selected in search field + Denomation returned by OpenMedicament
-     */
-    public function addToPlanPrise ($id, $data)
-    {
-      $this->user_id = Auth::id();
-      $pp_id = $id < 0 ? $this->getNextPlanPriseID() : $id;
-      $codeCIS = $data['value'];
-      $denomination = $data['label'];
-
-      $medicament = $this->getMedicamentID($codeCIS);
-
-      $this->plan->pp_id = $pp_id;
-      $this->plan->user_id = $this->user_id;
-      $this->plan->bdpm_id = $medicament;
-      $this->plan->save();
-
-      //$pp_content = User::find($this->user_id)->plans_prise->where('pp_id', 3);
-
-      var_dump($medicament);
-    }
-
-    /**
-     * Get the next available ID for the Plan de prise of the current user. If the current user has no Plan de prise, the cout begins with 1.
-     * @return Int New ID of the plan de prise
-     */
-    private function getNextPlanPriseID () {
-      $id = User::find($this->user_id)->plans_prise->max('pp_id');
-      if (!$id) {
-        $id = 0;
+      //var_dump($request->all());
+      $pp_id = $request->input('pp_id');
+      $request = $request->input('request');
+      switch ($request['action']) {
+        case 'store':
+          return response()->json(
+            $this->pp_repository->storePP($pp_id, $request['value'])
+          );
+          break;
+        case 'edit':
+          return response()->json(
+            $this->pp_repository->editPP($pp_id, $request['value'])
+          );
+          break;
+        case 'delete':
+          return response()->json(
+            $this->pp_repository->deletePP($pp_id, $request['value'])
+          );
+          break;
+        case 'destroy':
+          return response()->json(
+            $this->pp_repository->destroyPP($pp_id)
+          );
+          break;
+        default:
+          // code...
+          break;
       }
-      return $id + 1;
-    }
-
-    private function getMedicamentID ($codeCIS) {
-      $medicament = Medicament::where('code_cis', $codeCIS);
-      if ($medicament->count() > 0) {
-        return $medicament->first()->id;
-      }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\PlanPrise  $planPrise
-     * @return \Illuminate\Http\Response
-     */
-    public function show(PlanPrise $planPrise)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\PlanPrise  $planPrise
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(PlanPrise $planPrise)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\PlanPrise  $planPrise
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, PlanPrise $planPrise)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\PlanPrise  $planPrise
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(PlanPrise $planPrise)
-    {
-        //
     }
 }

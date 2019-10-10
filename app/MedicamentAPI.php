@@ -13,7 +13,7 @@ class MedicamentAPI extends Model
 
     protected $appends = ['associated_precautions', 'compositions_array', 'compositions_string'];
 
-    public function customValues () {
+    public function custom_values () {
       return $this->belongsTo('App\Medicament', 'medicament_id');
     }
 

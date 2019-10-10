@@ -42,7 +42,7 @@ class MedicamentRepository {
   }
 
   public function getMedicamentByCIS ($cis) {
-    return optional($this->medicamentAPI::where('code_cis', $cis)->first())->customValues;
+    return optional($this->medicamentAPI::where('code_cis', $cis)->first())->custom_values;
   }
 
 
