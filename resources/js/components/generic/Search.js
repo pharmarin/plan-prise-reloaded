@@ -211,15 +211,12 @@ export default class Search extends React.Component {
             value={this.state.query}
             {...ArrowKeysReact.events}
             />
-          {
-            this.renderSaveButton()
-          }
         </InputGroup>
         {
           this.state.results.length > 0 ?
           <div>
             {
-              this.props.multiple ? <a href="#" className="text-muted text-italic mb-0" onClick={() => this.setState({ selected: this.state.results.map((result) => Number(result.codeCIS))})}><small>Suggestions ({ this.state.results.length })</small></a> : null
+              this.props.multiple ? <a href="#" className="text-muted text-italic mb-0" onClick={() => this.setState({ selected: this.state.results })}><small>Suggestions ({ this.state.results.length })</small></a> : null
             }
             <ListGroup>
               { !this.props.multiple ? <ListGroup.Item className="d-none"></ListGroup.Item> : null }
