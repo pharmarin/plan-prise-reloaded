@@ -210,7 +210,10 @@ export default class Search extends React.Component {
             style={noBottomRadiusRight}
             value={this.state.query}
             {...ArrowKeysReact.events}
-            />
+          />
+          {
+            this.renderSaveButton()
+          }
         </InputGroup>
         {
           this.state.results.length > 0 ?
