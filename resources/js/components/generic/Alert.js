@@ -42,8 +42,9 @@ class AlertWrapper extends React.Component {
             return alert
           })
         }
-      }, () => setTimeout(() => this.removeAlert(id), alert.delay))
+      }, () => alert.delay ? setTimeout(() => this.removeAlert(id), alert.delay) : null)
     })
+    console.log('Added alert for ' + alert.delay + ' ms')
     return alert.id
   }
 

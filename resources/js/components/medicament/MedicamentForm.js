@@ -60,8 +60,8 @@ export default class MedicamentForm extends React.Component {
         },
         (response, deselect) => {
           this.props.alert.addAlert({
-            header: 'warning',
-            body: response
+            header: 'Médicaments non commercialisés',
+            body: response,
           })
           resolve({
             action: 'deselect',

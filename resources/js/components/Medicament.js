@@ -4,7 +4,7 @@ import { inputs } from './medicament/inputs';
 import MedicamentForm from './medicament/MedicamentForm';
 import alertManager from './generic/Alert';
 
-export default class Medicament extends React.Component {
+class Medicament extends React.Component {
 
   constructor (props) {
     super(props)
@@ -13,7 +13,7 @@ export default class Medicament extends React.Component {
 
     for (var key in this.newInputs) {
       if (this.newInputs.hasOwnProperty(key)) {
-        this.newInputs[key].defaultValue = this.newInputs[key].emptyObject
+        this.newInputs[key].defaultValue = this.newInputs[key].emptyObject()
       }
     }
 
@@ -106,12 +106,10 @@ export default class Medicament extends React.Component {
             default: value =  0; break;
           }
           return [{[inputName]: value.toString()}]
-          break;
         case 'custom_indications':
           return string.split(' OU ').map((indication) => {
             return {[inputName]: indication}
           })
-          break;
         default:
           return [{[inputName]: string}]
       }
@@ -119,7 +117,9 @@ export default class Medicament extends React.Component {
   }
 
   render () {
-    return <MedicamentForm method={this.method} inputs={this.newInputs} fromAPI={this.medicFromAPI} {...this.props} alert={this.props.alert} />
+    return <MedicamentForm method={this.method} inputs={this.newInputs} fromAPI={this.medicFromAPI} {...this.props} />
   }
 
 }
+
+export default alertManager(Medicament)

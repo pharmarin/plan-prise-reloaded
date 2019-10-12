@@ -5,6 +5,19 @@ import GenericInput from '../generic/GenericInput';
 export default class MedicamentInput extends React.Component
 {
 
+  constructor(props) {
+    super(props)
+    if (Array.isArray(props.inputValues) && props.inputValues.length === 0) {
+      this.addInputLine()
+    }
+  }
+
+  componentDidUpdate() {
+    if (Array.isArray(this.props.inputValues) && this.props.inputValues.length === 0) {
+      this.addInputLine()
+    }
+  }
+
   handleInputChange = (event) => {
     let target = event.target,
         name = target.getAttribute('child'),
@@ -17,14 +30,13 @@ export default class MedicamentInput extends React.Component
       var oldState = this.props.inputValues
       oldState[key][name] = value
       newState = oldState
-      console.log(key, oldState[key], oldState)
     }
     this.props.setState(newState)
   }
 
   getInputLine = (inputObject, inputParent, index) => {
     var inputLine = []
-    let inputProperties = this.props.inputProperties
+    let { inputProperties } = this.props
     for (var inputName in inputProperties.inputs) {
       let inputValueOrEmptyString = inputObject[inputName] !== null ? inputObject[inputName] : ""
       inputLine.push(
@@ -34,22 +46,23 @@ export default class MedicamentInput extends React.Component
     return inputLine
   }
 
-  addInputLine = (event, inputName) => {
-    event.preventDefault()
-    this.props.setState(this.props.inputValues.concat(this.props.inputProperties.emptyObject()))
+  addInputLine = (event = null, inputName) => {
+    if (event) {
+      event.preventDefault()
+    }
+    let inputValues = typeof this.props.inputValues === 'object' ? this.props.inputValues : {}
+    this.props.setState(inputValues.concat(this.props.inputProperties.emptyObject()))
   }
 
   removeInputLine = (event, inputName, key) => {
     event.preventDefault()
-    let inputValues = this.props.inputValues
+    let { inputValues } = this.props
     inputValues.splice(key, 1)
     this.props.setState(inputValues)
   }
 
   render () {
-    let inputName = this.props.inputName,
-        inputValues = this.props.inputValues,
-        inputProperties = this.props.inputProperties,
+    let { inputName, inputValues, inputProperties } = this.props,
         returnComponents = []
 
     if (inputProperties.isRepeated) {
