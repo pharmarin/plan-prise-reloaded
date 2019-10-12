@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Tous les médicaments')
+@section('title')
+  @if (request()->get('query'))
+    Résultats de la recherche pour "{{ request()->get('query') }}"
+  @else
+    Tous les médicaments
+  @endif
+@endsection
 
 @section('content')
     <div class="container">
