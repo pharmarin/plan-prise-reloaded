@@ -19,7 +19,8 @@ mix.options({
 |
 */
 
-mix.react('resources/js/medicament.js', 'public/js')
+mix.js('resources/js/app.js', 'public/js')
+  .react('resources/js/medicament.js', 'public/js')
   .react('resources/js/medicament-update.js', 'public/js')
   .react('resources/js/plan-prise.js', 'public/js')
   .sass('resources/sass/app.scss', 'public/css')
@@ -33,8 +34,11 @@ mix.react('resources/js/medicament.js', 'public/js')
     'lodash',
     'react-bootstrap'
   ])
+  .autoload({
+    jquery: ['$', 'window.jQuery', 'jQuery', 'jquery'],
+  })
   .version()
-  .sourceMaps()
+  //.sourceMaps()
   /*
   .webpackConfig({
     plugins: [

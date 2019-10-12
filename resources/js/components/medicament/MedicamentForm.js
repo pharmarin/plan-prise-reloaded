@@ -21,7 +21,7 @@ export default class MedicamentForm extends React.Component {
       this.state[input] = props.inputs[input].defaultValue
     }
 
-    if (this.props.fromAPI) {
+    if (this.props.fromAPI && this.props.fromAPI[0] !== undefined) {
       this.state.api_selected_detail = this.props.fromAPI
       this.state.inputs.commentaires.inputs.cible_id.options = this.getSubstancesActivesObject(this.props.fromAPI[0].compositions_array)
     }

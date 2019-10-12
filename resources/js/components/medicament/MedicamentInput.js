@@ -8,17 +8,16 @@ export default class MedicamentInput extends React.Component
   handleInputChange = (event) => {
     let target = event.target,
         name = target.getAttribute('child'),
-        parent = target.getAttribute('name').split('[')[0],
         key = target.getAttribute('index'),
         value = target.type === 'checkbox' ? target.checked : target.value,
         newState = {}
-
     if (key == undefined) {
       newState = value
     } else {
       var oldState = this.props.inputValues
       oldState[key][name] = value
       newState = oldState
+      console.log(key, oldState[key], oldState)
     }
     this.props.setState(newState)
   }
@@ -37,7 +36,7 @@ export default class MedicamentInput extends React.Component
 
   addInputLine = (event, inputName) => {
     event.preventDefault()
-    this.props.setState(this.props.inputValues.concat(this.props.inputProperties.emptyObject))
+    this.props.setState(this.props.inputValues.concat(this.props.inputProperties.emptyObject()))
   }
 
   removeInputLine = (event, inputName, key) => {

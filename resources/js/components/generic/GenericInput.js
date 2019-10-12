@@ -2,7 +2,6 @@ import React from 'react';
 
 export default class GenericInput extends React.Component {
   render () {
-    var props = this.props
     let defaultDivClassName = " flex-fill px-0 pb-1"
     let defaultInputClassName = "form-control mr-1"
     if (this.props.type === 'select') {

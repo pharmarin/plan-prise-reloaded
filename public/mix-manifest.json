@@ -1,13 +1,9 @@
 {
-    "/js/manifest.js": "/js/manifest.js?id=d91051ea7d0c9bd1981e",
-    "/js/manifest.js.map": "/js/manifest.js.map?id=a07956f82042cc418451",
-    "/js/vendor.js": "/js/vendor.js?id=7f6c9bca46f9fcdf43cb",
-    "/js/vendor.js.map": "/js/vendor.js.map?id=3eb322d68e9a78f61230",
-    "/js/medicament.js": "/js/medicament.js?id=f87d24037dd8ad9684a8",
-    "/css/app.css": "/css/app.css?id=0958fb52cc0dead15f44",
-    "/js/medicament.js.map": "/js/medicament.js.map?id=e393851221e90490ca4f",
-    "/js/medicament-update.js": "/js/medicament-update.js?id=50a5a412edb02879becf",
-    "/js/medicament-update.js.map": "/js/medicament-update.js.map?id=41c0992333ec34b589fc",
-    "/js/plan-prise.js": "/js/plan-prise.js?id=871a14c813182b19205b",
-    "/js/plan-prise.js.map": "/js/plan-prise.js.map?id=e0a187e359a8cc541d06"
+    "/js/app.js": "/js/app.js?id=8f60ce2fe7dc070927c1",
+    "/css/app.css": "/css/app.css?id=eafa2a317df3ea6fcbe5",
+    "/js/manifest.js": "/js/manifest.js?id=41f053ba9a94d81b39f8",
+    "/js/medicament.js": "/js/medicament.js?id=7fa64c6b64e323e20374",
+    "/js/medicament-update.js": "/js/medicament-update.js?id=7ba816556e672ce2f2eb",
+    "/js/plan-prise.js": "/js/plan-prise.js?id=74f0a3469fa565e97967",
+    "/js/vendor.js": "/js/vendor.js?id=f233b9a64ea8ab87d68c"
 }
