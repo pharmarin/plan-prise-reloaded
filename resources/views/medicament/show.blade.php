@@ -27,21 +27,23 @@
                     <div class="card-body">
 
                       <div class="row">
-                        <div class="col-sm-4 text-secondary text-right">Indications</div>
-                        <div class="col-sm-8">
-                          <ul class="list-unstyled">
-                            @foreach ($medicament->indications as $indication)
-                              <li>{{ $indication }}</li>
-                            @endforeach
-                          </ul>
-                        </div>
+                        @if ($medicament->indications)
+                          <div class="col-sm-4 text-secondary text-right">Indications</div>
+                          <div class="col-sm-8">
+                            <ul class="list-unstyled">
+                              @foreach ($medicament->indications as $indication)
+                                <li>{{ $indication }}</li>
+                              @endforeach
+                            </ul>
+                          </div>
+                        @endif
 
                         <div class="col-sm-4 text-secondary text-right">Température de conservation</div>
                         <div class="col-sm-8">
                           {{ $medicament->conservation_frigo ? "Au frigo" : "Température ambiante" }}
                         </div>
 
-                        @if ($medicament->conservation_duree !== null)
+                        @if ($medicament->conservation_duree)
                           <div class="col-sm-4 text-secondary text-right">Durée de conservation après ouverture</div>
                           <div class="col-sm-8">
                             <ul class="list-unstyled">
@@ -52,39 +54,45 @@
                           </div>
                         @endif
 
-                        <div class="col-sm-4 text-secondary text-right">Voie d'administration</div>
-                        <div class="col-sm-8">
-                          <ul class="list-unstyled">
-                            @foreach ($medicament->voiesAdministrationString as $voieAdministration)
-                              <li>{{ $voieAdministration }}</li>
-                            @endforeach
-                          </ul>
-                        </div>
+                        @if ($medicament->voiesAdministrationString)
+                          <div class="col-sm-4 text-secondary text-right">Voie d'administration</div>
+                          <div class="col-sm-8">
+                            <ul class="list-unstyled">
+                              @foreach ($medicament->voiesAdministrationString as $voieAdministration)
+                                <li>{{ $voieAdministration }}</li>
+                              @endforeach
+                            </ul>
+                          </div>
+                        @endif
 
-                        <div class="col-sm-4 text-secondary text-right">Commentaires par défaut</div>
-                        <div class="col-sm-8">
-                          <ul class="list-unstyled">
-                            @foreach ($medicament->precautions as $precaution)
-                              <li>
-                                <small class="text-muted text-small">{{ $precaution->option }}</small>
-                                <div>{{ $precaution->commentaire }}</div>
-                              </li>
-                            @endforeach
-                          </ul>
-                        </div>
-
-                        <div class="col-sm-4 text-secondary text-right">CIP</div>
-                        <div class="col-sm-8">
-                          <ul class="list-unstyled">
-                            @foreach ($medicament->bdpm as $medicamentAPI)
-                              @foreach ($medicamentAPI->cip as $cip)
+                        @if ($medicament->precautions)
+                          <div class="col-sm-4 text-secondary text-right">Commentaires par défaut</div>
+                          <div class="col-sm-8">
+                            <ul class="list-unstyled">
+                              @foreach ($medicament->precautions as $precaution)
                                 <li>
-                                  {{ $cip->CIP7 }}, {{ $cip->CIP13 }} ({{ $medicamentAPI->titulaire }})
+                                  <small class="text-muted text-small">{{ $precaution->option }}</small>
+                                  <div>{{ $precaution->commentaire }}</div>
                                 </li>
                               @endforeach
-                            @endforeach
-                          </ul>
-                        </div>
+                            </ul>
+                          </div>
+                        @endif
+
+                        @if ($medicament->bdpm)
+                          <div class="col-sm-4 text-secondary text-right">CIP</div>
+                          <div class="col-sm-8">
+                            <ul class="list-unstyled">
+                              @foreach ($medicament->bdpm as $medicamentAPI)
+                                @foreach ($medicamentAPI->cip as $cip)
+                                  <li>
+                                    {{ $cip->CIP7 }}, {{ $cip->CIP13 }} ({{ $medicamentAPI->titulaire }})
+                                  </li>
+                                @endforeach
+                              @endforeach
+                            </ul>
+                          </div>
+                        @endif
                     </div>
 
                     <a href="{{ route('medicament.edit', $medicament->id) }}" class="btn btn-warning btn-sm float-right">Modifier</a>

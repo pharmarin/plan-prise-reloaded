@@ -23,7 +23,9 @@ class Medicament extends Model
 
     public function getPrecautionsAttribute () {
       $voiesAdministration = $this->voies_administration_array;
-      if (empty($voiesAdministration)) return [];
+      if (empty($voiesAdministration) || $this->bdpm()->first() === null) {
+        return [];
+      }
       array_push($voiesAdministration, 0);
       return MedicamentPrecaution::whereIn('voie_administration', $voiesAdministration)
         ->where(function ($query) {

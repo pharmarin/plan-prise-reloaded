@@ -84,22 +84,24 @@ class MedicamentRepository {
 
       $commentaires = collect($request->input('commentaires'));
 
-      $commentaires_reference = $reference->precautions->map(function ($commentaire) {
-        return $commentaire->id;
-      });
-
-      if ($commentaires_reference->isNotEmpty()) {
-        $commentaires_comparaison = $commentaires->map(function ($commentaire) {
-          return $commentaire['id'];
+      if (count($reference->precautions) > 0) {
+        $commentaires_reference = $reference->precautions->map(function ($commentaire) {
+          return $commentaire->id;
         });
 
-        $to_delete = $commentaires_reference->diff($commentaires_comparaison);
+        if ($commentaires_reference->isNotEmpty()) {
+          $commentaires_comparaison = $commentaires->map(function ($commentaire) {
+            return $commentaire['id'];
+          });
 
-        $to_delete->each(function ($item, $key) {
+          $to_delete = $commentaires_reference->diff($commentaires_comparaison);
 
-          MedicamentPrecaution::find($item)->delete();
+          $to_delete->each(function ($item, $key) {
 
-        });
+            MedicamentPrecaution::find($item)->delete();
+
+          });
+        }
       }
 
     }
