@@ -50,5 +50,5 @@
 @endsection
 
 @section('scripts')
-  <script type="text/javascript" src="{{ asset('js/medicament.js') }}@if (isset($debug) && $debug === true)?rand={{ rand() }}@endif"></script>
+  <script type="text/javascript" src="{{ url(mix('js/medicament.js')) }}"></script>
 @endsection

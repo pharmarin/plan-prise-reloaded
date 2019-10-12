@@ -24,3 +24,5 @@
 
 <!-- Scripts -->
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=String.prototype.startsWith,Array.from,Array.prototype.fill,Array.prototype.keys,Array.prototype.findIndex,Number.isInteger&flags=gated"></script>
+<script type="text/javascript" src="{{ url(mix('js/manifest.js')) }}"></script>
+<script type="text/javascript" src="{{ url(mix('js/vendor.js')) }}"></script>
