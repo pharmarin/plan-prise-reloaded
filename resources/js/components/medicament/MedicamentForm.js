@@ -144,7 +144,7 @@ export default class MedicamentForm extends React.Component {
             <>
               <p>DCI : { this.state.api_selected_detail[0].compositions_string }</p>
 
-              <form action={this.props.route} method="POST">
+              <form action={window.php.route} method="POST">
 
                 {
                   this.props.method === "EDIT" ? <input type="hidden" name="_method" value="PUT" /> : null

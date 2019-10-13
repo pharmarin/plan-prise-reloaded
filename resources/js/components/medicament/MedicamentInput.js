@@ -51,7 +51,8 @@ export default class MedicamentInput extends React.Component
       event.preventDefault()
     }
     let inputValues = typeof this.props.inputValues === 'object' ? this.props.inputValues : {}
-    this.props.setState(inputValues.concat(this.props.inputProperties.emptyObject()))
+    let newValues = inputValues.concat(Object.assign({}, this.props.inputProperties.emptyObject))
+    this.props.setState(newValues)
   }
 
   removeInputLine = (event, inputName, key) => {

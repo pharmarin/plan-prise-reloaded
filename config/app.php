@@ -177,6 +177,8 @@ return [
 
         Collective\Html\HtmlServiceProvider::class,
 
+        App\Providers\ExtendCollectionProvider::class,
+
     ],
 
     /*

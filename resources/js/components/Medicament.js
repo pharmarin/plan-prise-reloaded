@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { inputs } from './medicament/inputs';
 import MedicamentForm from './medicament/MedicamentForm';
 import alertManager from './generic/Alert';
 
@@ -9,20 +8,20 @@ class Medicament extends React.Component {
   constructor (props) {
     super(props)
 
-    this.newInputs = inputs
+    this.newInputs = window.php.defaultInputs
 
     for (var key in this.newInputs) {
       if (this.newInputs.hasOwnProperty(key)) {
-        this.newInputs[key].defaultValue = this.newInputs[key].emptyObject()
+        this.newInputs[key].defaultValue = Object.assign({}, this.newInputs[key].emptyObject)
       }
     }
 
     this.method = 'CREATE'
 
-    if (this.props.old_medicament) {
+    if (window.php.old_medicament) {
       this.method = 'IMPORT'
 
-      const old_medicament = JSON.parse(this.props.old_medicament)
+      const old_medicament = window.php.old_medicament
 
       this.newInputs.old_medicament.defaultValue = old_medicament.id
       this.newInputs.custom_denomination.defaultValue = old_medicament.nomMedicament
@@ -33,10 +32,10 @@ class Medicament extends React.Component {
       this.newInputs.commentaires.defaultValue = this.getValueFromOldMedicament('commentaires', old_medicament.commentaire)
     }
 
-    if (this.props.edit) {
+    if (window.php.medicament) {
       this.method = 'EDIT'
 
-      const edit = JSON.parse(this.props.edit)
+      const edit = window.php.medicament
 
       this.medicFromAPI = edit.bdpm
 

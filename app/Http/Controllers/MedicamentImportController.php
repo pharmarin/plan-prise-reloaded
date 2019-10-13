@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\OldMedicament;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 class MedicamentImportController extends Controller
 {
@@ -23,8 +24,12 @@ class MedicamentImportController extends Controller
 
   public function showImportFormByID (Request $request, $id) {
     $old_medicament = OldMedicament::where('id', $id)->first();
-
-    return view('medicament.form')->withAction('IMPORT')->with(compact('old_medicament'))->withDebug($this->DEBUG);
+    $javascript = [
+      'old_medicament' => $old_medicament,
+      'defaultInputs' => Config::get('inputs.default'),
+      'route' => route('medicament.store')."?".http_build_query($request->input('query'))
+    ];
+    return view('medicament.form')->withAction('IMPORT')->with(compact('javascript', 'old_medicament'));
   }
-  
+
 }

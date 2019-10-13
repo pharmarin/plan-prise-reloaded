@@ -31,19 +31,7 @@
             @break
         @endswitch
       </h5>
-      <div id="react-medicament"
-      @if ($action == 'IMPORT')
-        data-route="{{ route('medicament.store') }}?{{ http_build_query(app('request')->input('query')) }}"
-        @elseif ($action == 'CREATE')
-            data-route="{{ route('medicament.store') }}"
-      @elseif ($action == 'EDIT')
-        data-route="{{ route('medicament.update', $medicament->id) }}"
-        data-edit="{{ $medicament->toJson() }}"
-      @endif
-      @if ($action == 'IMPORT')
-        data-old_medicament='{{ json_encode($old_medicament) }}'
-      @endif
-      ></div>
+      <div id="react-medicament"></div>
     </div>
   </div>
 </div>

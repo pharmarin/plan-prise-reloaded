@@ -18,7 +18,7 @@ class Medicament extends Model
 
     // Add attribute
     public function getCustomIndicationsAttribute ($custom_indications) {
-      return json_decode($custom_indications);
+      return collect(json_decode($custom_indications));
     }
 
     public function getPrecautionsAttribute () {

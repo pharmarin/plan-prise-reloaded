@@ -7,6 +7,7 @@ use App\Medicament;
 use App\Repositories\MedicamentRepository;
 use App\Repositories\CompositionRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 class MedicamentController extends Controller
 {
@@ -24,7 +25,8 @@ class MedicamentController extends Controller
     public function index()
     {
       $medicaments = $this->medicament_repository->getAll();
-      return view('medicament.index')->with(compact('medicaments'));
+      $columns = ['custom_denomination'];
+      return view('medicament.index')->with(compact('medicaments', 'columns'));
     }
 
     public function search (Request $request)
@@ -33,7 +35,8 @@ class MedicamentController extends Controller
         return view('medicament.search');
       }
       $medicaments = $this->medicament_repository->getLike($request->input('query'));
-      return view('medicament.index')->with(compact('medicaments'));
+      $columns = ['custom_denomination'];
+      return view('medicament.search')->with(compact('medicaments', 'columns'));
     }
 
     /**
@@ -43,7 +46,10 @@ class MedicamentController extends Controller
      */
     public function create(Request $request)
     {
-      return view('medicament.form')->withAction('CREATE')->withDebug($this->DEBUG);
+      $javascript = [
+        'route' => route('medicament.store')
+      ];
+      return view('medicament.form')->withAction('CREATE')->with(compact('javascript'));
     }
 
     /**
@@ -112,7 +118,12 @@ class MedicamentController extends Controller
     public function edit(Request $request, Medicament $medicament)
     {
       $medicament->load('bdpm');
-      return view('medicament.form')->withAction('EDIT')->with(compact('medicament'))->withDebug($this->DEBUG);
+      $javascript = [
+        'route' => route('medicament.update', $medicament->id),
+        'defaultInputs' => Config::get('inputs.default'),
+        'medicament' => $medicament
+      ];
+      return view('medicament.form')->withAction('EDIT')->with(compact('medicament', 'javascript'));
     }
 
     /**
