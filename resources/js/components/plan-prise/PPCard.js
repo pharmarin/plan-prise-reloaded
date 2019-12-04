@@ -51,19 +51,20 @@ export default class PPCard extends React.Component {
           this.isLoading(medicament) ? null :
           <Card.Body className="row">
             {
-              inputs.map(
-                (section) => {
+              Object.keys(inputs).map(
+                (sectionKey) => {
+                  let section = inputs[sectionKey]
                   if (!section.collapse || this.state.isOpened) {
                     return (
-                      <div key={section.id} className={!this.state.isOpened && !section.collapse ? "col-md-12 d-flex justify-content-around" : section.class}>
+                      <div key={sectionKey} className={!this.state.isOpened && !section.collapse ? "col-md-12 d-flex justify-content-around" : section.class}>
                         {
                           section.inputs.map((input) =>
                             <PPInputGroup
-                            key={input.id}
-                            input={input}
-                            medicament={medicament}
-                            setCustomData={setCustomData}
-                            isShowed={section.collapse ? this.state.isOpened : true}
+                              key={input.id}
+                              input={input}
+                              medicament={medicament}
+                              setCustomData={setCustomData}
+                              isShowed={section.collapse ? this.state.isOpened : true}
                             />
                           )
                         }

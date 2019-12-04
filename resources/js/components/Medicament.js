@@ -8,7 +8,7 @@ class Medicament extends React.Component {
   constructor (props) {
     super(props)
 
-    this.newInputs = window.php.defaultInputs
+    this.newInputs = window.php.default_inputs
 
     for (var key in this.newInputs) {
       if (this.newInputs.hasOwnProperty(key)) {

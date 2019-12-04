@@ -16,12 +16,14 @@ class PlanPrise extends Model
 
   protected $attributes = [
     'medic_data' => '[]',
-    'custom_data' => '{}'
+    'custom_data' => '{}',
+    'custom_settings' => '{}'
   ];
 
   protected $casts = [
     'medic_data' => 'array',
-    'custom_data' => 'array'
+    'custom_data' => 'array',
+    'custom_settings' => 'array'
   ];
 
   public $api_repository;

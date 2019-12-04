@@ -26,7 +26,7 @@ class MedicamentImportController extends Controller
     $old_medicament = OldMedicament::where('id', $id)->first();
     $javascript = [
       'old_medicament' => $old_medicament,
-      'defaultInputs' => Config::get('inputs.default'),
+      'default_inputs' => Config::get('inputs.medicament'),
       'route' => route('medicament.store')."?".http_build_query($request->input('query'))
     ];
     return view('medicament.form')->withAction('IMPORT')->with(compact('javascript', 'old_medicament'));

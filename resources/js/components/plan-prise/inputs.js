@@ -1,6 +1,5 @@
-export const inputs = [
-  {
-    id: 'properties',
+export const inputs = {
+  properties: {
     class: 'col-md-3',
     collapse: true,
     inputs: [
@@ -16,8 +15,7 @@ export const inputs = [
       }
     ]
   },
-  {
-    id: 'posologies',
+  posologies: {
     class: 'col-md-3',
     collapse: false,
     inputs: [
@@ -35,8 +33,7 @@ export const inputs = [
       }
     ]
   },
-  {
-    id: 'commentaires',
+  commentaires: {
     class: 'col-md-6',
     collapse: true,
     inputs: [
@@ -47,10 +44,10 @@ export const inputs = [
         help: 'population',
         multiple: true,
         class: {
-          population:'col-md-4',
+          population: 'col-md-4',
           commentaire: 'col-md-8'
         }
       }
     ]
   }
-]
+}

@@ -66,7 +66,6 @@ export default class Search extends React.Component {
 
   wakeUp = () => {
     this.setState(this.initialState)
-    console.log('default state', this.initialState)
     if (this.props.selected.length > 0) {
       this.setState({
         selected: this.props.selected.map((medic) => {

@@ -16,7 +16,7 @@ $voiesAdministration = [
 ];
 
 return [
-  'default' => [
+  'medicament' => [
     'old_medicament' => [
       'isRepeated' => false,
       'inputs' => [
@@ -115,6 +115,31 @@ return [
       ],
       'display' => 'commentaire',
       'emptyObject' => (object) [(object) [ 'id' => '', 'cible_id' => 0, 'voie_administration' => 0, 'option' => '', 'commentaire' => '' ]]
+    ]
+  ],
+  'plan_prise' => [
+    'inputs' => [
+      'poso_matin' => [
+        'label' => 'Matin',
+        'default' => true
+      ],
+      'poso_10h' => [
+        'label' => '10h'
+      ],
+      'poso_midi' => [
+        'label' => 'Midi',
+        'default' => true
+      ],
+      'poso_16h' => [
+        'label' => '16h'
+      ],
+      'poso_soir' => [
+        'label' => 'Soir',
+        'default' => true
+      ],
+      'poso_coucher' => [
+        'label' => 'Coucher'
+      ],
     ]
   ]
 ];

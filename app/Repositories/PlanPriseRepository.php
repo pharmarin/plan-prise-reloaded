@@ -97,6 +97,17 @@ class PlanPriseRepository
     }
   }
 
+  public function settingsPP ($pp_id, $value)
+  {
+    if ($this->initiatePP($pp_id)) {
+      $this->plan_prise->custom_settings = $value;
+      $this->plan_prise->save();
+      return $this->getReturnArray('success');
+    } else {
+      return $this->getReturnArray('error', ['data' => 'PP not exists']);
+    }
+  }
+
   private function getReturnArray ($status, $array = [])
   {
     return [

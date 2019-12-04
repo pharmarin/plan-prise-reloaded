@@ -120,7 +120,7 @@ class MedicamentController extends Controller
       $medicament->load('bdpm');
       $javascript = [
         'route' => route('medicament.update', $medicament->id),
-        'defaultInputs' => Config::get('inputs.default'),
+        'default_inputs' => Config::get('inputs.medicament'),
         'medicament' => $medicament
       ];
       return view('medicament.form')->withAction('EDIT')->with(compact('medicament', 'javascript'));

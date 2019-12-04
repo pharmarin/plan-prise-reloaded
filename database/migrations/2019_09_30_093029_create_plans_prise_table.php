@@ -19,6 +19,7 @@ class CreatePlansPriseTable extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->text('medic_data');
             $table->text('custom_data')->nullable();
+            $table->text('custom_settings')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

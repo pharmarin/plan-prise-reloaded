@@ -1,6 +1,8 @@
 import React from 'react';
-import { Button, Container, Row, Col, Card } from 'react-bootstrap';
+import { Button, Container, Form, Modal, Row, Col, Card } from 'react-bootstrap';
 import { createBrowserHistory } from 'history';
+import set from 'lodash/set';
+import get from 'lodash/get';
 
 import alertManager from './generic/Alert';
 import Search from './generic/Search';
@@ -17,7 +19,7 @@ class PlanPrise extends React.Component {
     super(props)
     this.state = this.initStateWithProps(props)
     this.history = createBrowserHistory({
-      basename: document.head.querySelector('meta[name="plan-prise-base-url"]').getAttribute('content')
+      basename: window.php.PP_base_url
     })
   }
 
@@ -29,11 +31,13 @@ class PlanPrise extends React.Component {
         startLoading: function (message = "") { this.state = true; this.message = message; return this; },
         stopLoading: function () { this.state = false; this.message = ""; return this; }
       },
+      isShowingOptions: false,
       currentID: null,
-      currentContent: []
+      currentContent: [],
+      currentSettings: {}
     }
-    if (props.currentpp) {
-      let currentpp = JSON.parse(props.currentpp)
+    if (window.php.current_pp) {
+      let currentpp = window.php.current_pp
       defaultState.currentID = currentpp.pp_id
       defaultState.currentContent =  currentpp.medic_data_detail.map((medicament) => {
         medicament.custom_data.bdpm = [medicament.data]
@@ -44,6 +48,7 @@ class PlanPrise extends React.Component {
           customData: currentpp.custom_data && currentpp.custom_data[medicament.data.code_cis] ? currentpp.custom_data[medicament.data.code_cis] : {}
         }
       })
+      defaultState.currentSettings = currentpp.custom_settings
     }
     return defaultState
   }
@@ -115,24 +120,16 @@ class PlanPrise extends React.Component {
     )
   }
 
-  saveModification = () => {
+  saveModification = (action, modifications, message) => {
     this.apiCall ? clearTimeout(this.apiCall) : null
-    let modifications = this.state.currentContent.reduce((request, medic) => {
-      let customData = medic.customData
-      if (Object.keys(customData).length > 0) {
-        return Object.assign(request, { [medic.codeCIS]: customData })
-      } else {
-        return request
-      }
-    }, {})
     this.apiCall = setTimeout(() => {
       let alert = this.props.alert.addAlert({
-        body: MESSAGES.planPrise.editPP
+        body: message
       })
       managePP(
         this.state.currentID,
         {
-          action: 'edit',
+          action: action,
           value: modifications
         },
         (response) => {
@@ -146,13 +143,13 @@ class PlanPrise extends React.Component {
     }, 1000)
   }
 
-  handleCustomDataChange = (input, value, codeCIS, multiple = false) => {
+  handleCustomDataChange = (input, value, codeCIS) => {
     this.setState((state) => {
       let currentContent = state.currentContent.map((medicament) => {
         if (medicament.codeCIS === codeCIS) {
-          let parent = input.parent,
-              child = input.child,
-            id = input.id
+          let parent = input.parent
+          let child = input.child
+          let id = input.id
           if (input.multiple === true) {
             let currentState = medicament.customData[parent] || {}
             if (value.action === "value") {
@@ -184,7 +181,17 @@ class PlanPrise extends React.Component {
           return medicament
         }
       })
-      this.saveModification()
+
+      let modifications = this.state.currentContent.reduce((request, medic) => {
+        let customData = medic.customData
+        if (Object.keys(customData).length > 0) {
+          return Object.assign(request, { [medic.codeCIS]: customData })
+        } else {
+          return request
+        }
+      }, {})
+      this.saveModification('edit', modifications, MESSAGES.planPrise.editPP)
+
       return {
         currentContent: currentContent
       }
@@ -217,7 +224,6 @@ class PlanPrise extends React.Component {
       }
     )
   }
-  // #endregion
 
   resetPP = () => {
     this.setState({
@@ -225,6 +231,24 @@ class PlanPrise extends React.Component {
       currentID: null,
       currentContent: []
     }, () => this.history.push('/'))
+  }
+
+  handleSettingsChange = (input, value) => {
+    let parent = input.parent
+    let id = input.id
+    this.setState((state) => {
+      if (value.action === "check") {
+        set(state.currentSettings, `${parent}.${id}.checked`, value.value)
+      }
+      this.saveModification('settings', state.currentSettings, 'Sauvegarde des préférences en cours')
+      return state
+    })
+  }
+  // #endregion
+
+  showOptions = (event) => {
+    event.preventDefault()
+    this.setState({ isShowingOptions: true })
   }
 
   render () {
@@ -240,15 +264,42 @@ class PlanPrise extends React.Component {
                     this.state.currentID === -1 ? "Nouveau Plan de Prise" : this.state.currentID === null ? "Que voulez-vous faire ? " : "Plan de prise n°" + this.state.currentID
                   }
                 </div>
-                <div>
-                  {
-                    this.state.currentID > 0 && !this.state.isLoading.state ?
+                {
+                  this.state.currentID > 0 && !this.state.isLoading.state ?
+                    <div className="d-flex">
+                      <div>
+                        <Button variant="link" className="text-secondary py-0" onClick={this.showOptions}>
+                          <i className="fa fa-cog"></i>
+                        </Button>
+                      </div>
+                      <Modal show={this.state.isShowingOptions} onHide={() => this.setState({ isShowingOptions: false })}>
+                        <Modal.Header closeButton>
+                          <Modal.Title>Options</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <h5>Colonnes à afficher</h5>
+                          <Row>
+                            {
+                              Object.keys(window.php.default_settings.inputs).map((key) => {
+                                let input = window.php.default_settings.inputs[key]
+                                return (
+                                  <Col key={key} sm={6}>
+                                    <Form.Group className="mb-0" controlId={key}>
+                                      <Form.Check type="checkbox" label={input.label} checked={get(this.state, `currentSettings.inputs.${key}.checked`, (input.default || false))} onChange={(event) => this.handleSettingsChange({ parent: 'inputs', id: key }, {action: 'check', value: event.target.checked })} />
+                                    </Form.Group>
+                                  </Col>
+                                )
+                              })
+                            }
+                          </Row>
+
+                        </Modal.Body>
+                      </Modal>
                       <Button variant="link" className="text-danger py-0" onClick={this.deletePP}>
                         <i className="fa fa-trash"></i>
-                      </Button> :
-                      null
-                  }
-                </div>
+                      </Button>
+                    </div> : null
+                }
               </Card.Header>
 
               <Card.Body>
@@ -259,11 +310,13 @@ class PlanPrise extends React.Component {
                     <PPSelect onSelect={(selectedID) => this.setState({ currentID: selectedID })} /> :
                     <div>
                       {
-                          this.state.currentContent ? this.state.currentContent.map(medicament =>
-                          <PPCard
+                          this.state.currentContent ? this.state.currentContent.map(
+                            medicament =>
+                            <PPCard
                               key={medicament.codeCIS}
                               medicament={medicament}
-                              setCustomData={this.handleCustomDataChange} deleteLine={this.deleteLine}
+                              customSettings={this.state.customSettings}
+                              setCustomData={this.handleCustomDataChange}deleteLine={this.deleteLine}
                             />
                           ) : null
                       }

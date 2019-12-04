@@ -1,11 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-  <div id="react-plan-prise"
-    @if ($current_pp)
-      data-currentPP="{{ $current_pp }}"
-    @endif
-    ></div>
+  <div id="react-plan-prise"></div>
 @endsection
 
 @section('scripts')
