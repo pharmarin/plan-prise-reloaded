@@ -71,9 +71,10 @@ export default class MedicamentInput extends React.Component
         <div>
           {
             inputValues.map((inputObject, index) => {
+              let isSubstance = inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S'
               let classColor = " " + (
                   inputName === 'commentaires' ?
-                  inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S' ?
+                  isSubstance ?
                     "border rounded border-warning" :
                     "border rounded border-success" :
                   ""
@@ -95,7 +96,7 @@ export default class MedicamentInput extends React.Component
                     className="btn btn-primary align-self-start ml-1"
                     onClick={ (event) => {
                       event.preventDefault()
-                      if (inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S') {
+                      if (isSubstance) {
                         if (!confirm ("La suppression de cette ligne affectera tous les médicaments contenant cette substance. Voulez-vous continuer ? ")) {
                           return
                         }

@@ -58,8 +58,10 @@ export default class Search extends React.Component {
 
   componentDidMount () {
     if (!this.props.modal && this.props.defaultValue) {
+      let defaultValue = this.props.defaultValue.match(/(^\D+)(\d+.*)/m)
+      defaultValue = defaultValue ? defaultValue.splice(1).map(item => item.trim()).join('*') : this.props.defaultValue
       this.setState({
-        query: this.props.defaultValue
+        query: defaultValue
       }, () => this.getInfo())
     }
   }
@@ -70,7 +72,7 @@ export default class Search extends React.Component {
       this.setState({
         selected: this.props.selected.map((medic) => {
           return {
-            codeCIS: medic.code_cis,
+            code_cis: medic.code_cis,
             denomination: medic.denomination
           }
         })
@@ -83,14 +85,14 @@ export default class Search extends React.Component {
     this.axiosSource && this.axiosSource.cancel('Cancel previous request')
     this.axiosSource = axios.CancelToken.source()
     this.setState({ isSearching: true })
-    let url = `${this.props.url}?query=${this.state.query}&limit=50`
+    let url = `${this.props.url}?query=${this.state.query}&display=code_cis,denomination&per_page=50`
     axios.get(url, {
       cancelToken: this.axiosSource.token
     })
     .then((response) => {
       this.setState({
         isSearching: false,
-        results: response.data
+        results: response.data.data
       })
     })
     .catch((thrown) => {
@@ -115,12 +117,12 @@ export default class Search extends React.Component {
   handleSearchSelect = (event, index) => {
     event.preventDefault()
     let result = this.state.results[index],
-        selected = this.state.selected.map(selected => Number(selected.codeCIS)).includes(Number(result.codeCIS)),
+        selected = this.state.selected.map(selected => Number(selected.code_cis)).includes(Number(result.code_cis)),
         newSelected = this.state.selected
     if (!selected) {
       newSelected.push(result)
     } else {
-      newSelected = newSelected.filter((selected) => Number(selected.codeCIS) != Number(result.codeCIS))
+      newSelected = newSelected.filter((selected) => Number(selected.code_cis) != Number(result.code_cis))
     }
     this.setState({
       selected: newSelected
@@ -142,7 +144,7 @@ export default class Search extends React.Component {
     let selected = this.state.selected
     if (deselect && deselect.length > 0) {
       let newSelected = selected.filter(
-        (medicament) => !deselect.map((code) => Number(code)).includes(Number(medicament.codeCIS))
+        (medicament) => !deselect.map((code) => Number(code)).includes(Number(medicament.code_cis))
       )
       this.setState({
         selected: newSelected
@@ -224,7 +226,7 @@ export default class Search extends React.Component {
               { !this.props.multiple ? <ListGroup.Item className="d-none"></ListGroup.Item> : null }
               {
                 this.state.results.map((result, index) => {
-                  let selected = this.state.selected.map(selected => Number(selected.codeCIS)).includes(Number(result.codeCIS)),
+                  let selected = this.state.selected.map(selected => Number(selected.code_cis)).includes(Number(result.code_cis)),
                       checkboxIcon = this.props.multiple ? selected ? <i className="fas fa-circle mr-2"></i> : <i className="far fa-circle mr-2"></i> : null
                   return (
                     <a key={index}
@@ -238,12 +240,12 @@ export default class Search extends React.Component {
                       onMouseEnter={() => this.setState({ hover: index })}
                       >
                       {
-                        this.props.multiple ? <input type="checkbox" checked={selected} className="d-none mt-1" onChange={(e) => this.handleSearchSelect(e, result, selected)} id={result.codeCIS}/> : null
+                        this.props.multiple ? <input type="checkbox" checked={selected} className="d-none mt-1" onChange={(e) => this.handleSearchSelect(e, result, selected)} id={result.code_cis}/> : null
                       }
-                      <label className={"d-flex m-0" + (selected ? " font-weight-bold" : "")} htmlFor={result.codeCIS}>
+                      <label className={"d-flex m-0" + (selected ? " font-weight-bold" : "")} htmlFor={result.code_cis}>
                         <div>{checkboxIcon}</div>
                         <div className="text-truncate flex-grow-1">{result.denomination}</div>
-                        <div className="ml-2">({result.codeCIS})</div>
+                        <div className="ml-2">({result.code_cis})</div>
                       </label>
                     </a>
                   )

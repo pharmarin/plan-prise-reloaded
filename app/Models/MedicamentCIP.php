@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +11,6 @@ class MedicamentCIP extends Model
   public $timestamps = false;
 
   public function medicament_id () {
-    return $this->belongsTo('App\MedicamentAPI');
+    return $this->belongsTo('App\Models\MedicamentAPI');
   }
 }

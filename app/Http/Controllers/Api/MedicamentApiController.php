@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\OldMedicament;
 use App\Models\Medicament;
 use App\Repositories\MedicamentRepository;
 use App\Repositories\CompositionRepository;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
-class MedicamentController extends Controller
+class MedicamentApiController extends Controller
 {
     protected $medicament_repository;
     protected $DEBUG = false;
@@ -26,7 +27,7 @@ class MedicamentController extends Controller
     {
       $medicaments = $this->medicament_repository->all();
       $columns = ['custom_denomination'];
-      return view('medicament.index')->with(compact('medicaments', 'columns'));
+      return response()->json($medicaments);
     }
 
     public function search (Request $request)
@@ -47,9 +48,7 @@ class MedicamentController extends Controller
     public function create(Request $request)
     {
       $javascript = [
-        'routes' => mix_routes([
-          'action' => route('medicament.store')
-        ]),
+        'route' => route('medicament.store'),
         'default_inputs' => Config::get('inputs.medicament')
       ];
       return view('medicament.form')->withAction('CREATE')->with(compact('javascript'));
@@ -92,11 +91,9 @@ class MedicamentController extends Controller
      */
     public function edit(Request $request, Medicament $medicament)
     {
-      $medicament->load('bdpm')->append('composition')->append('composition_string');
+      $medicament->load('bdpm');
       $javascript = [
-        'routes' => mix_routes([
-          'action' => route('medicament.update', $medicament->id)
-        ]),
+        'route' => route('medicament.update', $medicament->id),
         'default_inputs' => Config::get('inputs.medicament'),
         'medicament' => $medicament
       ];

@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
           Route::get('users', 'UsersController@index')->name('admin.users.index');
           Route::get('users/{user_id}/approve', 'UsersController@approve')->name('admin.users.approve');
           // Old Medicament
-          Route::match(['get', 'post'], 'medicament/import', 'MedicamentImportController@importFromOldDatabase')->name('medicament.import.search');
+          Route::get('medicament/import', 'MedicamentImportController@importFromOldDatabase')->name('medicament.import.search');
           Route::get('medicament/import/{id}', 'MedicamentImportController@showImportFormByID')->name('medicament.import.form');
           // Medicament API
           Route::get('medicament/refresh', 'MedicamentAPIController@refresh');

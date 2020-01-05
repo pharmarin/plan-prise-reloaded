@@ -13,6 +13,15 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+/*Route::middleware('auth:api')->group(function () {
+  Route::get('/user', function (Request $request) {
     return $request->user();
-});
+  });
+  Route::middleware(['approved'])->group(function () {
+    Route::resource('medicament', 'Api\MedicamentApiController');
+  });
+});*/ // Reste à implémenter https://laravel.com/docs/5.8/api-authentication
+
+Route::match(['get', 'post'], 'bdpm/get', 'Api\BdpmApiController@getFromCIS')->name('api.bdpm.get');
+Route::resource('medicament', 'Api\MedicamentApiController', ['as' => 'api']);
+Route::resource('bdpm', 'Api\BdpmApiController', ['as' => 'api']);

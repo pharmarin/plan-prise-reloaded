@@ -15,11 +15,11 @@ class CreateCustomMedicsTable extends Migration
     {
         Schema::create('custom_medics', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('customDenomination');
-            $table->text('customIndications');
-            $table->boolean('conservationFrigo');
-            $table->text('conservationDuree');
-            $table->text('voiesAdministration');
+            $table->string('custom_denomination');
+            $table->text('custom_indications');
+            $table->boolean('conservation_frigo');
+            $table->text('conservation_duree');
+            $table->text('voies_administration');
             $table->timestamps();
         });
     }

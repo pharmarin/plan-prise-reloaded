@@ -4,7 +4,7 @@ import Search from '../generic/Search';
 import MedicamentInput from './MedicamentInput';
 
 import { getAPIFromCIS } from '../generic/functions';
-import { API_URL, SPINNER } from '../params';
+import { SPINNER } from '../params';
 
 export default class MedicamentForm extends React.Component {
 
@@ -12,31 +12,20 @@ export default class MedicamentForm extends React.Component {
     super(props)
 
     this.state = {
-      isLoading: false,
       inputs: props.inputs,
-      api_selected_detail: []
+      bdpm: [],
+      composition: []
     }
+
+    this.initCommentaires = []
 
     for (let input in props.inputs) {
       this.state[input] = props.inputs[input].defaultValue
     }
 
-    if (this.props.fromAPI && this.props.fromAPI[0] !== undefined) {
-      this.state.api_selected_detail = this.props.fromAPI
-      this.state.inputs.commentaires.inputs.cible_id.options = this.getSubstancesActivesObject(this.props.fromAPI[0].compositions_array)
-    }
-  }
-
-  componentDidUpdate = (prevProps, prevState) => {
-    if (this.state.inputs) {
-      if (!(prevState.api_selected_detail.length > 0) && this.state.api_selected_detail[0]) {
-        let substancesActivesObject = this.getSubstancesActivesObject(this.state.api_selected_detail[0].compositions_array),
-          newInputs = this.state.inputs
-        newInputs.commentaires.inputs.cible_id.options = substancesActivesObject
-        this.setState({
-          inputs: newInputs
-        })
-      }
+    if (this.props.medicament && this.props.medicament.bdpm && this.props.medicament.bdpm[0] !== undefined) {
+      this.state.bdpm = this.props.medicament.bdpm
+      this.state.inputs.commentaires.inputs.cible_id.options = this.getSubstancesActivesObject(this.props.medicament.composition.composition_parsed)
     }
   }
 
@@ -44,29 +33,31 @@ export default class MedicamentForm extends React.Component {
     return await new Promise((resolve) => {
       this.setState({ isLoading: true })
       getAPIFromCIS(
-        selected.map(selected => selected.codeCIS),
-        (response, deselect) => {
+        selected.map(selected => selected.code_cis),
+        (response) => {
+          let substances_actives = this.getSubstancesActivesObject(response.composition)
+          let new_inputs = this.state.inputs
+          new_inputs.commentaires.inputs.cible_id.options = substances_actives
           let newCommentaires = this.state.commentaires
-          newCommentaires = newCommentaires.concat(response[0].associated_precautions)
+          newCommentaires = newCommentaires.concat(response.detail[0].composition_precautions)
+          this.initCommentaires = this.initCommentaires.concat(response.detail[0].composition_precautions)
           this.setState({
-              commentaires: newCommentaires,
-              api_selected_detail: response.sort((a, b) => {
+            commentaires: newCommentaires,
+            bdpm: response.detail.sort((a, b) => {
               if (a.denomination < b.denomination) return -1
               if (a.denomination > b.denomination) return 1
               return 0
-            })
+            }),
+            inputs: new_inputs
           })
           resolve()
         },
-        (response, deselect) => {
+        (response) => {
           this.props.alert.addAlert({
-            header: 'Médicaments non commercialisés',
+            header: 'Erreur lors de l\'ajout des médicaments',
             body: response,
           })
-          resolve({
-            action: 'deselect',
-            values: deselect
-          })
+          resolve()
         }
       )
       .then(() => {
@@ -75,23 +66,28 @@ export default class MedicamentForm extends React.Component {
     })
   }
 
-  removeAPILine = (event, codeCIS) => {
+  removeAPILine = (event, code_cis) => {
     event.preventDefault()
     this.setState({
-      api_selected_detail: this.state.api_selected_detail.filter((medicament) => {
-        return medicament.code_cis !== codeCIS
+      bdpm: this.state.bdpm.filter((medicament) => {
+        return medicament.code_cis !== code_cis
       })
     })
   }
 
-  getSubstancesActivesObject = (substancesArray) => {
-    let substancesObject = {}
-    if (substancesArray !== undefined) {
-      substancesArray.forEach((substance) => substancesObject = Object.assign(substancesObject, {
-        [substance.codeSubstance]: substance.denominationSubstance
-      }))
+  getSubstancesActivesObject = (compositions) => {
+    console.log(compositions)
+    let substances_object = {}
+    if (compositions !== undefined) {
+      compositions.forEach((composition) => {
+        console.log(composition)
+        let code_substance = composition.code_substance.map((code) => 'S-' + code).join('+')
+        Object.assign(substances_object, {
+          [code_substance]: composition.denomination_substance
+        })
+      })
     }
-    return {0: 'Ce médicament', ...substancesObject}
+    return { 0: 'Ce médicament', ...substances_object}
   }
 
   render () {
@@ -119,32 +115,32 @@ export default class MedicamentForm extends React.Component {
           <ul className="list-unstyled">
             <li key="add">
               <div className={this.state.isLoading ? "mb-1" : "d-none"}>
-                { SPINNER }
+                {SPINNER}
                 <span className="ml-2">Import des médicaments sélectionnés en cours...</span>
               </div>
               <Search
-                disabled={this.state.isLoading}
+                disabled={false}
                 multiple={true}
-                selected={this.state.api_selected_detail}
+                selected={this.state.bdpm}
                 defaultValue={this.state.inputs.custom_denomination.defaultValue}
-                modal={this.state.api_selected_detail.length > 0}
+                modal={this.state.bdpm.length > 0}
                 onSave={(values) => this.handleSearchSelect(values)}
-                url={API_URL}
+                url={window.php.routes.api.bdpm.search}
                 api={this.props.api}
                 />
             </li>
             {
-              this.state.api_selected_detail.length > 0 && this.state.api_selected_detail.map((api_selected_medicament, index) => <li key={index}><button className="btn btn-link p-1" onClick={(e) => this.removeAPILine(e, api_selected_medicament.code_cis)}><i className="fa fa-minus-circle"></i></button> { api_selected_medicament.denomination } (<a href={`http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=${api_selected_medicament.code_cis}&typedoc=R`} target="_blank">{ api_selected_medicament.code_cis }</a>)</li>
+              this.state.bdpm.length > 0 && this.state.bdpm.map((medicament, index) => <li key={index}><button className="btn btn-link p-1" onClick={(e) => this.removeAPILine(e, medicament.code_cis)}><i className="fa fa-minus-circle"></i></button> { medicament.denomination } (<a href={`http://base-donnees-publique.medicaments.gouv.fr/affichageDoc.php?specid=${medicament.code_cis}&typedoc=R`} target="_blank">{ medicament.code_cis }</a>)</li>
               )
             }
           </ul>
 
           {
-            this.state.api_selected_detail.length > 0 ?
+            this.state.bdpm.length > 0 ?
             <>
-              <p>DCI : { this.state.api_selected_detail[0].compositions_string }</p>
+              <p>DCI : { this.props.method === 'EDIT' ? this.props.medicament.composition_string : this.state.bdpm[0].composition_string }</p>
 
-              <form action={window.php.route} method="POST">
+              <form action={window.php.routes.action} method="POST">
 
                 {
                   this.props.method === "EDIT" ? <input type="hidden" name="_method" value="PUT" /> : null
@@ -161,8 +157,14 @@ export default class MedicamentForm extends React.Component {
                 }
 
                 {
-                  this.state.api_selected_detail.map((api_selected_medicament, index) =>
-                    <input key={index} type="hidden" name="api_selected[]" value={ api_selected_medicament.code_cis } />
+                  this.state.bdpm.map((medicament, index) =>
+                    <input key={index} type="hidden" name="bdpm[]" value={ medicament.code_cis } />
+                  )
+                }
+
+                {
+                  this.initCommentaires.map((commentaire, index) =>
+                    <input key={index} type="hidden" name="previous_prec_id[]" value={commentaire.id} />
                   )
                 }
 

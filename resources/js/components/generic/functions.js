@@ -6,10 +6,9 @@ export async function getAPIFromCIS (cisArray, onSuccessCallback, onErrorCallbac
     })
     .then((response) => {
       if (response.data.status === 'success') {
-        let jsonResponse = JSON.parse(response.data.data)
-        onSuccessCallback(jsonResponse, response.data.deselect)
+        onSuccessCallback(response.data.data)
       } else {
-        onErrorCallback(response.data.data, response.data.deselect)
+        onErrorCallback(response.data.data)
       }
       return true
     })

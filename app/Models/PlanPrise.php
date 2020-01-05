@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,7 +34,7 @@ class PlanPrise extends Model
 
   public function user_id ()
   {
-    return $this->belongsTo('App\User');
+    return $this->belongsTo('App\Models\User');
   }
 
   public function getMedicDataDetailAttribute ()

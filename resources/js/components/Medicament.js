@@ -37,7 +37,7 @@ class Medicament extends React.Component {
 
       const edit = window.php.medicament
 
-      this.medicFromAPI = edit.bdpm
+      this.medicament_edit = edit
 
       this.newInputs.custom_denomination.defaultValue = edit.custom_denomination
       this.newInputs.custom_indications.defaultValue = edit.custom_indications
@@ -62,11 +62,7 @@ class Medicament extends React.Component {
               cible: 'medicament',
               voie_administration: 0,
               population: commentaire.span,
-              commentaire: commentaire.text
-                .replace('/<br>/g', '**')
-                .replace('/<br/>/g', '**')
-                .replace('/<sup>/g', '')
-                .replace('/</sup>/g', '')
+              commentaire: commentaire.text.replace(/<[^>]*>?/gm, '')
             })
           })
           return result
@@ -116,7 +112,7 @@ class Medicament extends React.Component {
   }
 
   render () {
-    return <MedicamentForm method={this.method} inputs={this.newInputs} fromAPI={this.medicFromAPI} {...this.props} />
+    return <MedicamentForm method={this.method} inputs={this.newInputs} medicament={this.medicament_edit} {...this.props} />
   }
 
 }

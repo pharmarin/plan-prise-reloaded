@@ -3,37 +3,42 @@
 namespace App\Repositories;
 
 
-use App\MedicamentAPI;
-use App\MedicamentCIP;
+use App\Models\BdpmCis;
+use App\Models\BdpmCisCompo;
+use App\Models\MedicamentCIP;
 
-use App\Medicament;
+use App\Models\Medicament;
 
-use App\MedicamentPrecaution;
+use App\Models\Precaution;
 
 use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\DB;
 
 class MedicamentRepository {
 
-  protected $medicamentAPI;
+  protected $bdpmCis;
 
   protected $medicamentCustom;
 
+  protected $pivot_table;
 
-  public function __construct (MedicamentAPI $medicamentAPI, Medicament $medicamentCustom) {
 
-    $this->medicamentAPI = $medicamentAPI;
+  public function __construct (BdpmCis $bdpmCis, Medicament $medicamentCustom) {
+
+    $this->bdpmCis = $bdpmCis;
 
     $this->medicamentCustom = $medicamentCustom;
+
+    $this->pivot_table = 'custom_precautions_pivot';
 
   }
 
 
-  public function getAll ()
+  public function all ($options = [])
   {
-    return $this->medicamentCustom::orderBy('custom_denomination')->paginate(20);
+    $paginate = isset($options['paginate']) ? $options['paginate'] : 20;
+    $order_by = isset($options['order_by']) ? $options['order_by'] : 'custom_denomination';
+    return $this->medicamentCustom::orderBy($order_by)->paginate($paginate);
   }
 
   public function getLike ($string)
@@ -42,7 +47,7 @@ class MedicamentRepository {
   }
 
   public function getMedicamentByCIS ($cis) {
-    return optional($this->medicamentAPI::where('code_cis', $cis)->first())->custom_values;
+    return optional($this->bdpmCis::where('code_cis', $cis)->first())->custom_values;
   }
 
 
@@ -58,11 +63,20 @@ class MedicamentRepository {
 
     $this->medicamentCustom->save();
 
-    $fromAPI = $this->medicamentAPI::whereIn('code_cis', $request->input('api_selected'))->get();
+    $fromAPI = $this->bdpmCis::whereIn('code_cis', $request->input('bdpm'))->get();
 
     $this->medicamentCustom->bdpm()->saveMany($fromAPI);
 
-    $this->saveOrUpdateCommentairesFromForm($request->input('commentaires'), $this->medicamentCustom->id);
+    $commentaires = collect($request->input('commentaires'));
+    $commentaires_reference = collect($request->input('previous_prec_id'));
+
+    $commentaires_comparaison = $commentaires->map(function ($commentaire) {
+      return $commentaire['id'];
+    });
+
+    $this->_filterPrecautions($commentaires_reference, $commentaires_comparaison);
+
+    $this->saveOrUpdateCommentairesFromForm($request->input('commentaires'));
 
     return $this->medicamentCustom->id;
 
@@ -80,44 +94,34 @@ class MedicamentRepository {
 
     if ($request->input('_method') == 'PUT') {
 
-      $reference = Medicament::find($medicament->id);
+      $this->medicamentCustom = Medicament::find($medicament->id);
 
       $commentaires = collect($request->input('commentaires'));
 
-      if (count($reference->precautions) > 0) {
-        $commentaires_reference = $reference->precautions->map(function ($commentaire) {
-          return $commentaire->id;
-        });
+      $commentaires_reference = $this->medicamentCustom->precautions->map(function ($commentaire) {
+        return $commentaire->id;
+      });
+      $commentaires_comparaison = $commentaires->map(function ($commentaire) {
+        return $commentaire['id'];
+      });
 
-        if ($commentaires_reference->isNotEmpty()) {
-          $commentaires_comparaison = $commentaires->map(function ($commentaire) {
-            return $commentaire['id'];
-          });
+      $this->_filterPrecautions($commentaires_reference, $commentaires_comparaison);
 
-          $to_delete = $commentaires_reference->diff($commentaires_comparaison);
+      $this->populateModelFromForm($request, $this->medicamentCustom);
 
-          $to_delete->each(function ($item, $key) {
+      $this->medicamentCustom->save();
 
-            MedicamentPrecaution::find($item)->delete();
+      $fromAPI = $this->bdpmCis::whereIn('code_cis', $request->input('bdpm'))->get();
 
-          });
-        }
-      }
+      $medicament->bdpm()->sync($fromAPI);
+
+      $this->saveOrUpdateCommentairesFromForm($request->input('commentaires'));
+
+      return true;
 
     }
 
-    $medicament = $this->populateModelFromForm($request, $medicament);
-
-    $medicament->save();
-
-    $fromAPI = $this->medicamentAPI::whereIn('code_cis', $request->input('api_selected'))->get();
-
-    $medicament->bdpm()->saveMany($fromAPI);
-
-    $this->saveOrUpdateCommentairesFromForm($request->input('commentaires'), $medicament->id);
-
-    return true;
-
+    abort(403, 'Bad method ;)');
   }
 
 
@@ -152,9 +156,10 @@ class MedicamentRepository {
    * @param  integer $medicament_id ID du médicament (intervient dans la cible du commentaire)
    * @return boolean True if OK
    */
-  public function saveOrUpdateCommentairesFromForm ($commentaires, $medicament_id) {
+  public function saveOrUpdateCommentairesFromForm ($commentaires) {
 
     if (!$commentaires) return;
+
 
     foreach ($commentaires as $commentaire) {
 
@@ -162,11 +167,11 @@ class MedicamentRepository {
 
       if (!empty($commentaire['id'])) {
 
-        $this->updateCommentaire($commentaire, $medicament_id);
+        $this->updateCommentaire($commentaire);
 
       } else {
 
-        $this->saveCommentaire($commentaire, $medicament_id);
+        $this->saveCommentaire($commentaire);
 
       }
 
@@ -184,23 +189,17 @@ class MedicamentRepository {
    * @param  integer $medicament_id ID du médicament (pour la cible)
    * @return boolean True if OK
    */
-  protected function saveCommentaire ($commentaire, $medicament_id) {
+  protected function saveCommentaire ($commentaire) {
 
-    $toSave = new MedicamentPrecaution();
+    $cible_array = $this->getCible($commentaire['cible_id'], $this->medicamentCustom->id);
 
-    $cible = $this->getCible($commentaire['cible_id'], $medicament_id);
+    $precaution = new Precaution();
+    $precaution->voie_administration = $commentaire['voie_administration'];
+    $precaution->population = $commentaire['population'];
+    $precaution->commentaire = $commentaire['commentaire'];
+    $precaution->save();
 
-    $toSave->cible = $cible['cible'];
-
-    $toSave->cible_id = $cible['cible_id'];
-
-    $toSave->voie_administration = $commentaire['voie_administration'];
-
-    $toSave->population = $commentaire['population'];
-
-    $toSave->commentaire = $commentaire['commentaire'];
-
-    $toSave->save();
+    $this->_insertPivots($cible_array, $precaution);
 
     return true;
 
@@ -214,15 +213,17 @@ class MedicamentRepository {
    * @param  integer $medicament_id ID du médicament (pour la cible)
    * @return boolean True if OK
    */
-  protected function updateCommentaire ($commentaire, $medicament_id) {
+  protected function updateCommentaire ($commentaire) {
 
-    $toUpdate = MedicamentPrecaution::find($commentaire['id']);
+    $toUpdate = Precaution::find($commentaire['id']);
 
-    $cible = $this->getCible($commentaire['cible_id'], $medicament_id);
+    $cible_array = $this->getCible($commentaire['cible_id'], $this->medicamentCustom->id);
 
-    $toUpdate->cible = $cible['cible'];
+    //Faire le ménage des pivots existants
+    DB::table($this->pivot_table)->where('precaution_id', '=', $toUpdate->id)->delete();
 
-    $toUpdate->cible_id = $cible['cible_id'];
+    //Puis insérer les nouveaux pivots
+    $this->_insertPivots($cible_array, $toUpdate);
 
     $toUpdate->voie_administration = $commentaire['voie_administration'];
 
@@ -236,6 +237,34 @@ class MedicamentRepository {
 
   }
 
+  private function _filterPrecautions ($previous_id, $current_id) {
+    if (count($previous_id) > 0 && $previous_id->isNotEmpty()) {
+
+      $to_delete = $previous_id->diff($current_id);
+
+      $to_delete->each(function ($item, $key) {
+
+        Precaution::find($item)->delete();
+
+      });
+    }
+  }
+
+  private function _insertPivots ($cible_array, $precaution)
+  {
+    foreach ($cible_array as $cible_unique) {
+      if ($cible_unique['cible'] == "medicament") {
+        $this->medicamentCustom->precs()->attach($precaution);
+      } elseif ($cible_unique['cible'] == "substance") {
+        DB::table($this->pivot_table)->insert([
+          'cible_id' => $cible_unique['cible_id'],
+          'cible_type' => 'App\Models\BdpmCisCompo',
+          'precaution_id' => $precaution->id
+        ]);
+      }
+    }
+  }
+
 
   /**
    * Pour obtenir la cible du commentaire
@@ -246,49 +275,35 @@ class MedicamentRepository {
    */
   public function getCible ($cible, $medicament_id) {
 
-    $substanceOrMedicament = explode('-', $cible);
+    $cible_array = explode('+', $cible);
+    $cible_return = [];
 
-    switch ($substanceOrMedicament[0]) {
-
-      case "0":
-
-        return [
-
+    foreach ($cible_array as $cible_unique) {
+      $substanceOrMedicament = explode('-', $cible_unique);
+      switch ($substanceOrMedicament[0]) {
+        case "0":
+          $cible_return[] = [
+            'cible' => 'medicament',
+            'cible_id' => $medicament_id
+          ];
+          break;
+      case "M":
+          $cible_return[] = [
           'cible' => 'medicament',
-
-          'cible_id' => 'M-' . $medicament_id
-
-        ];
-
-        break;
-
-    case "M":
-
-        return [
-
-        'cible' => 'medicament',
-
-        'cible_id' => 'M-' . $medicament_id
-
-        ];
-
-        break;
-
-      case "S":
-
-        return [
-
-          'cible' => 'substance',
-
-          'cible_id' => $cible
-
-        ];
-
-        break;
-
-      default: break;
-
+          'cible_id' => $medicament_id
+          ];
+          break;
+        case "S":
+          $cible_return[] = [
+            'cible' => 'substance',
+            'cible_id' => $substanceOrMedicament[1]
+          ];
+          break;
+        default: break;
+      }
     }
+
+    return $cible_return;
 
   }
 
@@ -301,8 +316,6 @@ class MedicamentRepository {
   public function delete (Medicament $medicament) {
 
     $medicament->delete();
-
-    MedicamentPrecaution::where('cible', 'medicament')->where('cible_id', 'M-' . $medicament->id)->delete();
 
     return true;
 

@@ -10,7 +10,7 @@ import PPSelect from './plan-prise/PPSelect';
 import PPCard from './plan-prise/PPCard';
 
 import MESSAGES from './messages.js';
-import { API_URL, SPINNER } from './params';
+import { SPINNER } from './params';
 import { managePP } from './generic/functions';
 
 class PlanPrise extends React.Component {
@@ -326,7 +326,7 @@ class PlanPrise extends React.Component {
                         multiple={false}
                         onSave={this.addToPP}
                         type="cis"
-                        url={API_URL}
+                          url={window.php.routes.api.bdpm.search}
                         />
                     </div>
                 }

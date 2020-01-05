@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\PlanPrise;
+use App\Models\PlanPrise;
 use App\Repositories\MedicamentRepository;
 use Illuminate\Support\Facades\Auth;
 

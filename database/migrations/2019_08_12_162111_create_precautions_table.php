@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMedicamentPrecautionsTable extends Migration
+class CreatePrecautionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,8 +15,6 @@ class CreateMedicamentPrecautionsTable extends Migration
     {
         Schema::create('custom_precautions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('cible');
-            $table->string('cible_id');
             $table->integer('voie_administration');
             $table->string('population')->nullable();
             $table->text('commentaire');

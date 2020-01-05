@@ -5,79 +5,82 @@ namespace App\Repositories;
 class CompositionRepository
 {
 
-  private $compositionObject;
-  private $compositionArray;
+  public $composition_parsed;
 
-  public function __construct ($compositionObject)
+  public function __construct ($composition_object)
   {
-    $this->compositionObject = $compositionObject;
-    $this->compositionArray = $this->parseObject($compositionObject);
+    $this->composition_parsed = $this->_parseObject($composition_object->groupBy('pivot'));
   }
 
-  public function getCodeSubstanceArray ()
+  public function toArray ()
   {
-    return array_map(function ($composition) {
-      return $composition->codeSubstance;
-    }, $this->compositionArray);
-  }
-
-  public function getArray ()
-  {
-    return array_map(function ($composition) {
+    return $this->composition_parsed->map(function ($composition) {
       return (object) [
-        'codeSubstance' => 'S-' . $composition->codeSubstance,
-        'denominationSubstance' => $composition->denominationSubstance,
-        'dosageSubstance' => $composition->dosageSubstance
+        'code_substance' => $composition['code_substance'],
+        'denomination_substance' => $composition['denomination_substance']
       ];
-    }, $this->compositionArray);
+    });
   }
 
-  public function getString () {
-    return implode(array_map(function ($composition, $index) {
-      return ($index === 0 ? "" : " + ") . implode(array_map(function ($word) {
-        $word = mb_strtolower($word);
-        switch ($word) {
-          case 'de': case'(de': case'de)':
-            return $word;
-            break;
-          case "base":
-            return "";
-            break;
-          default:
-            return str_replace('( ', '(', ucwords(str_replace('(', '( ', $word)));
-            break;
+  public function toString () {
+    return $this->composition_parsed->map(function ($item) {
+      return $item['denomination_substance'];//trim(preg_split('/[()]+/', $item['denomination_substance'])[0]);
+    })->implode(' + ');
+  }
+
+  public function merge (CompositionRepository $composition)
+  {
+    foreach ($composition->composition_parsed as $new_key => $new_parsed) {
+      foreach ($this->composition_parsed as $previous_key => $previous_parsed) {
+        if ($previous_parsed['denomination_substance'] == $new_parsed['denomination_substance'] || !$previous_parsed['code_substance']->intersect($new_parsed['code_substance'])->isEmpty()) {
+          $this->composition_parsed[$previous_key]['code_substance'] = $previous_parsed['code_substance']->merge($new_parsed['code_substance'])->unique()->sort();
+          continue 2;
+        } else {
+          $need_push = $new_parsed;
         }
-      }, explode(" ", $composition->denominationSubstance)), " ") . " (" . $composition->codeSubstance . ")";
-    }, $this->compositionArray, array_keys($this->compositionArray)));
+      }
+      if (isset($need_push)) {
+        $this->composition_parsed->push($need_push);
+        unset($need_push);
+      }
+    }
+    return $this;
   }
 
-  private function parseObject ()
+  private function _parseObject ($composition_object)
   {
     $return = [];
     // Pour chaque forme pharmaceutique dans l'objet (ex : Actonel Combi contient sachets et comprimés)
-    foreach ($this->compositionObject as $composition) {
+    foreach ($composition_object as $composition) {
       // Pour chaque PA dans la forme pharmaceutique
-      foreach ($composition->substancesActives as $substanceActive) {
-        // Pour chaque fraction thérapeutique s'il y en a une ou plusieurs
-        if (!empty($substanceActive->fractionsTherapeutiques)) {
-          foreach ($substanceActive->fractionsTherapeutiques as $fractionTherapeutique) {
-            $return[] = $this->getSubstanceObject($fractionTherapeutique);
-          }
-        } else {
-          $return[] = $this->getSubstanceObject($substanceActive);
+      $tmp_denomination = "";
+      $tmp_codes = [];
+      foreach ($composition as $substance_active) {
+        switch ($substance_active->nature_composant) {
+          case 'FT':
+            $tmp_denomination = $substance_active->denomination_substance;
+          case 'SA':
+            $tmp_denomination = $tmp_denomination === "" ? $substance_active->denomination_substance : $tmp_denomination;
+            $tmp_codes[] = $substance_active->code_substance;
+            break;
+          default:
+            # code...
+            break;
         }
       }
+      $return[] = collect([
+        'code_substance' => collect($tmp_codes),
+        'denomination_substance' => $tmp_denomination
+      ]);
     }
-    return $return;
+    return collect($return);
   }
 
-  private function getSubstanceObject ($substance)
+  private function _codeArrayToString ($code_array)
   {
-    return (object) [
-      'codeSubstance' => $substance->codeSubstance,
-      'denominationSubstance' => $substance->denominationSubstance,
-      'dosageSubstance' => $substance->dosageSubstance
-    ];
+    return $code_array->sort()->map(function ($code) {
+      return 'S-' . $code;
+    })->implode('+');
   }
 
 }

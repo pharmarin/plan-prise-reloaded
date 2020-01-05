@@ -1,19 +1,33 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-use App\MedicamentPrecaution;
+
 use App\Repositories\CompositionRepository;
+use App\Repositories\PrecautionRepository;
 
 class Medicament extends Model
 {
     protected $table = 'custom_medics';
 
-    protected $appends = ['precautions', 'voies_administration_string', 'voies_administration_array'];
+    protected $appends = ['precautions'];
 
     public function bdpm () {
-      return $this->hasMany('App\MedicamentAPI');
+      return $this->belongsToMany('App\Models\BdpmCis', 'bdpm_custom_pivot', 'medicament_id', 'code_cis');
+    }
+
+    public function precs ()
+    {
+      return $this->morphToMany('App\Models\Precaution', 'cible', 'custom_precautions_pivot');
+    }
+
+    public function getPrecautionsAttribute ()
+    {
+
+      return (new PrecautionRepository())->fromMedicament($this);
+
     }
 
     // Add attribute
@@ -21,7 +35,7 @@ class Medicament extends Model
       return collect(json_decode($custom_indications));
     }
 
-    public function getPrecautionsAttribute () {
+    /*public function getPrecautionsAttribute () {
       $voiesAdministration = $this->voies_administration_array;
       if (empty($voiesAdministration) || $this->bdpm()->first() === null) {
         return [];
@@ -37,23 +51,28 @@ class Medicament extends Model
           }, $this->bdpm()->first()->compositions_array));
         })
         ->get();
-    }
+    }*/
 
     // Edit attribute
     public function getConservationDureeAttribute ($conservation_array) {
       $conservation_array = json_decode($conservation_array);
+      if (!$conservation_array) return;
       return array_filter(array_map(function ($conservation) {
         return ($conservation->laboratoire === null && $conservation->duree === null) ? null : $conservation;
       }, $conservation_array));
     }
 
     // Add attribute
-    public function getCompositionsAttribute () {
-      return $medicamentAPI = $this->bdpm()->first()->compositions;
+    public function getCompositionAttribute () {
+      $composition = null;
+      $this->bdpm->each(function ($bdpm) use (&$composition) {
+        $composition = $composition !== null ? $composition->merge($bdpm->composition) : $bdpm->composition;
+      });
+      return $composition;
     }
 
-    public function getDCIAttribute () {
-      return $medicamentAPI = $this->bdpm()->first()->compositions_string;
+    public function getCompositionStringAttribute () {
+      return $this->composition->toString();
     }
 
     // Add attribute

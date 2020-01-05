@@ -17,22 +17,20 @@
                 <div class="card">
                     <div class="card-header">
                       <h4>{{ $medicament->custom_denomination }}</h4>
+                      <h6>{{ $medicament->composition_string }}</h6>
                       <ul class="list-unstyled mb-0">
-                        @foreach ($medicament->compositions->getArray() as $substance)
-                            <li class="text-muted font-italic">{{ $substance->denominationSubstance }} ({{ $substance->codeSubstance }})</li>
-                        @endforeach
                       </ul>
                     </div>
 
                     <div class="card-body">
 
                       <div class="row">
-                        @if ($medicament->indications)
+                        @if ($medicament->custom_indications)
                           <div class="col-sm-4 text-secondary text-right">Indications</div>
                           <div class="col-sm-8">
                             <ul class="list-unstyled">
-                              @foreach ($medicament->indications as $indication)
-                                <li>{{ $indication }}</li>
+                              @foreach ($medicament->custom_indications as $indication)
+                                <li>{{ $indication->custom_indications }}</li>
                               @endforeach
                             </ul>
                           </div>
@@ -48,7 +46,7 @@
                           <div class="col-sm-8">
                             <ul class="list-unstyled">
                               @foreach ($medicament->conservation_duree as $conservation)
-                                <li>{{ $conservation->duree }} ({{ $conservation->laboratoire }})</li>
+                                <li>{{ $conservation->duree }}@if($conservation->laboratoire) ({{ $conservation->laboratoire }})@endif</li>
                               @endforeach
                             </ul>
                           </div>
@@ -58,8 +56,8 @@
                           <div class="col-sm-4 text-secondary text-right">Voie d'administration</div>
                           <div class="col-sm-8">
                             <ul class="list-unstyled">
-                              @foreach ($medicament->voiesAdministrationString as $voieAdministration)
-                                <li>{{ $voieAdministration }}</li>
+                              @foreach ($medicament->voies_administration_string as $voie_administration)
+                                <li>{{ $voie_administration }}</li>
                               @endforeach
                             </ul>
                           </div>
@@ -71,8 +69,11 @@
                             <ul class="list-unstyled">
                               @foreach ($medicament->precautions as $precaution)
                                 <li>
-                                  <small class="text-muted text-small">{{ $precaution->option }}</small>
-                                  <div>{{ $precaution->commentaire }}</div>
+                                  <small class="text-muted text-small">{{ $precaution->population }}</small>
+                                  <div>
+                                    <span class="{{ explode("-", $precaution->cible_id)[0] === "S" ? 'text-warning' : 'text-success' }}">•</span>
+                                    {{ $precaution->commentaire }}
+                                  </div>
                                 </li>
                               @endforeach
                             </ul>
@@ -83,10 +84,10 @@
                           <div class="col-sm-4 text-secondary text-right">CIP</div>
                           <div class="col-sm-8">
                             <ul class="list-unstyled">
-                              @foreach ($medicament->bdpm as $medicamentAPI)
-                                @foreach ($medicamentAPI->cip as $cip)
+                              @foreach ($medicament->bdpm as $bdpm_medicament)
+                                @foreach ($bdpm_medicament->cip as $cip)
                                   <li>
-                                    {{ $cip->CIP7 }}, {{ $cip->CIP13 }} ({{ $medicamentAPI->titulaire }})
+                                    {{ $cip->cip_7 }}, {{ $cip->cip_13 }} ({{ ltrim($bdpm_medicament->titulaires) }})
                                   </li>
                                 @endforeach
                               @endforeach

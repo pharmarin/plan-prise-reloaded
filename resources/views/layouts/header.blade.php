@@ -5,7 +5,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <!-- Medicament API route -->
-<meta name="medicament-api" content="{{ route('medicament.api.get') }}">
+<meta name="medicament-api" content="{{ route('api.bdpm.get') }}">
 <meta name="medicament-custom" content="{{ route('medicament.custom.get') }}">
 <meta name="plan-prise-api" content="{{ route('plan-prise.api') }}">
 

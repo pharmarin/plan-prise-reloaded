@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\MedicamentPrecaution;
@@ -14,11 +14,11 @@ class MedicamentAPI extends Model
     protected $appends = ['associated_precautions', 'compositions_array', 'compositions_string'];
 
     public function custom_values () {
-      return $this->belongsTo('App\Medicament', 'medicament_id');
+      return $this->belongsTo('App\Models\Medicament', 'medicament_id');
     }
 
     public function cip () {
-      return $this->hasMany('App\CIP', 'medicament_id');
+      return $this->hasMany('App\Models\CIP', 'medicament_id');
     }
 
     public function getIndicationsTherapeutiquesAttribute ($indications) {
@@ -39,12 +39,12 @@ class MedicamentAPI extends Model
     }
 
     // Add attribute
-    public function getCompositionsArrayAttribute () {
+    public function getCompositionArrayAttribute () {
       return $this->compositions->getArray();
     }
 
     // Add attribute
-    public function getCompositionsStringAttribute () {
+    public function getCompositionStringAttribute () {
       return $this->compositions->getString();
     }
 }

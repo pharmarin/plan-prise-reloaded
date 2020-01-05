@@ -1,5 +1,7 @@
 import React from 'react';
 
+import TextareaAutosize from 'react-autosize-textarea';
+
 export default class GenericInput extends React.Component {
   render () {
     let defaultDivClassName = " flex-fill px-0 pb-1"
@@ -19,7 +21,7 @@ export default class GenericInput extends React.Component {
     } else if (this.props.type === 'textarea') {
       return (
         <div className={[this.props.className + defaultDivClassName]}>
-          <textarea {...this.props} className={defaultInputClassName}></textarea>
+          <TextareaAutosize {...this.props} className={defaultInputClassName}></TextareaAutosize>
             <button type="button" className="btn btn-link p-0" data-toggle="modal" data-target="#helpModal">
               <small className="form-text text-muted">
               Aide sur le fonctionnement du champ de texte

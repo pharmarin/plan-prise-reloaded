@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\OldMedicament;
+use App\Models\OldMedicament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
@@ -27,7 +27,9 @@ class MedicamentImportController extends Controller
     $javascript = [
       'old_medicament' => $old_medicament,
       'default_inputs' => Config::get('inputs.medicament'),
-      'route' => route('medicament.store')."?".http_build_query($request->input('query'))
+      'routes' => mix_routes([
+        'action' => route('medicament.store') . "?" . http_build_query($request->input('query'))
+      ])
     ];
     return view('medicament.form')->withAction('IMPORT')->with(compact('javascript', 'old_medicament'));
   }
