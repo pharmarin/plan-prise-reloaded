@@ -25,11 +25,14 @@ class PrecautionRepository
     $precautions_collection = Precaution::whereHas('medicaments', function ($query) use ($medicament) {
       $query->where('cible_id', $medicament->id);
     })->get();
-    $precautions_composition = $this->fromComposition($medicament->composition);
+    $voies_administration = collect(json_decode($medicament->voies_administration))->map(function ($item) {
+      return $item->voies_administration;
+    })->push(0);
+    $precautions_composition = $this->fromComposition($medicament->composition, $voies_administration);
     return $precautions_collection->merge($precautions_composition);
   }
 
-  public function fromComposition (CompositionRepository $composition)
+  public function fromComposition (CompositionRepository $composition, $voies_administration)
   {
     $pivot_table = (new Precaution)->compositions()->getTable();
     $precautions_table = (new Precaution)->getTable();
@@ -38,6 +41,7 @@ class PrecautionRepository
         ->select($precautions_table.'.*')
         ->where($pivot_table.'.cible_type', BdpmCisCompo::class)
         ->whereIn($pivot_table.'.cible_id', $composition['code_substance'])
+        ->whereIn($precautions_table.'.voie_administration', $voies_administration)
         ->get();
       // Merge results to return array
       $precautions_collection = isset($precautions_collection) ? $precautions_collection->merge($precautions_results) : $precautions_results;
