@@ -48,6 +48,6 @@ class PrecautionRepository
       // Merge results to return array
       $precautions_collection = isset($precautions_collection) ? $precautions_collection->merge($precautions_results) : $precautions_results;
     }
-    return $precautions_collection;
+    return $precautions_collection->unique();
   }
 }
