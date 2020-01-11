@@ -77,7 +77,8 @@ export default class MedicamentForm extends React.Component {
     let substances_object = {}
     if (compositions !== undefined) {
       compositions.forEach((composition) => {
-        let code_substance = composition.code_substance.map((code) => 'S-' + code).join('+')
+        let code_array = Array.isArray(composition.code_substance) ? composition.code_substance : Object.values(composition.code_substance)
+        let code_substance = code_array.map((code) => 'S-' + code).join('+')
         Object.assign(substances_object, {
           [code_substance]: composition.denomination_substance
         })
