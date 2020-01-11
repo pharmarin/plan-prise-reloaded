@@ -23,7 +23,12 @@ class MedicamentImportController extends Controller
   }
 
   public function showImportFormByID (Request $request, $id) {
-    $old_medicament = OldMedicament::where('id', $id)->first();
+    $old_medicament = OldMedicament::where('id', $id)->where('import', false)->get();
+    if (count($old_medicament) !== 1) {
+      throw new \Exception('Wrong count returned to import controller. ');
+    } else {
+      $old_medicament = $old_medicament->first();
+    }
     $javascript = [
       'old_medicament' => $old_medicament,
       'default_inputs' => Config::get('inputs.medicament'),
