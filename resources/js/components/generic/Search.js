@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Form, FormControl, InputGroup, ListGroup, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import classNames from 'classnames';
 import ArrowKeysReact from 'arrow-keys-react';
 
-import { getAPIFromCIS } from './functions';
-import { isEqual, removeDuplicates } from './utils';
 import { SPINNER } from '../params.js';
 
 export default class Search extends React.Component {
