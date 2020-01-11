@@ -44,7 +44,7 @@ class PrecautionRepository
       if ($voies_administration !== null) {
         $precautions_results->whereIn($precautions_table.'.voie_administration', $voies_administration);
       }
-      $precautions_results->get();
+      $precautions_results = $precautions_results->get();
       // Merge results to return array
       $precautions_collection = isset($precautions_collection) ? $precautions_collection->merge($precautions_results) : $precautions_results;
     }
