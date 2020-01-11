@@ -3,6 +3,7 @@
 /public/storage
 /public/css
 /public/js
+/public/mix-manifest.json
 /storage/*.key
 /vendor
 .env
@@ -13,5 +14,4 @@ npm-debug.log
 yarn-error.log
 TODO
 *.code-workspace
-mix-manifest.json
 .DS_Store
