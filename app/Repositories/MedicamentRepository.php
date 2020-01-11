@@ -222,9 +222,10 @@ class MedicamentRepository {
   }
 
   private function _filterPrecautions ($delete_id) {
-    if (count($delete_id) > 0 && $delete_id->isNotEmpty()) {
+    $to_delete = array_filter($delete_id);
+    if (count($to_delete) > 0) {
 
-      $delete_id->each(function ($item) {
+      $to_delete->each(function ($item) {
 
         Precaution::find($item)->delete();
 

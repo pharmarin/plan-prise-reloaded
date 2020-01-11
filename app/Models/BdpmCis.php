@@ -57,7 +57,8 @@ class BdpmCis extends Model
     public function getCompositionPrecautionsAttribute ()
     {
 
-      return (new PrecautionRepository())->fromComposition($this->composition);
+      $voies_administration = $this->medicament->first() ? $this->medicament->first()->voies_administration : null;
+      return (new PrecautionRepository())->fromComposition($this->composition, $voies_administration);
 
     }
 }

@@ -32,7 +32,7 @@ class PrecautionRepository
     return $precautions_collection->merge($precautions_composition);
   }
 
-  public function fromComposition (CompositionRepository $composition, $voies_administration)
+  public function fromComposition (CompositionRepository $composition, $voies_administration = null)
   {
     $pivot_table = (new Precaution)->compositions()->getTable();
     $precautions_table = (new Precaution)->getTable();
@@ -40,9 +40,11 @@ class PrecautionRepository
       $precautions_results = Precaution::join($pivot_table, $precautions_table.'.id', '=', $pivot_table.'.precaution_id')
         ->select($precautions_table.'.*')
         ->where($pivot_table.'.cible_type', BdpmCisCompo::class)
-        ->whereIn($pivot_table.'.cible_id', $composition['code_substance'])
-        ->whereIn($precautions_table.'.voie_administration', $voies_administration)
-        ->get();
+        ->whereIn($pivot_table.'.cible_id', $composition['code_substance']);
+      if ($voies_administration !== null) {
+        $precautions_results->whereIn($precautions_table.'.voie_administration', $voies_administration);
+      }
+      $precautions_results->get();
       // Merge results to return array
       $precautions_collection = isset($precautions_collection) ? $precautions_collection->merge($precautions_results) : $precautions_results;
     }
