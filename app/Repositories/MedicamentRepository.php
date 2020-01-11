@@ -67,14 +67,7 @@ class MedicamentRepository {
 
     $this->medicamentCustom->bdpm()->saveMany($fromAPI);
 
-    $commentaires = collect($request->input('commentaires'));
-    $commentaires_reference = collect($request->input('previous_prec_id'));
-
-    $commentaires_comparaison = $commentaires->map(function ($commentaire) {
-      return $commentaire['id'];
-    });
-
-    $this->_filterPrecautions($commentaires_reference, $commentaires_comparaison);
+    $this->_filterPrecautions($request->input('delete_precautions'));
 
     $this->saveOrUpdateCommentairesFromForm($request->input('commentaires'));
 
@@ -96,16 +89,7 @@ class MedicamentRepository {
 
       $this->medicamentCustom = Medicament::find($medicament->id);
 
-      $commentaires = collect($request->input('commentaires'));
-
-      $commentaires_reference = $this->medicamentCustom->precautions->map(function ($commentaire) {
-        return $commentaire->id;
-      });
-      $commentaires_comparaison = $commentaires->map(function ($commentaire) {
-        return $commentaire['id'];
-      });
-
-      $this->_filterPrecautions($commentaires_reference, $commentaires_comparaison);
+      $this->_filterPrecautions($request->input('delete_precautions'));
 
       $this->populateModelFromForm($request, $this->medicamentCustom);
 
@@ -237,12 +221,10 @@ class MedicamentRepository {
 
   }
 
-  private function _filterPrecautions ($previous_id, $current_id) {
-    if (count($previous_id) > 0 && $previous_id->isNotEmpty()) {
+  private function _filterPrecautions ($delete_id) {
+    if (count($delete_id) > 0 && $delete_id->isNotEmpty()) {
 
-      $to_delete = $previous_id->diff($current_id);
-
-      $to_delete->each(function ($item, $key) {
+      $delete_id->each(function ($item) {
 
         Precaution::find($item)->delete();
 

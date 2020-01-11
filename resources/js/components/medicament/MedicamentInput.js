@@ -58,6 +58,9 @@ export default class MedicamentInput extends React.Component
   removeInputLine = (event, inputName, key) => {
     event.preventDefault()
     let { inputValues } = this.props
+    if (inputName === "commentaires") {
+      this.props.deleteCallback(inputValues[key])
+    }
     inputValues.splice(key, 1)
     this.props.setState(inputValues)
   }

@@ -14,10 +14,9 @@ export default class MedicamentForm extends React.Component {
     this.state = {
       inputs: props.inputs,
       bdpm: [],
-      composition: []
+      composition: [],
+      deleted_precautions: []
     }
-
-    this.initCommentaires = []
 
     for (let input in props.inputs) {
       this.state[input] = props.inputs[input].defaultValue
@@ -40,7 +39,6 @@ export default class MedicamentForm extends React.Component {
           new_inputs.commentaires.inputs.cible_id.options = substances_actives
           let newCommentaires = this.state.commentaires
           newCommentaires = newCommentaires.concat(response.detail[0].composition_precautions)
-          this.initCommentaires = this.initCommentaires.concat(response.detail[0].composition_precautions)
           this.setState({
             commentaires: newCommentaires,
             bdpm: response.detail.sort((a, b) => {
@@ -76,11 +74,9 @@ export default class MedicamentForm extends React.Component {
   }
 
   getSubstancesActivesObject = (compositions) => {
-    console.log(compositions)
     let substances_object = {}
     if (compositions !== undefined) {
       compositions.forEach((composition) => {
-        console.log(composition)
         let code_substance = composition.code_substance.map((code) => 'S-' + code).join('+')
         Object.assign(substances_object, {
           [code_substance]: composition.denomination_substance
@@ -163,8 +159,8 @@ export default class MedicamentForm extends React.Component {
                 }
 
                 {
-                  this.initCommentaires.map((commentaire, index) =>
-                    <input key={index} type="hidden" name="previous_prec_id[]" value={commentaire.id} />
+                  this.state.deleted_precautions.map((commentaire, index) =>
+                    <input key={index} type="hidden" name="delete_precautions[]" value={commentaire.id} />
                   )
                 }
 
@@ -177,6 +173,9 @@ export default class MedicamentForm extends React.Component {
                       inputProperties={this.state.inputs[inputName]}
                       setState={newState => this.setState({ [inputName]: newState })}
                       voiesAdministration={this.state.voies_administration}
+                      deleteCallback={(prec) => this.setState({
+                        deleted_precautions: this.state.deleted_precautions.concat(prec)
+                      })}
                       />)
                 }
 
