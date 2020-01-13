@@ -114,7 +114,7 @@ return [
         ]
       ],
       'display' => 'commentaire',
-      'emptyObject' => (object) [(object) [ 'id' => '', 'cible_id' => 0, 'voie_administration' => 0, 'option' => '', 'commentaire' => '' ]]
+      'emptyObject' => (object) [ 'id' => '', 'cible_id' => 0, 'cible_type' => \App\Models\Medicament::class, 'voie_administration' => 0, 'option' => '', 'commentaire' => '' ]
     ]
   ],
   'plan_prise' => [

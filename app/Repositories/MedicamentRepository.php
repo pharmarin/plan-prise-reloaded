@@ -4,8 +4,7 @@ namespace App\Repositories;
 
 
 use App\Models\BdpmCis;
-use App\Models\BdpmCisCompo;
-use App\Models\MedicamentCIP;
+use App\Models\Composition;
 
 use App\Models\Medicament;
 
@@ -59,13 +58,15 @@ class MedicamentRepository {
    */
   public function saveFromForm (Request $request) {
 
-    $this->medicamentCustom = $this->populateModelFromForm($request, $this->medicamentCustom);
+    $this->medicamentCustom = $this->_populateModelFromForm($request, $this->medicamentCustom);
 
     $this->medicamentCustom->save();
 
     $fromAPI = $this->bdpmCis::whereIn('code_cis', $request->input('bdpm'))->get();
-
     $this->medicamentCustom->bdpm()->saveMany($fromAPI);
+
+    $composition_array = $this->_saveOrUpdateComposition($request->input('composition'));
+    $this->medicamentCustom->compositions()->sync($composition_array);
 
     $this->_filterPrecautions($request->input('delete_precautions'));
 
@@ -91,13 +92,15 @@ class MedicamentRepository {
 
       $this->_filterPrecautions($request->input('delete_precautions'));
 
-      $this->populateModelFromForm($request, $this->medicamentCustom);
+      $this->_populateModelFromForm($request, $this->medicamentCustom);
 
       $this->medicamentCustom->save();
 
       $fromAPI = $this->bdpmCis::whereIn('code_cis', $request->input('bdpm'))->get();
-
       $medicament->bdpm()->sync($fromAPI);
+
+      $composition_array = $this->_saveOrUpdateComposition($request->input('composition'));
+      $this->medicamentCustom->compositions()->sync($composition_array);
 
       $this->saveOrUpdateCommentairesFromForm($request->input('commentaires'));
 
@@ -116,7 +119,7 @@ class MedicamentRepository {
    * @param  Medicament $medicament Médicament à modifier (créé précédemment ou existant)
    * @return Medicament Médicament modifié
    */
-  public function populateModelFromForm (Request $request, Medicament $medicament) {
+  private function _populateModelFromForm (Request $request, Medicament $medicament) {
 
     $medicament->custom_denomination = $request->input('custom_denomination');
 
@@ -130,6 +133,19 @@ class MedicamentRepository {
 
     return $medicament;
 
+  }
+
+  private function _saveOrUpdateComposition ($composition_array) {
+    return array_map(function ($composition) {
+      if (is_numeric($composition)) {
+        $model = Composition::findOrFail($composition);
+      } else {
+        $model = new Composition();
+        $model->denomination = $composition;
+        $model->save();
+      }
+      return $model->id;
+    }, $composition_array);
   }
 
 
@@ -175,7 +191,7 @@ class MedicamentRepository {
    */
   protected function saveCommentaire ($commentaire) {
 
-    $cible_array = $this->getCible($commentaire['cible_id'], $this->medicamentCustom->id);
+    $cible = $this->getCible($commentaire['cible_id'], $this->medicamentCustom->id);
 
     $precaution = new Precaution();
     $precaution->voie_administration = $commentaire['voie_administration'];
@@ -183,7 +199,7 @@ class MedicamentRepository {
     $precaution->commentaire = $commentaire['commentaire'];
     $precaution->save();
 
-    $this->_insertPivots($cible_array, $precaution);
+    $this->_insertPivots($cible, $precaution);
 
     return true;
 
@@ -201,13 +217,9 @@ class MedicamentRepository {
 
     $toUpdate = Precaution::find($commentaire['id']);
 
-    $cible_array = $this->getCible($commentaire['cible_id'], $this->medicamentCustom->id);
+    $cible = $this->getCible($commentaire['cible_id'], $this->medicamentCustom->id);
 
-    //Faire le ménage des pivots existants
-    DB::table($this->pivot_table)->where('precaution_id', '=', $toUpdate->id)->delete();
-
-    //Puis insérer les nouveaux pivots
-    $this->_insertPivots($cible_array, $toUpdate);
+    $this->_insertPivots($cible, $toUpdate);
 
     $toUpdate->voie_administration = $commentaire['voie_administration'];
 
@@ -230,19 +242,11 @@ class MedicamentRepository {
     }
   }
 
-  private function _insertPivots ($cible_array, $precaution)
+  private function _insertPivots ($cible, $precaution)
   {
-    foreach ($cible_array as $cible_unique) {
-      if ($cible_unique['cible'] == "medicament") {
-        $this->medicamentCustom->precs()->attach($precaution);
-      } elseif ($cible_unique['cible'] == "substance") {
-        DB::table($this->pivot_table)->insert([
-          'cible_id' => $cible_unique['cible_id'],
-          'cible_type' => 'App\Models\BdpmCisCompo',
-          'precaution_id' => $precaution->id
-        ]);
-      }
-    }
+
+    $cible['model']->precs()->save($precaution);
+
   }
 
 
@@ -255,35 +259,23 @@ class MedicamentRepository {
    */
   public function getCible ($cible, $medicament_id) {
 
-    $cible_array = explode('+', $cible);
     $cible_return = [];
 
-    foreach ($cible_array as $cible_unique) {
-      $substanceOrMedicament = explode('-', $cible_unique);
-      switch ($substanceOrMedicament[0]) {
-        case "0":
-          $cible_return[] = [
-            'cible' => 'medicament',
-            'cible_id' => $medicament_id
-          ];
-          break;
-      case "M":
-          $cible_return[] = [
-          'cible' => 'medicament',
-          'cible_id' => $medicament_id
-          ];
-          break;
-        case "S":
-          $cible_return[] = [
-            'cible' => 'substance',
-            'cible_id' => $substanceOrMedicament[1]
-          ];
-          break;
-        default: break;
-      }
-    }
+    $substanceOrMedicament = explode('-', $cible);
 
-    return $cible_return;
+    switch ($substanceOrMedicament[0]) {
+      case "0":
+      case "M":
+        return [
+          'type' => 'M',
+          'model' => Medicament::findOrFail($medicament_id)
+        ];
+      case "S":
+        return [
+          'type' => 'S',
+          'model' => Composition::findOrFail($substanceOrMedicament[1])
+        ];
+    }
 
   }
 

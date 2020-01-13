@@ -27,38 +27,4 @@ class BdpmCis extends Model
       return $this->hasMany('App\Models\BdpmCisCip', 'code_cis', 'code_cis');
 
     }
-
-    public function compo ()
-    {
-
-      return $this->hasMany('App\Models\BdpmCisCompo', 'code_cis', 'code_cis');
-
-    }
-
-    public function getCompositionAttribute ()
-    {
-      return new CompositionRepository($this->compo);
-    }
-
-    public function getCompositionGroupedAttribute ()
-    {
-
-      return $this->composition->toArray();
-
-    }
-
-    public function getCompositionStringAttribute ()
-    {
-
-      return $this->composition->toString();
-
-    }
-
-    public function getCompositionPrecautionsAttribute ()
-    {
-
-      $voies_administration = $this->medicament->first() ? $this->medicament->first()->voies_administration : null;
-      return (new PrecautionRepository())->fromComposition($this->composition, $voies_administration);
-
-    }
 }

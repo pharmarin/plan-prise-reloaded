@@ -7,11 +7,12 @@ use Illuminate\Http\Request;
 
 class BdpmRepository {
 
-  protected $bdpmCis;
+  protected $bdpm_cis;
 
-  public function __construct (BdpmCis $bdpmCis) {
+  public function __construct (BdpmCis $bdpm_cis = null) {
 
-    $this->bdpmCis = $bdpmCis;
+    if ($bdpm_cis === null) $bdpm_cis = new BdpmCis();
+    $this->bdpm_cis = $bdpm_cis;
 
   }
 
@@ -20,7 +21,7 @@ class BdpmRepository {
 
     $paginate = isset($options['paginate']) ? $options['paginate'] : 20;
     $order_by = isset($options['order_by']) ? $options['order_by'] : 'denomination';
-    $all = $this->bdpmCis->where('statut_administratif', 'Autorisation active');
+    $all = $this->bdpm_cis->where('statut_administratif', 'Autorisation active');
     if (isset($options['display'])) {
       $all = $all->select(explode(',', $options['display']));
     }
@@ -42,7 +43,7 @@ class BdpmRepository {
   public function show (int $code_cis)
   {
 
-    return $this->bdpmCis::find($code_cis)->load('compo');
+    return $this->bdpm_cis::find($code_cis)->load('compo');
 
   }
 

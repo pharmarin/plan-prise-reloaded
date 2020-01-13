@@ -5,14 +5,15 @@ namespace App\Models;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Repositories\BdpmRepository;
 use App\Repositories\CompositionRepository;
 use App\Repositories\PrecautionRepository;
 
 class Medicament extends Model
 {
     protected $table = 'custom_medics';
-
     protected $appends = ['precautions'];
+    protected $with = ['compositions'];
 
     public function bdpm () {
       return $this->belongsToMany('App\Models\BdpmCis', 'bdpm_custom_pivot', 'medicament_id', 'code_cis');
@@ -20,7 +21,11 @@ class Medicament extends Model
 
     public function precs ()
     {
-      return $this->morphToMany('App\Models\Precaution', 'cible', 'custom_precautions_pivot');
+      return $this->morphMany('App\Models\Precaution', 'cible');
+    }
+
+    public function compositions () {
+      return $this->belongsToMany('App\Models\Composition');
     }
 
     public function getPrecautionsAttribute ()
@@ -63,17 +68,14 @@ class Medicament extends Model
     }
 
     // Add attribute
-    public function getCompositionAttribute () {
-      $composition = null;
-      $this->bdpm->each(function ($bdpm) use (&$composition) {
-        $composition = $composition !== null ? $composition->merge($bdpm->composition) : $bdpm->composition;
-      });
-      return $composition;
-    }
+    /*public function getCompositionAttribute () {
+      $bdpm_repository = new BdpmRepository();
+      return $bdpm_repository->getCompositionFromBdpmCollection($this->bdpm);
+    }*/
 
-    public function getCompositionStringAttribute () {
+    /*public function getCompositionStringAttribute () {
       return $this->composition->toString();
-    }
+    }*/
 
     // Add attribute
     public function getVoiesAdministrationStringAttribute () {

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Imports\BdpmCisImport;
 use App\Imports\BdpmCisCipImport;
-use App\Imports\BdpmCisCompoImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 
@@ -17,8 +16,7 @@ class BdpmController extends Controller
     public function initImport () {
       $tables = [
         'bdpm_cis' => 'CIS_bdpm.txt',
-        'bdpm_cis_cip' => 'CIS_CIP_bdpm.txt',
-        'bdpm_cis_compo' => 'CIS_COMPO_bdpm.txt'
+        'bdpm_cis_cip' => 'CIS_CIP_bdpm.txt'
       ];
       return view('bdpm.selection')->with(compact('tables'));
     }
@@ -30,8 +28,6 @@ class BdpmController extends Controller
       $this->import(new BdpmCisImport, resource_path('imports/CIS_bdpm.txt'));
       $this->output('>> Importing CIS_CIP_bdpm.txt');
       $this->import(new BdpmCisCipImport, resource_path('imports/CIS_CIP_bdpm.txt'));
-      $this->output('>> Importing CIS_COMPO_bdpm.txt');
-      $this->import(new BdpmCisCompoImport, resource_path('imports/CIS_COMPO_bdpm.txt'));
       $this->output('== Import successful ==');
       $this->end();
     }

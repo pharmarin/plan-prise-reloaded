@@ -4,11 +4,6 @@
 <!-- CSRF Token -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<!-- Medicament API route -->
-<meta name="medicament-api" content="{{ route('api.bdpm.get') }}">
-<meta name="medicament-custom" content="{{ route('medicament.custom.get') }}">
-<meta name="plan-prise-api" content="{{ route('plan-prise.api') }}">
-
 <title>@if(View::hasSection('title'))@yield('title') - @endif{{ config('app.name', 'Laravel') }}</title>
 
 <!-- Fonts -->

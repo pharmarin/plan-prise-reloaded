@@ -1,10 +1,9 @@
 import React from 'react';
 
 import Search from '../generic/Search';
+import SearchComposition from './SearchComposition';
 import MedicamentInput from './MedicamentInput';
 
-import { getAPIFromCIS } from '../generic/functions';
-import { SPINNER } from '../params';
 
 export default class MedicamentForm extends React.Component {
 
@@ -14,7 +13,8 @@ export default class MedicamentForm extends React.Component {
     this.state = {
       inputs: props.inputs,
       bdpm: [],
-      composition: [],
+      composition_array: [],
+      composition_precautions: [],
       deleted_precautions: []
     }
 
@@ -22,44 +22,32 @@ export default class MedicamentForm extends React.Component {
       this.state[input] = props.inputs[input].defaultValue
     }
 
-    if (this.props.medicament && this.props.medicament.bdpm && this.props.medicament.bdpm[0] !== undefined) {
-      this.state.bdpm = this.props.medicament.bdpm
-      this.state.inputs.commentaires.inputs.cible_id.options = this.getSubstancesActivesObject(this.props.medicament.composition.composition_parsed)
+    if (Array.isArray(this.state.commentaires)) {
+      this.state.commentaires = this._getCommentairesObject(this.state.commentaires)
+    }
+
+    if (this.props.medicament) {
+      if (this.props.medicament.bdpm && this.props.medicament.bdpm[0] !== undefined) {
+        this.state.bdpm = this.props.medicament.bdpm
+      }
+      if (this.props.medicament.compositions) {
+        this.state.composition_array = this.props.medicament.compositions.map((composition) => {
+          return {
+            value: composition.id,
+            label: composition.denomination
+          }
+        })
+        this.state.inputs = this._getSubstancesActivesObject(this.state.composition_array, this.state.inputs)
+      }
     }
   }
 
-  handleSearchSelect = async (selected) => {
-    return await new Promise((resolve) => {
-      this.setState({ isLoading: true })
-      getAPIFromCIS(
-        selected.map(selected => selected.code_cis),
-        (response) => {
-          let substances_actives = this.getSubstancesActivesObject(response.composition)
-          let new_inputs = this.state.inputs
-          new_inputs.commentaires.inputs.cible_id.options = substances_actives
-          let newCommentaires = this.state.commentaires
-          newCommentaires = newCommentaires.concat(response.detail[0].composition_precautions)
-          this.setState({
-            commentaires: newCommentaires,
-            bdpm: response.detail.sort((a, b) => {
-              if (a.denomination < b.denomination) return -1
-              if (a.denomination > b.denomination) return 1
-              return 0
-            }),
-            inputs: new_inputs
-          })
-          resolve()
-        },
-        (response) => {
-          this.props.alert.addAlert({
-            header: 'Erreur lors de l\'ajout des médicaments',
-            body: response,
-          })
-          resolve()
-        }
-      )
-      .then(() => {
-        this.setState({ isLoading: false })
+  _handleSearchSelect = (selected) => {
+    this.setState({
+      bdpm: selected.sort((a, b) => {
+        if (a.denomination < b.denomination) return -1
+        if (a.denomination > b.denomination) return 1
+        return 0
       })
     })
   }
@@ -73,18 +61,47 @@ export default class MedicamentForm extends React.Component {
     })
   }
 
-  getSubstancesActivesObject = (compositions) => {
+  _getSubstancesActivesObject = (composition_array, inputs_options) => {
     let substances_object = {}
-    if (compositions !== undefined) {
-      compositions.forEach((composition) => {
-        let code_array = Array.isArray(composition.code_substance) ? composition.code_substance : Object.values(composition.code_substance)
-        let code_substance = code_array.map((code) => 'S-' + code).join('+')
-        Object.assign(substances_object, {
-          [code_substance]: composition.denomination_substance
-        })
-      })
+    if (composition_array) {
+      composition_array.forEach((composition) => Object.assign(substances_object, {
+        ["S-" + composition.value]: composition.label
+      }))
     }
-    return { 0: 'Ce médicament', ...substances_object}
+    substances_object = { 0: 'Ce médicament', ...substances_object }
+    inputs_options.commentaires.inputs.cible_id.options = substances_object
+    return inputs_options
+  }
+
+  _getCommentairesObject = (old_commentaires, new_commentaires = [], filter = false) => {
+    if (filter) {
+      old_commentaires = old_commentaires.filter((commentaire) => !commentaire.cible_type.includes('Composition'))
+    }
+    return old_commentaires
+      .concat(new_commentaires)
+      .flat()
+      .map((commentaire) => {
+        let new_commentaire = commentaire
+        if (!commentaire) {
+          return this.props.inputs.commentaires.defaultValue
+        } else if (
+          new_commentaire.cible_id === 0
+          || (
+            typeof new_commentaire.cible_id === "string"
+            && (
+              new_commentaire.cible_id.split('-')[0] === "M"
+              || new_commentaire.cible_id.split('-')[0] === "S"
+            )
+          )
+        ) {
+          return commentaire
+        } else {
+          new_commentaire.cible_id = new_commentaire.cible_type === "App\\Models\\Composition"
+            ? 'S-' + new_commentaire.cible_id
+            : 'M-' + new_commentaire.cible_id
+          return new_commentaire
+        }
+      })
   }
 
   render () {
@@ -111,17 +128,13 @@ export default class MedicamentForm extends React.Component {
           <h6>Correspondance dans la Base de Données Publique des Médicaments</h6>
           <ul className="list-unstyled">
             <li key="add">
-              <div className={this.state.isLoading ? "mb-1" : "d-none"}>
-                {SPINNER}
-                <span className="ml-2">Import des médicaments sélectionnés en cours...</span>
-              </div>
               <Search
                 disabled={false}
                 multiple={true}
                 selected={this.state.bdpm}
                 defaultValue={this.state.inputs.custom_denomination.defaultValue}
                 modal={this.state.bdpm.length > 0}
-                onSave={(values) => this.handleSearchSelect(values)}
+                onSave={(values) => this._handleSearchSelect(values)}
                 url={window.php.routes.api.bdpm.search}
                 api={this.props.api}
                 />
@@ -135,7 +148,6 @@ export default class MedicamentForm extends React.Component {
           {
             this.state.bdpm.length > 0 ?
             <>
-              <p>DCI : { this.props.method === 'EDIT' ? this.props.medicament.composition_string : this.state.bdpm[0].composition_string }</p>
 
               <form action={window.php.routes.action} method="POST">
 
@@ -150,10 +162,6 @@ export default class MedicamentForm extends React.Component {
                 <input type="hidden" name="_token" value={document.head.querySelector('meta[name="csrf-token"]').getAttribute('content')} />
 
                 {
-                  this.props.old ? <input type="hidden" name="old_medicament" value={ this.props.old } /> : null
-                }
-
-                {
                   this.state.bdpm.map((medicament, index) =>
                     <input key={index} type="hidden" name="bdpm[]" value={ medicament.code_cis } />
                   )
@@ -164,6 +172,30 @@ export default class MedicamentForm extends React.Component {
                     <input key={index} type="hidden" name="delete_precautions[]" value={commentaire.id} />
                   )
                 }
+
+                {
+                    this.state.composition_array.map((composition, index) =>
+                    <input key={index} type="hidden" name="composition[]" value={composition.value} />
+                  )
+                }
+
+                <p className="m-0">DCI : </p>
+                  <SearchComposition
+                    defaultOptions={window.php.medicament.compositions.map((composition) => {
+                      return {
+                        value: composition.id,
+                        label: composition.denomination
+                      }
+                    })}
+                    onCompositionChange={(composition_array) => this.setState({
+                      composition_array: composition_array,
+                      inputs: this._getSubstancesActivesObject(composition_array, this.state.inputs)
+                    })}
+                    onPrecautionChange={(precaution_array) => this.setState({
+                      commentaires: this._getCommentairesObject(this.state.commentaires, precaution_array, true)
+                    })}
+                    setState={(state) => this.setState(state)}
+                  />
 
                 {
                   Object.keys(this.state.inputs).map(inputName =>
@@ -177,60 +209,19 @@ export default class MedicamentForm extends React.Component {
                       deleteCallback={(prec) => this.setState({
                         deleted_precautions: this.state.deleted_precautions.concat(prec)
                       })}
-                      />)
+                    />
+                  )
                 }
 
-                <button type="submit" className="btn btn-primary">{ submitButton }</button>
+                <button type="submit" className="btn btn-primary" disabled={!(this.state.composition_array.length > 0)} >{ submitButton }</button>
 
               </form>
             </> : null
           }
         </div>
-        {
-          this.renderHelpModal()
-        }
+
       </div>
     )
   }
 
-  renderHelpModal = () => {
-    return (
-      <div id="helpModal" className="modal fade" tabIndex="-1" role="info" aria-hidden="true">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Aide</h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <table className="table table-bordered">
-                <thead className="thead-light">
-                  <tr>
-                    <th>Element</th>
-                    <th>Markdown Syntax</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Bold</td>
-                    <td><code>**bold text**</code></td>
-                  </tr>
-                  <tr>
-                    <td>Italic</td>
-                    <td><code>*italicized text*</code></td>
-                  </tr>
-                  <tr>
-                    <td>Link</td>
-                    <td><code>[title](https://www.example.com)</code></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
 }

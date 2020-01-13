@@ -17,7 +17,7 @@
                 <div class="card">
                     <div class="card-header">
                       <h4>{{ $medicament->custom_denomination }}</h4>
-                      <h6>{{ $medicament->composition_string }}</h6>
+                      <h6>{{ implode(' + ', $medicament->compositions->pluck('denomination')->all()) }}</h6>
                       <ul class="list-unstyled mb-0">
                       </ul>
                     </div>
@@ -69,9 +69,9 @@
                             <ul class="list-unstyled">
                               @foreach ($medicament->precautions as $precaution)
                                 <li>
-                                  <small class="text-muted text-small">{{ $precaution->population }}</small>
                                   <div>
-                                    <span class="{{ explode("-", $precaution->cible_id)[0] === "S" ? 'text-warning' : 'text-success' }}">•</span>
+                                    <span class="{{ $precaution->cible_type == \App\Models\Medicament::class ? 'text-success' : 'text-warning' }}">•</span>
+                                    <small class="text-muted text-small">{{ $precaution->population }}</small>
                                     {{ $precaution->commentaire }}
                                   </div>
                                 </li>

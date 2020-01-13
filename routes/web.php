@@ -31,13 +31,11 @@ Route::middleware(['auth'])->group(function () {
           // Old Medicament
           Route::get('medicament/import', 'MedicamentImportController@importFromOldDatabase')->name('medicament.import.search');
           Route::get('medicament/import/{id}', 'MedicamentImportController@showImportFormByID')->name('medicament.import.form');
-          // Medicament API
-          Route::get('medicament/refresh', 'MedicamentAPIController@refresh');
-          Route::post('medicament/refresh', 'MedicamentAPIController@update')->name('medicament.api.update');
-          Route::post('medicament/api/get', 'MedicamentAPIController@getDetailFromCIS')->name('medicament.api.get');
           // Medicament
           Route::get('medicament/search', 'MedicamentController@search')->name('medicament.search');
           Route::resource('medicament', 'MedicamentController');
+          // Composition
+          Route::resource('composition', 'CompositionController')->only(['index', 'edit']);
         });
     });
 });

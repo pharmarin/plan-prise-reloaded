@@ -30,16 +30,6 @@ class MedicamentApiController extends Controller
       return response()->json($medicaments);
     }
 
-    public function search (Request $request)
-    {
-      if (!$request->input('query')) {
-        return view('medicament.search');
-      }
-      $medicaments = $this->medicament_repository->getLike($request->input('query'));
-      $columns = ['custom_denomination'];
-      return view('medicament.search')->with(compact('medicaments', 'columns'));
-    }
-
     /**
      * Show the form for creating a new resource.
      *

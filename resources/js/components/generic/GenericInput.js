@@ -22,17 +22,12 @@ export default class GenericInput extends React.Component {
       return (
         <div className={[this.props.className + defaultDivClassName]}>
           <TextareaAutosize {...this.props} className={defaultInputClassName}></TextareaAutosize>
-            <button type="button" className="btn btn-link p-0" data-toggle="modal" data-target="#helpModal">
-              <small className="form-text text-muted">
-              Aide sur le fonctionnement du champ de texte
-              </small>
-            </button>
         </div>
       )
     } else {
       return (
         <div className={[this.props.className + defaultDivClassName]}>
-          <input {...this.props} className={defaultInputClassName}/>
+          <input {...this.props} className={defaultInputClassName} />
         </div>
       )
     }

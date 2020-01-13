@@ -2,10 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Models\BdpmCisCompo;
+use App\Models\Composition;
 use App\Models\Medicament;
 use App\Models\Precaution;
-use App\Repositories\CompositionRepository;
 
 class PrecautionRepository
 {
@@ -22,32 +21,26 @@ class PrecautionRepository
 
   public function fromMedicament (Medicament $medicament)
   {
-    $precautions_collection = Precaution::whereHas('medicaments', function ($query) use ($medicament) {
+    $precautions_collection = Precaution::whereHasMorph('cible', [Medicament::class], function ($query) use ($medicament) {
       $query->where('cible_id', $medicament->id);
     })->get();
+    // Préparation de l'array contenant les voies d'adminitration du médicament
     $voies_administration = collect(json_decode($medicament->voies_administration))->map(function ($item) {
-      return $item->voies_administration;
+      return (int) $item->voies_administration;
     })->push(0);
-    $precautions_composition = $this->fromComposition($medicament->composition, $voies_administration);
+    // Retrouver les précautions associées aux compositions
+    $precautions_composition = $this->fromComposition($medicament->compositions, $voies_administration);
+    // Merger le tout
     return $precautions_collection->merge($precautions_composition);
   }
 
-  public function fromComposition (CompositionRepository $composition, $voies_administration = null)
+  public function fromComposition ($composition_array, $voies_administration = null)
   {
-    $pivot_table = (new Precaution)->compositions()->getTable();
-    $precautions_table = (new Precaution)->getTable();
-    foreach ($composition->composition_parsed as $composition) {
-      $precautions_results = Precaution::join($pivot_table, $precautions_table.'.id', '=', $pivot_table.'.precaution_id')
-        ->select($precautions_table.'.*')
-        ->where($pivot_table.'.cible_type', BdpmCisCompo::class)
-        ->whereIn($pivot_table.'.cible_id', $composition['code_substance']);
-      if ($voies_administration !== null) {
-        $precautions_results->whereIn($precautions_table.'.voie_administration', $voies_administration);
-      }
-      $precautions_results = $precautions_results->get();
-      // Merge results to return array
-      $precautions_collection = isset($precautions_collection) ? $precautions_collection->merge($precautions_results) : $precautions_results;
-    }
+    $precautions_collection = Precaution::whereHasMorph('cible', [Composition::class], function ($query) use ($composition_array) {
+      $query->whereIn('cible_id', $composition_array->map(function ($composition) {
+        return $composition->id;
+      }));
+    })->whereIn('voie_administration', $voies_administration)->get();
     return $precautions_collection->unique();
   }
 }

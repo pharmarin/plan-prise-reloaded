@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCustomPrecautionsPivotTable extends Migration
+class CreateCompositionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,9 @@ class CreateCustomPrecautionsPivotTable extends Migration
      */
     public function up()
     {
-        Schema::create('custom_precautions_pivot', function (Blueprint $table) {
+        Schema::create('compositions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('precaution_id');
-            $table->string('cible_type');
-            $table->bigInteger('cible_id');
+            $table->text('denomination');
         });
     }
 
@@ -28,6 +26,6 @@ class CreateCustomPrecautionsPivotTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('custom_precautions_pivot');
+        Schema::dropIfExists('compositions');
     }
 }

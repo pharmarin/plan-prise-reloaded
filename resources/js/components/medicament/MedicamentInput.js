@@ -74,7 +74,7 @@ export default class MedicamentInput extends React.Component
         <div>
           {
             inputValues.map((inputObject, index) => {
-              let isSubstance = inputObject.cible_id && inputObject.cible_id.toString().split('-')[0] === 'S'
+              let isSubstance = inputObject.cible_id && inputObject.cible_type.toString() == 'App\\Models\\Composition'
               let classColor = " " + (
                   inputName === 'commentaires' ?
                   isSubstance ?
@@ -97,7 +97,7 @@ export default class MedicamentInput extends React.Component
                   </div>
                   <button
                     className="btn btn-primary align-self-start ml-1"
-                    onClick={ (event) => {
+                    onClick={(event) => {
                       event.preventDefault()
                       if (isSubstance) {
                         if (!confirm ("La suppression de cette ligne affectera tous les médicaments contenant cette substance. Voulez-vous continuer ? ")) {
@@ -106,6 +106,7 @@ export default class MedicamentInput extends React.Component
                       }
                       this.removeInputLine(event, inputName, index)
                     }}
+                    type="button"
                     >
                     <i className="fa fa-minus"></i>
                   </button>
@@ -116,6 +117,7 @@ export default class MedicamentInput extends React.Component
           <div key={-1} className="d-flex flex-row-reverse mr-1">
             <button className="btn btn-primary float-right"
               onClick={(event) => this.addInputLine(event, inputName)}
+              type="button"
               >
               <i className="fa fa-plus"></i>
             </button>

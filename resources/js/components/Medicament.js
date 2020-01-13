@@ -66,7 +66,6 @@ class Medicament extends React.Component {
             })
           })
           return result
-          break;
         case 'conservation_duree':
           result = []
           for (let [labo, duree] of Object.entries(string)) {
@@ -76,7 +75,6 @@ class Medicament extends React.Component {
             })
           }
           return result
-          break;
         default:
           return string
       }

@@ -63,10 +63,6 @@ class BdpmApiController extends Controller
     public function show($id)
     {
       $show = $this->bdpm_repository->show($id);
-      $index->each(function ($item) {
-        return $item->append('composition_grouped')
-                    ->append('composition_string');
-      });
       return response()->json($show);
     }
 
@@ -76,30 +72,20 @@ class BdpmApiController extends Controller
     * @return [Medicament] Array of medicaments
     */
     public function getFromCIS (Request $request) {
-      $cis_array = array_wrap($request->input('data'));
+      $cis_array = collect(array_wrap($request->input('data')));
 
-      $detail = [];
-
-      foreach ($cis_array as $cis) {
-        $medicament = $this->bdpm_repository->getFromCIS($cis);
-        $medicament->append('composition_grouped')
-                   ->append('composition_string')
-                   ->append('composition_precautions');
-
+      $bdpm_collection = $cis_array->sort()->map(function ($code_cis) {
+        $medicament = $this->bdpm_repository->getFromCIS($code_cis);
         if ($medicament) {
-          $detail[] = $medicament;
-          $compositions = isset($compositions) ? $compositions->merge($medicament->composition): $medicament->composition;
-        } else {
-          $detail[] = (new BdpmCis)->getEmpty();
+          return $medicament;
         }
-      }
+      });
 
       return response()->json(
         [
           'status' => 'success',
           'data' => [
-            'detail' => $detail,
-            'composition' => $compositions->toArray()
+            'detail' => $bdpm_collection->values()
           ]
         ]
       );

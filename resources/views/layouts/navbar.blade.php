@@ -30,6 +30,10 @@
                 <a class="dropdown-item" href="{{ route('medicament.import.search') }}">
                   {{ __('Importer') }}
                 </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ route('composition.index') }}">
+                  {{ __('Substances actives') }}
+                </a>
               </div>
             </li>
           @endif

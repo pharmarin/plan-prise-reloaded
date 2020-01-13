@@ -22,6 +22,6 @@ use Illuminate\Http\Request;
   });
 });*/ // Reste à implémenter https://laravel.com/docs/5.8/api-authentication
 
-Route::match(['get', 'post'], 'bdpm/get', 'Api\BdpmApiController@getFromCIS')->name('api.bdpm.get');
+Route::resource('composition', 'Api\CompositionApiController', ['as' => 'api']);
 Route::resource('medicament', 'Api\MedicamentApiController', ['as' => 'api']);
 Route::resource('bdpm', 'Api\BdpmApiController', ['as' => 'api']);

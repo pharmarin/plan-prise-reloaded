@@ -31,12 +31,12 @@ class MedicamentController extends Controller
 
     public function search (Request $request)
     {
-      if (!$request->input('query')) {
-        return view('medicament.search');
+      if ($request->has('query')) {
+        $medicaments = $this->medicament_repository->getLike($request->input('query'));
+        $columns = ['custom_denomination'];
+        return view('medicament.search')->with(compact('medicaments', 'columns'));
       }
-      $medicaments = $this->medicament_repository->getLike($request->input('query'));
-      $columns = ['custom_denomination'];
-      return view('medicament.search')->with(compact('medicaments', 'columns'));
+      return view('medicament.search');
     }
 
     /**
@@ -92,7 +92,7 @@ class MedicamentController extends Controller
      */
     public function edit(Request $request, Medicament $medicament)
     {
-      $medicament->load('bdpm')->append('composition')->append('composition_string');
+      $medicament->load('bdpm');
       $javascript = [
         'routes' => mix_routes([
           'action' => route('medicament.update', $medicament->id)
