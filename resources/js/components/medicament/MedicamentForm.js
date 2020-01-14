@@ -181,12 +181,7 @@ export default class MedicamentForm extends React.Component {
 
                 <p className="m-0">DCI : </p>
                   <SearchComposition
-                    defaultOptions={window.php.medicament.compositions.map((composition) => {
-                      return {
-                        value: composition.id,
-                        label: composition.denomination
-                      }
-                    })}
+                    defaultOptions={this.state.composition_array}
                     onCompositionChange={(composition_array) => this.setState({
                       composition_array: composition_array,
                       inputs: this._getSubstancesActivesObject(composition_array, this.state.inputs)
