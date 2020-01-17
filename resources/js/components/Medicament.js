@@ -24,16 +24,7 @@ class Medicament extends React.Component {
       const old_medicament = window.php.old_medicament
 
       this.medicament_edit = {
-        compositions: old_medicament.nomGenerique.split(' + ').map((dci) => {
-          return {
-            id: dci.replace(/(?:^|\s)\S/g, function (a) {
-              return a.toUpperCase()
-            }), // Capitalize
-            denomination: dci.replace(/(?:^|\s)\S/g, function (a) {
-              return a.toUpperCase()
-            }), // Capitalize
-          }
-        })
+        compositions: old_medicament.nomGenerique
       }
 
       this.newInputs.old_medicament.defaultValue = old_medicament.id
