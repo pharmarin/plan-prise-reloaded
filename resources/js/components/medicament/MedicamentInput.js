@@ -74,7 +74,7 @@ export default class MedicamentInput extends React.Component
         <div>
           {
             inputValues.map((inputObject, index) => {
-              let isSubstance = inputObject.cible_id && inputObject.cible_type.toString() == 'App\\Models\\Composition'
+              let isSubstance = inputObject.cible_id && inputObject.cible_id.split('-')[0] == 'S'
               let classColor = " " + (
                   inputName === 'commentaires' ?
                   isSubstance ?
