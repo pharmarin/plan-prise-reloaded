@@ -271,9 +271,10 @@ class MedicamentRepository {
           'model' => Medicament::findOrFail($medicament_id)
         ];
       case "S":
+        $composition = is_numeric($substanceOrMedicament[1]) ? Composition::findOrFail($substanceOrMedicament[1]) : Composition::where('denomination', '=', $substanceOrMedicament[1])->firstOrFail();
         return [
           'type' => 'S',
-          'model' => Composition::findOrFail($substanceOrMedicament[1])
+          'model' => $composition
         ];
     }
 
