@@ -74,8 +74,12 @@ export default class MedicamentForm extends React.Component {
   }
 
   _getCommentairesObject = (old_commentaires, new_commentaires = [], filter = false) => {
+    console.log('getCommentairesObject', old_commentaires, new_commentaires)
     if (filter) {
-      old_commentaires = old_commentaires.filter((commentaire) => !commentaire.cible_type.includes('Composition'))
+      old_commentaires = old_commentaires.filter((commentaire) => {
+        if (!commentaire.cible_type) return true
+        return !commentaire.cible_type.includes('Composition')
+      })
     }
     return old_commentaires
       .concat(new_commentaires)

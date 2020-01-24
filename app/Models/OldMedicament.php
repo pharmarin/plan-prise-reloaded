@@ -17,15 +17,19 @@ class OldMedicament extends Model
         $composition_models = Composition::where('denomination', '=', $composition)->get();
         if (count($composition_models) === 0) {
           $id = $composition;
+          $precautions = [];
         } elseif (count($composition_models) === 1) {
-          $id = $composition_models->first()->id;
-          $composition = $composition_models->first()->denomination;
+          $first_composition = $composition_models->first();
+          $id = $first_composition->id;
+          $composition = $first_composition->denomination;
+          $precautions = $first_composition->precautions;
         } else {
           throw new \Exception('Found more than 1 composition for denomination ' . $composition);
         }
         return (object) [
           'id' => $id,
-          'denomination' => $composition
+          'denomination' => $composition,
+          'precautions' => $precautions
         ];
       }, $composition_array);
     }

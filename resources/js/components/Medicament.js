@@ -33,7 +33,9 @@ class Medicament extends React.Component {
       this.newInputs.conservation_frigo.defaultValue = old_medicament.frigo
       this.newInputs.conservation_duree.defaultValue = this.getValueFromOldMedicament('conservation_duree', old_medicament.dureeConservation)
       this.newInputs.voies_administration.defaultValue = this.getValueFromOldMedicament('voies_administration', old_medicament.voieAdministration)
-      this.newInputs.commentaires.defaultValue = this.getValueFromOldMedicament('commentaires', old_medicament.commentaire)
+      let precautions_compo = old_medicament.nomGenerique.map((nomGe) => nomGe.precautions).flat()
+      let precautions_medic = this.getValueFromOldMedicament('commentaires', old_medicament.commentaire)
+      this.newInputs.commentaires.defaultValue = precautions_medic.concat(precautions_compo)
     }
 
     if (window.php.medicament) {

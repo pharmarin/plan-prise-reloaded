@@ -58,6 +58,9 @@ class MedicamentRepository {
    */
   public function saveFromForm (Request $request) {
 
+    $guard = Medicament::where('custom_denomination', '=', $request->input('custom_denomination'))->get();
+    if (count($guard) > 0) throw new \Exception('Un médicament portant ce nom existe déjà. ');
+
     $this->medicamentCustom = $this->_populateModelFromForm($request, $this->medicamentCustom);
 
     $this->medicamentCustom->save();
