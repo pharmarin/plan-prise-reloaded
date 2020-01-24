@@ -1,6 +1,6 @@
 <?php
 
-function mix_routes ($custom)
+function mix_routes ($custom = [])
 {
 
   return (object) array_merge($custom, array_map_r(function ($string) {
