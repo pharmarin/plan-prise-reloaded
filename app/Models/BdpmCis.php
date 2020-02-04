@@ -8,16 +8,14 @@ use App\Repositories\PrecautionRepository;
 
 class BdpmCis extends Model
 {
-    protected $hidden = ['compo'];
     protected $guarded = [];
     protected $primaryKey = 'code_cis';
-    //protected $appends = ['composition', 'composition_string', 'composition_grouped'];
     public $timestamps = false;
 
     public function medicament ()
     {
 
-      return $this->belongsToMany('App\Models\Medicament', 'bdpm_custom_pivot', 'medicament_id', 'code_cis');
+      return $this->belongsToMany('App\Models\Medicament', 'bdpm_custom_pivot', 'code_cis', 'medicament_id');
 
     }
 
@@ -26,5 +24,13 @@ class BdpmCis extends Model
 
       return $this->hasMany('App\Models\BdpmCisCip', 'code_cis', 'code_cis');
 
+    }
+
+    public function getToMedicamentAttribute ()
+    {
+      return (object) [
+        'id' => $this->code_cis,
+        'custom_denomination' => $this->denomination
+      ];
     }
 }

@@ -17,7 +17,7 @@
 
           <div class="row text-center">
             <div class="col-sm-6">
-              <a href="{{ $_SERVER['SCRIPT_URI'] }}plan-prise">
+              <a href="plan-prise">
                 Créer un plan de prise
               </a>
             </div>

@@ -21,7 +21,13 @@ use Illuminate\Http\Request;
     Route::resource('medicament', 'Api\MedicamentApiController');
   });
 });*/ // Reste à implémenter https://laravel.com/docs/5.8/api-authentication
+Route::middleware(['auth:api'])->group(function () {
 
-Route::resource('composition', 'Api\CompositionApiController', ['as' => 'api']);
-Route::resource('medicament', 'Api\MedicamentApiController', ['as' => 'api']);
-Route::resource('bdpm', 'Api\BdpmApiController', ['as' => 'api']);
+  Route::get('all/search', 'Api\CommonApiController@search')->name('api.all.search');
+  Route::post('all/show', 'Api\CommonApiController@show')->name('api.all.show');
+  Route::resource('composition', 'Api\CompositionApiController', ['as' => 'api']);
+  Route::resource('medicament', 'Api\MedicamentApiController', ['as' => 'api']);
+  Route::resource('bdpm', 'Api\BdpmApiController', ['as' => 'api']);
+  Route::resource('plan-prise', 'Api\PlanPriseApiController', ['as' => 'api']);
+
+});

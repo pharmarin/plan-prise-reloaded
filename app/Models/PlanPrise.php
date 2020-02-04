@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use \App\Repositories\CommonRepository;
+
 class PlanPrise extends Model
 {
 
@@ -12,7 +14,8 @@ class PlanPrise extends Model
 
   protected $table = 'plans_prise';
 
-  protected $appends = ['medic_data_detail'];
+  protected $appends = ['medicaments'];
+  protected $hidden = ['medic_data'];
 
   protected $attributes = [
     'medic_data' => '[]',
@@ -21,30 +24,31 @@ class PlanPrise extends Model
   ];
 
   protected $casts = [
-    'medic_data' => 'array',
-    'custom_data' => 'array',
-    'custom_settings' => 'array'
+    'medic_data' => 'collection',
+    'custom_data' => 'collection',
+    'custom_settings' => 'object'
   ];
-
-  public $api_repository;
-
-  public function __construct () {
-    $this->api_repository = resolve('App\Repositories\MedicamentAPIRepository');parent::__construct();
-  }
 
   public function user_id ()
   {
     return $this->belongsTo('App\Models\User');
   }
 
-  public function getMedicDataDetailAttribute ()
+  public function getMedicamentsAttribute ()
   {
-    return array_map(function ($code_cis) {
-      $medicament = $this->api_repository->getMedicamentAPIByCIS($code_cis);
+    $reference_array = $this->medic_data;
+    return $reference_array->map(function ($reference) {
+      $medicament = CommonRepository::find($reference['value'], $reference['type']);
+      if (get_class($medicament) === Medicament::class) $medicament->load('compositions');
       return [
-        'data' => $medicament,
-        'custom_data' => $medicament->custom_values
+        'type' => $reference['type'],
+        'value' => [
+          'id' => $reference['value'],
+          'denomination' => $medicament->custom_denomination
+        ],
+        'data' => $medicament
       ];
-    }, $this->medic_data);
+    })->values()->all();
   }
+
 }

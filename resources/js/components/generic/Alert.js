@@ -62,6 +62,7 @@ class AlertWrapper extends React.Component {
         alerts: state.alerts.filter((alert) => alert.id !== id)
       }
     }), 500)
+    return null
   }
 
   getTime = (diff) => {

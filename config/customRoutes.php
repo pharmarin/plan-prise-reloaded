@@ -9,6 +9,10 @@ return [
     'composition' => [
       'get' => 'api.composition.index',
       'search' => 'api.composition.index'
+    ], 
+    'all' => [
+      'search' => 'api.all.search',
+      'show' => 'api.all.show'
     ]
   ]
 ];

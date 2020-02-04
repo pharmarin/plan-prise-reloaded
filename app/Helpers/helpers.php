@@ -3,7 +3,7 @@
 function mix_routes ($custom = [])
 {
 
-  return (object) array_merge($custom, array_map_r(function ($string) {
+  return (object) array_merge_recursive($custom, array_map_r(function ($string) {
     return route($string);
   }, Config::get('customRoutes')));
 

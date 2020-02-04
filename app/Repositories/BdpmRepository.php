@@ -43,7 +43,7 @@ class BdpmRepository {
   public function show (int $code_cis)
   {
 
-    return $this->bdpm_cis::find($code_cis)->load('compo');
+    return $this->bdpm_cis::find($code_cis)->load('medicament');
 
   }
 

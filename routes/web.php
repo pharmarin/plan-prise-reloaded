@@ -10,7 +10,6 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/', 'HomeController@index')->name('home');
 
 Auth::routes();
@@ -22,11 +21,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('medicament/custom/get', 'MedicamentController@getDetailFromCIS')->name('medicament.custom.get');
         // PlanPrise
         Route::get('plan-prise/{pp_id?}', 'PlanPriseController@index')->name('plan-prise.index');
-        Route::post('plan-prise/api', 'PlanPriseController@api')->name('plan-prise.api');
 
         Route::middleware(['admin'])->group(function () {
           // Users
           Route::get('users', 'UsersController@index')->name('admin.users.index');
+
           Route::get('users/{user_id}/approve', 'UsersController@approve')->name('admin.users.approve');
           // Old Medicament
           Route::get('medicament/import', 'MedicamentImportController@importFromOldDatabase')->name('medicament.import.search');

@@ -70,7 +70,8 @@ class MedicamentApiController extends Controller
      */
     public function show(Medicament $medicament)
     {
-      return view('medicament.show')->with(compact('medicament'));
+      $medicament->load('compositions');
+      return response()->json($medicament, 200);
     }
 
     /**

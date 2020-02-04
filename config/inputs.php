@@ -118,28 +118,73 @@ return [
     ]
   ],
   'plan_prise' => [
-    'inputs' => [
-      'poso_matin' => [
-        'label' => 'Matin',
-        'default' => true
-      ],
-      'poso_10h' => [
-        'label' => '10h'
-      ],
-      'poso_midi' => [
-        'label' => 'Midi',
-        'default' => true
-      ],
-      'poso_16h' => [
-        'label' => '16h'
-      ],
-      'poso_soir' => [
-        'label' => 'Soir',
-        'default' => true
-      ],
-      'poso_coucher' => [
-        'label' => 'Coucher'
-      ],
+    'properties' => [
+      'class' => 'col-md-3',
+      'collapse' => true,
+      'inputs' => [
+        [
+          'id' => "custom_indications",
+          'label' => "Indication",
+          'choose' => "custom_indications"
+        ],
+        [
+          'id' => "conservation_duree",
+          'label' => "Conservation après ouverture",
+          'display' => "duree",
+          'choose' => "laboratoire",
+          'readOnly' => true
+        ]
+      ]
+    ],
+    'posologies' => [
+      'class' => 'col-md-3',
+      'collapse' => false,
+      'inputs' => [
+        [
+          'id' => 'poso_matin',
+          'label' => 'Matin',
+          'default' => true
+        ],
+        [
+          'id' => 'poso_10h',
+          'label' => '10h'
+        ],
+        [
+          'id' => 'poso_midi',
+          'label' => 'Midi',
+          'default' => true
+        ],
+        [
+          'id' => 'poso_16h',
+          'label' => '16h'
+        ],
+        [
+          'id' => 'poso_soir',
+          'label' => 'Soir',
+          'default' => true
+        ],
+        [
+          'id' => 'poso_coucher',
+          'label' => 'Coucher'
+        ]
+      ]
+    ],
+    'commentaires' => [
+      'class' => 'col-md-6',
+      'collapse' => true,
+      'inputs' => [
+        [
+          'id' => "precautions",
+          'label' => "Commentaires",
+          'display' => 'commentaire',
+          'help' => 'population',
+          'multiple' => true,
+          'class' => [
+            'population' => 'col-md-4',
+            'commentaire' => 'col-md-8'
+          ]
+        ]
+      ]
     ]
   ]
 ];

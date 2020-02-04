@@ -26,10 +26,6 @@ class BdpmApiController extends Controller
     public function index(Request $request)
     {
       $index = $this->bdpm_repository->all($request->query());
-      /*$index->each(function ($item) {
-        return $item->append('composition_grouped')
-                    ->append('composition_string');
-      });*/
       return response()->json($index);
     }
 
