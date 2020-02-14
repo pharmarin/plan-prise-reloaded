@@ -1,6 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
-export default class PPIntro extends React.Component {
+import * as PP_ACTIONS from '../../redux/plan-prise/actions';
+
+class PPSelect extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -8,9 +11,9 @@ export default class PPIntro extends React.Component {
     }
   }
 
-  handleSelect = (event, id) => {
+  _handleSelect = (event, id) => {
     event.preventDefault()
-    this.props.onSelect(id)
+    this.props.init(id)
   }
 
   render () {
@@ -25,7 +28,7 @@ export default class PPIntro extends React.Component {
                     className="list-group-item list-group-item-action"
                     data-id={result.id}
                     href="#"
-                    onClick={(event => this.handleSelect(event, -1))}
+                    onClick={(event => this._handleSelect(event, -1))}
                     >
                     Plan de prise n°{result.id}
                   </a>
@@ -35,7 +38,7 @@ export default class PPIntro extends React.Component {
                 className="list-group-item list-group-item-action list-group-item-success"
                 data-id="-1"
                 href="#"
-                onClick={(event => this.handleSelect(event, -1))}
+                onClick={(event => this._handleSelect(event, -1))}
                 >
                 Créer un plan de prise
               </a>
@@ -46,3 +49,11 @@ export default class PPIntro extends React.Component {
     )
   }
 }
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    init: (id) => dispatch(PP_ACTIONS.init(id))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(PPSelect)

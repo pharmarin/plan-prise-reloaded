@@ -1,7 +1,6 @@
 import React from 'react';
 
 import MedicamentForm from './medicament/MedicamentForm';
-import alertManager from './generic/Alert';
 
 class Medicament extends React.Component {
 
@@ -121,4 +120,4 @@ class Medicament extends React.Component {
 
 }
 
-export default alertManager(Medicament)
+export default Medicament

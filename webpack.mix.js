@@ -4,7 +4,19 @@ const mix = require('laravel-mix');
 mix.options({
   hmrOptions: {
     host: '192.168.1.15',
+    https: true,
     port: 8090,
+    disableHostCheck: true,
+    useLocalIp: true
+  }
+})
+
+mix.browserSync({
+  open: false,
+  proxy: 'https://pharmarin.dynamic-dns.net',
+  https: {
+    key: "/etc/letsencrypt/live/pharmarin.dynamic-dns.net/privkey.pem",
+    cert: "/etc/letsencrypt/live/pharmarin.dynamic-dns.net/cert.pem"
   }
 })
 
@@ -32,7 +44,9 @@ mix.js('resources/js/app.js', 'public/js')
     'axios',
     'popper.js',
     'lodash',
-    'react-bootstrap'
+    'react-bootstrap',
+    'redux',
+    'react-redux'
   ])
   .autoload({
     jquery: ['$', 'window.jQuery', 'jQuery', 'jquery'],

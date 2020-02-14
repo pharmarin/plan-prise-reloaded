@@ -1,11 +1,14 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Form, FormCheck } from 'react-bootstrap';
 import PPInput from './PPInput';
 
-export default class PPInputMultiple extends React.Component {
+import * as PP_ACTIONS from '../../redux/plan-prise/actions';
+
+class PPInputMultiple extends React.Component {
   render() {
-    let { input, needChoice, item, lineId, customData } = this.props
-    let customItemData = item.id && customData && customData[item.id] ? customData[item.id] : null
+    let { input, needChoice, item, lineId, currentCustomData } = this.props
+    let customItemData = item.id && currentCustomData && currentCustomData[item.id] ? currentCustomData[item.id] : null
     let customItemChecked = customItemData && customItemData.checked !== undefined ? customItemData.checked : item.population === null
 
     return (
@@ -22,28 +25,31 @@ export default class PPInputMultiple extends React.Component {
                 <FormCheck.Input
                   type={input.multiple ? 'checkbox' : 'radio'}
                   checked={customItemChecked}
-                  onChange={(event) => this.props.setCustomData(
+                  onChange={(event) => this.props.updateLine(
+                    lineId,
+                    {
+                      type: input.multiple ? 'check' : 'choose',
+                      value: input.multiple ? event.target.checked : item[input.choose]
+                    },
                     {
                       parent: input.id,
                       id: item.id,
                       multiple: input.multiple
                     },
                     {
-                      action: input.multiple ? 'check' : 'choose',
+                      type: input.multiple ? 'check' : 'choose',
                       value: input.multiple ? event.target.checked : item[input.choose]
-                    },
-                    lineId
+                    }
                   )}
                 />
                 <FormCheck.Label className="d-flex">
                   <PPInput
                     isShowed={this.props.isShowed}
                     lineId={lineId}
-                    customData={customItemData}
+                    currentCustomData={customItemData}
                     data={item}
                     input={input}
                     needChoice={needChoice}
-                    setCustomData={this.props.setCustomData}
                   />
                 </FormCheck.Label>
               </>
@@ -54,3 +60,11 @@ export default class PPInputMultiple extends React.Component {
     )
   }
 }
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateLine: (lineId, action, input) => dispatch(PP_ACTIONS.updateLine(lineId, action, input))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(PPInputMultiple)

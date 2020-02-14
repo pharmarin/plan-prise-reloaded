@@ -16,18 +16,34 @@ class CommonRepository {
   {
     switch ($type) {
       case Medicament::class:
-        return Medicament::find($id);
+        $model = Medicament::find($id);
         break;
       case OldMedicament::class:
-        return OldMedicament::find($id)->to_medicament;
+        $model = OldMedicament::find($id);
+        $model = $model ? $model->to_medicament : null;
         break;
       case BdpmCis::class:
-        return BdpmCis::find($id)->to_medicament;
+        $model = BdpmCis::find($id);
+        $model = $model ? $model->to_medicament : null;
         break;
       default:
         throw new \Exception('Type de modèle non envoyé. ');
         break;
     }
+    return CommonRepository::_getObject($id, $type, $model);
+  }
+
+  static function _getObject ($id, $type, $model) {
+    if (!$model) return null;
+    if (get_class($model) === Medicament::class) $model->load('compositions');
+    return [
+      'type' => $type,
+      'value' => [
+        'id' => $id,
+        'denomination' => $model->custom_denomination
+      ],
+      'data' => $model
+    ];
   }
 
 }

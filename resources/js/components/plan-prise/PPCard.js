@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { Button, Card } from 'react-bootstrap';
+
+import * as PP_ACTIONS from '../../redux/plan-prise/actions';
 
 import PPInputWrapper from './PPInputWrapper';
 import { SPINNER } from '../params';
@@ -7,14 +10,13 @@ import { SPINNER } from '../params';
 const PPCard = (props) => {
 
   const [isOpened, setIsOpened] = useState(false)
-  let { async, deleteLine, denomination, customData, customSettings, ...otherProps } = props
-  let { isPending, error, data } = async
+  let { details, denomination, currentCustomData } = props
+  let { state, data } = details
   let id = props.lineId
-  let customeLineData = customData[props.lineId]
 
   return (
     <Card className="mb-3">
-      <Card.Header className="d-flex" onClick={(event) => !event.target.classList.contains('prevent-toggle') && data && setIsOpened(!isOpened)}>
+    <Card.Header className="d-flex" onClick={(event) => !event.target.classList.contains('prevent-toggle') && data && setIsOpened(!isOpened)}>
     <div className="d-flex flex-column flex-grow-1" style={{
       whiteSpace: 'nowrap',
       overflow: 'hidden',
@@ -23,7 +25,7 @@ const PPCard = (props) => {
     <div className="d-flex">
     <div className="text-truncate">
     {
-      isPending ?
+      !data ?
       `Chargement de ${denomination} en cours... ` :
       data.custom_denomination
     }
@@ -31,20 +33,20 @@ const PPCard = (props) => {
     </div>
     {
       data && data.compositions && <div className="text-muted text-truncate">
-        <small>{
-          data.compositions.map(composition => composition.denomination).join(' + ')
-        }</small>
+      <small>{
+        data.compositions.map(composition => composition.denomination).join(' + ')
+      }</small>
       </div>
     }
     </div>
     <div className="d-flex flex-shrink-0 flex-column">
     {
-      isPending ?
+      state.isLoading ?
       <Button variant="link" size="sm" disabled className="ml-auto" tabIndex="-1">
       <small className="mr-1">Chargement en cours</small>
       { SPINNER }
       </Button> :
-      <Button variant="light" size="sm" className="rounded-pill text-danger ml-auto py-0 prevent-toggle" onClick={() => deleteLine(id, denomination)} tabIndex="-1">
+      <Button variant="light" size="sm" className="rounded-pill text-danger ml-auto py-0 prevent-toggle" onClick={() => props.removeLine(id)} tabIndex="-1">
       <small className="mr-1 prevent-toggle">Supprimer la ligne</small>
       <i className="fa fa-trash prevent-toggle"></i>
       </Button>
@@ -78,11 +80,9 @@ const PPCard = (props) => {
                   section.inputs.map((input) =>
                   <PPInputWrapper
                   key={input.id}
-                  customData={customeLineData}
                   input={input}
                   medicament={data}
                   isShowed={section.collapse ? isOpened : true}
-                  {...otherProps}
                   />
                   )
                 }
@@ -99,4 +99,11 @@ const PPCard = (props) => {
 
       }
 
-      export default PPCard
+      const mapDispatchToProps = (dispatch) => {
+        return {
+          setDefaults: (values) => dispatch(PP_ACTIONS.setDefaults(values)),
+          removeLine: (id) => dispatch(PP_ACTIONS.removeLine(id))
+        }
+      }
+
+      export default connect(null, mapDispatchToProps)(PPCard)

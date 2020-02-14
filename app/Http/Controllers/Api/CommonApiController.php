@@ -47,6 +47,5 @@ class CommonApiController extends Controller
       return response()->json(
         CommonRepository::find($request->input('id'), $request->input('type'))
       );
-      dd($request->all());
     }
 }

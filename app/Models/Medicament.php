@@ -12,7 +12,7 @@ use App\Repositories\PrecautionRepository;
 class Medicament extends Model
 {
     protected $table = 'custom_medics';
-    protected $appends = ['precautions'];
+    protected $appends = ['precautions', 'type'];
     protected $with = ['compositions'];
 
     public function bdpm () {
@@ -26,6 +26,10 @@ class Medicament extends Model
 
     public function compositions () {
       return $this->belongsToMany('App\Models\Composition');
+    }
+
+    public function getTypeAttribute () {
+      return get_class($this);
     }
 
     public function getPrecautionsAttribute ()

@@ -1,100 +1,46 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Async from 'react-async';
 import {
   CSSTransition,
   TransitionGroup,
 } from 'react-transition-group';
 
+import * as PP_ACTIONS from '../../redux/plan-prise/actions';
+import * as DATA_ACTIONS from '../../redux/data/actions';
+
 import PPCard from './PPCard';
 import SearchMedicament from '../generic/SearchMedicament';
 import MESSAGES from '../messages.js';
 
 const PPLogic = (props) => {
+    
+    // Merge with PlanPrise.js
+
+  const _getInputs = () => {
+    let inputs = _.cloneDeep(window.php.default.inputs)
+    let posologies = inputs.posologies.inputs
+
+    inputs.posologies.inputs = _.compact(Object.keys(posologies).map((key) => {
+      let posologie = posologies[key]
+      let isChecked = _.get(props.currentSettings, `inputs.${posologie.id}.checked`, null)
+      let isDefault = posologie.default
+      let isDisplayed = isChecked || (isChecked === null && isDefault)
+      return isDisplayed ? posologie : null
+    }))
+
+    return inputs
+  }
+
   const _handleAddLine = async (value) => {
     let medicament = {
       id: value.value,
       denomination: value.label,
       type: value.type
     }
-    let content = _.uniqBy(_.concat(props.currentContent, medicament), 'id')
-    let needPush = content.length > props.currentContent.length
-    if (!needPush) return null
-
-    props.setCurrentContent(content)
-
-    return await axios.post(window.php.routes.api.planprise.store, {
-      id: props.currentID,
-      value: value.value,
-      type: value.type
-    }, {
-      headers: {
-        Authorization: `Bearer ${window.php.routes.token}`
-      }
-    })
-      .then((response) => {
-        if (!response.status === 200) throw new Error(response.data.data)
-        if (props.currentID === -1) props.setCurrentID(response.data.pp_id)
-        return true
-      })
-      .catch((error) => this.props.alert.addAlert({
-        header: "Erreur",
-        body: error.response.data.data,
-        delay: 3000
-      })
-      )
+    return props.addLine(medicament)
   }
 
-  const _handleDeleteLine = (id, denomination = null) => {
-    props.setCurrentContent(_.filter(state.currentContent, (medicament) => medicament.id != id))
-    props.setCustomData(_.omit(state.customData, id))
-    props.saveModification('delete', id, MESSAGES.planPrise.removeFromPP(denomination))
-  }
-
-  const _handleCustomDataChange = (input, value, lineId) => {
-    let { id, child, multiple, parent } = input
-    let { customData } = props
-    if (multiple === true) {
-      let currentState = _.get(customData, `${lineId}.${parent}`, {})
-      if (value.action === "value") {
-        _.set(currentState, `${id}.${child}`, value.value)
-      } else if (value.action === "check") {
-        _.set(currentState, `${id}.checked`, value.value)
-      } else if (value.action === "choose") {
-        _.set(currentState, `${id}`, value.value)
-      } else if (value.action === "create") {
-        _.set(currentState, `${id}.${child}`, value.value)
-        _.set(currentState, `${id}.checked`, true)
-      }
-      _.set(customData, `${lineId}.${parent}`, currentState)
-    } else {
-      _.set(customData, `${lineId}.${parent}`, value.value)
-    }
-
-    props.setCustomData(customData)
-
-    if (value.action === "create") return false
-    return props.saveModification('edit', props.customData, MESSAGES.planPrise.editPP)
-  }
-
-  const _loadDetails = async (properties) => {
-    let { id, type } = properties
-    
-    return await axios.post(window.php.routes.api.all.show, {
-      id: id,
-      type: type
-    }, {
-      headers: {
-        Authorization: `Bearer ${window.php.routes.token}`
-      }
-    })
-      .then((response) => {
-        if (!response.status === 200) throw new Error(response.statusText)
-        return response.data
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-  }
 
   return (
     <TransitionGroup
@@ -103,40 +49,24 @@ const PPLogic = (props) => {
     >
       {
         props.currentContent && props.currentContent.map(
-          (medicament) =>
-            <CSSTransition
-              key={medicament.id}
-              timeout={500}
-              classNames="plan-prise-card"
-            >
-              <Async
+          (medicament) => {
+            let details = _.find(props.data, (item) => item.id === medicament.id && item.type === medicament.type) || props.emptyObject
+            if (!(details.data || details.state.isLoading)) props.load(medicament)
+            return (
+              <CSSTransition
                 key={medicament.id}
-                promiseFn={_loadDetails}
-                id={medicament.id}
-                denomination={medicament.denomination}
-                type={medicament.type}
-                watchFn={(prev, props) => {
-                  console.log(prev.id, props.id, prev.id !== props.id)
-                  return prev.id !== props.id
-                }}
+                timeout={500}
+                classNames="plan-prise-card"
               >
-                {
-                  (asyncProps) =>
-
-                    <PPCard
-                      async={asyncProps}
-                      lineId={medicament.id}
-                      denomination={medicament.denomination}
-                      customData={props.customData}
-                      customSettings={props.customSettings}
-                      inputs={props.inputs}
-                      setCustomData={_handleCustomDataChange}
-                      deleteLine={_handleDeleteLine}
-                    />
-
-                }
-              </Async>
-            </CSSTransition>
+                <PPCard
+                  details={details}
+                  lineId={medicament.id}
+                  denomination={medicament.denomination}
+                  inputs={_getInputs()}
+                />
+              </CSSTransition>
+            )
+          }
         )
       }
       <SearchMedicament
@@ -147,4 +77,21 @@ const PPLogic = (props) => {
   )
 }
 
-export default PPLogic
+const mapStateToProps = (state) => {
+  return {
+    currentContent: state.planPriseReducer.currentContent,
+    currentSettings: state.planPriseReducer.currentSettings,
+    data: state.dataReducer.data,
+    emptyObject: state.dataReducer.empty
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    init: (id) => dispatch(PP_ACTIONS.init(id)),
+    addLine: (medicament) => dispatch(PP_ACTIONS.addLine(medicament)),
+    load: (properties) => dispatch(DATA_ACTIONS.load(properties))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PPLogic)

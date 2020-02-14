@@ -37,7 +37,7 @@ class OldMedicament extends Model
 
   public function getToMedicamentAttribute ()
   {
-    //dd((array) json_decode($this->dureeConservation));
+    $commentaire = json_decode($this->commentaire, true) ?? [];
     return (object) [
       'id' => $this->id,
       'custom_denomination' => $this->nomMedicament,
@@ -55,13 +55,15 @@ class OldMedicament extends Model
         'laboratoire' => $this->dureeConservation
       ],
       'voies_administration' => $this->_switchVoieAdminitration($this->voieAdministration),
-      'precautions' => array_map(function ($precaution) {
+      'precautions' => array_map(function ($precaution, $key) {
         return [
           'population' => $precaution['span'] == "" ? null : $precaution['span'],
-          'commentaire' => str_replace(['<br>'], "", $precaution['text'])
+          'commentaire' => str_replace(['<br>'], "", $precaution['text']),
+          'id' => 'old_' . $key
         ];
-      }, json_decode($this->commentaire, true) ?? []),
-      'compositions' => $this->nomGenerique
+      }, $commentaire, array_keys($commentaire)),
+      'compositions' => $this->nomGenerique,
+      'type' => get_class($this)
     ];
   }
 

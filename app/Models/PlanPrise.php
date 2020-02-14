@@ -38,16 +38,7 @@ class PlanPrise extends Model
   {
     $reference_array = $this->medic_data;
     return $reference_array->map(function ($reference) {
-      $medicament = CommonRepository::find($reference['value'], $reference['type']);
-      if (get_class($medicament) === Medicament::class) $medicament->load('compositions');
-      return [
-        'type' => $reference['type'],
-        'value' => [
-          'id' => $reference['value'],
-          'denomination' => $medicament->custom_denomination
-        ],
-        'data' => $medicament
-      ];
+      return CommonRepository::find($reference['value'], $reference['type']);
     })->values()->all();
   }
 
