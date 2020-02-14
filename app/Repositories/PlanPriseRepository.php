@@ -32,6 +32,7 @@ class PlanPriseRepository
     if ($pp_id > 0) {
       $this->plan_prise = PlanPrise::where('pp_id', $pp_id)->where('user_id', Auth::id())->first();
       if (!$this->plan_prise) abort(404);
+      $this->plan_prise->append('medicaments');
       return true;
     } else {
       $this->plan_prise->pp_id = $this->_getNextID();
@@ -44,6 +45,20 @@ class PlanPriseRepository
     $max_id = PlanPrise::where('user_id', Auth::id())->withTrashed()->max('pp_id');
     $max_id = $max_id ?: 0;
     return $max_id + 1;
+  }
+
+  public function index ($pp_id) {
+    if ($pp_id) {
+      $index = PlanPrise::where('user_id', Auth::id())->where('pp_id', $pp_id)->first();
+      if (!$index) {
+        return $this->_getReturnArray('error', ['data' => 'PP not exists']);
+      }
+      $index->append('medicaments');
+      $index = $index->toArray();
+    } else {
+      $index = PlanPrise::where('user_id', Auth::id())->select(['pp_id'])->get()->all();
+    }
+    return $this->_getReturnArray('success', $index, false);
   }
 
   public function update ($pp_id, $values)
@@ -99,14 +114,14 @@ class PlanPriseRepository
     }
   }
 
-  private function _getReturnArray ($status, $array = [])
+  private function _getReturnArray ($status, $array = [], $join = true)
   {
     return [
       'status' => $status,
-      'data' => array_merge(
+      'data' => $join ? array_merge(
         $array,
         ['pp_id' => $this->plan_prise->pp_id]
-      )
+      ) : $array
     ];
   }
 

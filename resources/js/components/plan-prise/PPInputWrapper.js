@@ -17,11 +17,11 @@ class PPInputWrapper extends React.Component {
   }
 
   render() {
-    let { input, medicament, currentCustomData, ...props } = this.props
+    let { input, medicament, customData, ...props } = this.props
     let data = _.get(medicament, `${input.id}`, null)
-    let inputCustomData = _.get(currentCustomData, `${medicament.id}.${input.id}`, null)
+    let inputCustomData = _.get(customData, `${medicament.id}.${input.id}`, null)
     let needChoice = input.multiple || (!inputCustomData && Array.isArray(data))
-    let addedData = input.multiple ? _.get(currentCustomData, `${medicament.id}.custom_${input.id}`, null) : null
+    let addedData = input.multiple ? _.get(customData, `${medicament.id}.custom_${input.id}`, null) : null
 
     if (input.readOnly && (!medicament[input.id] || medicament[input.id].length === 0)) return null
     if (!data && (needChoice || input.multiple)) data = []
@@ -40,13 +40,13 @@ class PPInputWrapper extends React.Component {
                     needChoice={needChoice}
                     item={item}
                     lineId={medicament.id}
-                    currentCustomData={inputCustomData}
+                    customData={inputCustomData}
                     {...props}
                   />
                 ) :
                 <PPInput
                   isShowed={this.props.isShowed}
-                  currentCustomData={inputCustomData}
+                  customData={inputCustomData}
                   data={needChoice ? data[0] : data}
                   input={input}
                   lineId={medicament.id}
@@ -63,7 +63,7 @@ class PPInputWrapper extends React.Component {
                   needChoice={needChoice}
                   item={{ id: id }}
                   lineId={medicament.id}
-                  currentCustomData={addedData}
+                  customData={addedData}
                   {...props}
                 />
               }) : null
@@ -81,7 +81,7 @@ class PPInputWrapper extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    currentCustomData: state.planPriseReducer.currentCustomData
+    customData: state.planPriseReducer.customData
   }
 }
 

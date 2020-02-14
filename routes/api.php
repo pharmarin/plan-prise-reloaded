@@ -28,6 +28,7 @@ Route::middleware(['auth:api'])->group(function () {
   Route::resource('composition', 'Api\CompositionApiController', ['as' => 'api']);
   Route::resource('medicament', 'Api\MedicamentApiController', ['as' => 'api']);
   Route::resource('bdpm', 'Api\BdpmApiController', ['as' => 'api']);
+  Route::get('plan-prise/{pp_id?}', 'Api\PlanPriseApiController@index')->name('api.plan-prise.index');
   Route::resource('plan-prise', 'Api\PlanPriseApiController', ['as' => 'api']);
 
 });

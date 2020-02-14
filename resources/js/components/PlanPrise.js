@@ -1,176 +1,133 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
   Button,
   Container,
-  Form,
-  Modal,
   Row,
   Col,
   Card
 } from 'react-bootstrap';
-import { createBrowserHistory } from 'history';
 import _ from 'lodash';
 
 import * as PP_ACTIONS from '../redux/plan-prise/actions';
 import * as DATA_ACTIONS from '../redux/data/actions';
 
 import PPLogic from './plan-prise/PPLogic';
+import PPOptions from './plan-prise/PPOptions';
 import PPSelect from './plan-prise/PPSelect';
 import { SPINNER } from './params';
 
-class PlanPrise extends React.Component {
+const PlanPrise = (props) => {
 
-  constructor (props) {
-    super(props)
-    this.state = this.initStateWithProps(props)
-    this.history = createBrowserHistory({
-      basename: window.php.PP_base_url
-    })
-  }
+  const [showOptions, setShowOptions] = useState(false)
 
-  initStateWithProps = (props) => {
-    let defaultState = {
-      isLoading: {
-        state: false,
-        message: "",
-        startLoading: function (message = "") { this.state = true; this.message = message; return this; },
-        stopLoading: function () { this.state = false; this.message = ""; return this; }
-      },
-      isShowingOptions: false
+  useEffect(() => {
+    // Load PP list
+    if (props.list === null) {
+      props.loadList()
     }
-    if (window.php.current_pp) {
-      let currentpp = window.php.current_pp
-      props.setDefaults({
-        currentID: currentpp.pp_id,
-        currentContent: currentpp.medicaments.map((medicament) => ({
-          id: medicament.value.id,
-          denomination: medicament.value.denomination,
-          type: medicament.type
-        })),
-        currentCustomData: currentpp.custom_data || {},
-        currentSettings: currentpp.custom_settings
-      })
-      props.cacheDetails(currentpp.medicaments)
-    }
-    return defaultState
-  }
+  })
 
   // #region PP methods
-  _deletePP = async (event) => {
+  const _deletePP = async (event) => {
     event.preventDefault()
-    this.setState({ isLoading: this.state.isLoading.startLoading("Suppression du plan de prise en cours... ") })
-    return await axios.delete(`${window.php.routes.api.planprise.destroy}/${this.props.currentID}`, {
+    props.setLoading({
+      state: true,
+      message: "Suppression du plan de prise en cours... "
+    })
+    return await axios.delete(`${window.php.routes.api.planprise.destroy}/${props.pp_id}`, {
       headers: {
         Authorization: `Bearer ${window.php.routes.token}`
       }
     })
     .then(() => {
-      this.props.reset()
+      props.reset()
     })
     .catch((error) => {
-      this.setState({
-        isLoading: this.state.isLoading.stopLoading()
-      })
-      this.props.alert.addAlert({
-        header: "Erreur",
-        body: "Impossible de supprimer le plan de prise, veuillez réessayer. ",
-        delay: 10000
+      props.setLoading({
+        state: false,
+        message: ""
       })
       console.log('Error destroying pp', error.response)
     })
   }
   // #endregion
 
-  _showOptions = (event) => {
-    event.preventDefault()
-    this.setState({ isShowingOptions: true })
-  }
-
-  render() {
-    let { isLoading, isShowingOptions } = this.state
-    return (
-      <Container>
+  return (
+    <Container>
       <Row className="justify-content-center">
-      <Col xl={8}>
-      <Card>
-
-      <Card.Header className="d-flex">
-      <div className="flex-fill">
-      {
-        this.props.currentID === -1 ? "Nouveau Plan de Prise" : this.props.currentID === null ? "Que voulez-vous faire ? " : "Plan de prise n°" + this.props.currentID
-      }
-      </div>
-      {
-        this.props.currentID > 0 && !isLoading.state ?
-        <div className="d-flex">
-        <div>
-        <Button variant="link" className="text-secondary py-0" onClick={this._showOptions}>
-        <i className="fa fa-cog"></i>
-        </Button>
-        </div>
-        <Modal show={isShowingOptions} onHide={() => this.setState({ isShowingOptions: false })}>
-        <Modal.Header closeButton>
-        <Modal.Title>Options</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <h5>Colonnes à afficher</h5>
-        <Row>
-        {
-          Object.keys(window.php.default.inputs.posologies.inputs).map((key) => {
-            let input = window.php.default.inputs.posologies.inputs[key]
-            return (
-              <Col key={input.id} sm={6}>
-              <Form.Group className="mb-0" controlId={key}>
-              <Form.Check type="checkbox" label={input.label} checked={_.get(this.props, `currentSettings.inputs.${input.id}.checked`, (input.default || false))} onChange={(event) => this.props.updateSettings({ parent: 'inputs', id: input.id }, {action: 'check', value: event.target.checked })} />
-              </Form.Group>
-              </Col>
-              )
-            }
-            )
+        <Col xl={8}>
+          {
+            props.pp_id > 0 && !props.isLoading.state
+              && <Button variant="link" onClick={props.reset}><span className="fa fa-arrow-left"></span> Retour à la liste</Button>
           }
-          </Row>
-          </Modal.Body>
-          </Modal>
-          <Button variant="link" className="text-danger py-0" onClick={this._deletePP}>
-          <i className="fa fa-trash"></i>
-          </Button>
-          </div> : null
-        }
-        </Card.Header>
+          <Card>
+            <Card.Header className="d-flex">
+              <div className="flex-fill">
+              {
+                props.pp_id === -1
+                  ? "Nouveau Plan de Prise"
+                  : props.pp_id === null
+                    ? "Que voulez-vous faire ? "
+                    : "Plan de prise n°" + props.pp_id
+              }
+              </div>
+              {
+                props.pp_id > 0 && !props.isLoading.state
+                  ? <div className="d-flex">
+                    <div>
+                      <Button variant="link" className="text-secondary py-0" onClick={() => setShowOptions(true)}>
+                      <i className="fa fa-cog"></i>
+                      </Button>
+                    </div>
+                    <Button variant="link" className="text-danger py-0" onClick={_deletePP}>
+                      <i className="fa fa-trash"></i>
+                    </Button>
+                  </div>
+                  : null
+              }
+            </Card.Header>
 
-        <Card.Body>
-        {
-          isLoading.state ?
-          <div>{SPINNER}<span className="ml-3">{isLoading.message}</span></div> :
-          this.props.currentID === null ?
-          <PPSelect/> :
-          <PPLogic/>
-        }
-        </Card.Body>
-
-        </Card>
+            <Card.Body>
+            {
+              props.isLoading.state
+                ? <div>
+                    {SPINNER}
+                    <span className="ml-3">{props.isLoading.message}</span>
+                  </div>
+                : props.pp_id === null
+                  ? <PPSelect/>
+                  : <PPLogic/>
+            }
+            </Card.Body>
+          </Card>
         </Col>
-        </Row>
-        </Container>
-        )
-      }
-    }
+      </Row>
+      <PPOptions
+        showOptions={showOptions}
+        setShowOptions={setShowOptions}
+      />
+    </Container>
+  )
+}
 
-    const mapStateToProps = (state) => {
-      return {
-        currentID: state.planPriseReducer.currentID,
-        currentSettings: state.planPriseReducer.currentSettings
-      }
-    }
+const mapStateToProps = (state) => {
+  return {
+    isLoading: state.planPriseReducer.isLoading,
+    list: state.planPriseReducer.list,
+    pp_id: state.planPriseReducer.pp_id,
+    settings: state.planPriseReducer.settings
+  }
+}
 
-    const mapDispatchToProps = (dispatch) => {
-      return {
-        reset: () => dispatch(PP_ACTIONS.reset()),
-        setDefaults: (values) => dispatch(PP_ACTIONS.setDefaults(values)),
-        cacheDetails: (details) => dispatch(DATA_ACTIONS.cacheDetails(details)),
-        updateSettings: (input, value) => dispatch(PP_ACTIONS.updateSettings(input, value))
-      }
-    }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loadList: () => dispatch(PP_ACTIONS.loadList()),
+    cacheDetails: (details) => dispatch(DATA_ACTIONS.cacheDetails(details)),
+    reset: () => dispatch(PP_ACTIONS.reset()),
+    setLoading: (values) => dispatch(PP_ACTIONS.setLoading(values)),
+    updateSettings: (input, value) => dispatch(PP_ACTIONS.updateSettings(input, value))
+  }
+}
 
-    export default connect(mapStateToProps, mapDispatchToProps)(PlanPrise)
+export default connect(mapStateToProps, mapDispatchToProps)(PlanPrise)

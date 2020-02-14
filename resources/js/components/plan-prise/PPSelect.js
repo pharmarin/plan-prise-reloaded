@@ -1,52 +1,69 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { SPINNER } from '../params';
 import * as PP_ACTIONS from '../../redux/plan-prise/actions';
 
 class PPSelect extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      dataPP: []
-    }
-  }
-
   _handleSelect = (event, id) => {
     event.preventDefault()
     this.props.init(id)
   }
 
-  render () {
+  render() {
+    let { list } = this.props
     return (
       <div>
         <div className="row text-center">
-          <div className="col-md-6 offset-md-3">
+          <div className="col-md-6">
             <div className="list-group">
-              {
-                this.state.dataPP.map((result, index) =>
-                  <a
-                    className="list-group-item list-group-item-action"
-                    data-id={result.id}
-                    href="#"
-                    onClick={(event => this._handleSelect(event, -1))}
-                    >
-                    Plan de prise n°{result.id}
-                  </a>
-                )
-              }
               <a
                 className="list-group-item list-group-item-action list-group-item-success"
                 data-id="-1"
                 href="#"
                 onClick={(event => this._handleSelect(event, -1))}
-                >
+              >
                 Créer un plan de prise
               </a>
             </div>
           </div>
+          <div className="col-md-6">
+            {
+              list ?
+                <div className="list-group">
+                  <div style={{
+                      maxHeight: `${this.lineMax * this.lineHeight}rem`,
+                      overflow: 'scroll'
+                    }}>
+                    {
+                      list.map((item) =>
+                        <a
+                          key={item.pp_id}
+                          className="list-group-item list-group-item-action"
+                          href={'plan-prise/' + item.pp_id}
+                          onClick={(event => this._handleSelect(event, item.pp_id))}
+                        >
+                          Plan de prise n°{item.pp_id}
+                        </a>
+                      )
+                    }
+                  </div>
+                </div> :
+                <div>
+                  {SPINNER}
+                  <span className="ml-2">Chargement de vos plans de prise...</span>
+                </div>
+            }
+          </div>
         </div>
       </div>
     )
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    list: state.planPriseReducer.list
   }
 }
 
@@ -56,4 +73,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(PPSelect)
+export default connect(mapStateToProps, mapDispatchToProps)(PPSelect)

@@ -10,7 +10,7 @@ import { SPINNER } from '../params';
 const PPCard = (props) => {
 
   const [isOpened, setIsOpened] = useState(false)
-  let { details, denomination, currentCustomData } = props
+  let { details, denomination } = props
   let { state, data } = details
   let id = props.lineId
 
@@ -101,7 +101,6 @@ const PPCard = (props) => {
 
       const mapDispatchToProps = (dispatch) => {
         return {
-          setDefaults: (values) => dispatch(PP_ACTIONS.setDefaults(values)),
           removeLine: (id) => dispatch(PP_ACTIONS.removeLine(id))
         }
       }

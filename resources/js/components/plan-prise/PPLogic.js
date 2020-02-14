@@ -11,11 +11,8 @@ import * as DATA_ACTIONS from '../../redux/data/actions';
 
 import PPCard from './PPCard';
 import SearchMedicament from '../generic/SearchMedicament';
-import MESSAGES from '../messages.js';
 
 const PPLogic = (props) => {
-    
-    // Merge with PlanPrise.js
 
   const _getInputs = () => {
     let inputs = _.cloneDeep(window.php.default.inputs)
@@ -23,7 +20,7 @@ const PPLogic = (props) => {
 
     inputs.posologies.inputs = _.compact(Object.keys(posologies).map((key) => {
       let posologie = posologies[key]
-      let isChecked = _.get(props.currentSettings, `inputs.${posologie.id}.checked`, null)
+      let isChecked = _.get(props.settings, `inputs.${posologie.id}.checked`, null)
       let isDefault = posologie.default
       let isDisplayed = isChecked || (isChecked === null && isDefault)
       return isDisplayed ? posologie : null
@@ -48,7 +45,7 @@ const PPLogic = (props) => {
       enter={false}
     >
       {
-        props.currentContent && props.currentContent.map(
+        props.content && props.content.map(
           (medicament) => {
             let details = _.find(props.data, (item) => item.id === medicament.id && item.type === medicament.type) || props.emptyObject
             if (!(details.data || details.state.isLoading)) props.load(medicament)
@@ -79,8 +76,8 @@ const PPLogic = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    currentContent: state.planPriseReducer.currentContent,
-    currentSettings: state.planPriseReducer.currentSettings,
+    content: state.planPriseReducer.content,
+    settings: state.planPriseReducer.settings,
     data: state.dataReducer.data,
     emptyObject: state.dataReducer.empty
   }

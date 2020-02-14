@@ -3,25 +3,36 @@ import * as SERVICES from './services.local';
 import _ from 'lodash';
 
 const initialState = {
-  currentID: null,
-  currentContent: [],
-  currentCustomData: {},
-  currentSettings: {}
+  content: null,
+  customData: null,
+  isLoading: {
+    state: false,
+    message: ""
+  },
+  list: null,
+  pp_id: null,
+  settings: null,
 }
 
 const planPriseReducer = (state = initialState, action) => {
   const newState = _.cloneDeep(state)
   switch (action.type) {
-    case TYPES.SET_DEFAULTS:
+    case TYPES.SET_LOADING:
       return {
         ...newState,
-        ...action.values
+        isLoading: action.values
       }
     case TYPES.INIT:
       return {
         ...newState,
-        currentID: action.id
+        pp_id: action.id
       }
+    case TYPES.LOAD_DETAILS: {
+      return {
+        ...newState,
+        ...action.values
+      }
+    }
     case TYPES.RESET:
       return initialState
     case TYPES.UPDATE_LINE:
@@ -33,9 +44,14 @@ const planPriseReducer = (state = initialState, action) => {
     case TYPES.UPDATE_SETTINGS:
       let { parent, id } = action.input
       if (action.value.action === "check") {
-        _.set(newState, `currentSettings.${parent}.${id}.checked`, action.value.value)
+        _.set(newState, `settings.${parent}.${id}.checked`, action.value.value)
       }
       return newState
+    case TYPES.LOAD_LIST:
+      return {
+        ...newState,
+        list: action.list
+      }
     default: return newState
   }
 }

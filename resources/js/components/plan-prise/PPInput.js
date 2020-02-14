@@ -12,20 +12,20 @@ class PPInput extends React.Component {
   }
 
   render() {
-    let { input, needChoice, data, currentCustomData, lineId } = this.props
+    let { input, needChoice, data, customData, lineId } = this.props
     let display = input.display ? input.display : input.id
     let value
     let isSpan = input.readOnly && needChoice
 
-    if (data || currentCustomData) {
-      if (input.multiple && currentCustomData && currentCustomData[display]) {
-        // Permet de récupérer les currentCustomData des commentaires (car needChoice mais on veut quand même les currentCustomData)
-        value = currentCustomData[display]
+    if (data || customData) {
+      if (input.multiple && customData && customData[display]) {
+        // Permet de récupérer les customData des commentaires (car needChoice mais on veut quand même les customData)
+        value = customData[display]
       } else if (needChoice) {
-        // Si needChoice -> Pas de currentCustomData
+        // Si needChoice -> Pas de customData
         value = data[display] || ""
       } else {
-        value = currentCustomData || data || ""
+        value = customData || data || ""
         if (typeof value === 'object' && value !== null) value = value[display]
       }
     } else {

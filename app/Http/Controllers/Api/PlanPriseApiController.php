@@ -28,12 +28,12 @@ class PlanPriseApiController extends Controller
       return response()->json(
         [
           [
-            'label' => 'Médicament créés', 
+            'label' => 'Médicament créés',
             'options' => $created->map(function ($item) {
               $item['type'] = get_class($item);
               return $item;
             })
-          ], 
+          ],
           [
             'label' => 'Base de données publique',
             'options' => $bdpm->map(function ($item) {
@@ -41,7 +41,7 @@ class PlanPriseApiController extends Controller
               return $item;
             })
           ]
-          
+
         ]
       );
     }
@@ -51,9 +51,11 @@ class PlanPriseApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($pp_id = null)
     {
-        //
+      return $this->_jsonResponse(
+        $this->pp_repository->index($pp_id)
+      );
     }
 
     /**
@@ -137,7 +139,7 @@ class PlanPriseApiController extends Controller
         case 'error':
           return response()->json($response['data'], 400);
           break;
-        default: 
+        default:
           throw new \Exception('Pas de code erreur. ');
       }
     }

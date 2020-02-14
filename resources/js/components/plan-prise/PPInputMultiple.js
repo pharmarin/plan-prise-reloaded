@@ -7,8 +7,8 @@ import * as PP_ACTIONS from '../../redux/plan-prise/actions';
 
 class PPInputMultiple extends React.Component {
   render() {
-    let { input, needChoice, item, lineId, currentCustomData } = this.props
-    let customItemData = item.id && currentCustomData && currentCustomData[item.id] ? currentCustomData[item.id] : null
+    let { input, needChoice, item, lineId, customData } = this.props
+    let customItemData = item.id && customData && customData[item.id] ? customData[item.id] : null
     let customItemChecked = customItemData && customItemData.checked !== undefined ? customItemData.checked : item.population === null
 
     return (
@@ -46,7 +46,7 @@ class PPInputMultiple extends React.Component {
                   <PPInput
                     isShowed={this.props.isShowed}
                     lineId={lineId}
-                    currentCustomData={customItemData}
+                    customData={customItemData}
                     data={item}
                     input={input}
                     needChoice={needChoice}

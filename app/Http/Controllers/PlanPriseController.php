@@ -36,6 +36,7 @@ class PlanPriseController extends Controller
           ],
           'api' => [
             'planprise' => [
+              'index' => route('api.plan-prise.index'),
               'store' => route('api.plan-prise.store'),
               'update' => route('api.plan-prise.index'),
               'destroy' => route('api.plan-prise.index')
