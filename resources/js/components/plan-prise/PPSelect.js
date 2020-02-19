@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import { SPINNER } from '../params';
 import * as PP_ACTIONS from '../../redux/plan-prise/actions';
@@ -37,14 +38,14 @@ class PPSelect extends React.Component {
                     }}>
                     {
                       list.map((item) =>
-                        <a
+                        <Link
                           key={item.pp_id}
                           className="list-group-item list-group-item-action"
-                          href={'plan-prise/' + item.pp_id}
-                          onClick={(event => this._handleSelect(event, item.pp_id))}
+                          to={'plan-prise/' + item.pp_id}
+                          //onClick={(event => this._handleSelect(event, item.pp_id))}
                         >
                           Plan de prise n°{item.pp_id}
-                        </a>
+                        </Link>
                       )
                     }
                   </div>

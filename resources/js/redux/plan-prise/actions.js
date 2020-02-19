@@ -9,7 +9,8 @@ export const setLoading = (values) => {
   }
 }
 
-export const reset = () => {
+export const reset = (history) => {
+  history.push('/plan-prise')
   return {
     type: TYPES.RESET
   }

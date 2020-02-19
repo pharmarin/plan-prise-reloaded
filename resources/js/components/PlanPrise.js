@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
   Button,
@@ -19,9 +20,14 @@ import { SPINNER } from './params';
 
 const PlanPrise = (props) => {
 
+  const routeId = useParams().id
+
   const [showOptions, setShowOptions] = useState(false)
 
   useEffect(() => {
+    if (!props.pp_id && routeId) {
+      props.init(routeId)
+    }
     // Load PP list
     if (props.list === null) {
       props.loadList()
@@ -41,7 +47,7 @@ const PlanPrise = (props) => {
       }
     })
     .then(() => {
-      props.reset()
+      props.reset(props.history)
     })
     .catch((error) => {
       props.setLoading({
@@ -59,7 +65,7 @@ const PlanPrise = (props) => {
         <Col xl={8}>
           {
             props.pp_id > 0 && !props.isLoading.state
-              && <Button variant="link" onClick={props.reset}><span className="fa fa-arrow-left"></span> Retour à la liste</Button>
+              && <Button variant="link" onClick={() => props.reset(props.history)}><span className="fa fa-arrow-left"></span> Retour à la liste</Button>
           }
           <Card>
             <Card.Header className="d-flex">
@@ -115,19 +121,19 @@ const mapStateToProps = (state) => {
   return {
     isLoading: state.planPriseReducer.isLoading,
     list: state.planPriseReducer.list,
-    pp_id: state.planPriseReducer.pp_id,
-    settings: state.planPriseReducer.settings
+    pp_id: state.planPriseReducer.pp_id
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    init: (id) => dispatch(PP_ACTIONS.init(id)),
     loadList: () => dispatch(PP_ACTIONS.loadList()),
-    cacheDetails: (details) => dispatch(DATA_ACTIONS.cacheDetails(details)),
-    reset: () => dispatch(PP_ACTIONS.reset()),
-    setLoading: (values) => dispatch(PP_ACTIONS.setLoading(values)),
-    updateSettings: (input, value) => dispatch(PP_ACTIONS.updateSettings(input, value))
+    reset: (history = null) => dispatch(PP_ACTIONS.reset(history)),
+    setLoading: (values) => dispatch(PP_ACTIONS.setLoading(values))
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PlanPrise)
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(PlanPrise)
+)
