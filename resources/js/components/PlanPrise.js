@@ -11,10 +11,9 @@ import {
 import _ from 'lodash';
 
 import * as PP_ACTIONS from '../redux/plan-prise/actions';
-import * as DATA_ACTIONS from '../redux/data/actions';
 
 import PPLogic from './plan-prise/PPLogic';
-import PPOptions from './plan-prise/PPOptions';
+import PPSettings from './plan-prise/PPSettings';
 import PPSelect from './plan-prise/PPSelect';
 import { SPINNER } from './params';
 
@@ -22,7 +21,7 @@ const PlanPrise = (props) => {
 
   const routeId = useParams().id
 
-  const [showOptions, setShowOptions] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
 
   useEffect(() => {
     if (!props.pp_id && routeId) {
@@ -81,14 +80,18 @@ const PlanPrise = (props) => {
               {
                 props.pp_id > 0 && !props.isLoading.state
                   ? <div className="d-flex">
-                    <div>
-                      <Button variant="link" className="text-secondary py-0" onClick={() => setShowOptions(true)}>
-                      <i className="fa fa-cog"></i>
+                      <a className="btn text-success py-0" href={props.pp_id + "/print"}>
+                        <i className="fa fa-print"></i>
+                      </a>
+                    <a className="btn text-success py-0" href={props.pp_id + "/export"}>
+                        <i className="fa fa-file-pdf"></i>
+                      </a>
+                      <Button variant="link" className="text-secondary py-0" onClick={() => setShowSettings(true)}>
+                        <i className="fa fa-cog"></i>
                       </Button>
-                    </div>
-                    <Button variant="link" className="text-danger py-0" onClick={_deletePP}>
-                      <i className="fa fa-trash"></i>
-                    </Button>
+                      <Button variant="link" className="text-danger py-0" onClick={_deletePP}>
+                        <i className="fa fa-trash"></i>
+                      </Button>
                   </div>
                   : null
               }
@@ -109,9 +112,9 @@ const PlanPrise = (props) => {
           </Card>
         </Col>
       </Row>
-      <PPOptions
-        showOptions={showOptions}
-        setShowOptions={setShowOptions}
+      <PPSettings
+        showSettings={showSettings}
+        setShowSettings={setShowSettings}
       />
     </Container>
   )

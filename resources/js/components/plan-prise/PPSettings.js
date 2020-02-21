@@ -7,9 +7,9 @@ import {
   Row
 } from 'react-bootstrap';
 
-const PPOptions = (props) => {
+const PPSettings = (props) => {
   return (
-    <Modal show={props.showOptions} onHide={props.setShowOptions(false)}>
+    <Modal show={props.showSettings} onHide={() => props.setShowSettings(false)}>
       <Modal.Header closeButton>
         <Modal.Title>Options</Modal.Title>
       </Modal.Header>
@@ -49,4 +49,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(PPOptions)
+export default connect(mapStateToProps)(PPSettings)
