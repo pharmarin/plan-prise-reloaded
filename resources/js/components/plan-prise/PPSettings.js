@@ -7,6 +7,8 @@ import {
   Row
 } from 'react-bootstrap';
 
+import * as PP_ACTIONS from '../../redux/plan-prise/actions';
+
 const PPSettings = (props) => {
   return (
     <Modal show={props.showSettings} onHide={() => props.setShowSettings(false)}>
@@ -49,4 +51,10 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(PPSettings)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateSettings: (input, value) => dispatch(PP_ACTIONS.updateSettings(input, value))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PPSettings)

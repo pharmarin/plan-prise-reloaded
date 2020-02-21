@@ -99,11 +99,11 @@ export const removeLine = (id) => async (dispatch, getState) => {
 }
 
 export const updateSettings = (input, value) => async (dispatch, getState) => {
-  dispatch(updateSettingsState({
+  dispatch({
     type: TYPES.UPDATE_SETTINGS,
     input,
     value
-  }))
+  })
   API_SERVICES.saveModification(getState().planPriseReducer.pp_id, 'settings', getState().planPriseReducer.settings)
 }
 
