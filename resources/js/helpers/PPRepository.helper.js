@@ -10,9 +10,18 @@ class PPItem {
     if (!medicament) return []
     if (input.id === 'denomination') {
       return [
-        medicament.custom_denomination,
-        medicament.compositions.map(composition => composition.denomination).join(' + '),
-        `(Voies administration)`
+        {
+          value: medicament.custom_denomination,
+          style: 'custom_denomination'
+        },
+        {
+          value: medicament.compositions.map(composition => composition.denomination).join(' + '),
+          style: 'compositions'
+        },
+        {
+          value: `(Voies administration)`,
+          style: 'voies_administration'
+        }
       ]
     }
     let returnValue = customValue.length > 0 ? customValue : defaultValue
@@ -166,7 +175,7 @@ export default class PPRepository {
       if (_.isString(value)) return { text: value, style: key }
       if (_.isArray(value)) {
         let input = _.find(this.columns, { id: key })
-        if (input.multiple) return { stack: value.map(i => ({ text: _.isString(i) ? i : i.value, style: key })) }
+        if (input.multiple) return { stack: value.map(i => ({ text: _.isString(i) ? i : i.value, style: i.style ? i.style : key })) }
         if (input.join) return { text: value.map(i => _.isString(i) ? i : i.value).join(input.join) }
         return ""
       }

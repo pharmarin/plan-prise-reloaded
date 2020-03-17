@@ -38,14 +38,18 @@ export const generate = (pp_id, columns, values) => {
         headerRows: 1,
         body: [
           [...columns.map(column => ({ text: column.header, alignment: _.startsWith(column.id, 'poso_') ? 'center' : 'left', style: 'tableHeader' }))],
-          ...values.map(line => [...columns.map(column => _.get(line, column.id, ""))])
+          ...values.map(line => [...columns.map(column => {
+            console.log(_.get(line, column.id, ""))
+            return _.get(line, column.id, "")
+          })])
         ],
         widths: columns.map(column => _.startsWith(column.id, 'poso_') ? 40 : 'auto'),
       }
     }],
     defaultStyle: {
       fontSize: 10,
-      //font: 'Nunito'
+      //font: 'Nunito',
+      lineHeight: 1.2
     },
     styles: {
       header: {
@@ -66,7 +70,16 @@ export const generate = (pp_id, columns, values) => {
       voies_administration: {
         fontSize: 9,
         color: 'gray'
-      }
+      },
+      poso: {
+        alignment: 'center'
+      },
+      get poso_matin() { return this.poso },
+      get poso_10h() { return this.poso },
+      get poso_midi() { return this.poso },
+      get poso_16h() { return this.poso },
+      get poso_soir() { return this.poso },
+      get poso_coucher() { return this.poso }
     }
   }
   pdfMake.createPdf(document).open()

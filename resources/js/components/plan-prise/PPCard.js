@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Button, Card } from 'react-bootstrap';
+import _ from 'lodash';
 
 import * as PP_ACTIONS from '../../redux/plan-prise/actions';
 
@@ -28,14 +29,14 @@ const PPCard = (props) => {
     {
       !data ?
       `Chargement de ${denomination} en cours... ` :
-      data.denomination[0]
+      _.find(data.denomination, {style: 'custom_denomination'}).value
     }
     </div>
     </div>
     {
-      data && data.denomination[1] && <div className="text-muted text-truncate">
+            data && _.find(data.denomination, { style: 'compositions' }).value && <div className="text-muted text-truncate">
       <small>{
-        data.denomination[1]
+                _.find(data.denomination, { style: 'compositions' }).value
       }</small>
       </div>
     }
