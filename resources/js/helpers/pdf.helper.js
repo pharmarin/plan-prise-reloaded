@@ -36,6 +36,7 @@ export const generate = (pp_id, columns, values) => {
       table: {
         layout: 'planPrise',
         headerRows: 1,
+        dontBreakRows: true,
         body: [
           [...columns.map(column => ({ text: column.header, alignment: _.startsWith(column.id, 'poso_') ? 'center' : 'left', style: 'tableHeader' }))],
           ...values.map(line => [...columns.map(column => {
@@ -62,6 +63,9 @@ export const generate = (pp_id, columns, values) => {
       },
       tableHeader: {
         bold: true
+      },
+      interline: {
+        fontSize: 2
       },
       compositions: {
         italics: true,

@@ -175,7 +175,11 @@ export default class PPRepository {
       if (_.isString(value)) return { text: value, style: key }
       if (_.isArray(value)) {
         let input = _.find(this.columns, { id: key })
-        if (input.multiple) return { stack: value.map(i => ({ text: _.isString(i) ? i : i.value, style: i.style ? i.style : key })) }
+        if (input.multiple) return {
+          stack: value
+            .map(i => ({ text: _.isString(i) ? i : i.value, style: i.style ? i.style : key }))
+            .flatMap((e, index) => index ? [e, { text: " ", style: 'interline' }] : [e, { text: " ", style: 'interline' }]) // add interline https://stackoverflow.com/questions/46528616/how-to-insert-a-new-element-in-between-all-elements-of-a-js-array
+        }
         if (input.join) return { text: value.map(i => _.isString(i) ? i : i.value).join(input.join) }
         return ""
       }
