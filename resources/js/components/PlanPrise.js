@@ -9,10 +9,17 @@ import {
   Card
 } from 'react-bootstrap';
 import _ from 'lodash';
+import {
+  CSSTransition,
+  TransitionGroup,
+} from 'react-transition-group';
 
 import * as PP_ACTIONS from '../redux/plan-prise/actions';
+import PPRepository from '../helpers/PPRepository.helper';
+import { generate } from '../helpers/pdf.helper';
 
-import PPLogic from './plan-prise/PPLogic';
+import PPCard from './plan-prise/PPCard';
+import SearchMedicament from './generic/SearchMedicament';
 import PPSettings from './plan-prise/PPSettings';
 import PPSelect from './plan-prise/PPSelect';
 import { SPINNER } from './params';
@@ -20,20 +27,24 @@ import { SPINNER } from './params';
 const PlanPrise = (props) => {
 
   const routeId = useParams().id
-
   const [showSettings, setShowSettings] = useState(false)
+  const repository = new PPRepository({
+    content: props.content,
+    customData: props.customData,
+    data: props.data,
+    emptyObject: props.emptyObject,
+    settings: props.settings,
+  })
 
   useEffect(() => {
     if (!props.pp_id && routeId) {
       props.init(routeId)
     }
-    // Load PP list
     if (props.list === null) {
       props.loadList()
     }
   })
 
-  // #region PP methods
   const _deletePP = async (event) => {
     event.preventDefault()
     props.setLoading({
@@ -56,7 +67,26 @@ const PlanPrise = (props) => {
       console.log('Error destroying pp', error.response)
     })
   }
-  // #endregion
+
+  const _handleAddLine = async (value) => {
+    let medicament = {
+      id: value.value,
+      denomination: value.label,
+      type: value.type
+    }
+    return props.addLine(medicament)
+  }
+
+  const _generatePDF = () => {
+    let columns = repository.columns
+    let values = repository.values
+
+    return generate(
+      props.pp_id,
+      columns,
+      values
+    )
+  }
 
   return (
     <Container>
@@ -83,9 +113,9 @@ const PlanPrise = (props) => {
                       <a className="btn text-success py-0" href={props.pp_id + "/print"}>
                         <i className="fa fa-print"></i>
                       </a>
-                    <a className="btn text-success py-0" href={props.pp_id + "/export"}>
+                      <Button variant="link" className="text-success py-0" onClick={() => _generatePDF()}>
                         <i className="fa fa-file-pdf"></i>
-                      </a>
+                      </Button>
                       <Button variant="link" className="text-secondary py-0" onClick={() => setShowSettings(true)}>
                         <i className="fa fa-cog"></i>
                       </Button>
@@ -106,7 +136,37 @@ const PlanPrise = (props) => {
                   </div>
                 : props.pp_id === null
                   ? <PPSelect/>
-                  : <PPLogic/>
+                    : <TransitionGroup
+                      className="plan-prise"
+                      enter={false}
+                    >
+                      {
+                        props.content && props.content.map(
+                          (medicament) => {
+                            if (!repository.isLoaded(medicament)) props.load(medicament)
+                            return (
+                              <CSSTransition
+                                key={medicament.id}
+                                timeout={500}
+                                classNames="plan-prise-card"
+                              >
+                                <PPCard
+                                  denomination={medicament.denomination}
+                                  details={_.find(repository.valuesObject, med => med.line === medicament)}
+                                  lineId={medicament.id}
+                                  needChoice={_.get(repository.needChoice, medicament.id, [])}
+                                  repository={repository}
+                                />
+                              </CSSTransition>
+                            )
+                          }
+                        )
+                      }
+                      <SearchMedicament
+                        multiple={false}
+                        onSelect={(value) => _handleAddLine(value)}
+                      />
+                    </TransitionGroup>
             }
             </Card.Body>
           </Card>
@@ -122,9 +182,13 @@ const PlanPrise = (props) => {
 
 const mapStateToProps = (state) => {
   return {
+    content: state.planPriseReducer.content,
+    customData: state.planPriseReducer.customData,
+    data: state.dataReducer.data,
     isLoading: state.planPriseReducer.isLoading,
     list: state.planPriseReducer.list,
-    pp_id: state.planPriseReducer.pp_id
+    pp_id: state.planPriseReducer.pp_id,
+    settings: state.planPriseReducer.settings
   }
 }
 

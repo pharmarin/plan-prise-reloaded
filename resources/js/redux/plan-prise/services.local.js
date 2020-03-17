@@ -1,5 +1,3 @@
-import * as TYPES from './types';
-
 export const updateLine = (newState, action) => {
   let { id, child, multiple, parent, readOnly } = action.input
   let { type, value } = action.action
@@ -60,5 +58,4 @@ export const update = (newState, action) => {
       console.log(action)
       throw 'No action type'
   }
-
 }

@@ -125,7 +125,9 @@ return [
         [
           'id' => "custom_indications",
           'label' => "Indication",
-          'choose' => "custom_indications"
+          'choose' => "custom_indications",
+          'display' => "custom_indications",
+          'join' => ' ou '
         ],
         [
           'id' => "conservation_duree",
@@ -186,5 +188,6 @@ return [
         ]
       ]
     ]
-  ]
+  ],
+  'voies_administration' => $voiesAdministration
 ];

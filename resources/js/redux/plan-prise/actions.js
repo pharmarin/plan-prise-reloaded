@@ -1,5 +1,6 @@
 import * as TYPES from './types';
 import * as API_SERVICES from './services.api';
+import * as LOCAL_SERVICES from './services.local';
 import * as DATA_TYPES from '../data/types';
 
 export const setLoading = (values) => {
@@ -88,6 +89,14 @@ export const addLine = (medicament) => async (dispatch, getState) => {
   API_SERVICES.saveModification(getState().planPriseReducer.pp_id, 'add', medicament).then((pp_id) => {
     if (getState().planPriseReducer.pp_id === -1) dispatch(init(pp_id))
   })
+}
+
+export const addCustomItem = (lineId, input) => {
+  return {
+    type: TYPES.ADD_CUSTOM_ITEM,
+    input,
+    lineId
+  }
 }
 
 export const removeLine = (id) => async (dispatch, getState) => {

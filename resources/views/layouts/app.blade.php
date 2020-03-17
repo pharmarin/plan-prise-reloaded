@@ -5,7 +5,9 @@
 </head>
 <body>
   <div id="app">
-    @include('layouts.navbar')
+    @if (!isset($print) || $print !== true)
+      @include('layouts.navbar')
+    @endif
     <main class="py-4">
       @yield('content')
     </main>

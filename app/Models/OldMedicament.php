@@ -50,10 +50,7 @@ class OldMedicament extends Model
           'laboratoire' => $laboratoire,
           'duree' => $duree
         ];
-      }, array_keys(json_decode($this->dureeConservation, true)), json_decode($this->dureeConservation, true)) : [
-        'duree' => '',
-        'laboratoire' => $this->dureeConservation
-      ],
+      }, array_keys(json_decode($this->dureeConservation, true)), json_decode($this->dureeConservation, true)) : $this->dureeConservation,
       'voies_administration' => $this->_switchVoieAdminitration($this->voieAdministration),
       'precautions' => array_map(function ($precaution, $key) {
         return [

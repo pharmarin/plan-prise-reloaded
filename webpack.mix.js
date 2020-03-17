@@ -44,6 +44,7 @@ mix.js('resources/js/app.js', 'public/js')
     'axios',
     'popper.js',
     'lodash',
+    'pdfmake',
     'react-bootstrap',
     'redux',
     'react-redux'

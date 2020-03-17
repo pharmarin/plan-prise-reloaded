@@ -52,6 +52,12 @@ const planPriseReducer = (state = initialState, action) => {
         ...newState,
         list: action.list
       }
+    case TYPES.ADD_CUSTOM_ITEM:
+      _.set(newState, `customData.${action.lineId}.custom_${action.input}.${_.uniqueId('custom_' + action.input + '_')}`, {
+        checked: true,
+        ['custom_' + action.input]: ""
+      })
+      return newState
     default: return newState
   }
 }

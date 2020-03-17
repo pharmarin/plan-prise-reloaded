@@ -4,15 +4,16 @@ import { Button, Card } from 'react-bootstrap';
 
 import * as PP_ACTIONS from '../../redux/plan-prise/actions';
 
-import PPInputWrapper from './PPInputWrapper';
+import PPInputGroup from './PPInputGroup';
 import { SPINNER } from '../params';
 
 const PPCard = (props) => {
 
   const [isOpened, setIsOpened] = useState(false)
-  let { details, denomination } = props
+  let { details, denomination, needChoice, repository } = props
   let { state, data } = details
   let id = props.lineId
+  let inputs = repository.inputs
 
   return (
     <Card className="mb-3">
@@ -27,14 +28,14 @@ const PPCard = (props) => {
     {
       !data ?
       `Chargement de ${denomination} en cours... ` :
-      data.custom_denomination
+      data.denomination[0]
     }
     </div>
     </div>
     {
-      data && data.compositions && <div className="text-muted text-truncate">
+      data && data.denomination[1] && <div className="text-muted text-truncate">
       <small>{
-        data.compositions.map(composition => composition.denomination).join(' + ')
+        data.denomination[1]
       }</small>
       </div>
     }
@@ -69,38 +70,46 @@ const PPCard = (props) => {
     {
       data && <Card.Body className="row">
       {
-        Object.keys(props.inputs).map(
+        Object.keys(inputs).map(
           (sectionKey) => {
-            let { inputs } = props
             let section = inputs[sectionKey]
             if (!section.collapse || isOpened) {
               return (
                 <div key={sectionKey} className={!isOpened && !section.collapse ? "col-md-12 d-flex justify-content-around" : section.class}>
                 {
-                  section.inputs.map((input) =>
-                  <PPInputWrapper
-                  key={input.id}
-                  input={input}
-                  medicament={data}
-                  isShowed={section.collapse ? isOpened : true}
-                  />
-                  )
+                  section.inputs.map((input, i) => <PPInputGroup
+                    key={i}
+                    input={input}
+                    lineId={id}
+                    values={details.data}
+                  />)
                 }
                 </div>
                 )
-              }
+            } else {
+              let needChoiceInputs = _.find(section.inputs, (i) => needChoice.includes(i.id))
+              return needChoiceInputs &&
+                <div key={sectionKey} className="col-md-12 justify-content-around">
+                  <PPInputGroup
+                    input={needChoiceInputs}
+                    lineId={id}
+                    values={details.data}
+                  />
+                </div>
             }
-            )
           }
-          </Card.Body>
-        }
-        </Card>
         )
-
       }
+      </Card.Body>
+    }
+    </Card>
+  )
+
+}
 
       const mapDispatchToProps = (dispatch) => {
         return {
+          addCustomItem: (lineId, input) => dispatch(PP_ACTIONS.addCustomItem(lineId, input)),
           removeLine: (id) => dispatch(PP_ACTIONS.removeLine(id))
         }
       }
