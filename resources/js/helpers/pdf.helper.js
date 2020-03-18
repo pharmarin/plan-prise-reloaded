@@ -38,10 +38,13 @@ export const generate = (pp_id, columns, values) => {
         headerRows: 1,
         dontBreakRows: true,
         body: [
-          [...columns.map(column => ({ text: column.header, alignment: _.startsWith(column.id, 'poso_') ? 'center' : 'left', style: 'tableHeader' }))],
+          [...columns.map(column => ({
+            text: column.header,
+            alignment: _.startsWith(column.id, 'poso_') ? 'center' : 'left', style: ['tableHeader', column.id]
+          }))],
           ...values.map(line => [...columns.map(column => {
-            console.log(_.get(line, column.id, ""))
-            return _.get(line, column.id, "")
+            console.log(_.get(line, column.id, " "))
+            return _.get(line, column.id, { text: " ", style: column.id })
           })])
         ],
         widths: columns.map(column => _.startsWith(column.id, 'poso_') ? 40 : 'auto'),
@@ -49,8 +52,7 @@ export const generate = (pp_id, columns, values) => {
     }],
     defaultStyle: {
       fontSize: 10,
-      //font: 'Nunito',
-      lineHeight: 1.2
+      fillOpacity: .5
     },
     styles: {
       header: {
@@ -62,10 +64,14 @@ export const generate = (pp_id, columns, values) => {
         return this.header
       },
       tableHeader: {
-        bold: true
+        bold: true,
+        fillOpacity: 1
       },
       interline: {
         fontSize: 2
+      },
+      custom_denomination: {
+        bold: true
       },
       compositions: {
         italics: true,
@@ -75,16 +81,19 @@ export const generate = (pp_id, columns, values) => {
         fontSize: 9,
         color: 'gray'
       },
-      poso: {
-        alignment: 'center'
-      },
-      get poso_matin() { return this.poso },
-      get poso_10h() { return this.poso },
-      get poso_midi() { return this.poso },
-      get poso_16h() { return this.poso },
-      get poso_soir() { return this.poso },
-      get poso_coucher() { return this.poso }
+      ..._.fromPairs(
+        _.filter(columns, col => _.startsWith(col.id, 'poso_')).map(poso => {
+          return [
+            poso.id,
+            {
+              alignment: 'center',
+              fillColor: poso.color
+            }
+          ]
+        })
+      )
     }
   }
+  console.log(document.styles)
   pdfMake.createPdf(document).open()
 }

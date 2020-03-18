@@ -21,12 +21,12 @@ export const saveModification = async (pp_id, action, modifications) => {
       }
     })
     .then((response) => {
-      window.planPrise.toast = toast.close(window.planPrise.toast.id, window.planPrise.toast.position)
+      window.planPrise.toast = toast.close(window.planPrise.toast.id || null, window.planPrise.toast.position)
       if (!response.status === 200) throw new Error(response.statusText)
       return response.data.pp_id
     })
     .catch((error) => {
-      toast.close(window.planPrise.toast.id, window.planPrise.toast.position)
+      toast.close(window.planPrise.toast.id || null, window.planPrise.toast.position)
       console.log(error)
     })
   }, 1000)

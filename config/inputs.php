@@ -143,31 +143,47 @@ return [
       'collapse' => false,
       'inputs' => [
         [
+          'id' => 'poso_lever',
+          'label' => 'Lever',
+          'color' => '#66ffd5'
+        ],
+        [
           'id' => 'poso_matin',
           'label' => 'Matin',
-          'default' => true
+          'default' => true,
+          'color' => '#90e793'
         ],
         [
           'id' => 'poso_10h',
-          'label' => '10h'
+          'label' => '10h',
+          'color' => '#fff566'
         ],
         [
           'id' => 'poso_midi',
           'label' => 'Midi',
-          'default' => true
+          'default' => true,
+          'color' => '#ffbc81'
         ],
         [
           'id' => 'poso_16h',
-          'label' => '16h'
+          'label' => '16h',
+          'color' => '#e68ec7'
+        ],
+        [
+          'id' => 'poso_18h',
+          'label' => '18h',
+          'color' => '#c48ee6'
         ],
         [
           'id' => 'poso_soir',
           'label' => 'Soir',
-          'default' => true
+          'default' => true,
+          'color' => '#ffa19c'
         ],
         [
           'id' => 'poso_coucher',
-          'label' => 'Coucher'
+          'label' => 'Coucher',
+          'color' => '#b8e4f5'
         ]
       ]
     ],
