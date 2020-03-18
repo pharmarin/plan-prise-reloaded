@@ -42,10 +42,7 @@ export const generate = (pp_id, columns, values) => {
             text: column.header,
             alignment: _.startsWith(column.id, 'poso_') ? 'center' : 'left', style: ['tableHeader', column.id]
           }))],
-          ...values.map(line => [...columns.map(column => {
-            console.log(_.get(line, column.id, " "))
-            return _.get(line, column.id, { text: " ", style: column.id })
-          })])
+          ...values.map(line => [...columns.map(column => _.get(line, column.id, { text: " ", style: column.id }))])
         ],
         widths: columns.map(column => _.startsWith(column.id, 'poso_') ? 40 : 'auto'),
       }
