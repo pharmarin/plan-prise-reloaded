@@ -11,14 +11,14 @@ mix.options({
   }
 })
 
-mix.browserSync({
+/*mix.browserSync({
   open: false,
   proxy: 'https://pharmarin.dynamic-dns.net',
   https: {
     key: "/etc/letsencrypt/live/pharmarin.dynamic-dns.net/privkey.pem",
     cert: "/etc/letsencrypt/live/pharmarin.dynamic-dns.net/cert.pem"
   }
-})
+})*/
 
 /*
 |--------------------------------------------------------------------------
