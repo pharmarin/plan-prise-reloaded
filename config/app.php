@@ -179,6 +179,8 @@ return [
 
         App\Providers\ExtendCollectionProvider::class,
 
+        App\Providers\HelperServiceProvider::class,
+
     ],
 
     /*

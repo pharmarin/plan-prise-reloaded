@@ -13,12 +13,9 @@ export const saveModification = async (pp_id, action, modifications) => {
   }
   window.planPrise.apiCall.timeout = setTimeout(async () => {
     return await axios.put(`${window.php.routes.api.planprise.update}/${pp_id}`, {
+      token: window.php.routes.token,
       action: action,
       value: modifications
-    }, {
-      headers: {
-        Authorization: `Bearer ${window.php.routes.token}`
-      }
     })
     .then((response) => {
       window.planPrise.toast = toast.close(window.planPrise.toast.id || null, window.planPrise.toast.position)
@@ -34,8 +31,8 @@ export const saveModification = async (pp_id, action, modifications) => {
 
 export const loadList = async () => {
   return await axios.get(window.php.routes.api.planprise.index, {
-    headers: {
-      Authorization: `Bearer ${window.php.routes.token}`
+    params: {
+      token: window.php.routes.token
     }
   })
   .then((response) => {
@@ -49,8 +46,8 @@ export const loadList = async () => {
 
 export const loadDetails = async (id) => {
   return await axios.get(`${window.php.routes.api.planprise.index}/${id}`, {
-    headers: {
-      Authorization: `Bearer ${window.php.routes.token}`
+    params: {
+      token: window.php.routes.token
     }
   })
   .then((response) => {

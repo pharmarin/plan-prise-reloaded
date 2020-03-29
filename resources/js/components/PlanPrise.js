@@ -52,8 +52,8 @@ const PlanPrise = (props) => {
       message: "Suppression du plan de prise en cours... "
     })
     return await axios.delete(`${window.php.routes.api.planprise.destroy}/${props.pp_id}`, {
-      headers: {
-        Authorization: `Bearer ${window.php.routes.token}`
+      data: {
+        token: window.php.routes.token,
       }
     })
     .then(() => {
