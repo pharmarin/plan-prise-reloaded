@@ -25,6 +25,12 @@ export const init = (id) => (dispatch) => {
   let stopLoading = {
     state: false, message: ""
   }
+  if (!(_.toNumber(id) > 0)) {
+    return dispatch({
+      type: TYPES.INIT,
+      id: -1
+    })
+  }
   dispatch({
     type: TYPES.SET_LOADING,
     values: startLoading

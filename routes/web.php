@@ -21,8 +21,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('medicament/custom/get', 'MedicamentController@getDetailFromCIS')->name('medicament.custom.get');
         // PlanPrise
         Route::get('plan-prise/{pp_id?}', 'PlanPriseController@index')->name('plan-prise.index');
-        Route::get('plan-prise/{pp_id?}/print', 'PlanPriseController@print')->name('plan-prise.print');
-        Route::get('plan-prise/{pp_id?}/export', 'PlanPriseController@export')->name('plan-prise.export');
+        //Route::get('plan-prise/{pp_id?}/print', 'PlanPriseController@print')->name('plan-prise.print');
+        //Route::get('plan-prise/{pp_id?}/export', 'PlanPriseController@export')->name('plan-prise.export');
 
         Route::middleware(['admin'])->group(function () {
           // Users
