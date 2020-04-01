@@ -8,8 +8,8 @@
       "type": "edge",
       "version": "dev",
       "request": "launch",
-      "name": "Lancer Edge en utilisant localhost",
-      "url": "http://pharmarin.dynamic-dns.net/plan-prise/public",
+      "name": "Lancer Edge en utilisant pharmarin.dynamic-dns",
+      "url": "http://plan-prise.pharmarin.dynamic-dns.net/",
       "webRoot": "${workspaceFolder}"
     }
   ]
