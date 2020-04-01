@@ -12,7 +12,7 @@ import PlanPrise from './PlanPrise';
 const App = (props) => {
   return (
     <Provider store={store}>
-      <Router basename="/sites/plan-prise/">
+      <Router basename="/">
         <Switch>
           <Route path="/plan-prise/:id">
             <PlanPrise/>

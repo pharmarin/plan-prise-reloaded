@@ -27,7 +27,7 @@ class PlanPriseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index ($pp_id = null)
+    public function index ($pp_id = 0)
     {
       $current_pp = $pp_id > 0 ? $this->pp_repository->get($pp_id) : null;
       $javascript = [
@@ -53,33 +53,7 @@ class PlanPriseController extends Controller
         ]
       ];
 
-      //
-      $columns = [];
-      $current_pp = $this->pp_repository->get($pp_id);
-      $custom_data = $current_pp->custom_data;
-      $default = $current_pp->medicaments;
-      $settings = $current_pp->custom_settings;
-      $inputs = Config::get('inputs.plan_prise');
-      foreach ($inputs as $group_id => $group) {
-        foreach ($group['inputs'] as $input) {
-          if ($group_id === 'posologies') {
-            if (
-              !(isset($input['default']) && $input['default'] === true)
-              &&
-              !(isset($settings->inputs->{$input['id']}) && $settings->inputs->{$input['id']}->checked === true)
-            ) continue;
-          }
-          $columns[$input['id']] = $input;
-        }
-      }
-      $medicaments = array_map(function ($medicament) use ($custom_data, $columns) {
-        return CommonRepository::getValues($medicament, $custom_data[$medicament['value']['id']] ?? null, $columns);
-      }, $default);
-      if (count(array_filter(array_column($medicaments, 'conservation_duree'))) === 0) {
-        unset($columns['conservation_duree']);
-      }
-      //
-      return view('plan-prise.plan')->with(compact('javascript', 'pp_id', 'medicaments', 'columns'));
+      return view('plan-prise.plan')->with(compact('javascript'));
     }
 
     public function export ($pp_id)

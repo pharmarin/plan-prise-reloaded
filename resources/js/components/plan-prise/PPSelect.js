@@ -18,14 +18,12 @@ class PPSelect extends React.Component {
         <div className="row text-center">
           <div className="col-md-6">
             <div className="list-group">
-              <a
+              <Link
                 className="list-group-item list-group-item-action list-group-item-success"
-                data-id="-1"
-                href="#"
-                onClick={(event => this._handleSelect(event, -1))}
+                to={'/plan-prise/nouveau'}
               >
                 Créer un plan de prise
-              </a>
+              </Link>
             </div>
           </div>
           <div className="col-md-6">
@@ -41,8 +39,7 @@ class PPSelect extends React.Component {
                         <Link
                           key={item.pp_id}
                           className="list-group-item list-group-item-action"
-                          to={'plan-prise/' + item.pp_id}
-                          //onClick={(event => this._handleSelect(event, item.pp_id))}
+                          to={`/plan-prise/${item.pp_id}`}
                         >
                           Plan de prise n°{item.pp_id}
                         </Link>

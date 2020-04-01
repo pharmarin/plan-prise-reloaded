@@ -20,12 +20,9 @@ export const setStatus = (medicament, status, value) => {
 export const load = (medicament) => async (dispatch, getState) => {
   dispatch(setStatus(medicament, 'isLoading', true))
   return await axios.post(window.php.routes.api.all.show, {
+    token: window.php.routes.token,
     id: medicament.id,
     type: medicament.type
-  }, {
-    headers: {
-      Authorization: `Bearer ${window.php.routes.token}`
-    }
   })
   .then((response) => {
     if (!response.status === 200) throw new Error(response.statusText)

@@ -25,10 +25,8 @@ export default class SearchMedicament extends React.Component {
     this.axiosSourceOptions = axios.CancelToken.source()
     return await axios.get(window.php.routes.api.all.search, {
       cancelToken: this.axiosSourceOptions.token,
-      headers: {
-        Authorization: `Bearer ${window.php.routes.token}`
-      },
       params: {
+        token: window.php.routes.token,
         query: inputValue,
       }
     })
