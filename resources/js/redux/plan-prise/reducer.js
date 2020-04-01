@@ -34,7 +34,10 @@ const planPriseReducer = (state = initialState, action) => {
       }
     }
     case TYPES.RESET:
-      return initialState
+      return {
+        ...initialState,
+        list: newState.list
+      }
     case TYPES.UPDATE_LINE:
       return SERVICES.updateLine(newState, action)
     case TYPES.UPDATE:

@@ -93,7 +93,7 @@ const PlanPrise = (props) => {
       <Row className="justify-content-center">
         <Col xl={8}>
           {
-            props.pp_id > 0 && !props.isLoading.state
+            props.pp_id && !props.isLoading.state
               && <Button variant="link" onClick={() => props.reset(props.history)}><span className="fa fa-arrow-left"></span> Retour à la liste</Button>
           }
           <Card>
@@ -143,7 +143,7 @@ const PlanPrise = (props) => {
                       {
                         props.content && props.content.map(
                           (medicament) => {
-                            if (!repository.isLoaded(medicament)) props.load(medicament)
+                            //if (!repository.isLoaded(medicament)) props.load(medicament)
                             return (
                               <CSSTransition
                                 key={medicament.id}
