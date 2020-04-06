@@ -23,8 +23,13 @@ const dataReducer = (state = initialState, action) => {
       if (key === -1) {
         newState.data.push({
           ...newState.empty,
+          state: {
+            ...newState.empty.state,
+            [action.status]: action.value
+          },
           ...action.medicament
         })
+        return newState
       }
       return _.set(newState, `data.${key}.state.${action.status}`, action.value)
     default: return newState

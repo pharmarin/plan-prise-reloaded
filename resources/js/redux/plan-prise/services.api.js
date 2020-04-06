@@ -41,6 +41,7 @@ export const loadList = async () => {
   })
   .catch((error) => {
     console.log(error)
+    return document.location.reload()
   })
 }
 
@@ -56,5 +57,6 @@ export const loadDetails = async (id) => {
   })
   .catch((error) => {
     console.log(error)
+    return document.location.reload()
   })
 }
