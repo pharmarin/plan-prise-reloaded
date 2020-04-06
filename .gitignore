@@ -12,6 +12,5 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-TODO
 *.code-workspace
-.DS_Store
+**/.DS_Store
