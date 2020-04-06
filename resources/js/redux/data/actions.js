@@ -17,7 +17,7 @@ export const setStatus = (medicament, status, value) => {
   }
 }
 
-export const load = (medicament) => async (dispatch, getState) => {
+export const load = (medicament) => async (dispatch) => {
   dispatch(setStatus(medicament, 'isLoading', true))
   return await axios.post(window.php.routes.api.all.show, {
     token: window.php.routes.token,
@@ -26,12 +26,12 @@ export const load = (medicament) => async (dispatch, getState) => {
   })
   .then((response) => {
     if (!response.status === 200) throw new Error(response.statusText)
-    dispatch(setStatus(medicament, 'isLoading', false))
     dispatch(cacheDetails(response.data))
+    dispatch(setStatus(medicament, 'isLoading', false))
     return true
   })
   .catch((error) => {
     console.log(error)
-    return dispatch(setStatus(medicament, 'isLoading', false))
+    return document.location.reload()
   })
 }

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, withRouter } from 'react-router-dom';
+import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
   Button,
@@ -15,6 +15,7 @@ import {
 } from 'react-transition-group';
 
 import * as PP_ACTIONS from '../redux/plan-prise/actions';
+import * as DATA_ACTIONS from '../redux/data/actions';
 import PPRepository from '../helpers/PPRepository.helper';
 import { generate } from '../helpers/pdf.helper';
 
@@ -24,30 +25,49 @@ import PPSettings from './plan-prise/PPSettings';
 import PPSelect from './plan-prise/PPSelect';
 import { SPINNER } from './params';
 
-const PlanPrise = (props) => {
+class PlanPrise extends React.Component {
 
-  const routeId = useParams().id
-  const [showSettings, setShowSettings] = useState(false)
-  const repository = new PPRepository({
-    content: props.content,
-    customData: props.customData,
-    data: props.data,
-    emptyObject: props.emptyObject,
-    settings: props.settings,
-  })
-
-  useEffect(() => {
-    if (!props.pp_id && routeId) {
-      props.init(routeId)
+  constructor(props) {
+    super(props)
+    this.state = {
+      showSettings: false
     }
-    if (props.list === null) {
-      props.loadList()
-    }
-  })
+  }
 
-  const _deletePP = async (event) => {
+  componentDidMount() {
+    this._init()
+  }
+
+  componentDidUpdate() {
+    this._init()
+    if (this.count === 50) {
+      throw Error()
+    } else {
+      this.count = (this.count || 0) + 1
+    }
+  }
+
+  _init = () => {
+    let routeId = this.props.match.params.id
+    if (!this.props.pp_id && routeId) {
+      this.props.init(routeId)
+    }
+    if (this.props.list === null) {
+      this.props.loadList()
+    }
+    this.props.content && this.props.content.forEach(medicament => {
+      if (
+        !this.props.repository.isLoaded(medicament) 
+        && !this.props.repository.isLoading(medicament)
+      ) {
+        this.props.load(medicament)
+      }
+    })
+  }
+
+  _deletePP = async (event) => {
     event.preventDefault()
-    props.setLoading({
+    this.props.setLoading({
       state: true,
       message: "Suppression du plan de prise en cours... "
     })
@@ -57,10 +77,10 @@ const PlanPrise = (props) => {
       }
     })
     .then(() => {
-      props.reset(props.history)
+      this.props.reset(props.history)
     })
     .catch((error) => {
-      props.setLoading({
+      this.props.setLoading({
         state: false,
         message: ""
       })
@@ -68,116 +88,118 @@ const PlanPrise = (props) => {
     })
   }
 
-  const _handleAddLine = async (value) => {
+  _handleAddLine = async (value) => {
     let medicament = {
       id: value.value,
       denomination: value.label,
       type: value.type
     }
-    return props.addLine(medicament)
+    return this.props.addLine(medicament)
   }
 
-  const _generatePDF = () => {
-    let columns = repository.columns
-    let values = repository.values
+  _generatePDF = () => {
+    let columns = this.props.repository.columns
+    let values = this.props.repository.values
 
     return generate(
-      props.pp_id,
+      this.props.pp_id,
       columns,
       values
     )
   }
 
-  return (
-    <Container>
-      <Row className="justify-content-center">
-        <Col xl={8}>
-          {
-            props.pp_id && !props.isLoading.state
-              && <Button variant="link" onClick={() => props.reset(props.history)}><span className="fa fa-arrow-left"></span> Retour à la liste</Button>
-          }
-          <Card>
-            <Card.Header className="d-flex">
-              <div className="flex-fill">
-              {
-                props.pp_id === -1
-                  ? "Nouveau Plan de Prise"
-                  : props.pp_id === null
-                    ? "Que voulez-vous faire ? "
-                    : "Plan de prise n°" + props.pp_id
-              }
-              </div>
-              {
-                props.pp_id > 0 && !props.isLoading.state
-                  ? <div className="d-flex">
-                      <a className="btn text-success py-0" href={props.pp_id + "/print"}>
+  render() {
+    return (
+      <Container>
+        <Row className="justify-content-center">
+          <Col xl={8}>
+            {
+              this.props.pp_id && !this.props.isLoading.state
+              && <Button variant="link" onClick={() => this.props.reset(props.history)}><span className="fa fa-arrow-left"></span> Retour à la liste</Button>
+            }
+            <Card>
+              <Card.Header className="d-flex">
+                <div className="flex-fill">
+                  {
+                    this.props.pp_id === -1
+                      ? "Nouveau Plan de Prise"
+                      : this.props.pp_id === null
+                        ? "Que voulez-vous faire ? "
+                        : "Plan de prise n°" + this.props.pp_id
+                  }
+                </div>
+                {
+                  this.props.pp_id > 0 && !this.props.isLoading.state
+                    ? <div className="d-flex">
+                      <a className="btn text-success py-0" href={this.props.pp_id + "/print"}>
                         <i className="fa fa-print"></i>
                       </a>
-                      <Button variant="link" className="text-success py-0" onClick={() => _generatePDF()}>
+                      <Button variant="link" className="text-success py-0" onClick={() => this._generatePDF()}>
                         <i className="fa fa-file-pdf"></i>
                       </Button>
-                      <Button variant="link" className="text-secondary py-0" onClick={() => setShowSettings(true)}>
+                      <Button variant="link" className="text-secondary py-0" onClick={() => this.setShowSettings(true)}>
                         <i className="fa fa-cog"></i>
                       </Button>
-                      <Button variant="link" className="text-danger py-0" onClick={_deletePP}>
+                      <Button variant="link" className="text-danger py-0" onClick={this._deletePP}>
                         <i className="fa fa-trash"></i>
                       </Button>
-                  </div>
-                  : null
-              }
-            </Card.Header>
+                    </div>
+                    : null
+                }
+              </Card.Header>
 
-            <Card.Body>
-            {
-              props.isLoading.state
-                ? <div>
-                    {SPINNER}
-                    <span className="ml-3">{props.isLoading.message}</span>
-                  </div>
-                : props.pp_id === null
-                  ? <PPSelect/>
-                    : <TransitionGroup
-                      className="plan-prise"
-                      enter={false}
-                    >
-                      {
-                        props.content && props.content.map(
-                          (medicament) => {
-                            //if (!repository.isLoaded(medicament)) props.load(medicament)
-                            return (
-                              <CSSTransition
-                                key={medicament.id}
-                                timeout={500}
-                                classNames="plan-prise-card"
-                              >
-                                <PPCard
-                                  denomination={medicament.denomination}
-                                  details={_.find(repository.valuesObject, med => med.line === medicament)}
-                                  lineId={medicament.id}
-                                  needChoice={_.get(repository.needChoice, medicament.id, [])}
-                                  repository={repository}
-                                />
-                              </CSSTransition>
-                            )
-                          }
-                        )
-                      }
-                      <SearchMedicament
-                        multiple={false}
-                        onSelect={(value) => _handleAddLine(value)}
-                      />
-                    </TransitionGroup>
-            }
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-      <PPSettings
-        showSettings={showSettings}
-        setShowSettings={setShowSettings}
-      />
-    </Container>
-  )
+              <Card.Body>
+                {
+                  this.props.isLoading.state
+                    ? <div>
+                      {SPINNER}
+                      <span className="ml-3">{this.props.isLoading.message}</span>
+                    </div>
+                    : this.props.pp_id === null
+                      ? <PPSelect />
+                      : <TransitionGroup
+                        className="plan-prise"
+                        enter={false}
+                      >
+                        {
+                          this.props.content && this.props.content.map(
+                            (medicament) => {
+                              return (
+                                <CSSTransition
+                                  key={medicament.id}
+                                  timeout={500}
+                                  classNames="plan-prise-card"
+                                >
+                                  <PPCard
+                                    denomination={medicament.denomination}
+                                    details={_.find(this.props.repository.valuesObject, med => med.line === medicament)}
+                                    isLoaded={this.props.repository.isLoaded(medicament)}
+                                    lineId={medicament.id}
+                                    needChoice={_.get(this.props.repository.needChoice, medicament.id, [])}
+                                    repository={this.props.repository}
+                                  />
+                                </CSSTransition>
+                              )
+                            }
+                          )
+                        }
+                        <SearchMedicament
+                          multiple={false}
+                          onSelect={(value) => this._handleAddLine(value)}
+                        />
+                      </TransitionGroup>
+                }
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+        <PPSettings
+          showSettings={this.state.showSettings}
+          setShowSettings={(a) => this.setState({showSettings: a})}
+        />
+      </Container>
+    )
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -188,6 +210,12 @@ const mapStateToProps = (state) => {
     isLoading: state.planPriseReducer.isLoading,
     list: state.planPriseReducer.list,
     pp_id: state.planPriseReducer.pp_id,
+    repository: new PPRepository({
+      content: state.planPriseReducer.content,
+      customData: state.planPriseReducer.customData,
+      data: state.dataReducer.data,
+      settings: state.planPriseReducer.settings,
+    }),
     settings: state.planPriseReducer.settings
   }
 }
@@ -195,6 +223,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     init: (id) => dispatch(PP_ACTIONS.init(id)),
+    load: (medicament) => dispatch(DATA_ACTIONS.load(medicament)),
     loadList: () => dispatch(PP_ACTIONS.loadList()),
     reset: (history = null) => dispatch(PP_ACTIONS.reset(history)),
     setLoading: (values) => dispatch(PP_ACTIONS.setLoading(values))

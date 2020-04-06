@@ -9,47 +9,49 @@ import {
 
 import * as PP_ACTIONS from '../../redux/plan-prise/actions';
 
-const PPSettings = (props) => {
-  return (
-    <Modal show={props.showSettings} onHide={() => props.setShowSettings(false)}>
-      <Modal.Header closeButton>
-        <Modal.Title>Options</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <h5>Colonnes à afficher</h5>
-        <Row>
-          {
-            _.chunk(
-              Object.keys(window.php.default.inputs.posologies.inputs),
-              _.ceil(window.php.default.inputs.posologies.inputs.length / 2)
-            )
-              .map((chunk, index) =>
-                <Col key={index} sm={6}>
-                  {
-                    chunk.map((key) => {
-                      let input = window.php.default.inputs.posologies.inputs[key]
-                      return (
-                        <Form.Group key={key} className="mb-0" controlId={key}>
-                          <Form.Check
-                            type="checkbox"
-                            label={input.label}
-                            checked={_.get(props, `settings.inputs.${input.id}.checked`, (input.default || false))}
-                            onChange={(event) => props.updateSettings(
-                              { parent: 'inputs', id: input.id },
-                              { action: 'check', value: event.target.checked }
-                            )}
-                          />
-                        </Form.Group>
-                      )
-                    })
-                  }
-                </Col>
+class PPSettings extends React.Component {
+  render() {
+    return (
+      <Modal show={this.props.showSettings} onHide={() => this.props.setShowSettings(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Options</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h5>Colonnes à afficher</h5>
+          <Row>
+            {
+              _.chunk(
+                Object.keys(window.php.default.inputs.posologies.inputs),
+                _.ceil(window.php.default.inputs.posologies.inputs.length / 2)
               )
-          }
-        </Row>
-      </Modal.Body>
-    </Modal>
-  )
+                .map((chunk, index) =>
+                  <Col key={index} sm={6}>
+                    {
+                      chunk.map((key) => {
+                        let input = window.php.default.inputs.posologies.inputs[key]
+                        return (
+                          <Form.Group key={key} className="mb-0" controlId={key}>
+                            <Form.Check
+                              type="checkbox"
+                              label={input.label}
+                              checked={_.get(this.props, `settings.inputs.${input.id}.checked`, (input.default || false))}
+                              onChange={(event) => this.props.updateSettings(
+                                { parent: 'inputs', id: input.id },
+                                { action: 'check', value: event.target.checked }
+                              )}
+                            />
+                          </Form.Group>
+                        )
+                      })
+                    }
+                  </Col>
+                )
+            }
+          </Row>
+        </Modal.Body>
+      </Modal>
+    )
+  }
 }
 
 const mapStateToProps = (state) => {
