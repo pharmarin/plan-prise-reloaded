@@ -12,5 +12,5 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-*.code-workspace
 **/.DS_Store
+**/._*
