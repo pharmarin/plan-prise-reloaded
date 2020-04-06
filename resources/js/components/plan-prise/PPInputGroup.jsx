@@ -47,61 +47,65 @@ class PPInput extends React.Component {
   }
 }
 
-const PPInputBase = (props) => {
-  return (
-    <div>
-      <p className="text-muted mb-0 ml-1" style={{ fontSize: ".8em" }}>
-        {props.input.label}
-      </p>
-      { props.children }
-    </div>
-  )
+class PPInputBase extends React.Component {
+  render() {
+    return (
+      <div>
+        <p className="text-muted mb-0 ml-1" style={{ fontSize: ".8em" }}>
+          {this.props.input.label}
+        </p>
+        {this.props.children}
+      </div>
+    )
+  }
 }
 
-const PPInputGroup = (props) => {
+class PPInputGroup extends React.Component {
 
-  const { values, ...otherProps } = props
-  const { input, lineId } = otherProps
-  const inputValue = values[props.input.id]
+  render() {
+    let { values, ...otherProps } = this.props
+    let { input, lineId } = otherProps
+    let inputValue = values[this.props.input.id]
 
-  if (_.isArray(inputValue)) {
-    return <PPInputBase input={input}>
-      {[
-        ...inputValue.map((inputVal, index) =>
-          <Form.Group key={index}>
-            <Form.Check className="flex-fill mb-2">
-              <FormCheck.Input
-                type={input.multiple ? 'checkbox' : 'radio'}
-                checked={inputVal.checked}
-                style={inputVal.help ? { marginTop: '1.8em' } : null}
-                onChange={(event) => props.updateLine(
-                  lineId,
-                  {
-                    type: input.multiple ? 'check' : 'choose',
-                    value: input.multiple ? event.target.checked : inputVal.choose
-                  },
-                  {
-                    parent: inputVal.addedData ? 'custom_' + input.id : input.id,
-                    id: inputVal.id,
-                    multiple: input.multiple
-                  }
-                )}
-              />
-              <FormCheck.Label key={index} className="d-flex flex-column">
-                <PPInput value={inputVal} {...otherProps} />
-              </FormCheck.Label>
-            </Form.Check>
-          </Form.Group>
-        ),
-        input.multiple && <Button key={-1} variant="link" onClick={() => props.addCustomItem(id, input.id)}>Nouvelle ligne</Button>
-      ]}
-    </PPInputBase>
-  } else {
-    return <PPInputBase input={input}>
-      <Form.Group>
-        <PPInput value={inputValue} {...otherProps} />
-      </Form.Group>
-    </PPInputBase>
+    if (_.isArray(inputValue)) {
+      return <PPInputBase input={input}>
+        {[
+          ...inputValue.map((inputVal, index) =>
+            <Form.Group key={index}>
+              <Form.Check className="flex-fill mb-2">
+                <FormCheck.Input
+                  type={input.multiple ? 'checkbox' : 'radio'}
+                  checked={inputVal.checked}
+                  style={inputVal.help ? { marginTop: '1.8em' } : null}
+                  onChange={(event) => this.props.updateLine(
+                    lineId,
+                    {
+                      type: input.multiple ? 'check' : 'choose',
+                      value: input.multiple ? event.target.checked : inputVal.choose
+                    },
+                    {
+                      parent: inputVal.addedData ? 'custom_' + input.id : input.id,
+                      id: inputVal.id,
+                      multiple: input.multiple
+                    }
+                  )}
+                />
+                <FormCheck.Label key={index} className="d-flex flex-column">
+                  <PPInput value={inputVal} {...otherProps} />
+                </FormCheck.Label>
+              </Form.Check>
+            </Form.Group>
+          ),
+          input.multiple && <Button key={-1} variant="link" onClick={() => this.props.addCustomItem(id, input.id)}>Nouvelle ligne</Button>
+        ]}
+      </PPInputBase>
+    } else {
+      return <PPInputBase input={input}>
+        <Form.Group>
+          <PPInput value={inputValue} {...otherProps} />
+        </Form.Group>
+      </PPInputBase>
+    }
   }
 }
 

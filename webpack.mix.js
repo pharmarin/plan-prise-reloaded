@@ -53,7 +53,7 @@ mix.js('resources/js/app.js', 'public/js')
     jquery: ['$', 'window.jQuery', 'jQuery', 'jquery'],
   })
   .version()
-  .sourceMaps()
+  //.sourceMaps() //To high RAM usage
   /*
   .webpackConfig({
     plugins: [

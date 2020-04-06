@@ -74,9 +74,7 @@ export default class PPRepository {
     this.content = props.content || []
     this.customData = props.customData || []
     this.data = props.data || []
-    this.emptyObject = props.emptyObject
     this.settings = props.settings || []
-
     this.valuesObject = {}
     this.needChoiceObject = {}
     this.init()
@@ -165,9 +163,15 @@ export default class PPRepository {
     })
   }
 
-  isLoaded = (medicament) => {
+  isLoading = (medicament) => {
     let details = _.find(this.data, medicament)
-    return (details.data || !details.state.isLoading)
+    if (!details) return false
+    return (details.state.isLoading)
+  }
+
+  isLoaded = (medicament) => {
+    let details = _.find(this.data, medicament) || { data: null, state: { isLoading: false }}
+    return (details.data && !details.state.isLoading)
   }
 
   get values() {
