@@ -87,13 +87,16 @@ export const loadResult = (medicament) => {
   }
 }
 
-export const addLine = (medicament) => async (dispatch, getState) => {
+export const addLine = (medicament, history) => async (dispatch, getState) => {
   dispatch(update({
     type: 'add',
     value: medicament
   }))
-  API_SERVICES.saveModification(getState().planPriseReducer.pp_id, 'add', medicament).then((pp_id) => {
-    if (getState().planPriseReducer.pp_id === -1) dispatch(init(pp_id))
+  API_SERVICES.saveModification(getState().planPriseReducer.pp_id, 'add', medicament, (pp_id) => {
+    if (getState().planPriseReducer.pp_id === -1) {
+      dispatch(init(pp_id))
+      history.push(`/plan-prise/${pp_id}`)
+    }
   })
 }
 

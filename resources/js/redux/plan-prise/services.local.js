@@ -44,7 +44,7 @@ export const update = (newState, action) => {
       content = _.uniqBy(_.concat(newState.content, value), 'id')
       return {
         ...newState,
-        content: content
+        content: _.compact(content) // Remove falsey/null values
       }
     case "remove":
       content = _.filter(newState.content, (medicament) => medicament.id != value)
