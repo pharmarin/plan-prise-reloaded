@@ -2,7 +2,7 @@ import _ from 'lodash';
 import toast from 'toasted-notes';
 import 'toasted-notes/src/styles.css';
 
-export const saveModification = async (pp_id, action, modifications) => {
+export const saveModification = async (pp_id, action, modifications, callback) => {
   if (!window.planPrise) _.set(window, 'planPrise.apiCall', {})
   window.planPrise.apiCall.timeout && clearTimeout(window.planPrise.apiCall.timeout)
   if (_.get(window, 'planPrise.toast', null) === null) {
@@ -11,22 +11,30 @@ export const saveModification = async (pp_id, action, modifications) => {
       position: 'top-right'
     })
   }
+  let url = action === 'add' ? window.php.routes.api.planprise.store : `${window.php.routes.api.planprise.update}/${pp_id}`
+  let timeout = action === 'add' ? 0 : 1000
+  
   window.planPrise.apiCall.timeout = setTimeout(async () => {
-    return await axios.put(`${window.php.routes.api.planprise.update}/${pp_id}`, {
-      token: window.php.routes.token,
-      action: action,
-      value: modifications
+    return await axios({
+      method: action === 'add' ? 'post' : 'put',
+      url: url, 
+      data: {
+        token: window.php.routes.token,
+        action: action,
+        value: modifications
+      }
     })
     .then((response) => {
       window.planPrise.toast = toast.close(window.planPrise.toast.id || null, window.planPrise.toast.position)
       if (!response.status === 200) throw new Error(response.statusText)
-      return response.data.pp_id
+      console.log('response', response)
+      return callback(response.data.pp_id)
     })
     .catch((error) => {
       toast.close(window.planPrise.toast.id || null, window.planPrise.toast.position)
       console.log(error)
     })
-  }, 1000)
+  }, timeout)
 }
 
 export const loadList = async () => {

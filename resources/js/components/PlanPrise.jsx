@@ -94,7 +94,7 @@ class PlanPrise extends React.Component {
       denomination: value.label,
       type: value.type
     }
-    return this.props.addLine(medicament)
+    return this.props.addLine(medicament, this.props.history)
   }
 
   _generatePDF = () => {
@@ -222,6 +222,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    addLine: (medicament, history) => dispatch(PP_ACTIONS.addLine(medicament, history)),
     init: (id) => dispatch(PP_ACTIONS.init(id)),
     load: (medicament) => dispatch(DATA_ACTIONS.load(medicament)),
     loadList: () => dispatch(PP_ACTIONS.loadList()),

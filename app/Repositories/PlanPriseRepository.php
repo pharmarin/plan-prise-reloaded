@@ -61,6 +61,20 @@ class PlanPriseRepository
     return $this->_getReturnArray('success', $index, false);
   }
 
+  public function store ($pp_id, $values)
+  {
+    $addValues = [
+      'type' => $values['type'],
+      'value' => $values['id']
+    ];
+    $this->_init($pp_id);
+    $medic_data = $this->plan_prise->medic_data;
+    $medic_data->push($addValues);
+    $this->plan_prise->medic_data = $medic_data;
+    $this->plan_prise->save();
+    return $this->_getReturnArray('success');
+  }
+
   public function update ($pp_id, $values)
   {
     if ($this->_init($pp_id)) {
