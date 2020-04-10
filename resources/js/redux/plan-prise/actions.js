@@ -17,7 +17,7 @@ export const reset = (history) => {
   }
 }
 
-export const init = (id) => (dispatch) => {
+export const init = (id, reload = true) => (dispatch) => {
   let startLoading = {
     state: true,
     message: "Chargement en cours... "
@@ -39,6 +39,12 @@ export const init = (id) => (dispatch) => {
     type: TYPES.INIT,
     id
   })
+  if (!reload) {
+    return dispatch({
+      type: TYPES.SET_LOADING,
+      values: stopLoading
+    })
+  }
   API_SERVICES.loadDetails(id).then((details) => {
     dispatch({
       type: TYPES.LOAD_DETAILS,
