@@ -115,7 +115,7 @@ class PlanPrise extends React.Component {
           <Col xl={8}>
             {
               this.props.pp_id && !this.props.isLoading.state
-              && <Button variant="link" onClick={() => this.props.reset(props.history)}><span className="fa fa-arrow-left"></span> Retour à la liste</Button>
+              && <Button variant="link" onClick={() => this.props.reset(this.props.history)}><span className="fa fa-arrow-left"></span> Retour à la liste</Button>
             }
             <Card>
               <Card.Header className="d-flex">
