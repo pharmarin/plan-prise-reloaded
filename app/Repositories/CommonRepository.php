@@ -34,6 +34,32 @@ class CommonRepository {
     return CommonRepository::_getObject($id, $type, $model);
   }
 
+  static function search ($request) {
+    $query = $request . '%';
+    $limit = 10;
+    $medicaments = Medicament::where('custom_denomination', 'LIKE', $query)->take($limit)->get(['id as value', 'custom_denomination as label']);
+    $old_medicaments = OldMedicament::where('nomMedicament', 'LIKE', $query)->whereNull('import')->take($limit)->get(['id as value', 'nomMedicament as label']);
+    $bdpm = BdpmCis::where('denomination', 'LIKE', $query)->whereDoesntHave('medicament')->take($limit)->get(['code_cis as value', 'denomination as label']);
+    $created = collect();
+    $created = $created->merge($medicaments)->merge($old_medicaments);
+    return [
+      [
+        'label' => 'Médicament créés',
+        'options' => $created->map(function ($item) {
+          $item['type'] = get_class($item);
+          return $item;
+        })
+      ],
+      [
+        'label' => 'Base de données publique',
+        'options' => $bdpm->map(function ($item) {
+          $item['type'] = get_class($item);
+          return $item;
+        })
+      ]
+    ];
+  }
+
   static function _getObject ($id, $type, $model)
   {
     if (!$model) return null;
