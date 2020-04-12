@@ -104,6 +104,7 @@ export const addLine = (medicament, history) => async (dispatch, getState) => {
       history.push(`/plan-prise/${pp_id}`)
     }
   })
+  API_SERVICES.saveModification.flush()
 }
 
 export const addCustomItem = (lineId, input) => {

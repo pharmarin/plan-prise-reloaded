@@ -2,40 +2,39 @@ import _ from 'lodash';
 import toast from 'toasted-notes';
 import 'toasted-notes/src/styles.css';
 
-export const saveModification = async (pp_id, action, modifications, callback) => {
-  if (!window.planPrise) _.set(window, 'planPrise.apiCall', {})
-  window.planPrise.apiCall.timeout && clearTimeout(window.planPrise.apiCall.timeout)
+export const saveModification = _.debounce(async (pp_id, action, modifications, callback) => {
+  let url = action === 'add' ? window.php.routes.api.planprise.store : `${window.php.routes.api.planprise.update}/${pp_id}`
   if (_.get(window, 'planPrise.toast', null) === null) {
-    window.planPrise.toast = toast.notify('Sauvegarde automatique', {
+    _.set(window, 'planPrise.toast', toast.notify('Sauvegarde automatique', {
       duration: null,
       position: 'top-right'
-    })
+    }))
   }
-  let url = action === 'add' ? window.php.routes.api.planprise.store : `${window.php.routes.api.planprise.update}/${pp_id}`
-  let timeout = action === 'add' ? 0 : 1000
-  
-  window.planPrise.apiCall.timeout = setTimeout(async () => {
-    return await axios({
-      method: action === 'add' ? 'post' : 'put',
-      url: url, 
-      data: {
-        token: window.php.routes.token,
-        action: action,
-        value: modifications
-      }
-    })
+  return await axios({
+    method: action === 'add' ? 'post' : 'put',
+    url: url,
+    data: {
+      token: window.php.routes.token,
+      action: action,
+      value: modifications
+    }
+  })
     .then((response) => {
-      window.planPrise.toast = toast.close(window.planPrise.toast.id || null, window.planPrise.toast.position)
+      if (window.planPrise.toast) {
+        toast.close(window.planPrise.toast.id, window.planPrise.toast.position)
+      }
+      window.planPrise.toast = null
       if (!response.status === 200) throw new Error(response.statusText)
-      console.log('response', response)
-      return callback(response.data.pp_id)
+      return callback ? callback(response.data.pp_id) : true
     })
     .catch((error) => {
-      toast.close(window.planPrise.toast.id || null, window.planPrise.toast.position)
+      if (window.planPrise.toast) {
+        toast.close(window.planPrise.toast.id, window.planPrise.toast.position)
+      }
+      window.planPrise.toast = null
       console.log(error)
     })
-  }, timeout)
-}
+}, 5000)
 
 export const loadList = async () => {
   return await axios.get(window.php.routes.api.planprise.index, {
