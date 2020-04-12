@@ -15,7 +15,7 @@ export default class SearchMedicament extends React.Component {
       }
     }
 
-    this._debouncedLoadOptions = _.debounce(this._loadOptions, 500, {
+    this._LoadOptions = _.debounce(this._loadOptions, 500, {
       leading: true
     })
   }
@@ -30,7 +30,7 @@ export default class SearchMedicament extends React.Component {
         query: inputValue,
       }
     })
-    .then((response) => {
+      .then((response) => {
       if (response.data.length > 0) {
         return response.data
       } else {
@@ -82,7 +82,7 @@ export default class SearchMedicament extends React.Component {
         defaultValue={defaultOptions}
         isMulti={this.props.multiple || false}
         loadingMessage={() => "Chargement en cours..."}
-        loadOptions={this._debouncedLoadOptions}
+        loadOptions={this._loadOptions}
         menuPlacement="auto"
         noOptionsMessage={() => "Aucun médicament ne correspond à la recherche"}
         onChange={this._handleSelect}

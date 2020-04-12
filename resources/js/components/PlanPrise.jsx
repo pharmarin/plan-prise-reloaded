@@ -20,7 +20,7 @@ import PPRepository from '../helpers/PPRepository.helper';
 import { generate } from '../helpers/pdf.helper';
 
 import PPCard from './plan-prise/PPCard';
-import SearchMedicament from './generic/SearchMedicament';
+import SearchMedicament from './search/SearchMedicament';
 import PPSettings from './plan-prise/PPSettings';
 import PPSelect from './plan-prise/PPSelect';
 import { SPINNER } from './params';
