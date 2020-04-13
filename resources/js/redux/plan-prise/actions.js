@@ -121,6 +121,7 @@ export const removeLine = (id) => async (dispatch, getState) => {
     value: id
   }))
   API_SERVICES.saveModification(getState().planPriseReducer.pp_id, 'remove', id)
+  API_SERVICES.saveModification.flush()
 }
 
 export const updateSettings = (input, value) => async (dispatch, getState) => {
