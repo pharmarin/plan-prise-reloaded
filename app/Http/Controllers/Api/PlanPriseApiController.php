@@ -76,9 +76,7 @@ class PlanPriseApiController extends Controller
      */
     public function store(Request $request)
     {
-      return $this->_jsonResponse(
-        $this->pp_repository->store($request->input('id'), $request->input('value'))
-      );
+      //
     }
 
     /**
