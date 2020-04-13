@@ -71,20 +71,20 @@ class PlanPrise extends React.Component {
       state: true,
       message: "Suppression du plan de prise en cours... "
     })
-    return await axios.delete(`${window.php.routes.api.planprise.destroy}/${props.pp_id}`, {
+    return await axios.delete(`${window.php.routes.api.planprise.destroy}/${this.props.pp_id}`, {
       data: {
         token: window.php.routes.token,
       }
     })
-    .then(() => {
-      this.props.reset(props.history)
+    .then((res) => {
+      this.props.reset(this.props.history)
     })
     .catch((error) => {
       this.props.setLoading({
         state: false,
         message: ""
       })
-      console.log('Error destroying pp', error.response)
+      console.log('Error destroying pp', error)
     })
   }
 
