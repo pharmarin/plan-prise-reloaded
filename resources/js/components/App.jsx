@@ -8,6 +8,7 @@ import {
 
 import store from '../redux/store';
 import Navigation from './app/Navigation';
+import Authentification from './app/Authentification';
 import PlanPrise from './PlanPrise';
 
 class App extends React.Component {
@@ -17,6 +18,12 @@ class App extends React.Component {
         <Router basename="/">
           <Navigation />
           <Switch>
+            <Route path="/connexion">
+              <Authentification role="signin"/>
+            </Route>
+            <Route path="/inscription">
+              <Authentification role="register" />
+            </Route>
             <Route path="/plan-prise/:id">
               <PlanPrise />
             </Route>

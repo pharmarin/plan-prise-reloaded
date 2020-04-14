@@ -12,7 +12,7 @@ import {
 class Navigation extends React.Component {
   render() {
     return (
-      <Navbar bg="light" expand="lg">
+      <Navbar bg="light" expand="lg" className="mb-1">
         <Navbar.Brand>
           <Link to="/">Plan de prise</Link>
         </Navbar.Brand>
