@@ -91,6 +91,5 @@ export const generate = (pp_id, columns, values) => {
       )
     }
   }
-  console.log(document.styles)
   pdfMake.createPdf(document).open()
 }

@@ -32,9 +32,6 @@ class PlanPriseController extends Controller
       $current_pp = $pp_id > 0 ? $this->pp_repository->get($pp_id) : null;
       $javascript = [
         'routes' => mix_routes([
-          'path' => [
-            'planprise' => explode($_SERVER['HTTP_HOST'], route('plan-prise.index'))[1]
-          ],
           'api' => [
             'planprise' => [
               'index' => route('api.plan-prise.index'),
@@ -46,7 +43,8 @@ class PlanPriseController extends Controller
           'token' => auth('api')->tokenById(Auth::id())
         ]),
         'default' => [
-          'inputs' => Config::get('inputs.plan_prise')
+          'inputs' => Config::get('inputs.plan_prise'),
+          'voies_administration' => Config::get('inputs.voies_administration')
         ],
         'user' => [
           'name' => Auth::user()->display_name ?? Auth::user()->name

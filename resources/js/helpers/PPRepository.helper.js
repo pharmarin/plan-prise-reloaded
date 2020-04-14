@@ -19,7 +19,7 @@ class PPItem {
           style: 'compositions'
         },
         {
-          value: `(Voies administration)`,
+          value: `(Voie ${window.php.default.voies_administration[medicament.voies_administration].toLowerCase() || ""})`,
           style: 'voies_administration'
         }
       ]
