@@ -13,16 +13,20 @@ use Illuminate\Http\Request;
 |
 */
 
-/*Route::middleware('auth:api')->group(function () {
-  Route::get('/user', function (Request $request) {
-    return $request->user();
-  });
-  Route::middleware(['approved'])->group(function () {
-    Route::resource('medicament', 'Api\MedicamentApiController');
-  });
-});*/ // Reste à implémenter https://laravel.com/docs/5.8/api-authentication
+Route::prefix('auth')->group(function () {
+  Route::post('login', 'Api\UserApiController@login');
+});
+
 Route::middleware(['auth:api'])->group(function () {
 
+  // Authentication
+  Route::prefix('auth')->group(function () {
+    Route::post('logout', 'Api\UserApiController@logout');
+    Route::post('refresh', 'Api\UserApiController@refresh');
+    Route::post('info', 'Api\UserApiController@info');
+  });
+
+  // Plan de prise
   Route::get('all/search', 'Api\CommonApiController@search')->name('api.all.search');
   Route::post('all/show', 'Api\CommonApiController@show')->name('api.all.show');
   Route::resource('composition', 'Api\CompositionApiController', ['as' => 'api']);
