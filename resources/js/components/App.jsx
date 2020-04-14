@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import store from '../redux/store';
+import Navigation from './app/Navigation';
 import PlanPrise from './PlanPrise';
 
 class App extends React.Component {
@@ -14,6 +15,7 @@ class App extends React.Component {
     return (
       <Provider store={store}>
         <Router basename="/">
+          <Navigation />
           <Switch>
             <Route path="/plan-prise/:id">
               <PlanPrise />

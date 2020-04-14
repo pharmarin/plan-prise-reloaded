@@ -10,7 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', 'HomeController@index')->name('home');
+Route::get('/{any?}', function () {
+  return view('react-app');
+});
 
 Auth::routes();
 
