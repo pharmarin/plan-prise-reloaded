@@ -1,6 +1,8 @@
 import axios from 'axios';
 import * as TYPES from './types';
 
+import store from '../store';
+
 export const cacheDetails = (details) => {
   return {
     type: TYPES.CACHE_DETAILS,
@@ -18,9 +20,10 @@ export const setStatus = (medicament, status, value) => {
 }
 
 export const load = (medicament) => async (dispatch) => {
+  let token = store.getState().userReducer.token
   dispatch(setStatus(medicament, 'isLoading', true))
   return await axios.post(window.php.routes.api.all.show, {
-    token: window.php.routes.token,
+    token,
     id: medicament.id,
     type: medicament.type
   })

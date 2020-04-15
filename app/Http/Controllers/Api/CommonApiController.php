@@ -13,6 +13,10 @@ use \App\Repositories\CommonRepository;
 class CommonApiController extends Controller
 {
 
+    public function __construct() {
+      $this->middleware('ajax');
+    }
+
     public function search (Request $request)
     {
       return response()->json(

@@ -2,7 +2,10 @@ import _ from 'lodash';
 import toast from 'toasted-notes';
 import 'toasted-notes/src/styles.css';
 
+import store from '../store';
+
 export const saveModification = _.debounce(async (pp_id, action, modifications, callback) => {
+  let token = store.getState().userReducer.token
   let url = `${window.php.routes.api.planprise.update}/${pp_id}`
   if (_.get(window, 'planPrise.toast', null) === null) {
     _.set(window, 'planPrise.toast', toast.notify('Sauvegarde automatique', {
@@ -11,7 +14,7 @@ export const saveModification = _.debounce(async (pp_id, action, modifications, 
     }))
   }
   return await axios.put(url, {
-    token: window.php.routes.token,
+    token,
     action: action,
     value: modifications
   })
@@ -33,9 +36,10 @@ export const saveModification = _.debounce(async (pp_id, action, modifications, 
 }, 5000)
 
 export const loadList = async () => {
+  let token = store.getState().userReducer.token
   return await axios.get(window.php.routes.api.planprise.index, {
     params: {
-      token: window.php.routes.token
+      token
     }
   })
   .then((response) => {
@@ -44,14 +48,15 @@ export const loadList = async () => {
   })
   .catch((error) => {
     console.log(error)
-    return document.location.reload()
+    throw new Error(error)
   })
 }
 
 export const loadDetails = async (id) => {
+  let token = store.getState().userReducer.token
   return await axios.get(`${window.php.routes.api.planprise.index}/${id}`, {
     params: {
-      token: window.php.routes.token
+      token
     }
   })
   .then((response) => {
@@ -60,6 +65,6 @@ export const loadDetails = async (id) => {
   })
   .catch((error) => {
     console.log(error)
-    return document.location.reload()
+    throw new Error(error)
   })
 }

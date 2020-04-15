@@ -6,10 +6,12 @@ import {
 } from 'redux'
 import thunk from 'redux-thunk';
 
+import userReducer from './user/reducer';
 import dataReducer from './data/reducer';
 import planPriseReducer from './plan-prise/reducer';
 
 const rootReducer = combineReducers({
+  userReducer,
   dataReducer,
   planPriseReducer
 })

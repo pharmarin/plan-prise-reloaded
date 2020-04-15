@@ -2,6 +2,9 @@
 
 return [
   'api' => [
+    'auth' => [
+      'login' => 'api.auth.login'
+    ],
     'bdpm' => [
       'index' => 'api.bdpm.index',
       'search' => 'api.bdpm.index'

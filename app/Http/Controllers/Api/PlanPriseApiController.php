@@ -13,7 +13,7 @@ class PlanPriseApiController extends Controller
 
     public function __construct (PlanPriseRepository $pp_repository)
     {
-      $this->middleware('ajax')->except('searchMedicaments');
+      $this->middleware('ajax');
       $this->pp_repository = $pp_repository;
     }
 

@@ -14,6 +14,7 @@ class UserApiController extends Controller
      */
     public function __construct()
     {
+        $this->middleware('ajax');
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
@@ -75,8 +76,7 @@ class UserApiController extends Controller
     protected function respondWithToken($token)
     {
         return response()->json([
-            'access_token' => $token,
-            'name' => auth('api')->user()->name,
+            'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);

@@ -46,6 +46,7 @@
         "arrow-keys-react": "^1.0.6",
         "classnames": "^2.2.6",
         "is-json": "^2.0.1",
+        "jsonwebtoken": "^8.5.1",
         "pdfmake": "^0.1.65",
         "react-async": "^10.0.0",
         "react-autosize-textarea": "^7.0.0",
