@@ -1,5 +1,18 @@
 import jwt from 'jsonwebtoken';
 
+export const storeToken = (token) => {
+  try {
+    localStorage.setItem('state.auth.token', JSON.stringify(token))
+  } catch (err) { return }
+}
+
+export const restoreToken = () => {
+  try {
+    const token = JSON.parse(localStorage.getItem('state.auth.token')) || undefined
+    return token
+  } catch (err) { return undefined; }
+}
+
 export const isValid = (token) => {
   if (!token) return false 
 

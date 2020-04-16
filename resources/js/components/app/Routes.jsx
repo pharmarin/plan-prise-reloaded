@@ -13,6 +13,7 @@ export class PublicRoute extends React.Component {
 }
 
 class ProtectedRoute extends React.Component {
+
   render() {
     if (!this.props.token) {
       console.info('Cannot access route: No token provided')

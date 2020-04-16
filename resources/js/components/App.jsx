@@ -12,7 +12,18 @@ import { PublicRoute, Route as ProtectedRoute } from './app/Routes';
 import Profile from './app/Profile';
 import PlanPrise from './PlanPrise';
 
+import * as USER_ACTIONS from '../redux/user/actions';
+
 class App extends React.Component {
+
+  constructor(props) {
+    super(props)
+    let state = store.getState()
+    if (!state.userReducer.token) {
+      store.dispatch(USER_ACTIONS.restoreToken())
+    }
+  }
+
   render() {
     return (
       <Provider store={store}>
@@ -45,6 +56,7 @@ class App extends React.Component {
       </Provider>
     )
   }
+
 }
 
 export default App
