@@ -1,11 +1,10 @@
-import * as TYPES from './types';
+import { TYPES } from './actions';
 import _ from 'lodash';
 
 const initialState = {
   status: null,
-  name: null,
-  mail: null,
-  token: null
+  token: null,
+  user: null
 }
 
 const userReducer = (state = initialState, action) => {
@@ -19,10 +18,9 @@ const userReducer = (state = initialState, action) => {
     case TYPES.LOGIN:
       return {
         ...newState,
-        token: action.token,
-        name: action.name,
-        mail: action.mail,
-        status: null
+        token: action.token || newState.token,
+        user: action.user || newState.user,
+        status: action.status || null
       }
     case TYPES.LOGOUT: 
       return initialState

@@ -21,3 +21,20 @@ export const login = async (email, password) => {
     return false
   })
 }
+
+export const info = async (token) => {
+  return await axios.get(window.php.routes.api.auth.info, {
+    params: {
+      token
+    }
+  })
+  .then((response) => {
+    if (!response.status === 200) throw new Error(response)
+    console.log(response.data)
+    return response.data
+  })
+  .catch((error) => {
+    console.log(error)
+    return false
+  })
+}

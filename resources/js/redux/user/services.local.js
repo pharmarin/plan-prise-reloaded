@@ -6,11 +6,24 @@ export const storeToken = (token) => {
   } catch (err) { return }
 }
 
+export const storeUser = (user) => {
+  try {
+    sessionStorage.setItem('state.auth.user', JSON.stringify(user))
+  } catch (err) { return }
+}
+
 export const restoreToken = () => {
   try {
     const token = JSON.parse(localStorage.getItem('state.auth.token')) || undefined
     return token
-  } catch (err) { return undefined; }
+  } catch (err) { return undefined }
+}
+
+export const restoreUser = () => {
+  try {
+    const user = JSON.parse(sessionStorage.getItem('state.auth.user')) || undefined
+    return user
+  } catch (err) { return undefined }
 }
 
 export const isValid = (token) => {

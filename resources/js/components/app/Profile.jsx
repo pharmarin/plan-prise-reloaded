@@ -4,6 +4,8 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 
 import Skeleton from '../generic/Skeleton';
 
+import userSelector from "../../redux/user/selector";
+
 class Profile extends React.Component {
   render() {
     return (
@@ -13,7 +15,7 @@ class Profile extends React.Component {
             Nom et Prénom
           </Form.Label>
           <Col sm="7">
-            <Form.Control plaintext readOnly value={this.props.name} />
+            <Form.Control plaintext readOnly value={this.props.user.details.name || ""} />
           </Col>
           <Col sm="2">
             <Button variant="primary" block>Changer</Button>
@@ -38,7 +40,7 @@ class Profile extends React.Component {
             </Form.Text>
           </Form.Label>
           <Col sm="7">
-            <Form.Control plaintext readOnly value="Reste à ajouter" />
+            <Form.Control plaintext readOnly value={this.props.user.details.display_name || this.props.user.details.name || ""} />
           </Col>
           <Col sm="2">
             <Button variant="primary" block>Changer</Button>
@@ -49,7 +51,7 @@ class Profile extends React.Component {
             Email
           </Form.Label>
           <Col sm="7">
-            <Form.Control plaintext readOnly value={this.props.mail} />
+            <Form.Control plaintext readOnly value={this.props.user.details.email || ""} />
           </Col>
           <Col sm="2">
             <Button variant="primary" block>Changer</Button>
@@ -73,7 +75,7 @@ class Profile extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    ...state.userReducer
+    user: userSelector(state)
   }
 }
 

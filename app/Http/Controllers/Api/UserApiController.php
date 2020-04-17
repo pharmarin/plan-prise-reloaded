@@ -78,6 +78,7 @@ class UserApiController extends Controller
         return response()->json([
             'token' => $token,
             'token_type' => 'bearer',
+            'user' => auth('api')->user(),
             'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
     }

@@ -21,9 +21,9 @@ Route::middleware(['auth:api'])->group(function () {
 
   // Authentication
   Route::prefix('auth')->group(function () {
-    Route::post('logout', 'Api\UserApiController@logout');
-    Route::post('refresh', 'Api\UserApiController@refresh');
-    Route::post('info', 'Api\UserApiController@info');
+    Route::post('logout', 'Api\UserApiController@logout')->name('api.auth.logout');
+    Route::post('refresh', 'Api\UserApiController@refresh')->name('api.auth.refresh');
+    Route::get('info', 'Api\UserApiController@info')->name('api.auth.info');
   });
 
   // Plan de prise

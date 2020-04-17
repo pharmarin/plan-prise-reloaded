@@ -7,26 +7,26 @@ import {
   Navbar
 } from 'react-bootstrap';
 
-import * as LOCAL_SERVICES from '../../redux/user/services.local';
+import userSelector from "../../redux/user/selector";
 
 class Navigation extends React.Component {
   
   _auth = (component) => {
-    if (LOCAL_SERVICES.isValid(this.props.token)) {
+    if (this.props.user.isValid) {
       return component
     }
     return null
   }
 
   _public = (component) => {
-    if (!LOCAL_SERVICES.isValid(this.props.token)) {
+    if (!this.props.user.isValid) {
       return component
     }
     return null
   }
 
   _admin = (component) => {
-    if (LOCAL_SERVICES.get(this.props.token, "admin")) {
+    if (this.props.user.isAdmin) {
       return this._auth(component)
     }
     return null
@@ -53,7 +53,7 @@ class Navigation extends React.Component {
             this._auth(
               <Nav>
                 <LinkContainer to="/profile">
-                  <Nav.Link>{this.props.name}</Nav.Link>
+                  <Nav.Link>{this.props.user.details.name}</Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/deconnexion">
                   <Nav.Link>Se déconnecter</Nav.Link>
@@ -81,8 +81,7 @@ class Navigation extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    token: state.userReducer.token,
-    name: LOCAL_SERVICES.get(state.userReducer.token, 'name')
+    user: userSelector(state)
   }
 }
 
