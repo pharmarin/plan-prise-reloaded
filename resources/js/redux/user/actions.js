@@ -35,7 +35,8 @@ export const restore = () => (dispatch) => {
   let user = restoreUser()
   if (token) {
     dispatch(login({
-      token
+      token, 
+      user
     }))
     if (!user) {
       dispatch(fetch(token))
