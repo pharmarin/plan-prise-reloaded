@@ -22,7 +22,7 @@ const userReducer = (state = initialState, action) => {
         user: action.user || newState.user,
         status: action.status || null
       }
-    case TYPES.LOGOUT: 
+    case TYPES.RESET: 
       return initialState
     default: return newState
   }

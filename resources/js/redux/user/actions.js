@@ -2,6 +2,7 @@ import {
   info
 } from '../../redux/user/services.api';
 import {
+  clearStorage,
   restoreToken, 
   restoreUser,
   storeToken, 
@@ -11,7 +12,7 @@ import {
 export const TYPES = {
   LOADING: 'LOADING',
   LOGIN: 'LOGIN',
-  LOGOUT: 'LOGOUT'
+  RESET: 'RESET'
 }
 
 export const login = (credentials) => {
@@ -24,9 +25,10 @@ export const login = (credentials) => {
   }
 }
 
-export const logout = () => {
+export const reset = () => {
+  clearStorage()
   return {
-    type: TYPES.LOGOUT
+    type: TYPES.RESET
   }
 }
 
@@ -52,7 +54,7 @@ const fetch = (token) => (dispatch) => {
         user
       }))
     } else {
-      dispatch(logout())
+      dispatch(reset())
     }
   })
 }

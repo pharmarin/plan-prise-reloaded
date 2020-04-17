@@ -12,13 +12,17 @@ import _ from 'lodash';
 import Skeleton from '../generic/Skeleton';
 
 import {
-  login as performLogin
+  login as performLogin,
+  logout as performLogout
 } from '../../redux/user/services.api';
 import {
   login,
-  logout
+  reset
 } from '../../redux/user/actions';
 import userSelector from '../../redux/user/selector';
+
+let approvedRoles = ['signin', 'signout', 'register']
+let cancelRedirect = ["/deconnexion"]
 
 class Authentification extends React.Component {
   constructor(props) {
@@ -29,16 +33,32 @@ class Authentification extends React.Component {
       isLoading: false
     }
 
-    if (this.props.role === "signout") {
-      this.props.logout()
+    if (props.role === "signout") {
+      this.state.isLoading = true
+      this._handleSignout(props)
     }
 
-    if (this.props.role === "signin" && _.get(props, 'location.state.message')) {
+    if (props.role === "signin" && _.get(props, 'location.state.message')) {
       // Si problème de connexion (expiré ou pas connecté), 
       // on deconnecte d'abord pour être sûr de ne pas avoir
       // de doublons / mauvais token pas supprimé
-      this.props.logout()
+      props.reset()
     }
+  }
+
+  _redirect = () => {
+    let redirect
+    if (!approvedRoles.includes(this.props.role)) redirect = true
+    if (this.props.role === 'signout' && this.state.isLoading) redirect = false
+    if (this.props.user.isValid) redirect = true
+
+    if (redirect) {
+      let redirectTo = _.get(this.props, 'location.state.redirectTo', "/")
+      if (redirectTo === "/deconnexion") redirectTo = "/"
+      return <Redirect to={redirectTo}/>
+    }
+
+    return null  
   }
 
   _handleChange = (e) => {
@@ -68,20 +88,27 @@ class Authentification extends React.Component {
     }
   }
 
+  _handleSignout = (props) => {
+    performLogout().then(() => {
+      props.reset()
+    })
+  }
+
   _getTitle = (role) => {
     switch (role) {
       case 'signin':
         return "Connexion"
       case 'register': 
         return "Inscription"
+      case 'signout':
+        return "Déconnexion"
       default:
         return ""
     }
   }
 
   render() {
-    let roles = ['signin', 'register']
-    if (!roles.includes(this.props.role) || this.props.user.isValid) return <Redirect to={_.get(this.props, 'location.state.redirectTo', "/")}/>
+    if (this._redirect()) return this._redirect()
     return (
       <Skeleton header={this._getTitle(this.props.role)} size={{ md: 6 }}>
         <Message status={_.get(this.props, 'location.state.message')}/>
@@ -140,6 +167,18 @@ class Authentification extends React.Component {
                 S'inscrire
               </Button>
             </Form>
+        }
+        {
+          this.props.role === 'signout' && 
+            <>
+              <Spinner
+                as="span"
+                animation="border"
+                className="mr-2"
+                size="sm"
+              />
+              Déconnexion en cours
+            </>
         }
       </Skeleton>
     )
@@ -212,7 +251,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     login: (credentials) => dispatch(login(credentials)),
-    logout: () => dispatch(logout())
+    reset: () => dispatch(reset())
   }
 }
 

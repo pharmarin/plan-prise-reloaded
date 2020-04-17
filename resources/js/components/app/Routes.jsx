@@ -16,22 +16,24 @@ class ProtectedRoute extends React.Component {
 
   render() {
     if (!this.props.user.isAuth) {
-      console.info('Cannot access route: No token provided')
+      console.info('Cannot access route: No token provided', this.props.path)
+      let redirectTo = this.props.path
       return <Redirect to={{
         pathname: "/connexion",
         state: {
           message: "unauthorized",
-          redirectTo: this.props.path
+          redirectTo
         }
       }} />
     }
     if (!this.props.user.isValid) {
-      console.info('Cannot access route: Token expired')
+      console.info('Cannot access route: Token expired', this.props.path)
+      let redirectTo = this.props.path
       return <Redirect to={{
         pathname: "/connexion",
         state: {
           message: "expired",
-          redirectTo: this.props.path
+          redirectTo
         }
       }} />
     }

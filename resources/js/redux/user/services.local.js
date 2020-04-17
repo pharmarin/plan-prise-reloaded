@@ -1,27 +1,37 @@
 import jwt from 'jsonwebtoken';
 
+const STORAGE_KEYS = {
+  token: 'state.auth.token',
+  user: 'state.auth.user'
+}
+
+export const clearStorage = () => {
+  localStorage.removeItem(STORAGE_KEYS.token)
+  sessionStorage.removeItem(STORAGE_KEYS.user)
+}
+
 export const storeToken = (token) => {
   try {
-    localStorage.setItem('state.auth.token', JSON.stringify(token))
+    localStorage.setItem(STORAGE_KEYS.token, JSON.stringify(token))
   } catch (err) { return }
 }
 
 export const storeUser = (user) => {
   try {
-    sessionStorage.setItem('state.auth.user', JSON.stringify(user))
+    sessionStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user))
   } catch (err) { return }
 }
 
 export const restoreToken = () => {
   try {
-    const token = JSON.parse(localStorage.getItem('state.auth.token')) || undefined
+    const token = JSON.parse(localStorage.getItem(STORAGE_KEYS.token)) || undefined
     return token
   } catch (err) { return undefined }
 }
 
 export const restoreUser = () => {
   try {
-    const user = JSON.parse(sessionStorage.getItem('state.auth.user')) || undefined
+    const user = JSON.parse(sessionStorage.getItem(STORAGE_KEYS.user)) || undefined
     return user
   } catch (err) { return undefined }
 }

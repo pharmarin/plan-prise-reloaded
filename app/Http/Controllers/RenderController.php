@@ -18,6 +18,7 @@ class RenderController extends Controller
             ],
             'auth' => [
               'login' => route('api.auth.login'),
+              'logout' => route('api.auth.logout'),
               'info' => route('api.auth.info')
             ],
             'bdpm' => [

@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import store from '../../redux/store'; // à supprimer !!!
+
 /**
  * 
  * @param {string} email Issu du formulaire de connexion
@@ -15,6 +17,21 @@ export const login = async (email, password) => {
   .then((response) => {
     if (!response.status === 200) throw new Error(response)
     return response.data
+  })
+  .catch((error) => {
+    console.log(error)
+    return false
+  })
+}
+
+export const logout = async () => {
+  let token = store.getState().userReducer.token
+  return await axios.post(window.php.routes.api.auth.logout, {
+    token
+  })
+  .then((response) => {
+    if (!response.status === 200) throw new Error(response)
+    return true
   })
   .catch((error) => {
     console.log(error)
