@@ -1,5 +1,12 @@
-import * as API_SERVICES from '../../redux/user/services.api';
-import * as LOCAL_SERVICES from '../../redux/user/services.local';
+import {
+  info
+} from '../../redux/user/services.api';
+import {
+  restoreToken, 
+  restoreUser,
+  storeToken, 
+  storeUser
+} from '../../redux/user/services.local';
 
 export const TYPES = {
   LOADING: 'LOADING',
@@ -8,8 +15,8 @@ export const TYPES = {
 }
 
 export const login = (credentials) => {
-  if (credentials.token) LOCAL_SERVICES.storeToken(credentials.token)
-  if (credentials.user) LOCAL_SERVICES.storeUser(credentials.user)
+  if (credentials.token) storeToken(credentials.token)
+  if (credentials.user) storeUser(credentials.user)
   return {
     type: TYPES.LOGIN,
     token: credentials.token,
@@ -23,21 +30,21 @@ export const logout = () => {
   }
 }
 
-export const restoreToken = () => (dispatch) => {
-  let token = LOCAL_SERVICES.restoreToken()
-  let user = LOCAL_SERVICES.restoreUser()
+export const restore = () => (dispatch) => {
+  let token = restoreToken()
+  let user = restoreUser()
   if (token) {
     dispatch(login({
       token
     }))
     if (!user) {
-      dispatch(restoreUser(token))
+      dispatch(fetch(token))
     }
   }
 }
 
-const restoreUser = (token) => (dispatch) => {
-  API_SERVICES.info(token).then((user) => {
+const fetch = (token) => (dispatch) => {
+  info(token).then((user) => {
     console.log(user)
     if (user) {
       dispatch(login({

@@ -14,8 +14,16 @@ import {
   TransitionGroup,
 } from 'react-transition-group';
 
-import * as PP_ACTIONS from '../redux/plan-prise/actions';
-import * as DATA_ACTIONS from '../redux/data/actions';
+import {
+  addLine,
+  init,
+  loadList,
+  reset,
+  setLoading
+} from '../redux/plan-prise/actions';
+import {
+  load
+} from '../redux/data/actions';
 import PPRepository from '../helpers/PPRepository.helper';
 import { generate } from '../helpers/pdf.helper';
 
@@ -222,12 +230,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addLine: (medicament, history) => dispatch(PP_ACTIONS.addLine(medicament, history)),
-    init: (id) => dispatch(PP_ACTIONS.init(id)),
-    load: (medicament) => dispatch(DATA_ACTIONS.load(medicament)),
-    loadList: () => dispatch(PP_ACTIONS.loadList()),
-    reset: (history = null) => dispatch(PP_ACTIONS.reset(history)),
-    setLoading: (values) => dispatch(PP_ACTIONS.setLoading(values))
+    addLine: (medicament, history) => dispatch(addLine(medicament, history)),
+    init: (id) => dispatch(init(id)),
+    load: (medicament) => dispatch(load(medicament)),
+    loadList: () => dispatch(loadList()),
+    reset: (history = null) => dispatch(reset(history)),
+    setLoading: (values) => dispatch(setLoading(values))
   }
 }
 

@@ -12,7 +12,9 @@ import { PublicRoute, Route as ProtectedRoute } from './app/Routes';
 import Profile from './app/Profile';
 import PlanPrise from './PlanPrise';
 
-import * as USER_ACTIONS from '../redux/user/actions';
+import {
+  restore
+} from '../redux/user/actions';
 
 class App extends React.Component {
 
@@ -20,7 +22,7 @@ class App extends React.Component {
     super(props)
     let state = store.getState()
     if (!state.userReducer.token) {
-      store.dispatch(USER_ACTIONS.restoreToken())
+      store.dispatch(restore())
     }
   }
 

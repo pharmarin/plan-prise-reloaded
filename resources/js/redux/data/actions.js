@@ -1,7 +1,12 @@
 import axios from 'axios';
-import * as TYPES from './types';
 
 import store from '../store';
+
+export const TYPES = {
+  CACHE_DETAILS: 'CACHE_DETAILS',
+  LOAD_DETAILS: 'LOAD_DETAILS',
+  SET_STATUS: 'SET_STATUS'
+}
 
 export const cacheDetails = (details) => {
   return {

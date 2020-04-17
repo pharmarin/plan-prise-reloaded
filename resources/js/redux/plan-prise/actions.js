@@ -1,7 +1,24 @@
-import * as TYPES from './types';
-import * as API_SERVICES from './services.api';
-import * as LOCAL_SERVICES from './services.local';
-import * as DATA_TYPES from '../data/types';
+import {
+  loadDetails,
+  loadList as performLoadList,
+  saveModification
+} from './services.api';
+import { TYPES as DATA_TYPES } from '../data/actions';
+
+export const TYPES = {
+  SET_DEFAULTS: 'SET_DEFAULTS',
+  SET_LOADING: 'SET_LOADING',
+  INIT: 'INIT',
+  RESET: 'RESET',
+  UPDATE: 'UPDATE',
+  UPDATE_LINE: 'UPDATE_LINE',
+  LOAD_LINE: 'LOAD_LINE', // thunk
+  LOAD_RESULT: 'LOAD_RESULT',
+  UPDATE_SETTINGS: 'UPDATE_SETTINGS',
+  LOAD_LIST: 'LOAD_LIST',
+  LOAD_DETAILS: 'LOAD_DETAILS',
+  ADD_CUSTOM_ITEM: 'ADD_CUSTOM_ITEM'
+}
 
 export const setLoading = (values) => {
   return {
@@ -45,7 +62,7 @@ export const init = (id, reload = true) => (dispatch) => {
       values: stopLoading
     })
   }
-  API_SERVICES.loadDetails(id).then((details) => {
+  loadDetails(id).then((details) => {
     dispatch({
       type: TYPES.LOAD_DETAILS,
       values: {
@@ -76,7 +93,7 @@ export const updateLine = (lineId, action, input = {}) => (dispatch, getState) =
     action,
     lineId
   })
-  API_SERVICES.saveModification(getState().planPriseReducer.pp_id, 'edit', getState().planPriseReducer.customData)
+  saveModification(getState().planPriseReducer.pp_id, 'edit', getState().planPriseReducer.customData)
 }
 
 export const update = (action) => {
@@ -98,7 +115,7 @@ export const addLine = (medicament, history) => async (dispatch, getState) => {
     type: 'add',
     value: medicament
   }))
-  API_SERVICES.saveModification(getState().planPriseReducer.pp_id, 'add', medicament, (pp_id) => {
+  saveModification(getState().planPriseReducer.pp_id, 'add', medicament, (pp_id) => {
     if (getState().planPriseReducer.pp_id === -1) {
       dispatch(init(pp_id))
       history.push(`/plan-prise/${pp_id}`)
@@ -120,8 +137,8 @@ export const removeLine = (id) => async (dispatch, getState) => {
     type: 'remove',
     value: id
   }))
-  API_SERVICES.saveModification(getState().planPriseReducer.pp_id, 'remove', id)
-  API_SERVICES.saveModification.flush()
+  saveModification(getState().planPriseReducer.pp_id, 'remove', id)
+  saveModification.flush()
 }
 
 export const updateSettings = (input, value) => async (dispatch, getState) => {
@@ -130,11 +147,11 @@ export const updateSettings = (input, value) => async (dispatch, getState) => {
     input,
     value
   })
-  API_SERVICES.saveModification(getState().planPriseReducer.pp_id, 'settings', getState().planPriseReducer.settings)
+  saveModification(getState().planPriseReducer.pp_id, 'settings', getState().planPriseReducer.settings)
 }
 
-export const loadList = () => async (dispatch, getState) => {
-  API_SERVICES.loadList().then((list) => {
+export const loadList = () => async (dispatch) => {
+  performLoadList().then((list) => {
     if (Array.isArray(list)) dispatch({
       type: TYPES.LOAD_LIST,
       list

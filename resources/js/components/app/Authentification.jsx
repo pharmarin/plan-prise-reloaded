@@ -11,9 +11,14 @@ import _ from 'lodash';
 
 import Skeleton from '../generic/Skeleton';
 
-import * as USER_API_SERVICES from '../../redux/user/services.api';
-import * as USER_LOCAL_SERVICES from '../../redux/user/services.local';
-import * as USER_ACTIONS from '../../redux/user/actions';
+import {
+  login as performLogin
+} from '../../redux/user/services.api';
+import {
+  login,
+  logout
+} from '../../redux/user/actions';
+import userSelector from '../../redux/user/selector';
 
 class Authentification extends React.Component {
   constructor(props) {
@@ -50,7 +55,7 @@ class Authentification extends React.Component {
     this.setState({ isLoading: true })
     const { signinEmail, signinPassword } = this.state
     if (signinEmail && signinPassword) {
-      USER_API_SERVICES.login(signinEmail, signinPassword).then((credentials) => {
+      performLogin(signinEmail, signinPassword).then((credentials) => {
         if (credentials) {
           this.props.login(credentials)
         } else {
@@ -76,7 +81,7 @@ class Authentification extends React.Component {
 
   render() {
     let roles = ['signin', 'register']
-    if (!roles.includes(this.props.role) || USER_LOCAL_SERVICES.isValid(this.props.token)) return <Redirect to={_.get(this.props, 'location.state.redirectTo', "/")}/>
+    if (!roles.includes(this.props.role) || this.props.user.isValid) return <Redirect to={_.get(this.props, 'location.state.redirectTo', "/")}/>
     return (
       <Skeleton header={this._getTitle(this.props.role)} size={{ md: 6 }}>
         <Message status={_.get(this.props, 'location.state.message')}/>
@@ -200,14 +205,14 @@ class Submit extends React.Component {
 const mapStateToProps = (state) => {
   return {
     status: state.userReducer.status,
-    token: state.userReducer.token
+    user: userSelector(state)
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    login: (credentials) => dispatch(USER_ACTIONS.login(credentials)),
-    logout: () => dispatch(USER_ACTIONS.logout())
+    login: (credentials) => dispatch(login(credentials)),
+    logout: () => dispatch(logout())
   }
 }
 

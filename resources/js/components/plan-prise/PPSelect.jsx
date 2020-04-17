@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { SPINNER } from '../params';
-import * as PP_ACTIONS from '../../redux/plan-prise/actions';
+import { init } from '../../redux/plan-prise/actions';
 
 class PPSelect extends React.Component {
   _handleSelect = (event, id) => {
@@ -67,7 +67,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    init: (id) => dispatch(PP_ACTIONS.init(id))
+    init: (id) => dispatch(init(id))
   }
 }
 

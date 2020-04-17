@@ -4,7 +4,7 @@ import { Button, Form, FormCheck } from 'react-bootstrap';
 import autosize from 'autosize';
 import _ from 'lodash';
 
-import * as PP_ACTIONS from '../../redux/plan-prise/actions';
+import { updateLine } from '../../redux/plan-prise/actions';
 
 class PPInput extends React.Component {
 
@@ -111,7 +111,7 @@ class PPInputGroup extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateLine: (lineId, action, input) => dispatch(PP_ACTIONS.updateLine(lineId, action, input))
+    updateLine: (lineId, action, input) => dispatch(updateLine(lineId, action, input))
   }
 }
 

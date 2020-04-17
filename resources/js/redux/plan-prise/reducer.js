@@ -1,5 +1,8 @@
-import * as TYPES from './types';
-import * as SERVICES from './services.local';
+import { TYPES } from './actions';
+import { 
+  update, 
+  updateLine
+ } from './services.local';
 import _ from 'lodash';
 
 const initialState = {
@@ -39,9 +42,9 @@ const planPriseReducer = (state = initialState, action) => {
         list: newState.list
       }
     case TYPES.UPDATE_LINE:
-      return SERVICES.updateLine(newState, action)
+      return updateLine(newState, action)
     case TYPES.UPDATE:
-      return SERVICES.update(newState, action)
+      return update(newState, action)
     case TYPES.LOAD_RESULT:
       return newState
     case TYPES.UPDATE_SETTINGS:

@@ -26,7 +26,7 @@ export const restoreUser = () => {
   } catch (err) { return undefined }
 }
 
-export const isValid = (token) => {
+export const validate = (token) => {
   if (!token) return false 
 
   let expirationTime = get(token, "exp") * 1000 // PHP timestamp is in s

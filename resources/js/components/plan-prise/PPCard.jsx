@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import { Button, Card } from 'react-bootstrap';
 import _ from 'lodash';
 
-import * as PP_ACTIONS from '../../redux/plan-prise/actions';
+import {
+  addCustomItem, 
+  removeLine
+} from '../../redux/plan-prise/actions';
 
 import PPInputGroup from './PPInputGroup';
 import { SPINNER } from '../params';
@@ -134,8 +137,8 @@ class PPCard extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addCustomItem: (lineId, input) => dispatch(PP_ACTIONS.addCustomItem(lineId, input)),
-    removeLine: (id) => dispatch(PP_ACTIONS.removeLine(id))
+    addCustomItem: (lineId, input) => dispatch(addCustomItem(lineId, input)),
+    removeLine: (id) => dispatch(removeLine(id))
   }
 }
 

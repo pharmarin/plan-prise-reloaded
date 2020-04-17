@@ -7,7 +7,7 @@ import {
   Row
 } from 'react-bootstrap';
 
-import * as PP_ACTIONS from '../../redux/plan-prise/actions';
+import { updateSettings } from '../../redux/plan-prise/actions';
 
 class PPSettings extends React.Component {
   render() {
@@ -62,7 +62,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateSettings: (input, value) => dispatch(PP_ACTIONS.updateSettings(input, value))
+    updateSettings: (input, value) => dispatch(updateSettings(input, value))
   }
 }
 

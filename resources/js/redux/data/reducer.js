@@ -1,5 +1,7 @@
-import * as TYPES from './types';
-import * as LOCAL_SERVICES from './services.local'
+import { TYPES } from './actions';
+import {
+  addDetailsToState
+} from './services.local'
 import _ from 'lodash';
 
 const initialState = {
@@ -16,7 +18,7 @@ const dataReducer = (state = initialState, action) => {
   const newState = _.cloneDeep(state)
   switch (action.type) {
     case TYPES.CACHE_DETAILS: {
-      return LOCAL_SERVICES.addDetailsToState(newState, action.details)
+      return addDetailsToState(newState, action.details)
     }
     case TYPES.SET_STATUS:
       const key = _.findIndex(newState.data, item => item.id === action.medicament.id && item.type === action.medicament.type)
