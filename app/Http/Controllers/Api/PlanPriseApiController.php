@@ -53,6 +53,7 @@ class PlanPriseApiController extends Controller
      */
     public function index($pp_id = null)
     {
+      //dd($this->pp_repository->index($pp_id));
       return $this->_jsonResponse(
         $this->pp_repository->index($pp_id)
       );

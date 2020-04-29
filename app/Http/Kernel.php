@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
         'approved' => \App\Http\Middleware\CheckApproved::class,
         'admin' => \App\Http\Middleware\CheckAdmin::class,
         'ajax' => \App\Http\Middleware\Ajax::class,
+        'jwt' => \App\Http\Middleware\RefreshToken::class,
     ];
 
     /**

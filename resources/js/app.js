@@ -7,6 +7,8 @@
 
 require('./bootstrap');
 
+axios.defaults.withCredentials = true;
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 

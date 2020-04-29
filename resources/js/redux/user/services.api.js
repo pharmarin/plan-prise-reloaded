@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-import store from '../../redux/store'; // à supprimer !!!
+import axiosWithToken from "../../helpers/axios.helper";
 
 /**
  * 
@@ -25,10 +24,7 @@ export const login = async (email, password) => {
 }
 
 export const logout = async () => {
-  let token = store.getState().userReducer.token
-  return await axios.post(window.php.routes.api.auth.logout, {
-    token
-  })
+  return await axiosWithToken().post(window.php.routes.api.auth.logout)
   .then((response) => {
     if (!response.status === 200) throw new Error(response)
     return true
@@ -39,12 +35,8 @@ export const logout = async () => {
   })
 }
 
-export const info = async (token) => {
-  return await axios.get(window.php.routes.api.auth.info, {
-    params: {
-      token
-    }
-  })
+export const info = async () => {
+  return await axiosWithToken().get(window.php.routes.api.auth.info)
   .then((response) => {
     if (!response.status === 200) throw new Error(response)
     console.log(response.data)
@@ -54,4 +46,17 @@ export const info = async (token) => {
     console.log(error)
     return false
   })
+}
+
+export const refresh = async (token) => {
+  console.log(token)
+  return await axiosWithToken({}, token).post(window.php.routes.api.auth.refresh)
+    .then((response) => {
+      if (!response.status === 200) throw new Error(response)
+      return response.data
+    })
+    .catch((error) => {
+      console.log(error)
+      return false
+    })
 }

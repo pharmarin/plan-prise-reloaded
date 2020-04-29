@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 
 import store from '../redux/store';
+import Accueil from './app/Accueil';
 import Navigation from './app/Navigation';
 import Authentification from './app/Authentification';
 import { PublicRoute, Route as ProtectedRoute } from './app/Routes';
@@ -33,7 +34,7 @@ class App extends React.Component {
           <Navigation />
           <Switch>
             <PublicRoute path="/" exact>
-              <div>ROOT</div>
+              <Accueil/>
             </PublicRoute>
             <PublicRoute path="/inscription">
               <Authentification role="register" />

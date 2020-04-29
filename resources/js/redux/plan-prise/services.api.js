@@ -2,10 +2,9 @@ import _ from 'lodash';
 import toast from 'toasted-notes';
 import 'toasted-notes/src/styles.css';
 
-import store from '../store';
+import axiosWithToken from "../../helpers/axios.helper";
 
 export const saveModification = _.debounce(async (pp_id, action, modifications, callback) => {
-  let token = store.getState().userReducer.token
   let url = `${window.php.routes.api.planprise.update}/${pp_id}`
   if (_.get(window, 'planPrise.toast', null) === null) {
     _.set(window, 'planPrise.toast', toast.notify('Sauvegarde automatique', {
@@ -13,8 +12,7 @@ export const saveModification = _.debounce(async (pp_id, action, modifications, 
       position: 'top-right'
     }))
   }
-  return await axios.put(url, {
-    token,
+  return await axiosWithToken().put(url, {
     action: action,
     value: modifications
   })
@@ -36,12 +34,7 @@ export const saveModification = _.debounce(async (pp_id, action, modifications, 
 }, 5000)
 
 export const loadList = async () => {
-  let token = store.getState().userReducer.token
-  return await axios.get(window.php.routes.api.planprise.index, {
-    params: {
-      token
-    }
-  })
+  return await axiosWithToken().get(window.php.routes.api.planprise.index)
   .then((response) => {
     if (!response.status === 200) throw new Error(response.statusText)
     return response.data
@@ -53,12 +46,7 @@ export const loadList = async () => {
 }
 
 export const loadDetails = async (id) => {
-  let token = store.getState().userReducer.token
-  return await axios.get(`${window.php.routes.api.planprise.index}/${id}`, {
-    params: {
-      token
-    }
-  })
+  return await axiosWithToken().get(`${window.php.routes.api.planprise.index}/${id}`)
   .then((response) => {
     if (!response.status === 200) throw new Error(response.statusText)
     return response.data

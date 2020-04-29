@@ -1,5 +1,6 @@
 import {
-  info
+  info, 
+  refresh as performRefresh
 } from '../../redux/user/services.api';
 import {
   clearStorage,
@@ -8,6 +9,7 @@ import {
   storeToken, 
   storeUser
 } from '../../redux/user/services.local';
+import userSelector from "../../redux/user/selector";
 
 export const TYPES = {
   LOADING: 'LOADING',
@@ -35,19 +37,36 @@ export const reset = () => {
 export const restore = () => (dispatch) => {
   let token = restoreToken()
   let user = restoreUser()
+  let selector = userSelector({
+    userReducer: {
+      user: {
+        token,
+        details: user
+      }
+    }
+  })
   if (token) {
-    dispatch(login({
-      token, 
-      user
-    }))
-    if (!user) {
-      dispatch(fetch(token))
+    if (true) { //(!selector.isValid) {
+      dispatch(refresh(token))
+    } else {
+      dispatch(login({
+        token,
+        user
+      }))
+      if (!user) {
+        dispatch(fetch())
+      }
     }
   }
 }
 
-const fetch = (token) => (dispatch) => {
-  info(token).then((user) => {
+const refresh = (token) => (dispatch) => {
+  console.log(token)
+  performRefresh(token).then((details) => console.log(details))
+}
+
+const fetch = () => (dispatch) => {
+  info().then((user) => {
     console.log(user)
     if (user) {
       dispatch(login({
