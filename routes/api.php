@@ -13,11 +13,11 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::prefix('auth')->group(function () {
+/*Route::prefix('auth')->group(function () {
   Route::post('login', 'Api\UserApiController@login')->name('api.auth.login');
 });
 
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['jwt'])->group(function () {
 
   // Authentication
   Route::prefix('auth')->group(function () {
@@ -35,4 +35,4 @@ Route::middleware(['auth:api'])->group(function () {
   Route::get('plan-prise/{pp_id?}', 'Api\PlanPriseApiController@index')->name('api.plan-prise.index');
   Route::resource('plan-prise', 'Api\PlanPriseApiController', ['as' => 'api']);
 
-});
+});*/
