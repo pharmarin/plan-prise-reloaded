@@ -1,15 +1,16 @@
 const mix = require('laravel-mix');
+require('laravel-mix-artisan-serve');
+require('laravel-mix-polyfill');
 //const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-mix.options({
+/*mix.options({
   hmrOptions: {
-    host: '192.168.1.15',
-    https: true,
-    port: 8090,
+    host: '127.0.0.1',
+    port: 8080,
     disableHostCheck: true,
     useLocalIp: true
   }
-})
+})*/
 
 /*mix.browserSync({
   open: false,
@@ -32,9 +33,7 @@ mix.options({
 */
 
 mix.js('resources/js/app.js', 'public/js')
-  //.react('resources/js/medicament.js', 'public/js')
-  //.react('resources/js/medicament-update.js', 'public/js')
-  //.react('resources/js/plan-prise.js', 'public/js')
+  .polyfill()
   .sass('resources/sass/app.scss', 'public/css')
   .extract([
    'react',
@@ -53,7 +52,7 @@ mix.js('resources/js/app.js', 'public/js')
     jquery: ['$', 'window.jQuery', 'jQuery', 'jquery'],
   })
   .version()
-  //.sourceMaps() //To high RAM usage
+  .sourceMaps()
   /*
   .webpackConfig({
     plugins: [
@@ -63,4 +62,5 @@ mix.js('resources/js/app.js', 'public/js')
       })
     ],
   })
-  */;
+  */
+  .serve()

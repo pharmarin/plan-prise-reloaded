@@ -32,6 +32,8 @@
         "jquery": "^3.2",
         "jshint": "^2.11.0",
         "laravel-mix": "^4.1.4",
+        "laravel-mix-artisan-serve": "^1.0.1",
+        "laravel-mix-polyfill": "^2.0.0",
         "lodash": "~>4.17.13",
         "popper.js": "^1.16.1",
         "react": "^16.12.0",

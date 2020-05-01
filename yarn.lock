@@ -3233,6 +3233,11 @@ core-js@^2.4.0:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
   integrity sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg==
 
+"core-js@^2.6.9 || ^3.1.4":
+  version "3.6.5"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.6.5.tgz#7395dc273af37fb2e50e9bd3d9fe841285231d1a"
+  integrity sha512-vZVEEwZoIsI+vPEuoF9Iqf5H7/M3eeQqWlQnYa8FSKKePuYTf5MWnxb5SDAzCa60b3JBRS5g9b+Dq7b1y/RCrA==
+
 core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
@@ -6090,6 +6095,21 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
+laravel-mix-artisan-serve@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/laravel-mix-artisan-serve/-/laravel-mix-artisan-serve-1.0.1.tgz#7e8a04e87c537bcf9c6defa07455ec3e87c2b263"
+  integrity sha512-9xxN9nMU+ks7cAnx0lOQ1gprWOtOxPgp2O2xeYtVqrZsezsrNtkviQ022Z5MTPnGYV6OJE64TEVS6Mnf2u591w==
+  dependencies:
+    node-cmd "^3.0.0"
+
+laravel-mix-polyfill@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/laravel-mix-polyfill/-/laravel-mix-polyfill-2.0.0.tgz#8f0b3cbf2cb156b62a9f740a6f6e63867f7b9da5"
+  integrity sha512-r5OO3B82P9kA9FZPyw4v3ZBTAP474kWG08TkYI6A+hjf7eHLo+NSXq+FYLAw2LWL01I2H3pdChcPU7FJopHvaA==
+  dependencies:
+    core-js "^2.6.9 || ^3.1.4"
+    regenerator-runtime "^0.13.2"
+
 laravel-mix@^4.1.4:
   version "4.1.4"
   resolved "https://registry.yarnpkg.com/laravel-mix/-/laravel-mix-4.1.4.tgz#3260b89a2a85ff5e21c7f9db860a5086cbf75dca"
@@ -6823,6 +6843,11 @@ no-case@^2.2.0:
   integrity sha512-rmTZ9kz+f3rCvK2TD1Ue/oZlns7OGoIWP4fc3llxxRXlOkHKoWPPWJOfFYpITabSow43QJbRIoHQXtt10VldyQ==
   dependencies:
     lower-case "^1.1.1"
+
+node-cmd@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/node-cmd/-/node-cmd-3.0.0.tgz#38fff70a4aaa4f659d203eb57862737018e24f6f"
+  integrity sha1-OP/3CkqqT2WdID61eGJzcBjiT28=
 
 node-forge@0.9.0:
   version "0.9.0"
