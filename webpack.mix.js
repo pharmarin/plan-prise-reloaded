@@ -52,7 +52,6 @@ mix.js('resources/js/app.js', 'public/js')
     jquery: ['$', 'window.jQuery', 'jQuery', 'jquery'],
   })
   .version()
-  .sourceMaps()
   /*
   .webpackConfig({
     plugins: [
