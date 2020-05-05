@@ -1,258 +1,287 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect, withRouter } from 'react-router-dom';
-import {
-  Alert,
-  Form,
-  Button,
-  Spinner
-} from 'react-bootstrap';
-import _ from 'lodash';
+import { Alert, Form, Button, Spinner } from 'react-bootstrap';
+import get from 'lodash/get';
+import includes from 'lodash/includes';
 
 import Skeleton from '../generic/Skeleton';
 
 import {
-  login as performLogin,
-  logout as performLogout
+  performLogin,
+  performLogout,
 } from '../../redux/user/services.api';
-import {
-  login,
-  reset
-} from '../../redux/user/actions';
+import { doLogin, doReset } from '../../redux/user/actions';
 import userSelector from '../../redux/user/selector';
 
-let approvedRoles = ['signin', 'signout', 'register']
-let cancelRedirect = ["/deconnexion"]
+const approvedRoles = ['signin', 'signout', 'register'];
+const cancelRedirect = ['/deconnexion'];
 
 class Authentification extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       isInvalid: false,
-      isLoading: false
+      isLoading: false,
+    };
+
+    if (props.to === 'signout') {
+      this.state.isLoading = true;
+      this.handleSignout(props);
     }
 
-    if (props.role === "signout") {
-      this.state.isLoading = true
-      this._handleSignout(props)
-    }
-
-    if (props.role === "signin" && _.get(props, 'location.state.message')) {
-      // Si problème de connexion (expiré ou pas connecté), 
+    if (
+      props.to === 'signin' &&
+      get(props, 'location.state.message')
+    ) {
+      // Si problème de connexion (expiré ou pas connecté),
       // on deconnecte d'abord pour être sûr de ne pas avoir
       // de doublons / mauvais token pas supprimé
-      props.reset()
+      props.reset();
     }
   }
 
-  _redirect = () => {
-    let redirect
-    if (!approvedRoles.includes(this.props.role)) redirect = true
-    if (this.props.role === 'signout' && this.state.isLoading) redirect = false
-    if (this.props.user.isValid) redirect = true
+  redirect = () => {
+    let redirect;
+    const { to, user } = this.props;
+    const { isLoading } = this.state;
+    if (!includes(approvedRoles, to)) redirect = true;
+    if (to === 'signout' && isLoading) redirect = false;
+    if (user.isValid) redirect = true;
 
     if (redirect) {
-      let redirectTo = _.get(this.props, 'location.state.redirectTo', "/")
-      if (redirectTo === "/deconnexion") redirectTo = "/"
-      return <Redirect to={redirectTo}/>
+      let redirectTo = get(
+        this.props,
+        'location.state.redirectTo',
+        '/',
+      );
+      if (includes(cancelRedirect, redirectTo)) redirectTo = '/';
+      return <Redirect to={redirectTo} />;
     }
 
-    return null  
-  }
+    return null;
+  };
 
-  _handleChange = (e) => {
-    const { name, value } = e.target
+  handleChange = (e) => {
+    const { name, value } = e.target;
     this.setState({
       [name]: value,
-      isInvalid: false
-    })
-  }
+      isInvalid: false,
+    });
+  };
 
-  _handleSignin = (e) => {
-    e.preventDefault()
+  handleSignin = (e) => {
+    e.preventDefault();
 
-    this.setState({ isLoading: true })
-    const { signinEmail, signinPassword } = this.state
+    this.setState({ isLoading: true });
+    const { signinEmail, signinPassword } = this.state;
+    const { login } = this.props;
     if (signinEmail && signinPassword) {
-      performLogin(signinEmail, signinPassword).then((credentials) => {
-        if (credentials) {
-          this.props.login(credentials)
-        } else {
-          this.setState({
-            isInvalid: true,
-            isLoading: false
-          })
-        }
-      })
+      performLogin(signinEmail, signinPassword).then(
+        (credentials) => {
+          if (credentials) {
+            login(credentials);
+          } else {
+            this.setState({
+              isInvalid: true,
+              isLoading: false,
+            });
+          }
+        },
+      );
     }
-  }
+  };
 
-  _handleSignout = (props) => {
+  handleSignout = (props) => {
     performLogout().then(() => {
-      props.reset()
-    })
-  }
+      props.reset();
+    });
+  };
 
-  _getTitle = (role) => {
+  getTitle = (role) => {
     switch (role) {
       case 'signin':
-        return "Connexion"
-      case 'register': 
-        return "Inscription"
+        return 'Connexion';
+      case 'register':
+        return 'Inscription';
       case 'signout':
-        return "Déconnexion"
+        return 'Déconnexion';
       default:
-        return ""
+        return '';
     }
-  }
+  };
 
-  render() {
-    if (this._redirect()) return this._redirect()
-    return (
-      <Skeleton header={this._getTitle(this.props.role)} size={{ md: 6 }}>
-        <Message status={_.get(this.props, 'location.state.message')}/>
-        {
-          this.props.role === 'signin' &&
-            <Form onSubmit={this._handleSignin} validated={this.state.isValidated}>
-              <Input
-                autoComplete="username"
-                help="Ne sera jamais utilisée ou diffusée."
-                isInvalid={this.state.isInvalid}
-                isLoading={this.state.isLoading}
-                label="Adresse mail"
-                name="signinEmail"
-                onChange={this._handleChange}
-                required
-                type="email"
-                value={_.get(this.state, 'signinEmail', "")}
-              />
-              <Input
-                autoComplete="current-password"
-                invalidLabel="Connexion impossible, vérifiez les informations saisies"
-                isInvalid={this.state.isInvalid}
-                isLoading={this.state.isLoading}
-                label="Mot de passe"
-                name="signinPassword"
-                onChange={this._handleChange}
-                required
-                type="password"
-                value={_.get(this.state, 'signinPassword', "")}
-              />
-              <Submit
-                label="Se connecter"
-                workingLabel="Connexion en cours"
-              />
-            </Form>
-        }
-        {
-          this.props.role === 'register' && 
-            <Form>
-              <Form.Group controlId="registerName">
-                <Form.Label>Nom</Form.Label>
-                <Form.Control type="text" placeholder="Nom"/>
-              </Form.Group>
-              <Form.Group controlId="registerEmail">
-                <Form.Label>Adresse mail</Form.Label>
-                <Form.Control type="email" placeholder="Adresse mail" />
-                <Form.Text className="text-muted">
-                  Ne sera jamais utilisée ou diffusée.
-                </Form.Text>
-              </Form.Group>
-              <Form.Group controlId="registerPassword">
-                <Form.Label>Mot de passe</Form.Label>
-                <Form.Control type="password" placeholder="Mot de passe" />
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                S'inscrire
-              </Button>
-            </Form>
-        }
-        {
-          this.props.role === 'signout' && 
-            <>
-              <Spinner
-                as="span"
-                animation="border"
-                className="mr-2"
-                size="sm"
-              />
-              Déconnexion en cours
-            </>
-        }
-      </Skeleton>
-    )
-  }
-}
-
-class Message extends React.Component {
-  render() {
-    let message
-    switch (this.props.status) {
+  getMessage = (status) => {
+    switch (status) {
       case 'unauthorized':
-        message = "Vous devez vous connecter avant d'accéder à cette page. "
-        break;
+        return "Vous devez vous connecter avant d'accéder à cette page. ";
       case 'expired':
-        message = "Vous avez été deconnecté. "
-        break;
+        return 'Vous avez été deconnecté. ';
       default:
-        return null
+        return null;
     }
-    return <Alert variant="danger">{message}</Alert>
+  };
+
+  render() {
+    const { to } = this.props;
+    const { isInvalid, isLoading, isValidated } = this.state;
+    const message = get(this.props, 'location.state.message', null);
+    if (this.redirect()) return this.redirect();
+    return (
+      <Skeleton header={this.getTitle(to)} size={{ md: 6 }}>
+        {(() =>
+          message ? (
+            <Alert variant="danger">{this.getMessage(message)}</Alert>
+          ) : null)()}
+        {to === 'signin' && (
+          <Form onSubmit={this.handleSignin} validated={isValidated}>
+            <Input
+              autoComplete="username"
+              help="Ne sera jamais utilisée ou diffusée."
+              isInvalid={isInvalid}
+              isLoading={isLoading}
+              label="Adresse mail"
+              name="signinEmail"
+              onChange={this.handleChange}
+              required
+              type="email"
+              value={get(this.state, 'signinEmail', '')}
+            />
+            <Input
+              autoComplete="current-password"
+              invalidLabel="Connexion impossible, vérifiez les informations saisies"
+              isInvalid={isInvalid}
+              isLoading={isLoading}
+              label="Mot de passe"
+              name="signinPassword"
+              onChange={this.handleChange}
+              required
+              type="password"
+              value={get(this.state, 'signinPassword', '')}
+            />
+            <Submit
+              label="Se connecter"
+              workingLabel="Connexion en cours"
+            />
+          </Form>
+        )}
+        {to === 'register' && (
+          <Form>
+            <Form.Group controlId="registerName">
+              <Form.Label>Nom</Form.Label>
+              <Form.Control type="text" placeholder="Nom" />
+            </Form.Group>
+            <Form.Group controlId="registerEmail">
+              <Form.Label>Adresse mail</Form.Label>
+              <Form.Control type="email" placeholder="Adresse mail" />
+              <Form.Text className="text-muted">
+                Ne sera jamais utilisée ou diffusée.
+              </Form.Text>
+            </Form.Group>
+            <Form.Group controlId="registerPassword">
+              <Form.Label>Mot de passe</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Mot de passe"
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              S'inscrire
+            </Button>
+          </Form>
+        )}
+        {to === 'signout' && (
+          <>
+            <Spinner
+              as="span"
+              animation="border"
+              className="mr-2"
+              size="sm"
+            />
+            Déconnexion en cours
+          </>
+        )}
+      </Skeleton>
+    );
   }
 }
 
-class Input extends React.Component {
-  render() {
-    let { help, invalidLabel, isLoading, ...parentProps } = this.props
-    let { label } = this.props
-    return (
-      <Form.Group controlId={this.props.name}>
-        <Form.Label>{this.props.label}</Form.Label>
-        <Form.Control
-          disabled={isLoading}
-          placeholder={label}
-          {...parentProps}
-        />
-        {help && <Form.Text className="text-muted">
-          {help}
-        </Form.Text>}
-        {invalidLabel && <Form.Control.Feedback type="invalid">{invalidLabel}</Form.Control.Feedback>}
-      </Form.Group>
-    )
-  }
-}
+Authentification.propTypes = {
+  login: PropTypes.func,
+  to: PropTypes.string,
+  reset: PropTypes.func,
+  user: PropTypes.shape({
+    isValid: PropTypes.bool,
+  }),
+};
 
-class Submit extends React.Component {
-  render() {
-    let { isLoading, label, workingLabel } = this.props
-    return (
-      <Button variant="primary" type="submit" disabled={isLoading} block>
-        {isLoading ? <>
-          <Spinner
-            as="span"
-            animation="border"
-            size="sm"
-          />
+const Input = (props) => {
+  const { help, invalidLabel, isLoading, label, name } = props;
+  return (
+    <Form.Group controlId={name}>
+      <Form.Label>{label}</Form.Label>
+      <Form.Control disabled={isLoading} placeholder={label} />
+      {help && <Form.Text className="text-muted">{help}</Form.Text>}
+      {invalidLabel && (
+        <Form.Control.Feedback type="invalid">
+          {invalidLabel}
+        </Form.Control.Feedback>
+      )}
+    </Form.Group>
+  );
+};
+
+Input.propTypes = {
+  help: PropTypes.string,
+  invalidLabel: PropTypes.string,
+  isLoading: PropTypes.bool,
+  label: PropTypes.string,
+  name: PropTypes.string,
+};
+
+const Submit = (props) => {
+  const { isLoading, label, workingLabel } = props;
+  return (
+    <Button
+      variant="primary"
+      type="submit"
+      disabled={isLoading}
+      block
+    >
+      {isLoading ? (
+        <>
+          <Spinner as="span" animation="border" size="sm" />
           <span className="ml-1">{workingLabel}</span>
-        </> : label}
-      </Button>
-    )
-  }
-}
+        </>
+      ) : (
+        label
+      )}
+    </Button>
+  );
+};
+
+Submit.propTypes = {
+  isLoading: PropTypes.bool,
+  label: PropTypes.string,
+  workingLabel: PropTypes.string,
+};
 
 const mapStateToProps = (state) => {
   return {
     status: state.userReducer.status,
-    user: userSelector(state)
-  }
-}
+    user: userSelector(state),
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    login: (credentials) => dispatch(login(credentials)),
-    reset: () => dispatch(reset())
-  }
-}
+    login: (credentials) => dispatch(doLogin(credentials)),
+    reset: () => dispatch(doReset()),
+  };
+};
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Authentification))
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Authentification),
+);

@@ -1,79 +1,67 @@
+import { performInfo } from './services.api';
 import {
-  info, 
-  refresh as performRefresh
-} from '../../redux/user/services.api';
-import {
-  clearStorage,
-  restoreToken, 
-  restoreUser,
-  storeToken, 
-  storeUser
-} from '../../redux/user/services.local';
-import userSelector from "../../redux/user/selector";
+  performClearStorage,
+  performRestoreToken,
+  performRestoreUser,
+  performStoreToken,
+  performStoreUser,
+} from './services.local';
 
 export const TYPES = {
   LOADING: 'LOADING',
   LOGIN: 'LOGIN',
-  RESET: 'RESET'
-}
+  RESET: 'RESET',
+};
 
-export const login = (credentials) => {
-  if (credentials.token) storeToken(credentials.token)
-  if (credentials.user) storeUser(credentials.user)
+export const doLogin = (credentials) => {
+  if (credentials.token) performStoreToken(credentials.token);
+  if (credentials.user) performStoreUser(credentials.user);
   return {
     type: TYPES.LOGIN,
     token: credentials.token,
-    user: credentials.user
-  }
-}
+    user: credentials.user,
+  };
+};
 
-export const reset = () => {
-  clearStorage()
+export const doReset = () => {
+  performClearStorage();
   return {
-    type: TYPES.RESET
-  }
-}
+    type: TYPES.RESET,
+  };
+};
 
-export const restore = () => (dispatch) => {
-  let token = restoreToken()
-  let user = restoreUser()
-  let selector = userSelector({
-    userReducer: {
-      user: {
-        token,
-        details: user
-      }
-    }
-  })
-  if (token) {
-    if (true) { //(!selector.isValid) {
-      dispatch(refresh(token))
-    } else {
-      dispatch(login({
-        token,
-        user
-      }))
-      if (!user) {
-        dispatch(fetch())
-      }
-    }
-  }
-}
+/* const doRefresh = (token) => {
+  console.log(token);
+  performRefresh(token).then((details) => console.log(details));
+}; */
 
-const refresh = (token) => (dispatch) => {
-  console.log(token)
-  performRefresh(token).then((details) => console.log(details))
-}
-
-const fetch = () => (dispatch) => {
-  info().then((user) => {
-    console.log(user)
+const doFetch = () => (dispatch) => {
+  performInfo().then((user) => {
+    console.log(user);
     if (user) {
-      dispatch(login({
-        user
-      }))
+      dispatch(
+        doLogin({
+          user,
+        }),
+      );
     } else {
-      dispatch(reset())
+      dispatch(doReset());
     }
-  })
-}
+  });
+};
+
+export const doRestore = () => (dispatch) => {
+  const token = performRestoreToken();
+  const user = performRestoreUser();
+  if (token) {
+    dispatch(
+      doLogin({
+        token,
+        user,
+      }),
+    );
+    if (!user) {
+      dispatch(doFetch());
+    }
+  }
+};

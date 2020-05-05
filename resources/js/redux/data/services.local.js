@@ -1,21 +1,31 @@
-export const addDetailsToState = (state, medicaments) => {
-  if (!Array.isArray(medicaments)) medicaments = [medicaments]
+import isArray from 'lodash/isArray';
+import findIndex from 'lodash/findIndex';
+import forEach from 'lodash/forEach';
+import set from 'lodash/set';
 
-  medicaments.map((medicament) => {
-    medicament = { ...medicament, ...medicament.value }
-    const key = _.findIndex(state.data, item => item.id === medicament.id && item.type === medicament.type)
+export default (state, medicaments) => {
+  const medicamentsArray = isArray(medicaments)
+    ? medicaments
+    : [medicaments];
+
+  forEach(medicamentsArray, (medicament) => {
+    // const medicament = { ...medicament, ...medicament.value };
+    const key = findIndex(state.data, {
+      id: medicament.value.id,
+      type: medicament.type,
+    });
 
     if (key === -1) {
       state.data.push({
         ...state.empty,
-        ...medicament.value, //id + denomination
+        ...medicament.value, // id + denomination
         type: medicament.type,
-        data: medicament.data
-      })
+        data: medicament.data,
+      });
     } else {
-      _.set(state, `data.${key}.data`, medicament.data)
+      set(state, `data.${key}.data`, medicament.data);
     }
-  })
+  });
 
-  return state
-}
+  return state;
+};

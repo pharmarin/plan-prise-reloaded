@@ -1,29 +1,32 @@
-import {
-  applyMiddleware,
-  createStore,
-  combineReducers,
-  compose
-} from 'redux'
+import { applyMiddleware, createStore, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 
 import userReducer from './user/reducer';
 import dataReducer from './data/reducer';
 import planPriseReducer from './plan-prise/reducer';
 
+const logger = process.env.APP_DEBUG
+  ? require('redux-logger')
+  : false;
+
 const rootReducer = combineReducers({
   userReducer,
   dataReducer,
-  planPriseReducer
-})
+  planPriseReducer,
+});
 
 const middlewares = [thunk];
 
-if (process.env.NODE_ENV === `development`) {
-  const { logger } = require(`redux-logger`);
-
+if (logger) {
   middlewares.push(logger);
 }
 
-const store = createStore(rootReducer, {}, applyMiddleware(...middlewares))
+console.log(middlewares, process.env);
 
-export default store
+const store = createStore(
+  rootReducer,
+  {},
+  applyMiddleware(...middlewares),
+);
+
+export default store;

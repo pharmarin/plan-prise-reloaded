@@ -1,25 +1,20 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const mix = require('laravel-mix');
 require('laravel-mix-artisan-serve');
 require('laravel-mix-polyfill');
-//const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-/*mix.options({
-  hmrOptions: {
-    host: '127.0.0.1',
-    port: 8080,
-    disableHostCheck: true,
-    useLocalIp: true
-  }
-})*/
-
-/*mix.browserSync({
-  open: false,
-  proxy: 'https://pharmarin.dynamic-dns.net',
-  https: {
-    key: "/etc/letsencrypt/live/pharmarin.dynamic-dns.net/privkey.pem",
-    cert: "/etc/letsencrypt/live/pharmarin.dynamic-dns.net/cert.pem"
-  }
-})*/
+mix.webpackConfig({
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader', 'eslint-loader'],
+      },
+    ],
+  },
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -32,11 +27,12 @@ require('laravel-mix-polyfill');
 |
 */
 
-mix.js('resources/js/app.js', 'public/js')
+mix
+  .js('resources/js/app.jsx', 'public/js')
   .polyfill()
   .sass('resources/sass/app.scss', 'public/css')
   .extract([
-   'react',
+    'react',
     'react-dom',
     'react-overlays',
     'jquery',
@@ -46,7 +42,7 @@ mix.js('resources/js/app.js', 'public/js')
     'pdfmake',
     'react-bootstrap',
     'redux',
-    'react-redux'
+    'react-redux',
   ])
   .autoload({
     jquery: ['$', 'window.jQuery', 'jQuery', 'jquery'],
@@ -62,4 +58,4 @@ mix.js('resources/js/app.js', 'public/js')
     ],
   })
   */
-  .serve()
+  .serve();

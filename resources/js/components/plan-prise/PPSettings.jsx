@@ -1,69 +1,97 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  Col,
-  Form,
-  Modal,
-  Row
-} from 'react-bootstrap';
+import { Col, Form, Modal, Row } from 'react-bootstrap';
+import ceil from 'lodash/ceil';
+import chunk from 'lodash/chunk';
+import keys from 'lodash/keys';
+import map from 'lodash/map';
+import get from 'lodash/get';
 
-import { updateSettings } from '../../redux/plan-prise/actions';
+import { doUpdateSettings } from '../../redux/plan-prise/actions';
 
-class PPSettings extends React.Component {
-  render() {
-    return (
-      <Modal show={this.props.showSettings} onHide={() => this.props.setShowSettings(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Options</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h5>Colonnes à afficher</h5>
-          <Row>
-            {
-              _.chunk(
-                Object.keys(window.php.default.inputs.posologies.inputs),
-                _.ceil(window.php.default.inputs.posologies.inputs.length / 2)
-              )
-                .map((chunk, index) =>
-                  <Col key={index} sm={6}>
-                    {
-                      chunk.map((key) => {
-                        let input = window.php.default.inputs.posologies.inputs[key]
-                        return (
-                          <Form.Group key={key} className="mb-0" controlId={key}>
-                            <Form.Check
-                              type="checkbox"
-                              label={input.label}
-                              checked={_.get(this.props, `settings.inputs.${input.id}.checked`, (input.default || false))}
-                              onChange={(event) => this.props.updateSettings(
-                                { parent: 'inputs', id: input.id },
-                                { action: 'check', value: event.target.checked }
-                              )}
-                            />
-                          </Form.Group>
-                        )
-                      })
-                    }
-                  </Col>
-                )
-            }
-          </Row>
-        </Modal.Body>
-      </Modal>
-    )
-  }
-}
+const PPSettings = (props) => {
+  const { setShowSettings, showSettings, updateSettings } = props;
+  return (
+    <Modal show={showSettings} onHide={() => setShowSettings(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>Options</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <h5>Colonnes à afficher</h5>
+        <Row>
+          {map(
+            chunk(
+              keys(window.php.default.inputs.posologies.inputs),
+              ceil(
+                window.php.default.inputs.posologies.inputs.length /
+                  2,
+              ),
+            ),
+            (c) => (
+              <Col key={c.id} sm={6}>
+                {map(c, (key) => {
+                  const input =
+                    window.php.default.inputs.posologies.inputs[key];
+                  return (
+                    <Form.Group
+                      key={key}
+                      className="mb-0"
+                      controlId={key}
+                    >
+                      <Form.Check
+                        type="checkbox"
+                        label={input.label}
+                        checked={get(
+                          props,
+                          `settings.inputs.${input.id}.checked`,
+                          input.default || false,
+                        )}
+                        onChange={(event) =>
+                          updateSettings(
+                            {
+                              parent: 'inputs',
+                              id: input.id,
+                            },
+                            {
+                              action: 'check',
+                              value: event.target.checked,
+                            },
+                          )
+                        }
+                      />
+                    </Form.Group>
+                  );
+                })}
+              </Col>
+            ),
+          )}
+        </Row>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+PPSettings.propTypes = {
+  setShowSettings: PropTypes.func,
+  showSettings: PropTypes.bool,
+  updateSettings: PropTypes.func,
+};
 
 const mapStateToProps = (state) => {
   return {
-    settings: state.planPriseReducer.settings
-  }
-}
+    settings: state.planPriseReducer.settings,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateSettings: (input, value) => dispatch(updateSettings(input, value))
-  }
-}
+    updateSettings: (input, value) =>
+      dispatch(doUpdateSettings(input, value)),
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(PPSettings)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(PPSettings);

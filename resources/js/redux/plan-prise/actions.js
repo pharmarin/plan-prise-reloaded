@@ -1,7 +1,10 @@
+import isArray from 'lodash/isArray';
+import map from 'lodash/map';
+import toNumber from 'lodash/toNumber';
 import {
-  loadDetails,
-  loadList as performLoadList,
-  saveModification
+  performLoadDetails,
+  performLoadList,
+  performSaveModification,
 } from './services.api';
 import { TYPES as DATA_TYPES } from '../data/actions';
 
@@ -17,144 +20,177 @@ export const TYPES = {
   UPDATE_SETTINGS: 'UPDATE_SETTINGS',
   LOAD_LIST: 'LOAD_LIST',
   LOAD_DETAILS: 'LOAD_DETAILS',
-  ADD_CUSTOM_ITEM: 'ADD_CUSTOM_ITEM'
-}
+  ADD_CUSTOM_ITEM: 'ADD_CUSTOM_ITEM',
+};
 
-export const setLoading = (values) => {
+export const doSetLoading = (values) => {
   return {
     type: TYPES.SET_LOADING,
-    values
-  }
-}
+    values,
+  };
+};
 
-export const reset = (history) => {
-  history.push('/plan-prise')
+export const doReset = (history) => {
+  history.push('/plan-prise');
   return {
-    type: TYPES.RESET
-  }
-}
+    type: TYPES.RESET,
+  };
+};
 
-export const init = (id, reload = true) => (dispatch) => {
-  let startLoading = {
+export const doInit = (id, reload = true) => (dispatch) => {
+  const startLoading = {
     state: true,
-    message: "Chargement en cours... "
-  }
-  let stopLoading = {
-    state: false, message: ""
-  }
-  if (!(_.toNumber(id) > 0)) {
+    message: 'Chargement en cours... ',
+  };
+  const stopLoading = {
+    state: false,
+    message: '',
+  };
+  if (!(toNumber(id) > 0)) {
     return dispatch({
       type: TYPES.INIT,
-      id: -1
-    })
+      id: -1,
+    });
   }
   dispatch({
     type: TYPES.SET_LOADING,
-    values: startLoading
-  })
+    values: startLoading,
+  });
   dispatch({
     type: TYPES.INIT,
-    id
-  })
+    id,
+  });
   if (!reload) {
     return dispatch({
       type: TYPES.SET_LOADING,
-      values: stopLoading
-    })
+      values: stopLoading,
+    });
   }
-  loadDetails(id).then((details) => {
+  performLoadDetails(id).then((details) => {
     dispatch({
       type: TYPES.LOAD_DETAILS,
       values: {
-        content: details.medicaments.map((medicament) => ({
+        content: map(details.medicaments, (medicament) => ({
           id: medicament.value.id,
           denomination: medicament.value.denomination,
-          type: medicament.type
+          type: medicament.type,
         })),
         customData: details.custom_data || {},
-        settings: details.custom_settings
-      }
-    })
+        settings: details.custom_settings,
+      },
+    });
     dispatch({
       type: DATA_TYPES.CACHE_DETAILS,
-      details: details.medicaments
-    })
+      details: details.medicaments,
+    });
     dispatch({
       type: TYPES.SET_LOADING,
-      values: stopLoading
-    })
-  })
-}
+      values: stopLoading,
+    });
+  });
+  return true;
+};
 
-export const updateLine = (lineId, action, input = {}) => (dispatch, getState) => {
+export const doUpdateLine = (lineId, action, input = {}) => (
+  dispatch,
+  getState,
+) => {
   dispatch({
     type: TYPES.UPDATE_LINE,
     input,
     action,
-    lineId
-  })
-  saveModification(getState().planPriseReducer.pp_id, 'edit', getState().planPriseReducer.customData)
-}
+    lineId,
+  });
+  performSaveModification(
+    getState().planPriseReducer.pp_id,
+    'edit',
+    getState().planPriseReducer.customData,
+  );
+};
 
-export const update = (action) => {
+export const doUpdate = (action) => {
   return {
     type: TYPES.UPDATE,
-    action
-  }
-}
+    action,
+  };
+};
 
-export const loadResult = (medicament) => {
+export const doLoadResult = (medicament) => {
   return {
     type: TYPES.LOAD_RESULT,
-    medicament
-  }
-}
+    medicament,
+  };
+};
 
-export const addLine = (medicament, history) => async (dispatch, getState) => {
-  dispatch(update({
-    type: 'add',
-    value: medicament
-  }))
-  saveModification(getState().planPriseReducer.pp_id, 'add', medicament, (pp_id) => {
-    if (getState().planPriseReducer.pp_id === -1) {
-      dispatch(init(pp_id))
-      history.push(`/plan-prise/${pp_id}`)
-    }
-  })
-  API_SERVICES.saveModification.flush()
-}
+export const doAddLine = (medicament, history) => async (
+  dispatch,
+  getState,
+) => {
+  dispatch(
+    doUpdate({
+      type: 'add',
+      value: medicament,
+    }),
+  );
+  performSaveModification(
+    getState().planPriseReducer.pp_id,
+    'add',
+    medicament,
+    (ppId) => {
+      if (getState().planPriseReducer.ppId === -1) {
+        dispatch(doInit(ppId));
+        history.push(`/plan-prise/${ppId}`);
+      }
+    },
+  );
+  performSaveModification.flush();
+};
 
-export const addCustomItem = (lineId, input) => {
+export const doAddCustomItem = (lineId, input) => {
   return {
     type: TYPES.ADD_CUSTOM_ITEM,
     input,
-    lineId
-  }
-}
+    lineId,
+  };
+};
 
-export const removeLine = (id) => async (dispatch, getState) => {
-  dispatch(update({
-    type: 'remove',
-    value: id
-  }))
-  saveModification(getState().planPriseReducer.pp_id, 'remove', id)
-  saveModification.flush()
-}
+export const doRemoveLine = (id) => async (dispatch, getState) => {
+  dispatch(
+    doUpdate({
+      type: 'remove',
+      value: id,
+    }),
+  );
+  performSaveModification(
+    getState().planPriseReducer.pp_id,
+    'remove',
+    id,
+  );
+  performSaveModification.flush();
+};
 
-export const updateSettings = (input, value) => async (dispatch, getState) => {
+export const doUpdateSettings = (input, value) => async (
+  dispatch,
+  getState,
+) => {
   dispatch({
     type: TYPES.UPDATE_SETTINGS,
     input,
-    value
-  })
-  saveModification(getState().planPriseReducer.pp_id, 'settings', getState().planPriseReducer.settings)
-}
+    value,
+  });
+  performSaveModification(
+    getState().planPriseReducer.pp_id,
+    'settings',
+    getState().planPriseReducer.settings,
+  );
+};
 
-export const loadList = () => async (dispatch) => {
+export const doLoadList = () => async (dispatch) => {
   performLoadList().then((list) => {
-    if (Array.isArray(list)) dispatch({
-      type: TYPES.LOAD_LIST,
-      list
-    })
-  })
-}
+    if (isArray(list))
+      dispatch({
+        type: TYPES.LOAD_LIST,
+        list,
+      });
+  });
+};

@@ -1,52 +1,63 @@
-import React from "react";
-import { connect } from "react-redux";
-import { Redirect, Route as RouterRoute } from "react-router-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { Redirect, Route as RouterRoute } from 'react-router-dom';
 
-import userSelector from "../../redux/user/selector";
+import userSelector from '../../redux/user/selector';
 
-export class PublicRoute extends React.Component {
-  render() {
+// eslint-disable-next-line react/jsx-props-no-spreading
+const PublicRoute = (props) => <RouterRoute {...props} />;
+
+const ProtectedRoute = (props) => {
+  const { user, path } = props;
+  if (!user.isAuth) {
+    console.info('Cannot access route: No token provided', path);
+    const redirectTo = path;
     return (
-      <RouterRoute {...this.props}/>
-    )
+      <Redirect
+        to={{
+          pathname: '/connexion',
+          state: {
+            message: 'unauthorized',
+            redirectTo,
+          },
+        }}
+      />
+    );
   }
-}
-
-class ProtectedRoute extends React.Component {
-
-  render() {
-    if (!this.props.user.isAuth) {
-      console.info('Cannot access route: No token provided', this.props.path)
-      let redirectTo = this.props.path
-      return <Redirect to={{
-        pathname: "/connexion",
-        state: {
-          message: "unauthorized",
-          redirectTo
-        }
-      }} />
-    }
-    if (!this.props.user.isValid) {
-      console.info('Cannot access route: Token expired', this.props.path)
-      let redirectTo = this.props.path
-      return <Redirect to={{
-        pathname: "/connexion",
-        state: {
-          message: "expired",
-          redirectTo
-        }
-      }} />
-    }
+  if (!user.isValid) {
+    console.info('Cannot access route: Token expired', path);
+    const redirectTo = path;
     return (
-      <RouterRoute {...this.props}/>
-    )
+      <Redirect
+        to={{
+          pathname: '/connexion',
+          state: {
+            message: 'expired',
+            redirectTo,
+          },
+        }}
+      />
+    );
   }
-}
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  return <RouterRoute {...props} />;
+};
+
+ProtectedRoute.propTypes = {
+  path: PropTypes.string,
+  user: PropTypes.shape({
+    isAuth: PropTypes.bool,
+    isValid: PropTypes.bool,
+  }),
+};
 
 const mapStateToProps = (state) => {
   return {
-    user: userSelector(state)
-  }
-}
+    user: userSelector(state),
+  };
+};
 
-export const Route = connect(mapStateToProps)(ProtectedRoute)
+const Route = connect(mapStateToProps)(ProtectedRoute);
+
+export { Route, PublicRoute };

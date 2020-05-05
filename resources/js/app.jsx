@@ -1,3 +1,7 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import App from './components/App';
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -7,17 +11,7 @@
 
 require('./bootstrap');
 
-axios.defaults.withCredentials = true;
-
-import React from 'react';
-import ReactDOM from 'react-dom';
-
-import App from './components/App';
-
 if (document.getElementById('app')) {
-  let app = document.getElementById('app');
-  ReactDOM.render(
-    <App />
-    , app
-  );
+  const app = document.getElementById('app');
+  ReactDOM.render(<App />, app);
 }

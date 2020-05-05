@@ -1,61 +1,75 @@
+import compact from 'lodash/compact';
+import concat from 'lodash/concat';
+import get from 'lodash/get';
+import merge from 'lodash/merge';
+import omit from 'lodash/omit';
+import reject from 'lodash/reject';
+import set from 'lodash/set';
+import uniqBy from 'lodash/uniqBy';
+
 export const updateLine = (newState, action) => {
-  let { id, child, multiple, parent, readOnly } = action.input
-  let { type, value } = action.action
-  let { lineId } = action
-  let { customData, loadedData } = newState
+  const { id, child, multiple, parent, readOnly } = action.input;
+  const { type, value } = action.action;
+  const { lineId } = action;
+  const { customData, loadedData } = newState;
 
   if (type === 'data') {
-    _.set(loadedData, lineId, _.merge(_.get(loadedData, lineId, {}), value))
+    set(
+      loadedData,
+      lineId,
+      merge(get(loadedData, lineId, {}), value),
+    );
     return {
       ...newState,
-      loadedData: loadedData
-    }
+      loadedData,
+    };
   }
-  if (readOnly) return newState
+  if (readOnly) return newState;
   if (multiple === true) {
-    let currentState = _.get(customData, `${lineId}.${parent}`, {})
-    if (type === "value") {
-      _.set(currentState, `${id}.${child}`, value)
-    } else if (type === "check") {
-      _.set(currentState, `${id}.checked`, value)
-      console.log('check', currentState)
-    } else if (type === "choose") {
-      _.set(currentState, `${id}`, value)
-    } else if (type === "create") {
-      _.set(currentState, `${id}.${child}`, value)
-      _.set(currentState, `${id}.checked`, true)
+    const currentState = get(customData, `${lineId}.${parent}`, {});
+    if (type === 'value') {
+      set(currentState, `${id}.${child}`, value);
+    } else if (type === 'check') {
+      set(currentState, `${id}.checked`, value);
+      console.log('check', currentState);
+    } else if (type === 'choose') {
+      set(currentState, `${id}`, value);
+    } else if (type === 'create') {
+      set(currentState, `${id}.${child}`, value);
+      set(currentState, `${id}.checked`, true);
     }
-    _.set(customData, `${lineId}.${parent}`, currentState)
+    set(customData, `${lineId}.${parent}`, currentState);
   } else {
-    _.set(customData, `${lineId}.${parent}`, value)
+    set(customData, `${lineId}.${parent}`, value);
   }
 
   return {
     ...newState,
-    customData: customData
-  }
-}
+    customData,
+  };
+};
 
 export const update = (newState, action) => {
-  let { type, value } = action.action
-  let content, customContent
+  const { type, value } = action.action;
+  let content;
+  let customContent;
   switch (type) {
-    case "add":
-      content = _.uniqBy(_.concat(newState.content, value), 'id')
+    case 'add':
+      content = uniqBy(concat(newState.content, value), 'id');
       return {
         ...newState,
-        content: _.compact(content) // Remove falsey/null values
-      }
-    case "remove":
-      content = _.filter(newState.content, (medicament) => medicament.id != value)
-      customContent = _.omit(newState.customData, value)
+        content: compact(content), // Remove falsey/null values
+      };
+    case 'remove':
+      content = reject(newState.content, ['id', value]);
+      customContent = omit(newState.customData, value);
       return {
         ...newState,
-        content: content,
-        customData: customContent
-      }
+        content,
+        customData: customContent,
+      };
     default:
-      console.log(action)
-      throw 'No action type'
+      console.log(action);
+      throw Error('No action type');
   }
-}
+};

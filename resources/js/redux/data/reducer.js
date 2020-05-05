@@ -1,41 +1,50 @@
+import cloneDeep from 'lodash/cloneDeep';
+import findIndex from 'lodash/findIndex';
+import set from 'lodash/set';
 import { TYPES } from './actions';
-import {
-  addDetailsToState
-} from './services.local'
-import _ from 'lodash';
+import performAddDetailsToState from './services.local';
 
 const initialState = {
   empty: {
     state: {
-      isLoading: false
+      isLoading: false,
     },
-    data: null
+    data: null,
   },
-  data: []
-}
+  data: [],
+};
 
 const dataReducer = (state = initialState, action) => {
-  const newState = _.cloneDeep(state)
+  const newState = cloneDeep(state);
   switch (action.type) {
     case TYPES.CACHE_DETAILS: {
-      return addDetailsToState(newState, action.details)
+      return performAddDetailsToState(newState, action.details);
     }
-    case TYPES.SET_STATUS:
-      const key = _.findIndex(newState.data, item => item.id === action.medicament.id && item.type === action.medicament.type)
+    case TYPES.SET_STATUS: {
+      const key = findIndex(newState.data, {
+        id: action.medicament.id,
+        type: action.medicament.type,
+      });
       if (key === -1) {
         newState.data.push({
           ...newState.empty,
           state: {
             ...newState.empty.state,
-            [action.status]: action.value
+            [action.status]: action.value,
           },
-          ...action.medicament
-        })
-        return newState
+          ...action.medicament,
+        });
+        return newState;
       }
-      return _.set(newState, `data.${key}.state.${action.status}`, action.value)
-    default: return newState
+      return set(
+        newState,
+        `data.${key}.state.${action.status}`,
+        action.value,
+      );
+    }
+    default:
+      return newState;
   }
-}
+};
 
-export default dataReducer
+export default dataReducer;

@@ -1,9 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import {
-  BrowserRouter as Router,
-  Switch
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
 import store from '../redux/store';
 import Accueil from './app/Accueil';
@@ -13,17 +10,14 @@ import { PublicRoute, Route as ProtectedRoute } from './app/Routes';
 import Profile from './app/Profile';
 import PlanPrise from './PlanPrise';
 
-import {
-  restore
-} from '../redux/user/actions';
+import { doRestore } from '../redux/user/actions';
 
 class App extends React.Component {
-
   constructor(props) {
-    super(props)
-    let state = store.getState()
+    super(props);
+    const state = store.getState();
     if (!state.userReducer.token) {
-      store.dispatch(restore())
+      store.dispatch(doRestore());
     }
   }
 
@@ -34,19 +28,19 @@ class App extends React.Component {
           <Navigation />
           <Switch>
             <PublicRoute path="/" exact>
-              <Accueil/>
+              <Accueil />
             </PublicRoute>
             <PublicRoute path="/inscription">
-              <Authentification role="register" />
+              <Authentification to="register" />
             </PublicRoute>
             <PublicRoute path="/connexion">
-              <Authentification role="signin"/>
+              <Authentification to="signin" />
             </PublicRoute>
             <ProtectedRoute path="/deconnexion">
-              <Authentification role="signout"/>
+              <Authentification to="signout" />
             </ProtectedRoute>
             <ProtectedRoute path="/profile">
-              <Profile/>
+              <Profile />
             </ProtectedRoute>
             <ProtectedRoute path="/plan-prise/:id">
               <PlanPrise />
@@ -57,9 +51,8 @@ class App extends React.Component {
           </Switch>
         </Router>
       </Provider>
-    )
+    );
   }
-
 }
 
-export default App
+export default App;

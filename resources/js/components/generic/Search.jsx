@@ -1,266 +1,369 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable react/jsx-one-expression-per-line */
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Form, FormControl, InputGroup, ListGroup, Modal } from 'react-bootstrap';
+import {
+  Button,
+  Form,
+  FormControl,
+  InputGroup,
+  ListGroup,
+  Modal,
+} from 'react-bootstrap';
 import axios from 'axios';
 import classNames from 'classnames';
 import ArrowKeysReact from 'arrow-keys-react';
 
-import { SPINNER } from '../params.js';
+import { SPINNER } from '../params';
 
 export default class Search extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = this.initialState;
+    const { hover, results } = this.state;
 
-  static defaultProps = {
-    modal: true,
-    multiple: false,
-    selected: [],
+    ArrowKeysReact.config({
+      up: () => {
+        this.setState({
+          hover: Math.max(hover - 1, 0),
+        });
+      },
+      down: () => {
+        this.setState({
+          hover: Math.min(hover + 1, results.length - 1),
+        });
+      },
+    });
   }
 
-  static propTypes = {
-    defaultValue: PropTypes.string,
-    disabled: PropTypes.bool,
-    onSave: PropTypes.func,
-    modal: PropTypes.bool,
-    multiple: PropTypes.bool,
-    selected: PropTypes.array,
-    url: PropTypes.string
+  componentDidMount() {
+    const { defaultValue, modal } = this.props;
+    if (!modal && defaultValue) {
+      let value = defaultValue.match(/(^\D+)(\d+.*)/m);
+      value = value
+        ? value
+            .splice(1)
+            .map((item) => item.trim())
+            .join('*')
+        : defaultValue;
+      this.setState(
+        {
+          query: value,
+        },
+        () => this.getInfo(),
+      );
+    }
   }
 
-  get initialState () {
+  static get initialState() {
     return {
       hover: 0,
       isSearching: false,
       query: '',
       results: [],
       selected: [],
-      showModal: false
-    }
-  }
-
-  constructor (props) {
-    super(props)
-    this.state = this.initialState
-
-    ArrowKeysReact.config({
-      up: () => {
-        this.setState({
-          hover: Math.max(this.state.hover - 1, 0)
-        })
-      },
-      down: () => {
-          this.setState({
-            hover: Math.min(this.state.hover + 1, this.state.results.length - 1)
-          })
-      }
-    })
-  }
-
-  componentDidMount () {
-    if (!this.props.modal && this.props.defaultValue) {
-      let defaultValue = this.props.defaultValue.match(/(^\D+)(\d+.*)/m)
-      defaultValue = defaultValue ? defaultValue.splice(1).map(item => item.trim()).join('*') : this.props.defaultValue
-      this.setState({
-        query: defaultValue
-      }, () => this.getInfo())
-    }
+      showModal: false,
+    };
   }
 
   wakeUp = () => {
-    this.setState(this.initialState)
-    if (this.props.selected.length > 0) {
+    const { selected } = this.props;
+    this.setState(this.initialState);
+    if (selected.length > 0) {
       this.setState({
-        selected: this.props.selected.map((medic) => {
+        selected: selected.map((medic) => {
           return {
             code_cis: medic.code_cis,
-            denomination: medic.denomination
-          }
-        })
-      })
+            denomination: medic.denomination,
+          };
+        }),
+      });
     }
-    setTimeout(() => this.searchInput.focus(), 500)
-  }
+    setTimeout(() => this.searchInput.focus(), 500);
+  };
 
   getInfo = () => {
-    this.axiosSource && this.axiosSource.cancel('Cancel previous request')
-    this.axiosSource = axios.CancelToken.source()
-    this.setState({ isSearching: true })
-    let url = `${this.props.url}?query=${this.state.query}&display=code_cis,denomination&per_page=50`
-    axios.get(url, {
-      cancelToken: this.axiosSource.token
-    })
-    .then((response) => {
-      this.setState({
-        isSearching: false,
-        results: response.data.data
+    const { url, query } = this.state;
+    if (this.axiosSource) {
+      this.axiosSource.cancel('Cancel previous request');
+    }
+    this.axiosSource = axios.CancelToken.source();
+    this.setState({ isSearching: true });
+    const fullUrl = `${url}?query=${query}&display=code_cis,denomination&per_page=50`;
+    axios
+      .get(fullUrl, {
+        cancelToken: this.axiosSource.token,
       })
-    })
-    .catch((thrown) => {
-      if (axios.isCancel(thrown)) {
-        console.log('Request canceled', thrown.message);
-      } else {
-        console.log(thrown)
-      }
-    })
-  }
+      .then((response) => {
+        this.setState({
+          isSearching: false,
+          results: response.data.data,
+        });
+      })
+      .catch((thrown) => {
+        if (axios.isCancel(thrown)) {
+          console.log('Request canceled', thrown.message);
+        } else {
+          console.log(thrown);
+        }
+      });
+  };
 
   handleSearchChange = () => {
-    this.setState({
-      query: this.searchInput.value
-    }, () => {
-      if (this.state.query && this.state.query.length > 3) {
-        this.getInfo()
-      }
-    })
-  }
+    const { query } = this.state;
+    this.setState(
+      {
+        query: this.searchInput.value,
+      },
+      () => {
+        if (query && query.length > 3) {
+          this.getInfo();
+        }
+      },
+    );
+  };
 
   handleSearchSelect = (event, index) => {
-    event.preventDefault()
-    let result = this.state.results[index],
-        selected = this.state.selected.map(selected => Number(selected.code_cis)).includes(Number(result.code_cis)),
-        newSelected = this.state.selected
-    if (!selected) {
-      newSelected.push(result)
+    event.preventDefault();
+    const { results, multiple, selected } = this.state;
+    const result = results[index];
+    const selection = selected
+      .map((s) => Number(s.code_cis))
+      .includes(Number(result.code_cis));
+    let newSelected = selected;
+    if (!selection) {
+      newSelected.push(result);
     } else {
-      newSelected = newSelected.filter((selected) => Number(selected.code_cis) != Number(result.code_cis))
+      newSelected = newSelected.filter(
+        (s) => Number(s.code_cis) !== Number(result.code_cis),
+      );
     }
-    this.setState({
-      selected: newSelected
-    }, () => !this.props.multiple ? this.saveValues() : null)
-  }
+    this.setState(
+      {
+        selected: newSelected,
+      },
+      () => (!multiple ? this.saveValues() : null),
+    );
+  };
 
   saveValues = () => {
-    Promise.resolve(this.props.onSave([...new Set(this.state.selected)]))
-    .then((resolve) => {
-      if (resolve && resolve.action == 'deselect') {
-        this.deselectValues(resolve.values)
-      }
-    })
-    if (!this.props.multiple) this.wakeUp()
-    if (this.props.modal) this.setState({ showModal: false })
-  }
+    const { modal, multiple, onSave } = this.props;
+    const { selected } = this.state;
+    Promise.resolve(onSave([...new Set(selected)])).then(
+      (resolve) => {
+        if (resolve && resolve.action === 'deselect') {
+          this.deselectValues(resolve.values);
+        }
+      },
+    );
+    if (!multiple) this.wakeUp();
+    if (modal) this.setState({ showModal: false });
+  };
 
   deselectValues = (deselect) => {
-    let selected = this.state.selected
+    const { selected } = this.state;
     if (deselect && deselect.length > 0) {
-      let newSelected = selected.filter(
-        (medicament) => !deselect.map((code) => Number(code)).includes(Number(medicament.code_cis))
-      )
+      const newSelected = selected.filter(
+        (medicament) =>
+          !deselect
+            .map((code) => Number(code))
+            .includes(Number(medicament.code_cis)),
+      );
       this.setState({
-        selected: newSelected
-      })
+        selected: newSelected,
+      });
     }
-    return true
-  }
+    return true;
+  };
 
   renderSaveButton = () => {
-    if (this.props.multiple) {
+    const { disabled, multiple } = this.props;
+    if (multiple) {
       return (
         <InputGroup.Append>
           <Button
             type="button"
             variant="primary"
             onClick={() => this.saveValues()}
-            disabled={this.props.disabled}
-            >
+            disabled={disabled}
+          >
             Importer
           </Button>
         </InputGroup.Append>
-      )
-    } else {
-      return null
+      );
     }
-  }
+    return null;
+  };
 
   renderModal = () => {
-    const showModal = (value) => this.setState({ showModal: value })
+    const { showModal } = this.state;
+    const setShowModal = (value) =>
+      this.setState({ showModal: value });
     return (
       <>
-      <Button type="button" variant="link" className="px-0" onClick={() => showModal(true)}>
-        <i className="fa fa-plus-circle p-1"></i> Importer des médicaments
+        <Button
+          type="button"
+          variant="link"
+          className="px-0"
+          onClick={() => setShowModal(true)}
+        >
+          <i className="fa fa-plus-circle p-1" />
+          Importer des médicaments
         </Button>
-        <Modal show={this.state.showModal} onHide={() => showModal(false)}>
+        <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Importer un médicament</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            { this.renderForm() }
-          </Modal.Body>
+          <Modal.Body>{this.renderForm()}</Modal.Body>
         </Modal>
-        </>
-    )
-  }
+      </>
+    );
+  };
 
   renderForm = () => {
-    let noBottomRadiusLeft = this.state.results.length > 0 && !this.props.multiple ? { borderBottomLeftRadius: 0 } : {},
-    noBottomRadiusRight = this.state.results.length > 0 && !this.props.multiple ? { borderBottomRightRadius: 0 } : {}
+    const {
+      hover,
+      isSearching,
+      query,
+      results,
+      selected,
+    } = this.state;
+    const { disabled, multiple } = this.props;
+    const noBottomRadiusLeft =
+      results.length > 0 && !multiple
+        ? { borderBottomLeftRadius: 0 }
+        : {};
+    const noBottomRadiusRight =
+      results.length > 0 && !multiple
+        ? { borderBottomRightRadius: 0 }
+        : {};
     return (
-      <Form onSubmit={(e) => this.handleSearchSelect(e, this.state.hover)}>
+      <Form onSubmit={(e) => this.handleSearchSelect(e, hover)}>
         <InputGroup>
           <InputGroup.Prepend>
             <InputGroup.Text style={noBottomRadiusLeft}>
-              { this.state.isSearching ? SPINNER : <i className="fa fa-search"></i> }
+              {isSearching ? SPINNER : <i className="fa fa-search" />}
             </InputGroup.Text>
           </InputGroup.Prepend>
           <FormControl
-            disabled={this.props.disabled}
+            disabled={disabled}
             type="text"
             onChange={this.handleSearchChange}
             placeholder="Rechercher un médicament dans la base de données publique"
-            ref={(input) => this.searchInput = input}
+            ref={(input) => {
+              this.searchInput = input;
+            }}
             style={noBottomRadiusRight}
-            value={this.state.query}
+            value={query}
+            // eslint-disable-next-line react/jsx-props-no-spreading
             {...ArrowKeysReact.events}
           />
-          {
-            this.renderSaveButton()
-          }
+          {this.renderSaveButton()}
         </InputGroup>
-        {
-          this.state.results.length > 0 ?
+        {results.length > 0 ? (
           <div>
-            {
-              this.props.multiple ? <a href="#" className="text-muted text-italic mb-0" onClick={() => this.setState({ selected: this.state.results })}><small>Tout sélectionner ({ this.state.results.length })</small></a> : null
-            }
+            {multiple ? (
+              <Button
+                type="link"
+                className="text-muted text-italic mb-0"
+                onClick={() =>
+                  this.setState({
+                    selected: results,
+                  })
+                }
+              >
+                <small>Tout sélectionner ({results.length})</small>
+              </Button>
+            ) : null}
             <ListGroup>
-              { !this.props.multiple ? <ListGroup.Item className="d-none"></ListGroup.Item> : null }
-              {
-                this.state.results.map((result, index) => {
-                  let selected = this.state.selected.map(selected => Number(selected.code_cis)).includes(Number(result.code_cis)),
-                      checkboxIcon = this.props.multiple ? selected ? <i className="fas fa-circle mr-2"></i> : <i className="far fa-circle mr-2"></i> : null
-                  return (
-                    <a key={index}
-                      href="#"
-                      className={classNames({
-                        "list-group-item list-group-item-action py-2": true,
-                        "border-top-0": index === 0 && !this.props.multiple,
-                        "focus": index === this.state.hover
-                       })}
-                      onClick={(e) => this.handleSearchSelect(e, index)}
-                      onMouseEnter={() => this.setState({ hover: index })}
-                      >
-                      {
-                        this.props.multiple ? <input type="checkbox" checked={selected} className="d-none mt-1" onChange={(e) => this.handleSearchSelect(e, result, selected)} id={result.code_cis}/> : null
-                      }
-                      <label className={"d-flex m-0" + (selected ? " font-weight-bold" : "")} htmlFor={result.code_cis}>
-                        <div>{checkboxIcon}</div>
-                        <div className="text-truncate flex-grow-1">{result.denomination}</div>
-                        <div className="ml-2">({result.code_cis})</div>
-                      </label>
-                    </a>
+              {!multiple ? (
+                <ListGroup.Item className="d-none" />
+              ) : null}
+              {results.map((result, index) => {
+                const selection = selected
+                  .map((s) => Number(s.code_cis))
+                  .includes(Number(result.code_cis));
+                const checkboxIcon = multiple ? (
+                  selection ? (
+                    <i className="fas fa-circle mr-2" />
+                  ) : (
+                    <i className="far fa-circle mr-2" />
                   )
-                })
-              }
+                ) : null;
+                return (
+                  <Button
+                    type="link"
+                    key={result.code_cis}
+                    className={classNames({
+                      'list-group-item list-group-item-action py-2': true,
+                      'border-top-0': index === 0 && !multiple,
+                      focus: index === hover,
+                    })}
+                    onClick={(e) => this.handleSearchSelect(e, index)}
+                    onMouseEnter={() =>
+                      this.setState({ hover: index })
+                    }
+                  >
+                    {multiple ? (
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        className="d-none mt-1"
+                        onChange={(e) =>
+                          this.handleSearchSelect(e, result, selected)
+                        }
+                        id={result.code_cis}
+                      />
+                    ) : null}
+                    <label
+                      className={`d-flex m-0${
+                        selected ? ' font-weight-bold' : ''
+                      }`}
+                      htmlFor={result.code_cis}
+                    >
+                      <div>{checkboxIcon}</div>
+                      <div className="text-truncate flex-grow-1">
+                        {result.denomination}
+                      </div>
+                      <div className="ml-2">({result.code_cis})</div>
+                    </label>
+                  </Button>
+                );
+              })}
             </ListGroup>
-          </div> : null
-        }
+          </div>
+        ) : null}
       </Form>
-    )
-  }
+    );
+  };
 
-  render () {
-    if (this.props.modal) {
-      return this.renderModal()
-    } else {
-      return this.renderForm()
+  render() {
+    const { modal } = this.props;
+    if (modal) {
+      return this.renderModal();
     }
+    return this.renderForm();
   }
 }
+
+Search.propTypes = {
+  defaultValue: PropTypes.string,
+  disabled: PropTypes.bool,
+  onSave: PropTypes.func,
+  modal: PropTypes.bool,
+  multiple: PropTypes.bool,
+  selected: PropTypes.arrayOf(
+    PropTypes.shape({
+      code_cis: PropTypes.number,
+      denomination: PropTypes.string,
+    }),
+  ),
+  url: PropTypes.string,
+};
+
+Search.defaultProps = {
+  modal: true,
+  multiple: false,
+  selected: [],
+};
