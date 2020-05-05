@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect, withRouter } from 'react-router-dom';
 import { Alert, Form, Button, Spinner } from 'react-bootstrap';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
 
 import Skeleton from '../generic/Skeleton';
-
 import {
   performLogin,
   performLogout,
@@ -18,12 +19,18 @@ import userSelector from '../../redux/user/selector';
 const approvedRoles = ['signin', 'signout', 'register'];
 const cancelRedirect = ['/deconnexion'];
 
+const SigninSchema = Yup.object().shape({
+  signinEmail: Yup.string()
+    .email("L'adresse mail entrée ne semble pas valide")
+    .required("L'adresse mail est requise"),
+  signinPassword: Yup.string().required('Le mot de passe est requis'),
+});
+
 class Authentification extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isInvalid: false,
       isLoading: false,
     };
 
@@ -64,19 +71,9 @@ class Authentification extends React.Component {
     return null;
   };
 
-  handleChange = (e) => {
-    const { name, value } = e.target;
-    this.setState({
-      [name]: value,
-      isInvalid: false,
-    });
-  };
-
-  handleSignin = (e) => {
-    e.preventDefault();
-
-    this.setState({ isLoading: true });
-    const { signinEmail, signinPassword } = this.state;
+  handleSignin = (values, { setSubmitting }) => {
+    setSubmitting(true);
+    const { signinEmail, signinPassword } = values;
     const { login } = this.props;
     if (signinEmail && signinPassword) {
       performLogin(signinEmail, signinPassword).then(
@@ -85,10 +82,10 @@ class Authentification extends React.Component {
             login(credentials);
           } else {
             this.setState({
-              isInvalid: true,
               isLoading: false,
             });
           }
+          setSubmitting(false);
         },
       );
     }
@@ -126,7 +123,6 @@ class Authentification extends React.Component {
 
   render() {
     const { to } = this.props;
-    const { isInvalid, isLoading, isValidated } = this.state;
     const message = get(this.props, 'location.state.message', null);
     if (this.redirect()) return this.redirect();
     return (
@@ -136,62 +132,73 @@ class Authentification extends React.Component {
             <Alert variant="danger">{this.getMessage(message)}</Alert>
           ) : null)()}
         {to === 'signin' && (
-          <Form onSubmit={this.handleSignin} validated={isValidated}>
-            <Input
-              autoComplete="username"
-              help="Ne sera jamais utilisée ou diffusée."
-              isInvalid={isInvalid}
-              isLoading={isLoading}
-              label="Adresse mail"
-              name="signinEmail"
-              onChange={this.handleChange}
-              required
-              type="email"
-              value={get(this.state, 'signinEmail', '')}
-            />
-            <Input
-              autoComplete="current-password"
-              invalidLabel="Connexion impossible, vérifiez les informations saisies"
-              isInvalid={isInvalid}
-              isLoading={isLoading}
-              label="Mot de passe"
-              name="signinPassword"
-              onChange={this.handleChange}
-              required
-              type="password"
-              value={get(this.state, 'signinPassword', '')}
-            />
-            <Submit
-              label="Se connecter"
-              workingLabel="Connexion en cours"
-            />
-          </Form>
+          <Formik
+            initialValues={{ signinEmail: '', signinPassword: '' }}
+            validationSchema={SigninSchema}
+            onSubmit={this.handleSignin}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+            }) => (
+              <Form noValidate onSubmit={handleSubmit}>
+                <Form.Group controlId="signinEmail">
+                  <Form.Label>Adresse mail</Form.Label>
+                  <Form.Control
+                    autoComplete="username"
+                    isInvalid={!!errors.signinEmail}
+                    isValid={
+                      touched.signinEmail && !errors.signinEmail
+                    }
+                    name="signinEmail"
+                    type="email"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Adresse mail"
+                    value={values.signinEmail}
+                  />
+                  {errors.signinEmail && touched.signinEmail ? (
+                    <Form.Control.Feedback type="invalid">
+                      {errors.signinEmail}
+                    </Form.Control.Feedback>
+                  ) : (
+                    <Form.Text className="text-muted">
+                      Ne sera jamais utilisée ou diffusée.
+                    </Form.Text>
+                  )}
+                </Form.Group>
+                <Form.Group controlId="signinPassword">
+                  <Form.Label>Adresse mail</Form.Label>
+                  <Form.Control
+                    autoComplete="current-password"
+                    isInvalid={!!errors.signinPassword}
+                    name="signinPassword"
+                    type="password"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Adresse mail"
+                    value={values.signinPassword}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.signinPassword}
+                  </Form.Control.Feedback>
+                </Form.Group>
+                <Button disabled={isSubmitting} type="submit">
+                  {isSubmitting && <Spinner />}
+                  {isSubmitting
+                    ? 'Connexion en cours'
+                    : 'Se connecter'}
+                </Button>
+              </Form>
+            )}
+          </Formik>
         )}
-        {to === 'register' && (
-          <Form>
-            <Form.Group controlId="registerName">
-              <Form.Label>Nom</Form.Label>
-              <Form.Control type="text" placeholder="Nom" />
-            </Form.Group>
-            <Form.Group controlId="registerEmail">
-              <Form.Label>Adresse mail</Form.Label>
-              <Form.Control type="email" placeholder="Adresse mail" />
-              <Form.Text className="text-muted">
-                Ne sera jamais utilisée ou diffusée.
-              </Form.Text>
-            </Form.Group>
-            <Form.Group controlId="registerPassword">
-              <Form.Label>Mot de passe</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Mot de passe"
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              S'inscrire
-            </Button>
-          </Form>
-        )}
+        {to === 'register' && <p>À mettre en place... </p>}
         {to === 'signout' && (
           <>
             <Spinner
@@ -215,57 +222,6 @@ Authentification.propTypes = {
   user: PropTypes.shape({
     isValid: PropTypes.bool,
   }),
-};
-
-const Input = (props) => {
-  const { help, invalidLabel, isLoading, label, name } = props;
-  return (
-    <Form.Group controlId={name}>
-      <Form.Label>{label}</Form.Label>
-      <Form.Control disabled={isLoading} placeholder={label} />
-      {help && <Form.Text className="text-muted">{help}</Form.Text>}
-      {invalidLabel && (
-        <Form.Control.Feedback type="invalid">
-          {invalidLabel}
-        </Form.Control.Feedback>
-      )}
-    </Form.Group>
-  );
-};
-
-Input.propTypes = {
-  help: PropTypes.string,
-  invalidLabel: PropTypes.string,
-  isLoading: PropTypes.bool,
-  label: PropTypes.string,
-  name: PropTypes.string,
-};
-
-const Submit = (props) => {
-  const { isLoading, label, workingLabel } = props;
-  return (
-    <Button
-      variant="primary"
-      type="submit"
-      disabled={isLoading}
-      block
-    >
-      {isLoading ? (
-        <>
-          <Spinner as="span" animation="border" size="sm" />
-          <span className="ml-1">{workingLabel}</span>
-        </>
-      ) : (
-        label
-      )}
-    </Button>
-  );
-};
-
-Submit.propTypes = {
-  isLoading: PropTypes.bool,
-  label: PropTypes.string,
-  workingLabel: PropTypes.string,
 };
 
 const mapStateToProps = (state) => {
