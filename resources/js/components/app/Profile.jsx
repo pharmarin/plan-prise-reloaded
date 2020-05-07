@@ -10,7 +10,7 @@ import userSelector from '../../redux/user/selector';
 const Profile = (props) => {
   const { user } = props;
   return (
-    <Skeleton header="Profile">
+    <Skeleton header="Profil">
       <Form.Group as={Row} controlId="name">
         <Form.Label column sm="3">
           Nom et Prénom
