@@ -3,7 +3,7 @@ import { TYPES } from './actions';
 
 const initialState = {
   status: null,
-  token: null,
+  tokens: null,
   user: null,
 };
 
@@ -18,7 +18,7 @@ const userReducer = (state = initialState, action) => {
     case TYPES.LOGIN:
       return {
         ...newState,
-        token: action.token || newState.token,
+        tokens: action.tokens || newState.tokens,
         user: action.user || newState.user,
         status: action.status || null,
       };

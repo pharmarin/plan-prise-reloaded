@@ -1,22 +1,22 @@
 import isEmpty from 'lodash/isEmpty';
 import { createSelector } from 'reselect';
-import { getValue, performValidate } from './services.local';
+import { performValidate } from './services.local';
 
 const user = (state) => state.userReducer.user || {};
-const token = (state) => state.userReducer.token;
+const tokens = (state) => state.userReducer.tokens;
 
-const isAuth = createSelector(token, (t) => !isEmpty(t));
+const isAuth = createSelector(tokens, (t) => !isEmpty(t));
 
 const isValid = createSelector(
-  token,
+  tokens,
   isAuth,
-  (t, a) => a && performValidate(t),
+  (t, a) => a && performValidate(t.access_token || null),
 );
 
 const isAdmin = createSelector(
-  token,
+  user,
   isValid,
-  (t, v) => v && getValue(t, 'admin'),
+  (u, v) => v && u.admin === 1,
 );
 
 export default function userSelector(state) {

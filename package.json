@@ -55,6 +55,7 @@
     "classnames": "^2.2.6",
     "formik": "^2.1.4",
     "is-json": "^2.0.1",
+    "js-base64": "^2.5.2",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "pdfmake": "^0.1.65",

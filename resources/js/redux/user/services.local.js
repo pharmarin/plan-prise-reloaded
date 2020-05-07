@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
-import get from 'lodash/get';
 
 const STORAGE_KEYS = {
-  token: 'state.auth.token',
+  tokens: 'state.auth.tokens',
   user: 'state.auth.user',
 };
 
@@ -19,13 +18,13 @@ export const getValue = (token, key) => {
 };
 
 export const performClearStorage = () => {
-  localStorage.removeItem(STORAGE_KEYS.token);
+  localStorage.removeItem(STORAGE_KEYS.tokens);
   sessionStorage.removeItem(STORAGE_KEYS.user);
 };
 
-export const performStoreToken = (token) => {
+export const performStoreTokens = (tokens) => {
   try {
-    localStorage.setItem(STORAGE_KEYS.token, JSON.stringify(token));
+    localStorage.setItem(STORAGE_KEYS.tokens, JSON.stringify(tokens));
     return true;
   } catch (err) {
     return console.error('Error storing token', err);
@@ -41,10 +40,10 @@ export const performStoreUser = (user) => {
   }
 };
 
-export const performRestoreToken = () => {
+export const performRestoreTokens = () => {
   try {
     const token =
-      JSON.parse(localStorage.getItem(STORAGE_KEYS.token)) ||
+      JSON.parse(localStorage.getItem(STORAGE_KEYS.tokens)) ||
       undefined;
     return token;
   } catch (err) {
@@ -66,7 +65,7 @@ export const performRestoreUser = () => {
 export const performValidate = (token) => {
   if (!token) return false;
 
-  const expirationTime = get(token, 'exp') * 1000; // PHP timestamp is in s
+  const expirationTime = getValue(token, 'exp') * 1000; // PHP timestamp is in s
   const timeNow = new Date().getTime(); // JS timestamp is in ms
 
   if (expirationTime > timeNow) {

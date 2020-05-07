@@ -7,6 +7,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
+import { Base64 } from 'js-base64';
 
 import Skeleton from '../generic/Skeleton';
 import {
@@ -30,6 +31,7 @@ class Authentification extends React.Component {
   constructor(props) {
     super(props);
 
+    this.mounted = false;
     this.state = {
       isLoading: false,
     };
@@ -48,6 +50,14 @@ class Authentification extends React.Component {
       // de doublons / mauvais token pas supprimé
       props.reset();
     }
+  }
+
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   redirect = () => {
@@ -71,23 +81,23 @@ class Authentification extends React.Component {
     return null;
   };
 
-  handleSignin = (values, { setSubmitting }) => {
+  handleSignin = async (values, { setSubmitting }) => {
     setSubmitting(true);
     const { signinEmail, signinPassword } = values;
     const { login } = this.props;
     if (signinEmail && signinPassword) {
-      performLogin(signinEmail, signinPassword).then(
-        (credentials) => {
-          if (credentials) {
-            login(credentials);
-          } else {
-            this.setState({
-              isLoading: false,
-            });
-          }
-          setSubmitting(false);
-        },
-      );
+      try {
+        const tokens = await performLogin(
+          signinEmail,
+          signinPassword,
+        );
+        const jsonUser = Base64.decode(tokens.user_info);
+        const user = JSON.parse(jsonUser);
+        login({ ...tokens, user });
+      } catch (e) {
+        console.error(e);
+      }
+      if (this.mounted) setSubmitting(false);
     }
   };
 
@@ -152,9 +162,6 @@ class Authentification extends React.Component {
                   <Form.Control
                     autoComplete="username"
                     isInvalid={!!errors.signinEmail}
-                    isValid={
-                      touched.signinEmail && !errors.signinEmail
-                    }
                     name="signinEmail"
                     type="email"
                     onBlur={handleBlur}

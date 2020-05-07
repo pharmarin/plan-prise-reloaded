@@ -1,13 +1,15 @@
-import { applyMiddleware, createStore, combineReducers } from 'redux';
+import {
+  applyMiddleware,
+  compose,
+  createStore,
+  combineReducers,
+} from 'redux';
 import thunk from 'redux-thunk';
+import logger from 'redux-logger';
 
 import userReducer from './user/reducer';
 import dataReducer from './data/reducer';
 import planPriseReducer from './plan-prise/reducer';
-
-const logger = process.env.APP_DEBUG
-  ? require('redux-logger')
-  : false;
 
 const rootReducer = combineReducers({
   userReducer,
@@ -15,18 +17,15 @@ const rootReducer = combineReducers({
   planPriseReducer,
 });
 
-const middlewares = [thunk];
+const middlewares = [];
+middlewares.push(thunk);
 
-if (logger) {
+if (process.env.NODE_ENV === 'development') {
   middlewares.push(logger);
 }
 
-console.log(middlewares, process.env);
-
-const store = createStore(
+const store = compose(applyMiddleware(...middlewares))(createStore)(
   rootReducer,
-  {},
-  applyMiddleware(...middlewares),
 );
 
 export default store;

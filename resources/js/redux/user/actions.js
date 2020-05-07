@@ -1,9 +1,9 @@
 import { performInfo } from './services.api';
 import {
   performClearStorage,
-  performRestoreToken,
+  performRestoreTokens,
   performRestoreUser,
-  performStoreToken,
+  performStoreTokens,
   performStoreUser,
 } from './services.local';
 
@@ -14,12 +14,13 @@ export const TYPES = {
 };
 
 export const doLogin = (credentials) => {
-  if (credentials.token) performStoreToken(credentials.token);
-  if (credentials.user) performStoreUser(credentials.user);
+  const { user, ...tokens } = credentials;
+  if (tokens) performStoreTokens(tokens);
+  if (user) performStoreUser(user);
   return {
     type: TYPES.LOGIN,
-    token: credentials.token,
-    user: credentials.user,
+    tokens,
+    user,
   };
 };
 
@@ -51,7 +52,7 @@ const doFetch = () => (dispatch) => {
 };
 
 export const doRestore = () => (dispatch) => {
-  const token = performRestoreToken();
+  const token = performRestoreTokens();
   const user = performRestoreUser();
   if (token) {
     dispatch(
