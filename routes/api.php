@@ -13,8 +13,8 @@ use Illuminate\Http\Request;
 |
 */
 
-/*Route::prefix('auth')->group(function () {
-  Route::post('login', 'Api\UserApiController@login')->name('api.auth.login');
+Route::prefix('v1')->group(function () {
+  Route::post('oauth/token', 'Api\ApiAuthController@auth')->name('api.auth.login');
 });
 
 Route::middleware(['jwt'])->group(function () {

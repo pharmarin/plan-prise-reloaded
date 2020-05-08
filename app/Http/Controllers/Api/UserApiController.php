@@ -14,7 +14,7 @@ class UserApiController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('ajax');
+        //$this->middleware('ajax');
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
