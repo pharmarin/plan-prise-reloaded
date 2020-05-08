@@ -35,4 +35,4 @@ Route::middleware(['jwt'])->group(function () {
   Route::get('plan-prise/{pp_id?}', 'Api\PlanPriseApiController@index')->name('api.plan-prise.index');
   Route::resource('plan-prise', 'Api\PlanPriseApiController', ['as' => 'api']);
 
-});*/
+});
