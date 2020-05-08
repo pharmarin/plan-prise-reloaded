@@ -11,7 +11,8 @@ export default function axiosWithToken(
   defaultToken = null,
 ) {
   console.log(defaultToken);
-  const token = defaultToken || store.getState().userReducer.token;
+  const token =
+    defaultToken || store.getState().userReducer.tokens.access_token;
   const defaultOptions = {
     headers: {
       Authorization: `Bearer ${token}`,
