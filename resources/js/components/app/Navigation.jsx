@@ -4,43 +4,50 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Nav, Navbar } from 'react-bootstrap';
-
-import userSelector from '../../redux/user/selector';
+import authenticate from '../auth/AuthGate';
 
 class Navigation extends React.Component {
   auth = (component) => {
-    const { user } = this.props;
-    if (user.isValid) {
+    const { auth } = this.props;
+    if (auth.isValid) {
       return component;
     }
     return null;
   };
 
   public = (component) => {
-    const { user } = this.props;
-    if (!user.isValid) {
+    const { auth } = this.props;
+    if (!auth.isValid) {
       return component;
     }
     return null;
   };
 
   admin = (component) => {
-    const { user } = this.props;
-    if (user.isAdmin) {
+    const {
+      auth: {
+        user: { admin: isAdmin = false },
+      },
+    } = this.props;
+    if (isAdmin) {
       return this.auth(component);
     }
     return null;
   };
 
   render() {
-    const { user } = this.props;
+    const {
+      auth: {
+        user: { name = '' },
+      },
+    } = this.props;
     return (
       <Navbar bg="light" expand="lg" className="mb-1">
         <Navbar.Brand>
           <Link to="/">Plan de prise</Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar id="basic-navbar-nav">
           <Nav className="mr-auto">
             {this.auth(
               <LinkContainer to="/plan-prise">
@@ -51,7 +58,7 @@ class Navigation extends React.Component {
           {this.auth(
             <Nav>
               <LinkContainer to="/profile">
-                <Nav.Link>{user.details.name}</Nav.Link>
+                <Nav.Link>{name}</Nav.Link>
               </LinkContainer>
               <LinkContainer to="/deconnexion">
                 <Nav.Link>Se déconnecter</Nav.Link>
@@ -68,26 +75,26 @@ class Navigation extends React.Component {
               </LinkContainer>
             </Nav>,
           )}
-        </Navbar.Collapse>
+        </Navbar>
       </Navbar>
     );
   }
 }
 
 Navigation.propTypes = {
-  user: PropTypes.shape({
-    details: PropTypes.shape({
-      name: PropTypes.string,
-    }),
-    isAdmin: PropTypes.bool,
+  auth: PropTypes.shape({
     isValid: PropTypes.bool,
+    user: PropTypes.shape({
+      name: PropTypes.string,
+      admin: PropTypes.bool,
+    }),
   }),
 };
 
 const mapStateToProps = (state) => {
   return {
-    user: userSelector(state),
+    tokens: state.authReducer.tokens,
   };
 };
 
-export default connect(mapStateToProps)(Navigation);
+export default connect(mapStateToProps)(authenticate(Navigation));

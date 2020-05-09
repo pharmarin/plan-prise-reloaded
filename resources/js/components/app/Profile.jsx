@@ -5,10 +5,8 @@ import { Button, Col, Form, Row } from 'react-bootstrap';
 
 import Skeleton from '../generic/Skeleton';
 
-import userSelector from '../../redux/user/selector';
-
 const Profile = (props) => {
-  const { user } = props;
+  const { user = {} } = props;
   return (
     <Skeleton header="Profil">
       <Form.Group as={Row} controlId="name">
@@ -16,15 +14,11 @@ const Profile = (props) => {
           Nom et Prénom
         </Form.Label>
         <Col sm="7">
-          <Form.Control
-            plaintext
-            readOnly
-            value={user.details.name || ''}
-          />
+          <Form.Control plaintext readOnly value={user.name || ''} />
         </Col>
         <Col sm="2">
-          <Button variant="primary" block>
-            Changer
+          <Button variant="primary" size="sm" block>
+            <span className="fa fa-edit" />
           </Button>
         </Col>
       </Form.Group>
@@ -36,8 +30,8 @@ const Profile = (props) => {
           <Form.Control plaintext readOnly value="Reste à ajouter" />
         </Col>
         <Col sm="2">
-          <Button variant="primary" block>
-            Changer
+          <Button variant="primary" size="sm" block>
+            <span className="fa fa-edit" />
           </Button>
         </Col>
       </Form.Group>
@@ -52,14 +46,12 @@ const Profile = (props) => {
           <Form.Control
             plaintext
             readOnly
-            value={
-              user.details.display_name || user.details.name || ''
-            }
+            value={user.display_name || user.name || ''}
           />
         </Col>
         <Col sm="2">
-          <Button variant="primary" block>
-            Changer
+          <Button variant="primary" size="sm" block>
+            <span className="fa fa-edit" />
           </Button>
         </Col>
       </Form.Group>
@@ -68,15 +60,11 @@ const Profile = (props) => {
           Email
         </Form.Label>
         <Col sm="7">
-          <Form.Control
-            plaintext
-            readOnly
-            value={user.details.email || ''}
-          />
+          <Form.Control plaintext readOnly value={user.email || ''} />
         </Col>
         <Col sm="2">
-          <Button variant="primary" block>
-            Changer
+          <Button variant="primary" size="sm" block>
+            <span className="fa fa-edit" />
           </Button>
         </Col>
       </Form.Group>
@@ -88,8 +76,8 @@ const Profile = (props) => {
           <Form.Control plaintext readOnly value="***************" />
         </Col>
         <Col sm="2">
-          <Button variant="primary" block>
-            Changer
+          <Button variant="primary" size="sm" block>
+            <span className="fa fa-edit" />
           </Button>
         </Col>
       </Form.Group>
@@ -99,17 +87,15 @@ const Profile = (props) => {
 
 Profile.propTypes = {
   user: PropTypes.shape({
-    details: PropTypes.shape({
-      display_name: PropTypes.string,
-      email: PropTypes.string,
-      name: PropTypes.string,
-    }),
+    display_name: PropTypes.string,
+    email: PropTypes.string,
+    name: PropTypes.string,
   }),
 };
 
 const mapStateToProps = (state) => {
   return {
-    user: userSelector(state),
+    user: state.authReducer.user,
   };
 };
 

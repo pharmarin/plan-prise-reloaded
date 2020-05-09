@@ -17,7 +17,7 @@ class RenderController extends Controller
               'show' => route('api.all.show')
             ],
             'auth' => [
-              'login' => route('api.auth.login'),
+              'login' => route('passport.token'),
               'logout' => route('api.auth.logout'),
               'info' => route('api.auth.info'),
               'refresh' => route('api.auth.refresh')

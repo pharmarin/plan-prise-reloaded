@@ -1,12 +1,6 @@
 import axios from 'axios';
 import axiosWithToken from '../../helpers/axios.helper';
-
-const clientCredentials = {
-  grant_type: 'password',
-  client_id: '3',
-  client_secret: 'uh9b4oN8GsZnTVlZSI3iNyZPOiGmF5zI6VlbfVgW',
-  scope: '',
-};
+import clientCredentials from '../../../../oauth2-client.json';
 
 /**
  *
@@ -34,20 +28,6 @@ export const performLogout = async () => {
     .then((response) => {
       if (!response.status === 200) throw new Error(response);
       return true;
-    })
-    .catch((error) => {
-      console.log(error);
-      return false;
-    });
-};
-
-export const performInfo = async () => {
-  return axiosWithToken()
-    .get(window.php.routes.api.auth.info)
-    .then((response) => {
-      if (!response.status === 200) throw new Error(response);
-      console.log(response.data);
-      return response.data;
     })
     .catch((error) => {
       console.log(error);

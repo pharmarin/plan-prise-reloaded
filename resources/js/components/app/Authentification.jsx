@@ -7,15 +7,11 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
-import { Base64 } from 'js-base64';
 
 import Skeleton from '../generic/Skeleton';
-import {
-  performLogin,
-  performLogout,
-} from '../../redux/user/services.api';
-import { doLogin, doReset } from '../../redux/user/actions';
-import userSelector from '../../redux/user/selector';
+import { performLogout } from '../../redux/auth/services.api';
+import { doLogin, doReset } from '../../redux/auth/actions';
+import authenticate from '../auth/AuthGate';
 
 const approvedRoles = ['signin', 'signout', 'register'];
 const cancelRedirect = ['/deconnexion'];
@@ -62,11 +58,11 @@ class Authentification extends React.Component {
 
   redirect = () => {
     let redirect;
-    const { to, user } = this.props;
+    const { to, auth } = this.props;
     const { isLoading } = this.state;
     if (!includes(approvedRoles, to)) redirect = true;
     if (to === 'signout' && isLoading) redirect = false;
-    if (user.isValid) redirect = true;
+    if (auth.isValid) redirect = true;
 
     if (redirect) {
       let redirectTo = get(
@@ -84,19 +80,12 @@ class Authentification extends React.Component {
   handleSignin = async (values, { setSubmitting }) => {
     setSubmitting(true);
     const { signinEmail, signinPassword } = values;
-    const { login } = this.props;
+    const { doLogin: login } = this.props;
     if (signinEmail && signinPassword) {
-      try {
-        const tokens = await performLogin(
-          signinEmail,
-          signinPassword,
-        );
-        const jsonUser = Base64.decode(tokens.user_info);
-        const user = JSON.parse(jsonUser);
-        login({ ...tokens, user });
-      } catch (e) {
-        console.error(e);
-      }
+      login({
+        username: signinEmail,
+        password: signinPassword,
+      });
       if (this.mounted) setSubmitting(false);
     }
   };
@@ -132,7 +121,7 @@ class Authentification extends React.Component {
   };
 
   render() {
-    const { to } = this.props;
+    const { isLoading, to } = this.props;
     const message = get(this.props, 'location.state.message', null);
     if (this.redirect()) return this.redirect();
     return (
@@ -154,7 +143,6 @@ class Authentification extends React.Component {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting,
             }) => (
               <Form noValidate onSubmit={handleSubmit}>
                 <Form.Group controlId="signinEmail">
@@ -195,11 +183,15 @@ class Authentification extends React.Component {
                     {errors.signinPassword}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <Button disabled={isSubmitting} type="submit">
-                  {isSubmitting && <Spinner />}
-                  {isSubmitting
-                    ? 'Connexion en cours'
-                    : 'Se connecter'}
+                <Button disabled={isLoading} type="submit">
+                  {isLoading && (
+                    <Spinner
+                      animation="border"
+                      size="sm"
+                      styles={{ marginRight: 10 }}
+                    />
+                  )}
+                  {isLoading ? 'Connexion en cours' : 'Se connecter'}
                 </Button>
               </Form>
             )}
@@ -223,28 +215,32 @@ class Authentification extends React.Component {
 }
 
 Authentification.propTypes = {
-  login: PropTypes.func,
+  doLogin: PropTypes.func,
+  isLoading: PropTypes.bool,
   to: PropTypes.string,
   reset: PropTypes.func,
-  user: PropTypes.shape({
+  auth: PropTypes.shape({
     isValid: PropTypes.bool,
   }),
 };
 
 const mapStateToProps = (state) => {
   return {
-    status: state.userReducer.status,
-    user: userSelector(state),
+    isLoading: state.authReducer.isLoading,
+    tokens: state.authReducer.tokens,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    login: (credentials) => dispatch(doLogin(credentials)),
+    doLogin: (values) => dispatch(doLogin(values)),
     reset: () => dispatch(doReset()),
   };
 };
 
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(Authentification),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(authenticate(Authentification)),
 );

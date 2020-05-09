@@ -4,15 +4,14 @@ import get from 'lodash/get';
 import replace from 'lodash/replace';
 
 import store from '../redux/store';
-import { doLogin, doReset } from '../redux/user/actions';
+import { doLogin, doReset } from '../redux/auth/actions';
 
 export default function axiosWithToken(
   options = {},
   defaultToken = null,
 ) {
-  console.log(defaultToken);
   const token =
-    defaultToken || store.getState().userReducer.tokens.access_token;
+    defaultToken || store.getState().authReducer.tokens.access_token;
   const defaultOptions = {
     headers: {
       Authorization: `Bearer ${token}`,

@@ -7,12 +7,12 @@ import {
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 
-import userReducer from './user/reducer';
+import authReducer from './auth/reducer';
 import dataReducer from './data/reducer';
 import planPriseReducer from './plan-prise/reducer';
 
 const rootReducer = combineReducers({
-  userReducer,
+  authReducer,
   dataReducer,
   planPriseReducer,
 });

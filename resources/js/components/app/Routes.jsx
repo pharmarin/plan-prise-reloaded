@@ -2,15 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect, Route as RouterRoute } from 'react-router-dom';
-
-import userSelector from '../../redux/user/selector';
+import { performValidation } from '../../redux/auth/services.local';
 
 // eslint-disable-next-line react/jsx-props-no-spreading
 const PublicRoute = (props) => <RouterRoute {...props} />;
 
 const ProtectedRoute = (props) => {
-  const { user, path } = props;
-  if (!user.isAuth) {
+  const { user, path, tokens } = props;
+  if (!tokens) {
     console.info('Cannot access route: No token provided', path);
     const redirectTo = path;
     return (
@@ -50,11 +49,21 @@ ProtectedRoute.propTypes = {
     isAuth: PropTypes.bool,
     isValid: PropTypes.bool,
   }),
+  tokens: PropTypes.shape({
+    access_token: PropTypes.string,
+    refresh_token: PropTypes.string,
+    token_type: PropTypes.string,
+    expires_in: PropTypes.number,
+  }),
 };
 
 const mapStateToProps = (state) => {
   return {
-    user: userSelector(state),
+    user: {
+      ...state.authReducer.user,
+      isValid: performValidation(state.authReducer.tokens),
+    },
+    tokens: state.authReducer.tokens,
   };
 };
 

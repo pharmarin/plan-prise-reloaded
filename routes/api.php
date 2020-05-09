@@ -13,10 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::prefix('v1')->group(function () {
-  Route::post('oauth/token', 'Api\ApiAuthController@auth')->name('api.auth.login');
-});
-
 Route::middleware(['auth:api'])->group(function () {
 
   // Authentication

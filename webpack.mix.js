@@ -2,7 +2,6 @@
 const mix = require('laravel-mix');
 require('laravel-mix-artisan-serve');
 require('laravel-mix-polyfill');
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 mix.webpackConfig({
   module: {
@@ -46,16 +45,7 @@ mix
   ])
   .autoload({
     jquery: ['$', 'window.jQuery', 'jQuery', 'jquery'],
-  })
-  .version()
-  /*
-  .webpackConfig({
-    plugins: [
-      new BundleAnalyzerPlugin({
-        analyzerHost: '192.168.1.15',
-        analyzerPort: 8383
-      })
-    ],
-  })
-  */
-  .serve();
+  });
+
+if (mix.inProduction()) mix.version();
+if (!mix.inProduction()) mix.serve();

@@ -1,22 +1,27 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+} from 'react-router-dom';
 
 import store from '../redux/store';
 import Accueil from './app/Accueil';
 import Navigation from './app/Navigation';
 import Authentification from './app/Authentification';
-import { PublicRoute, Route as ProtectedRoute } from './app/Routes';
+import { Route as ProtectedRoute } from './app/Routes';
 import Profile from './app/Profile';
 import PlanPrise from './PlanPrise';
 
-import { doRestore } from '../redux/user/actions';
+import { doRestore } from '../redux/auth/actions';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     const state = store.getState();
-    if (!state.userReducer.token) {
+    if (!state.authReducer.token) {
       store.dispatch(doRestore());
     }
   }
@@ -27,15 +32,15 @@ class App extends React.Component {
         <Router basename="/">
           <Navigation />
           <Switch>
-            <PublicRoute path="/" exact>
+            <Route path="/" exact>
               <Accueil />
-            </PublicRoute>
-            <PublicRoute path="/inscription">
+            </Route>
+            <Route path="/inscription">
               <Authentification to="register" />
-            </PublicRoute>
-            <PublicRoute path="/connexion">
+            </Route>
+            <Route path="/connexion">
               <Authentification to="signin" />
-            </PublicRoute>
+            </Route>
             <ProtectedRoute path="/deconnexion">
               <Authentification to="signout" />
             </ProtectedRoute>

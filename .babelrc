@@ -1,5 +1,9 @@
 {
-  "plugins": ["transform-class-properties", "react-hot-loader/babel"],
+  "plugins": [
+    "transform-class-properties", 
+    "react-hot-loader/babel", 
+    "@babel/plugin-transform-react-jsx-source"
+  ],
   "presets": [
     [
       "@babel/env",
