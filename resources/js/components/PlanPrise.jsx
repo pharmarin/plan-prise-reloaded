@@ -174,22 +174,22 @@ class PlanPrise extends React.Component {
                       <i className="fa fa-print" />
                     </a>
                     <Button
-                      variant="link"
                       className="text-success py-0"
+                      variant="link"
                       onClick={() => this.generatePDF()}
                     >
                       <i className="fa fa-file-pdf" />
                     </Button>
                     <Button
-                      variant="link"
                       className="text-secondary py-0"
+                      variant="link"
                       onClick={() => this.setShowSettings(true)}
                     >
                       <i className="fa fa-cog" />
                     </Button>
                     <Button
-                      variant="link"
                       className="text-danger py-0"
+                      variant="link"
                       onClick={this.deletePP}
                     >
                       <i className="fa fa-trash" />
@@ -223,8 +223,8 @@ class PlanPrise extends React.Component {
                           return (
                             <CSSTransition
                               key={medicament.id}
-                              timeout={500}
                               classNames="plan-prise-card"
+                              timeout={500}
                             >
                               <PPCard
                                 denomination={medicament.denomination}
@@ -260,8 +260,8 @@ class PlanPrise extends React.Component {
           </Col>
         </Row>
         <PPSettings
-          showSettings={showSettings}
           setShowSettings={(a) => this.setState({ showSettings: a })}
+          showSettings={showSettings}
         />
       </Container>
     );
@@ -305,19 +305,19 @@ PlanPrise.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    content: state.planPriseReducer.content,
-    customData: state.planPriseReducer.customData,
-    data: state.dataReducer.data,
-    isLoading: state.planPriseReducer.isLoading,
-    list: state.planPriseReducer.list,
-    ppId: state.planPriseReducer.pp_id,
+    content: state.planPrise.content,
+    customData: state.planPrise.customData,
+    data: state.data.data,
+    isLoading: state.planPrise.isLoading,
+    list: state.planPrise.list,
+    ppId: state.planPrise.pp_id,
     repository: new PPRepository({
-      content: state.planPriseReducer.content,
-      customData: state.planPriseReducer.customData,
-      data: state.dataReducer.data,
-      settings: state.planPriseReducer.settings,
+      content: state.planPrise.content,
+      customData: state.planPrise.customData,
+      data: state.data.data,
+      settings: state.planPrise.settings,
     }),
-    settings: state.planPriseReducer.settings,
+    settings: state.planPrise.settings,
   };
 };
 

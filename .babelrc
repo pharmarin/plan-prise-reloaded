@@ -2,7 +2,16 @@
   "plugins": [
     "transform-class-properties", 
     "react-hot-loader/babel", 
-    "@babel/plugin-transform-react-jsx-source"
+    "@babel/plugin-transform-react-jsx-source",
+    ["module-resolver", {
+      "root": ["./resources/js"],
+      "alias": {
+        "@root": "./",
+        "@components": "./resources/js/components",
+        "@helpers": "./resources/js/helpers",
+        "@redux": "./resources/js/redux"
+      }
+    }]
   ],
   "presets": [
     [

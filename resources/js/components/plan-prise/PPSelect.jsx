@@ -76,7 +76,7 @@ PPSelect.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    list: state.planPriseReducer.list,
+    list: state.planPrise.list,
   };
 };
 

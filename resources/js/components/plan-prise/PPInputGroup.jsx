@@ -22,7 +22,7 @@ class PPInput extends React.Component {
     const help = get(value, 'help', null);
 
     return (
-      <>
+      <React.Fragment>
         <Form.Text
           className="text-muted font-italic"
           style={{ fontSize: '.8em' }}
@@ -30,14 +30,14 @@ class PPInput extends React.Component {
           {help}
         </Form.Text>
         <Form.Control
-          as="textarea"
-          rows={1}
-          className="flex-fill"
-          disabled={input.readOnly}
-          value={stringValue || ''}
           ref={(i) => {
             this.textarea = i;
           }}
+          as="textarea"
+          className="flex-fill"
+          disabled={input.readOnly}
+          rows={1}
+          value={stringValue || ''}
           onChange={(event) =>
             updateLine(
               lineId,
@@ -59,7 +59,7 @@ class PPInput extends React.Component {
             )
           }
         />
-      </>
+      </React.Fragment>
     );
   }
 }
@@ -118,7 +118,6 @@ const PPInputGroup = (props) => {
             <Form.Group key={inputVal}>
               <Form.Check className="flex-fill mb-2">
                 <FormCheck.Input
-                  type={input.multiple ? 'checkbox' : 'radio'}
                   checked={inputVal.checked}
                   style={
                     inputVal.help
@@ -127,6 +126,7 @@ const PPInputGroup = (props) => {
                         }
                       : null
                   }
+                  type={input.multiple ? 'checkbox' : 'radio'}
                   onChange={(event) =>
                     updateLine(
                       lineId,

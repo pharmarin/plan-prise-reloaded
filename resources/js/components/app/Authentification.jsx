@@ -9,8 +9,7 @@ import get from 'lodash/get';
 import includes from 'lodash/includes';
 
 import Skeleton from '../generic/Skeleton';
-import { performLogout } from '../../redux/auth/services.api';
-import { doLogin, doReset } from '../../redux/auth/actions';
+import { doLogin, doLogout, doReset } from '../../redux/auth/actions';
 import authenticate from '../auth/AuthGate';
 
 const approvedRoles = ['signin', 'signout', 'register'];
@@ -83,17 +82,15 @@ class Authentification extends React.Component {
     const { doLogin: login } = this.props;
     if (signinEmail && signinPassword) {
       login({
-        username: signinEmail,
         password: signinPassword,
+        username: signinEmail,
       });
       if (this.mounted) setSubmitting(false);
     }
   };
 
   handleSignout = (props) => {
-    performLogout().then(() => {
-      props.reset();
-    });
+    props.doLogout();
   };
 
   getTitle = (role) => {
@@ -151,11 +148,11 @@ class Authentification extends React.Component {
                     autoComplete="username"
                     isInvalid={!!errors.signinEmail}
                     name="signinEmail"
+                    placeholder="Adresse mail"
                     type="email"
+                    value={values.signinEmail}
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Adresse mail"
-                    value={values.signinEmail}
                   />
                   {errors.signinEmail && touched.signinEmail ? (
                     <Form.Control.Feedback type="invalid">
@@ -168,22 +165,22 @@ class Authentification extends React.Component {
                   )}
                 </Form.Group>
                 <Form.Group controlId="signinPassword">
-                  <Form.Label>Adresse mail</Form.Label>
+                  <Form.Label>Mot de passe</Form.Label>
                   <Form.Control
                     autoComplete="current-password"
                     isInvalid={!!errors.signinPassword}
                     name="signinPassword"
+                    placeholder="Adresse mail"
                     type="password"
+                    value={values.signinPassword}
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Adresse mail"
-                    value={values.signinPassword}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errors.signinPassword}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <Button disabled={isLoading} type="submit">
+                <Button block disabled={isLoading} type="submit">
                   {isLoading && (
                     <Spinner
                       animation="border"
@@ -199,15 +196,15 @@ class Authentification extends React.Component {
         )}
         {to === 'register' && <p>À mettre en place... </p>}
         {to === 'signout' && (
-          <>
+          <React.Fragment>
             <Spinner
-              as="span"
               animation="border"
+              as="span"
               className="mr-2"
               size="sm"
             />
             Déconnexion en cours
-          </>
+          </React.Fragment>
         )}
       </Skeleton>
     );
@@ -215,25 +212,26 @@ class Authentification extends React.Component {
 }
 
 Authentification.propTypes = {
-  doLogin: PropTypes.func,
-  isLoading: PropTypes.bool,
-  to: PropTypes.string,
-  reset: PropTypes.func,
   auth: PropTypes.shape({
     isValid: PropTypes.bool,
   }),
+  doLogin: PropTypes.func,
+  isLoading: PropTypes.bool,
+  reset: PropTypes.func,
+  to: PropTypes.string,
 };
 
 const mapStateToProps = (state) => {
   return {
-    isLoading: state.authReducer.isLoading,
-    tokens: state.authReducer.tokens,
+    isLoading: state.auth.isLoading,
+    tokens: state.auth.tokens,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     doLogin: (values) => dispatch(doLogin(values)),
+    doLogout: () => dispatch(doLogout()),
     reset: () => dispatch(doReset()),
   };
 };

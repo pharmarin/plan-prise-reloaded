@@ -40,13 +40,13 @@ const PPSettings = (props) => {
                       controlId={key}
                     >
                       <Form.Check
-                        type="checkbox"
-                        label={input.label}
                         checked={get(
                           props,
                           `settings.inputs.${input.id}.checked`,
                           input.default || false,
                         )}
+                        label={input.label}
+                        type="checkbox"
                         onChange={(event) =>
                           updateSettings(
                             {
@@ -80,7 +80,7 @@ PPSettings.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    settings: state.planPriseReducer.settings,
+    settings: state.planPrise.settings,
   };
 };
 

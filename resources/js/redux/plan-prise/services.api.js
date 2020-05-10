@@ -4,7 +4,7 @@ import set from 'lodash/set';
 import toast from 'toasted-notes';
 import 'toasted-notes/src/styles.css';
 
-import axiosWithToken from '../../helpers/axios.helper';
+import axiosWithToken from '@helpers/axios-clients';
 
 export const performSaveModification = () => {
   debounce(async (ppId, action, modifications, callback) => {

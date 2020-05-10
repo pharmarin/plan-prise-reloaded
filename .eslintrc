@@ -15,13 +15,23 @@
       "no-console": "off",
       "react/forbid-prop-types": "warn",
       "react/jsx-curly-newline": "off",
+      "react/jsx-fragments": ["error", "element"],
       "react/no-unescaped-entities": "off",
       "react/require-default-props": "off",
+      "react/jsx-sort-props": ["error", {
+        "callbacksLast": true,
+        "reservedFirst": true
+      }],
       "prettier/prettier": "warn"
     },
     "env": {
       "browser": true,
       "node": true,
       "es6": true
+    },
+    "settings": {
+      "import/resolver": {
+        "babel-module": {}
+      }
     }
   }

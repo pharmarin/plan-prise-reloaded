@@ -13,14 +13,14 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware(['auth:api'])->group(function () {
-
-  // Authentication
-  Route::prefix('auth')->group(function () {
-    Route::post('logout', 'Api\UserApiController@logout')->name('api.auth.logout');
-    Route::post('refresh', 'Api\UserApiController@refresh')->name('api.auth.refresh');
-    Route::get('info', 'Api\UserApiController@info')->name('api.auth.info');
+Route::prefix('v1')->group(function () {
+  Route::group(['middleware' => ['auth:api']], function () {
+    Route::get('user', 'Api\v1\ApiUserController@info')->name('api.user.info');
+    Route::delete('oauth/token', 'Api\V1\ApiUserController@logout');
   });
+});
+
+Route::middleware(['auth:api'])->group(function () {
 
   // Plan de prise
   Route::get('all/search', 'Api\CommonApiController@search')->name('api.all.search');

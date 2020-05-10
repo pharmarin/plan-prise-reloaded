@@ -42,7 +42,7 @@ class Navigation extends React.Component {
       },
     } = this.props;
     return (
-      <Navbar bg="light" expand="lg" className="mb-1">
+      <Navbar bg="light" className="mb-1" expand="lg">
         <Navbar.Brand>
           <Link to="/">Plan de prise</Link>
         </Navbar.Brand>
@@ -93,7 +93,7 @@ Navigation.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    tokens: state.authReducer.tokens,
+    tokens: state.auth.tokens,
   };
 };
 

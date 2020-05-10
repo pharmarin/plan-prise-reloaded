@@ -85,23 +85,23 @@ class PPCard extends React.Component {
           <div className="d-flex flex-shrink-0 flex-column">
             {!isLoaded ? (
               <Button
-                variant="link"
-                size="sm"
-                disabled
                 className="ml-auto"
+                disabled
+                size="sm"
                 tabIndex="-1"
+                variant="link"
               >
                 <small className="mr-1">Chargement en cours</small>
                 <Spinner />
               </Button>
             ) : (
-              <>
+              <React.Fragment>
                 <Button
-                  variant="light"
-                  size="sm"
                   className="rounded-pill text-danger ml-auto py-0 prevent-toggle"
-                  onClick={() => removeLine(id)}
+                  size="sm"
                   tabIndex="-1"
+                  variant="light"
+                  onClick={() => removeLine(id)}
                 >
                   <small className="mr-1 prevent-toggle">
                     Supprimer la ligne
@@ -109,28 +109,28 @@ class PPCard extends React.Component {
                   <i className="fa fa-trash prevent-toggle" />
                 </Button>
                 <Button
-                  variant="light"
-                  size="sm"
                   className="rounded-pill text-muted ml-auto py-0 mt-1"
+                  size="sm"
                   tabIndex="-1"
+                  variant="light"
                 >
                   {isOpened ? (
-                    <>
+                    <React.Fragment>
                       <small className="mr-1">
                         Masquer les détails
                       </small>
                       <i className="far fa-caret-square-up" />
-                    </>
+                    </React.Fragment>
                   ) : (
-                    <>
+                    <React.Fragment>
                       <small className="mr-1">
                         Afficher les détails
                       </small>
                       <i className="far fa-caret-square-down" />
-                    </>
+                    </React.Fragment>
                   )}
                 </Button>
-              </>
+              </React.Fragment>
             )}
           </div>
         </Card.Header>

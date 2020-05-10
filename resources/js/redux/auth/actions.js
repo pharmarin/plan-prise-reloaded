@@ -1,38 +1,45 @@
-import { performLogin } from './services.api';
+import get from 'lodash/get';
 import {
   performClearStorage,
   performRestoreTokens,
   performStoreTokens,
-} from './services.local';
-
-const asyncTypes = (action) => ({
-  [`${action}_START`]: `${action}_START`,
-  [`${action}_SUCCESS`]: `${action}_SUCCESS`,
-  [`${action}_ERROR`]: `${action}_ERROR`,
-});
+} from '@redux/auth/services.local';
+import asyncTypes from '@helpers/async-types';
+import clientCredentials from '@root/oauth2-client.json';
 
 export const TYPES = {
+  ...asyncTypes('LOGIN'),
+  ...asyncTypes('LOGOUT'),
   RESET: 'RESET',
   LOGIN_RESTORE: 'LOGIN_RESTORE',
-  ...asyncTypes('LOGIN'),
 };
 
-export const doLogin = ({ username, password }) => async (
-  dispatch,
-) => {
-  dispatch({ type: TYPES.LOGIN_START });
-  try {
-    const tokens = await performLogin(username, password);
-    dispatch({ type: TYPES.LOGIN_SUCCESS, tokens });
+export const doLogin = ({ username, password }) => (dispatch) => {
+  dispatch({
+    auth: true,
+    type: 'LOGIN',
+    payload: {
+      request: {
+        method: 'post',
+        data: {
+          username,
+          password,
+          ...clientCredentials,
+        },
+        url: '/oauth/token',
+      },
+    },
+  }).then((response) => {
+    console.log('response', response);
     try {
-      if (tokens) performStoreTokens(tokens);
+      if (response.payload.status !== 200)
+        throw new Error('User could not be logged in. ');
+      const tokens = get(response, 'payload.data');
+      performStoreTokens(tokens);
     } catch (error) {
       console.log('Could not store tokens to localStorage', error);
     }
-  } catch (error) {
-    console.error('Could not perform login', error);
-    dispatch({ type: TYPES.LOGIN_ERROR });
-  }
+  });
 };
 
 export const doReset = () => {
@@ -40,6 +47,21 @@ export const doReset = () => {
   return {
     type: TYPES.RESET,
   };
+};
+
+export const doLogout = () => (dispatch) => {
+  dispatch({
+    type: 'LOGOUT',
+    auth: true,
+    payload: {
+      request: {
+        method: 'delete',
+        url: `/oauth/token`,
+      },
+    },
+  })
+    .then(() => dispatch(doReset()))
+    .catch(() => dispatch(doReset()));
 };
 
 export const doRestore = () => (dispatch) => {

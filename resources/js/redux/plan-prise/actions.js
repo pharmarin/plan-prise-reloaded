@@ -102,9 +102,9 @@ export const doUpdateLine = (lineId, action, input = {}) => (
     lineId,
   });
   performSaveModification(
-    getState().planPriseReducer.pp_id,
+    getState().planPrise.pp_id,
     'edit',
-    getState().planPriseReducer.customData,
+    getState().planPrise.customData,
   );
 };
 
@@ -133,11 +133,11 @@ export const doAddLine = (medicament, history) => async (
     }),
   );
   performSaveModification(
-    getState().planPriseReducer.pp_id,
+    getState().planPrise.pp_id,
     'add',
     medicament,
     (ppId) => {
-      if (getState().planPriseReducer.ppId === -1) {
+      if (getState().planPrise.ppId === -1) {
         dispatch(doInit(ppId));
         history.push(`/plan-prise/${ppId}`);
       }
@@ -161,11 +161,7 @@ export const doRemoveLine = (id) => async (dispatch, getState) => {
       value: id,
     }),
   );
-  performSaveModification(
-    getState().planPriseReducer.pp_id,
-    'remove',
-    id,
-  );
+  performSaveModification(getState().planPrise.pp_id, 'remove', id);
   performSaveModification.flush();
 };
 
@@ -179,9 +175,9 @@ export const doUpdateSettings = (input, value) => async (
     value,
   });
   performSaveModification(
-    getState().planPriseReducer.pp_id,
+    getState().planPrise.pp_id,
     'settings',
-    getState().planPriseReducer.settings,
+    getState().planPrise.settings,
   );
 };
 

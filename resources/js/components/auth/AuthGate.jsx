@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-
 import get from 'lodash/get';
+import store from '@redux/store';
 import {
   performValidation,
   getValue,
@@ -15,7 +15,7 @@ const authenticate = (WrappedComponent) => {
         'Authentication needs to have access to tokens',
       );
     const tokens = get(props, 'tokens');
-    if (!tokens) doRestore();
+    if (!tokens) store.dispatch(doRestore());
     const isValid = performValidation(tokens);
     const user = getValue(get(tokens, 'access_token'), 'usr') || {};
     return <WrappedComponent {...props} auth={{ isValid, user }} />;

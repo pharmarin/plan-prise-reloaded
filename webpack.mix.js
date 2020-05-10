@@ -2,6 +2,7 @@
 const mix = require('laravel-mix');
 require('laravel-mix-artisan-serve');
 require('laravel-mix-polyfill');
+const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
 
 mix.webpackConfig({
   module: {
@@ -13,6 +14,8 @@ mix.webpackConfig({
       },
     ],
   },
+  plugins: [new ErrorOverlayPlugin()],
+  devtool: 'cheap-module-source-map',
 });
 
 /*

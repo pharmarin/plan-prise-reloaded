@@ -18,7 +18,6 @@ export const getValue = (token, key) => {
 
 export const performClearStorage = () => {
   localStorage.removeItem(STORAGE_KEYS.tokens);
-  sessionStorage.removeItem(STORAGE_KEYS.user);
 };
 
 export const performStoreTokens = (tokens) => {

@@ -60,10 +60,10 @@ ProtectedRoute.propTypes = {
 const mapStateToProps = (state) => {
   return {
     user: {
-      ...state.authReducer.user,
-      isValid: performValidation(state.authReducer.tokens),
+      ...state.auth.user,
+      isValid: performValidation(state.auth.tokens),
     },
-    tokens: state.authReducer.tokens,
+    tokens: state.auth.tokens,
   };
 };
 

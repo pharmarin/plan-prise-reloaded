@@ -7,21 +7,21 @@ import {
   Switch,
 } from 'react-router-dom';
 
-import store from '../redux/store';
-import Accueil from './app/Accueil';
-import Navigation from './app/Navigation';
-import Authentification from './app/Authentification';
-import { Route as ProtectedRoute } from './app/Routes';
-import Profile from './app/Profile';
-import PlanPrise from './PlanPrise';
+import store from 'redux/store';
+import Accueil from 'components/app/Accueil';
+import Navigation from 'components/app/Navigation';
+import Authentification from 'components/app/Authentification';
+import { Route as ProtectedRoute } from 'components/app/Routes';
+import Profile from 'components/app/Profile';
+import PlanPrise from 'components/PlanPrise';
 
-import { doRestore } from '../redux/auth/actions';
+import { doRestore } from 'redux/auth/actions';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     const state = store.getState();
-    if (!state.authReducer.token) {
+    if (!state.auth.token) {
       store.dispatch(doRestore());
     }
   }
@@ -32,7 +32,7 @@ class App extends React.Component {
         <Router basename="/">
           <Navigation />
           <Switch>
-            <Route path="/" exact>
+            <Route exact path="/">
               <Accueil />
             </Route>
             <Route path="/inscription">

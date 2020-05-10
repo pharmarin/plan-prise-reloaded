@@ -18,9 +18,8 @@ class RenderController extends Controller
             ],
             'auth' => [
               'login' => route('passport.token'),
-              'logout' => route('api.auth.logout'),
-              'info' => route('api.auth.info'),
-              'refresh' => route('api.auth.refresh')
+              'logout' => route('passport.tokens.index'),
+              'info' => route('api.user.info'),
             ],
             'bdpm' => [
               'index' => route('api.bdpm.index'),

@@ -1,4 +1,4 @@
-import axiosWithToken from '../../helpers/axios.helper';
+import axiosWithToken from '@helpers/axios-clients';
 
 export const TYPES = {
   CACHE_DETAILS: 'CACHE_DETAILS',

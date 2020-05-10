@@ -112,7 +112,6 @@ export default class SearchMedicament extends React.Component {
         noOptionsMessage={constant(
           'Aucun médicament ne correspond à la recherche',
         )}
-        onChange={this.handleSelect}
         placeholder="Ajouter un médicament au plan de prise"
         theme={(theme) => ({
           ...theme,
@@ -122,6 +121,7 @@ export default class SearchMedicament extends React.Component {
           },
         })}
         value={select.value}
+        onChange={this.handleSelect}
       />
     );
   }

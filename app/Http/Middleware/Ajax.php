@@ -19,6 +19,6 @@ class Ajax
         return $next($request);
       }
 
-      abort(404);
+      abort(404, "This request has to be an AJAX call");
     }
 }

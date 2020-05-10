@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import TextareaAutosize from 'react-autosize-textarea';
+import keys from 'lodash/keys';
+import map from 'lodash/map';
 
 const GenericInput = (props) => {
   const defaultDivClassName = ' flex-fill px-0 pb-1';
@@ -13,7 +15,7 @@ const GenericInput = (props) => {
     return (
       <div className={[className + defaultDivClassName]}>
         <select {...props} className={defaultInputClassName}>
-          {Object.keys(options).map((value) => (
+          {map(keys(options), (value) => (
             <option key={value} value={value}>
               {options[value]}
             </option>
