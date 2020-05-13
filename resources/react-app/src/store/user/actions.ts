@@ -3,9 +3,5 @@ import axios from 'axios';
 
 export const doLoadUser = createAsyncThunk(
   'user/load',
-  async (arg, { dispatch }) => {
-    try {
-      await axios.post(`/api/v1/user`);
-    } catch (error) {}
-  }
+  async () => await axios.get(`/api/v1/user`)
 );
