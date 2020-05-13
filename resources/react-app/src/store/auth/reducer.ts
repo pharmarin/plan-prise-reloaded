@@ -1,14 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import startsWith from 'lodash/startsWith';
 
-import {
-  AuthState,
-  AuthActions,
-  LOGIN,
-  LOGIN_RESTORE,
-  RESET,
-  Tokens,
-} from './types';
+import { AuthState, AuthActions, LOGIN, LOGIN_RESTORE, RESET } from './types';
 import { AxiosResponse } from 'helpers/async-types';
 import get from 'lodash/get';
 

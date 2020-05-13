@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import get from 'lodash/get';
 import { Tokens } from 'store/auth/types';
-import { number } from 'yup';
 
 const STORAGE_KEYS = {
   tokens: 'state.auth.tokens',
