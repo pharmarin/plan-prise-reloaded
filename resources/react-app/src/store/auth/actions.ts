@@ -1,5 +1,5 @@
 import get from 'lodash/get';
-import axios from 'axios';
+import axios from 'helpers/axios-clients';
 import {
   performClearStorage,
   performRestoreTokens,
@@ -11,6 +11,7 @@ if (!process.env.REACT_APP_OAUTH_ID || !process.env.REACT_APP_OAUTH_SECRET)
   throw new Error(
     'Please add REACT_APP_OAUTH_ID and REACT_APP_OAUTH_SECRET to .env'
   );
+
 const clientCredentials = {
   client_id: process.env.REACT_APP_OAUTH_ID,
   client_secret: process.env.REACT_APP_OAUTH_SECRET,
@@ -24,18 +25,11 @@ export const doLogin = createAsyncThunk(
     loginForm: { username: string; password: string },
     { rejectWithValue, signal }
   ) => {
-    const source = axios.CancelToken.source();
-    signal.addEventListener('abort', () => {
-      source.cancel();
-    });
     try {
-      const response = await axios.post(
-        `/api/v1/oauth/token`,
-        { ...loginForm, ...clientCredentials },
-        {
-          cancelToken: source.token,
-        }
-      );
+      const response = await axios.post(`/oauth/token`, {
+        ...loginForm,
+        ...clientCredentials,
+      });
       try {
         if (response.status !== 200)
           throw new Error('User could not be logged in. ');
@@ -53,7 +47,7 @@ export const doLogin = createAsyncThunk(
 
 export const doLogout = createAsyncThunk('auth/logout', async () => {
   performClearStorage();
-  await axios.delete(`/api/v1/oauth/token`);
+  await axios.delete(`/oauth/token`, { withCredentials: true });
 });
 
 export const doRestore = createAction('auth/restore', () => {
