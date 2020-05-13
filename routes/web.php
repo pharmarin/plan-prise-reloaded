@@ -10,7 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/{any?}', 'RenderController@render');
+
+Route::get('/app{any?}', 'RenderController@render')->where('any', '.*')->name('app');
 
 /*Auth::routes();
 
