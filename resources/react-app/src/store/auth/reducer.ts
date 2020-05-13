@@ -1,9 +1,6 @@
-import cloneDeep from 'lodash/cloneDeep';
-import startsWith from 'lodash/startsWith';
-
-import { AuthState, AuthActions, LOGIN, LOGIN_RESTORE, RESET } from './types';
-import { AxiosResponse } from 'helpers/async-types';
-import get from 'lodash/get';
+import { AuthState, Tokens } from './types';
+import { createReducer, PayloadAction } from '@reduxjs/toolkit';
+import { doLogin, doRestore, doLogout } from './actions';
 
 const initialState: AuthState = {
   isError: false,
@@ -11,48 +8,25 @@ const initialState: AuthState = {
   tokens: null,
 };
 
-type MergedActions = AuthActions | AxiosResponse;
-
-const loginReducer = (
-  newState: AuthState,
-  action: MergedActions
-): AuthState => {
-  switch (action.type) {
-    case LOGIN.start:
-      return {
-        ...newState,
-        isLoading: true,
-        isError: false,
-      };
-    case LOGIN.success:
-      if (get(action, 'payload.status') !== 200) return initialState;
-      return {
-        ...newState,
-        tokens: get(action, 'payload.data'),
-        isLoading: false,
-      };
-    case LOGIN.error:
-      return { ...initialState, isError: get(action, 'error.data', true) };
-    case LOGIN_RESTORE:
-      return {
-        ...newState,
-        tokens: get(action, 'tokens'),
-      };
-    default:
-      return initialState;
-  }
-};
-
-const authReducer = (state = initialState, action: AuthActions): AuthState => {
-  const newState = cloneDeep(state);
-  if (startsWith(action.type, LOGIN.start))
-    return loginReducer(newState, action);
-  switch (action.type) {
-    case RESET:
-      return initialState;
-    default:
-      return newState;
-  }
-};
-
-export default authReducer;
+export default createReducer(initialState, {
+  [doLogin.pending.type]: (state) => {
+    state.isLoading = true;
+    state.isError = false;
+  },
+  [doLogin.fulfilled.type]: (state, action: PayloadAction<Tokens>) => {
+    state.isLoading = false;
+    state.tokens = action.payload;
+  },
+  [doLogin.rejected.type]: (state, action: PayloadAction<string | false>) => {
+    state = {
+      ...initialState,
+      isError: action.payload,
+    };
+  },
+  [doRestore.type]: (state, action: PayloadAction<Tokens | null>) => {
+    if (action.payload) state.tokens = action.payload;
+  },
+  [doLogout.pending.type]: () => initialState,
+  [doLogout.fulfilled.type]: () => initialState,
+  [doLogout.rejected.type]: () => initialState,
+});

@@ -1,7 +1,6 @@
-import cloneDeep from 'lodash/cloneDeep';
-import { UserState, UserActions, LOAD_USER } from './types';
-import { AxiosResponse } from 'helpers/async-types';
-import get from 'lodash/get';
+import { UserState, User } from './types';
+import { createReducer, PayloadAction } from '@reduxjs/toolkit';
+import { doLoadUser } from './actions';
 
 const initialState: UserState = {
   isError: false,
@@ -9,37 +8,17 @@ const initialState: UserState = {
   details: {},
 };
 
-type MergedActions = UserActions | AxiosResponse;
-
-const userReducer = (
-  state: UserState = initialState,
-  action: MergedActions
-): UserState => {
-  const newState = cloneDeep(state);
-  console.log(action);
-  switch (action.type) {
-    case LOAD_USER.start:
-      return {
-        ...state,
-        isLoading: true,
-        isError: false,
-      };
-    case LOAD_USER.success:
-      if (get(action, 'payload.status') !== 200) return initialState;
-      return {
-        ...state,
-        details: get(action, 'payload.data'),
-        isLoading: false,
-      };
-    case LOAD_USER.error:
-      return {
-        ...state,
-        isLoading: false,
-        isError: true,
-      };
-    default:
-      return newState;
-  }
-};
-
-export default userReducer;
+export default createReducer(initialState, {
+  [doLoadUser.pending.type]: (state) => {
+    state.isLoading = true;
+    state.isError = false;
+  },
+  [doLoadUser.fulfilled.type]: (state, action: PayloadAction<User>) => {
+    state.isLoading = false;
+    state.details = action.payload;
+  },
+  [doLoadUser.rejected.type]: (state) => {
+    state.isLoading = false;
+    state.isError = true;
+  },
+});

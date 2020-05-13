@@ -17,7 +17,7 @@ export interface Tokens {
 }
 
 export interface AuthState {
-  isError: boolean;
+  isError: boolean | string;
   isLoading: boolean;
   tokens: Tokens | null;
 }

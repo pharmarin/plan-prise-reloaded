@@ -1,23 +1,23 @@
-import React from "react";
-import { connect, ConnectedProps } from "react-redux";
-import { Redirect, withRouter, RouteComponentProps } from "react-router-dom";
-import { Alert, Form, Button, Spinner } from "react-bootstrap";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import get from "lodash/get";
-import includes from "lodash/includes";
+import React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { Redirect, withRouter, RouteComponentProps } from 'react-router-dom';
+import { Alert, Form, Button, Spinner } from 'react-bootstrap';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import get from 'lodash/get';
+import includes from 'lodash/includes';
 
-import Skeleton from "components/generic/Skeleton";
-import { doLogin, doLogout, doReset } from "store/auth/actions";
-import authenticator, { AuthProps } from "components/auth/AuthGate";
+import Skeleton from 'components/generic/Skeleton';
+import { doLogin, doLogout } from 'store/auth/actions';
+import authenticator, { AuthProps } from 'components/auth/AuthGate';
 
-const cancelRedirect = ["/deconnexion"];
+const cancelRedirect = ['/deconnexion'];
 
 const SigninSchema = Yup.object().shape({
   signinEmail: Yup.string()
     .email("L'adresse mail entrée ne semble pas valide")
     .required("L'adresse mail est requise"),
-  signinPassword: Yup.string().required("Le mot de passe est requis"),
+  signinPassword: Yup.string().required('Le mot de passe est requis'),
 });
 
 export enum Role {
@@ -48,7 +48,6 @@ const mapState = (state: RootState) => ({
 const mapDispatch = {
   doLogin: (values: { username: string; password: string }) => doLogin(values),
   doLogout: () => doLogout(),
-  reset: () => doReset(),
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -80,11 +79,11 @@ class Authentification extends React.Component<
       this.handleSignout();
     }
 
-    if (props.role === Role.signin && get(props, "location.state.message")) {
+    if (props.role === Role.signin && get(props, 'location.state.message')) {
       // Si problème de connexion (expiré ou pas connecté),
       // on deconnecte d'abord pour être sûr de ne pas avoir
       // de doublons / mauvais token pas supprimé
-      props.reset();
+      props.doLogout();
     }
   }
 
@@ -102,8 +101,8 @@ class Authentification extends React.Component<
     if (auth.isValid) redirect = true;
 
     if (redirect) {
-      let redirectTo = get(this.props, "location.state.redirectTo", "/");
-      if (includes(cancelRedirect, redirectTo)) redirectTo = "/";
+      let redirectTo = get(this.props, 'location.state.redirectTo', '/');
+      if (includes(cancelRedirect, redirectTo)) redirectTo = '/';
       return <Redirect to={redirectTo} />;
     }
 
@@ -117,22 +116,22 @@ class Authentification extends React.Component<
   getTitle = (role: Role) => {
     switch (role) {
       case Role.signin:
-        return "Connexion";
+        return 'Connexion';
       case Role.register:
-        return "Inscription";
+        return 'Inscription';
       case Role.signout:
-        return "Déconnexion";
+        return 'Déconnexion';
       default:
-        return "";
+        return '';
     }
   };
 
   getMessage = (status: string | null) => {
     switch (status) {
-      case "unauthorized":
+      case 'unauthorized':
         return "Vous devez vous connecter avant d'accéder à cette page. ";
-      case "expired":
-        return "Vous avez été deconnecté. ";
+      case 'expired':
+        return 'Vous avez été deconnecté. ';
       default:
         return null;
     }
@@ -140,7 +139,7 @@ class Authentification extends React.Component<
 
   render() {
     const { isLoading, role } = this.props;
-    const message = get(this.props, "location.state.message", null);
+    const message = get(this.props, 'location.state.message', null);
     if (this.redirect()) return this.redirect();
     return (
       <Skeleton header={this.getTitle(role)} size={{ md: 6 }}>
@@ -150,7 +149,7 @@ class Authentification extends React.Component<
           ) : null)()}
         {role === Role.signin && (
           <Formik
-            initialValues={{ signinEmail: "", signinPassword: "" }}
+            initialValues={{ signinEmail: '', signinPassword: '' }}
             validationSchema={SigninSchema}
             onSubmit={(
               values: { signinEmail: string; signinPassword: string },
@@ -223,7 +222,7 @@ class Authentification extends React.Component<
                       style={{ marginRight: 10 }}
                     />
                   )}
-                  {isLoading ? "Connexion en cours" : "Se connecter"}
+                  {isLoading ? 'Connexion en cours' : 'Se connecter'}
                 </Button>
               </Form>
             )}

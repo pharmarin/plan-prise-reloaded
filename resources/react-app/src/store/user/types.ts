@@ -4,14 +4,16 @@ import asyncTypes, {
   ValueOf,
 } from 'helpers/async-types';
 
+export type User = {
+  name?: string;
+  display_name?: string;
+  email?: string;
+};
+
 export type UserState = {
   isError: boolean;
   isLoading: boolean;
-  details: {
-    name?: string;
-    display_name?: string;
-    email?: string;
-  };
+  details: User | {};
 };
 
 export const LOAD_USER: AsyncObjectType = asyncTypes('LOAD_USER');

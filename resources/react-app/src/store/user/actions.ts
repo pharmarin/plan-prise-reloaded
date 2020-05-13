@@ -1,13 +1,11 @@
-import { LOAD_USER, UserActions } from './types';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
-export const doLoadUser = (): UserActions => {
-  return {
-    type: LOAD_USER.start,
-    payload: {
-      request: {
-        url: '/user',
-      },
-    },
-    auth: true,
-  };
-};
+export const doLoadUser = createAsyncThunk(
+  'user/load',
+  async (arg, { dispatch }) => {
+    try {
+      await axios.post(`/api/v1/user`);
+    } catch (error) {}
+  }
+);
