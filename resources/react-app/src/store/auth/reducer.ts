@@ -1,6 +1,6 @@
 import { AuthState, Tokens } from './types';
 import { createReducer, PayloadAction } from '@reduxjs/toolkit';
-import { doLogin, doRestore, doLogout } from './actions';
+import { doLogin, doLogout } from './actions';
 
 const initialState: AuthState = {
   isError: false,
@@ -22,9 +22,6 @@ export default createReducer(initialState, {
       ...initialState,
       isError: action.payload,
     };
-  },
-  [doRestore.type]: (state, action: PayloadAction<Tokens | null>) => {
-    if (action.payload) state.tokens = action.payload;
   },
   [doLogout.pending.type]: () => initialState,
   [doLogout.fulfilled.type]: () => initialState,

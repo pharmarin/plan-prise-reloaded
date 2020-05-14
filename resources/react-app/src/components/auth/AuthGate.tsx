@@ -1,9 +1,7 @@
 import React from 'react';
 import { Subtract } from 'utility-types';
 import get from 'lodash/get';
-import store from 'store/store';
 import { performValidation, getValue } from 'store/auth/services.local';
-import { doRestore } from 'store/auth/actions';
 import keys from 'lodash/keys';
 
 /**
@@ -28,7 +26,6 @@ const authenticate = <P extends AuthProps>(Component: React.ComponentType<P>) =>
       if (!('tokens' in this.props) && !('doRestore' in this.props))
         throw new Error('Authentication needs direct access to tokens');
       const tokens = get(this.props, 'tokens');
-      if (!tokens) store.dispatch(doRestore());
       const isValid = performValidation(tokens);
       const hasToken = keys(tokens).includes('access_token');
       const user = getValue(get(tokens, 'access_token'), 'usr') || {};

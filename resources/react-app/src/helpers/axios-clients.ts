@@ -1,6 +1,6 @@
 import axios from 'axios';
 import get from 'lodash/get';
-import store from 'store/store';
+import { store } from 'store/store';
 
 const BASE_URL = `${process.env.REACT_APP_API_PATH}`;
 

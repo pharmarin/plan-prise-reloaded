@@ -1,11 +1,6 @@
-import get from 'lodash/get';
 import axios from 'helpers/axios-clients';
-import {
-  performClearStorage,
-  performRestoreTokens,
-  performStoreTokens,
-} from 'store/auth/services.local';
-import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { persistor } from 'store/store';
 
 if (!process.env.REACT_APP_OAUTH_ID || !process.env.REACT_APP_OAUTH_SECRET)
   throw new Error(
@@ -30,14 +25,6 @@ export const doLogin = createAsyncThunk(
         ...loginForm,
         ...clientCredentials,
       });
-      try {
-        if (response.status !== 200)
-          throw new Error('User could not be logged in. ');
-        const tokens = get(response, 'data');
-        performStoreTokens(tokens);
-      } catch (error) {
-        console.log('Could not store tokens to localStorage', error);
-      }
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -46,13 +33,6 @@ export const doLogin = createAsyncThunk(
 );
 
 export const doLogout = createAsyncThunk('auth/logout', async () => {
-  performClearStorage();
   await axios.delete(`/oauth/token`, { withCredentials: true });
-});
-
-export const doRestore = createAction('auth/restore', () => {
-  const tokens = performRestoreTokens();
-  return {
-    payload: tokens || null,
-  };
+  await persistor.purge();
 });
