@@ -36,3 +36,4 @@ yarn-error.log*
 public/static/*
 public/*manifest*
 public/service-worker.js
+resources/views/app.blade.php
