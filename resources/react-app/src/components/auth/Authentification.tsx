@@ -10,6 +10,7 @@ import includes from 'lodash/includes';
 import Skeleton from 'components/generic/Skeleton';
 import { doLogin, doLogout } from 'store/auth/actions';
 import authenticator, { AuthProps } from 'components/auth/AuthGate';
+import { RootState } from 'store/store';
 
 const cancelRedirect = ['/deconnexion'];
 
@@ -26,23 +27,9 @@ export enum Role {
   signout,
 }
 
-interface RootState {
-  auth: {
-    isError: boolean;
-    isLoading: boolean;
-    tokens: {
-      token_type: string;
-      access_token: string;
-      refresh_token: string;
-      expires_in: number;
-    };
-  };
-}
-
 const mapState = (state: RootState) => ({
   isError: state.auth.isError,
   isLoading: state.auth.isLoading,
-  tokens: state.auth.tokens,
 });
 
 const mapDispatch = {
@@ -55,8 +42,8 @@ const connector = connect(mapState, mapDispatch);
 type ReduxProps = ConnectedProps<typeof connector>;
 
 type AuthentificationProps = ReduxProps &
-  RouteComponentProps &
-  AuthProps & {
+  AuthProps &
+  RouteComponentProps & {
     role: Role;
   };
 

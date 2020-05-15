@@ -17,7 +17,7 @@ export const getValue = (
   return null;
 };
 
-export const performValidation = (tokens: Tokens) => {
+export const performValidation = (tokens: Tokens | null) => {
   if (!tokens) return false;
 
   const accessToken = tokens.access_token;

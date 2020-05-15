@@ -1,13 +1,11 @@
 import React from 'react';
-import { Subtract } from 'utility-types';
+import { connect } from 'react-redux';
+import { Diff } from 'utility-types';
 import get from 'lodash/get';
-import { performValidation, getValue } from 'store/auth/services.local';
 import keys from 'lodash/keys';
 
-/**
- * TODO: Ne pas devoir appeler connect dans le composant parent
- * -> Accéder au store directement depuis AuthGate
- */
+import { RootState } from 'store/store';
+import { performValidation, getValue } from 'store/auth/services.local';
 
 export type AuthProps = {
   auth: {
@@ -20,19 +18,36 @@ export type AuthProps = {
   };
 };
 
-const authenticate = <P extends AuthProps>(Component: React.ComponentType<P>) =>
-  class Authenticator extends React.Component<Subtract<P, AuthProps>> {
-    render() {
-      if (!('tokens' in this.props) && !('doRestore' in this.props))
-        throw new Error('Authentication needs direct access to tokens');
-      const tokens = get(this.props, 'tokens');
-      const isValid = performValidation(tokens);
-      const hasToken = keys(tokens).includes('access_token');
-      const user = getValue(get(tokens, 'access_token'), 'usr') || {};
-      return (
-        <Component {...(this.props as P)} auth={{ hasToken, isValid, user }} />
-      );
-    }
+export default <BaseProps extends AuthProps>(
+  Component: React.ComponentType<BaseProps>
+) => {
+  const mapStateToProps = (state: RootState) => {
+    const tokens = get(state, 'auth.tokens');
+    const isValid = performValidation(tokens);
+    const hasToken = keys(tokens).includes('access_token');
+    const user = tokens ? getValue(get(tokens, 'access_token'), 'usr') : {};
+    return {
+      auth: {
+        hasToken,
+        isValid,
+        user,
+      },
+    };
   };
 
-export default authenticate;
+  type HocProps = ReturnType<typeof mapStateToProps>;
+
+  class Authenticator extends React.Component<HocProps> {
+    render() {
+      const { auth, ...restProps } = this.props;
+      return <Component {...(restProps as BaseProps)} auth={auth} />;
+    }
+  }
+
+  return connect<
+    ReturnType<typeof mapStateToProps>,
+    undefined,
+    Diff<BaseProps, AuthProps>,
+    RootState
+  >(mapStateToProps)(Authenticator);
+};

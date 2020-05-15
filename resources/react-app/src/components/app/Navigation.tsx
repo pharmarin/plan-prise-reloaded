@@ -1,30 +1,10 @@
-import React from "react";
-import { connect, ConnectedProps } from "react-redux";
-import { Link } from "react-router-dom";
-import { LinkContainer } from "react-router-bootstrap";
-import { Nav, Navbar } from "react-bootstrap";
-import authenticate, { AuthProps } from "components/auth/AuthGate";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
+import { Nav, Navbar } from 'react-bootstrap';
+import authenticate, { AuthProps } from 'components/auth/AuthGate';
 
-interface RootState {
-  auth: {
-    tokens: {
-      token_type: string;
-      access_token: string;
-      refresh_token: string;
-      expires_in: number;
-    };
-  };
-}
-
-const mapState = (state: RootState) => ({
-  tokens: state.auth.tokens,
-});
-
-const connector = connect(mapState);
-
-type StoreProps = ConnectedProps<typeof connector>;
-
-type NavigationProps = StoreProps & AuthProps;
+type NavigationProps = AuthProps;
 
 class Navigation extends React.Component<NavigationProps> {
   auth = (component: React.ReactElement) => {
@@ -58,7 +38,7 @@ class Navigation extends React.Component<NavigationProps> {
   render() {
     const {
       auth: {
-        user: { name = "" },
+        user: { name = '' },
       },
     } = this.props;
     return (
@@ -101,4 +81,4 @@ class Navigation extends React.Component<NavigationProps> {
   }
 }
 
-export default connector(authenticate(Navigation));
+export default authenticate(Navigation);
