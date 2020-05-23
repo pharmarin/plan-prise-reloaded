@@ -1,40 +1,6 @@
-
-
-// Fonts
-
-@import url('https://fonts.googleapis.com/css?family=Nunito');
-
-
-// Variables
-
 @import 'variables';
-
-
-// Bootstrap
-
-@import '~bootstrap/scss/bootstrap';
-
-@import 'print';
-
-
-.navbar-laravel {
-
-  background-color: #fff;
-
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-
-}
-
-
-.list-group-item-action {
-
-  &.hover, &.focus {
-
-    @extend .list-group-item-action, :focus;
-
-  }
-
-}
+@import '~argon-design-system-react/src/assets/vendor/nucleo/css/nucleo.css';
+@import '~argon-design-system-react/src/assets/scss/argon-design-system-react';
 
 // Animations
 

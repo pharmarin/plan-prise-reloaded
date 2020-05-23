@@ -1,6 +1,8 @@
 import React from 'react';
 import { Redirect, Route as RouterRoute } from 'react-router-dom';
-import authenticator, { AuthProps } from 'components/auth/AuthGate';
+import authenticator, {
+  AuthProps,
+} from 'components/Authentification/Authenticator';
 
 type ProtectedRouteProps = AuthProps & {
   children: React.ReactNode;

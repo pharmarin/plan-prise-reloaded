@@ -14,27 +14,26 @@ import storage from 'redux-persist/lib/storage';
 import logger from 'redux-logger';
 import concat from 'lodash/concat';
 
-import authReducer from './auth/reducer';
+import appReducer, { AppState } from './app';
 import dataReducer from './data/reducer';
 import planPriseReducer from './plan-prise/reducer';
-import userReducer from './user/reducer';
-import { AuthState } from './auth/types';
-import { UserState } from './user/types';
+import userReducer, { UserState } from './user';
 
 export interface RootState {
-  auth: AuthState;
+  app: AppState;
   data: any;
   planPrise: any;
   user: UserState;
 }
 
 const rootReducer = combineReducers({
-  auth: persistReducer(
+  app: persistReducer(
     {
       key: 'auth',
       storage,
+      whitelist: ['auth'],
     },
-    authReducer
+    appReducer
   ),
   data: dataReducer,
   planPrise: planPriseReducer,
