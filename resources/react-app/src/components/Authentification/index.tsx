@@ -14,7 +14,7 @@ import {
   Col,
 } from 'reactstrap';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
+import Validator from 'validatorjs';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
 
@@ -24,14 +24,8 @@ import authenticator, {
 } from 'components/Authentification/Authenticator';
 import { RootState } from 'store/store';
 
+Validator.useLang('fr');
 const cancelRedirect = ['/deconnexion'];
-
-const SigninSchema = Yup.object().shape({
-  signinEmail: Yup.string()
-    .email("L'adresse mail entrée ne semble pas valide")
-    .required("L'adresse mail est requise"),
-  signinPassword: Yup.string().required('Le mot de passe est requis'),
-});
 
 export enum Role {
   signin,
@@ -119,19 +113,31 @@ const Authentification = (props: AuthentificationProps) => {
       {message && <Alert variant="danger">{getMessage(message)}</Alert>}
       {role === Role.signin && (
         <Formik
-          initialValues={{ signinEmail: '', signinPassword: '' }}
-          validationSchema={SigninSchema}
-          onSubmit={(
-            values: { signinEmail: string; signinPassword: string },
-            { setSubmitting }
-          ) => {
+          initialValues={{ email: '', password: '' }}
+          validate={(values) => {
+            const validationConfig = get(
+              JSON.parse(localStorage.getItem('pharmarin.config') || ''),
+              'validation',
+              {}
+            );
+            if (validationConfig.email && validationConfig.password) {
+              const rules = {
+                email: validationConfig.email,
+                password: validationConfig.password,
+              };
+              const validator = new Validator(values, rules);
+              if (validator.fails()) return validator.errors.all();
+              return;
+            }
+            throw new Error('Could not get validation rules. ');
+          }}
+          onSubmit={({ email, password }, { setSubmitting }) => {
             setSubmitting(true);
-            const { signinEmail, signinPassword } = values;
             const { login } = props;
-            if (signinEmail && signinPassword) {
+            if (email && password) {
               login({
-                password: signinPassword,
-                username: signinEmail,
+                password,
+                username: email,
               });
               if (isMounted) setSubmitting(false);
             }
@@ -147,22 +153,20 @@ const Authentification = (props: AuthentificationProps) => {
           }) => (
             <Form noValidate onSubmit={handleSubmit}>
               <FormGroup>
-                <Label for="signinEmail">Adresse mail</Label>
+                <Label for="email">Adresse mail</Label>
                 <Input
                   autoComplete="username"
-                  id="signinEmail"
-                  invalid={!!errors.signinEmail}
-                  name="signinEmail"
+                  id="email"
+                  invalid={!!errors.email}
+                  name="email"
                   placeholder="Adresse mail"
                   type="email"
-                  value={values.signinEmail}
+                  value={values.email}
                   onBlur={handleBlur}
                   onChange={handleChange}
                 />
-                {errors.signinEmail && touched.signinEmail ? (
-                  <FormFeedback valid={false}>
-                    {errors.signinEmail}
-                  </FormFeedback>
+                {errors.email && touched.email ? (
+                  <FormFeedback valid={false}>{errors.email}</FormFeedback>
                 ) : (
                   <FormText color="muted">
                     Ne sera jamais utilisée ou diffusée.
@@ -170,21 +174,19 @@ const Authentification = (props: AuthentificationProps) => {
                 )}
               </FormGroup>
               <FormGroup>
-                <Label for="signinPassword">Mot de passe</Label>
+                <Label for="password">Mot de passe</Label>
                 <Input
                   autoComplete="current-password"
-                  id="signinPassword"
-                  invalid={!!errors.signinPassword}
-                  name="signinPassword"
+                  id="password"
+                  invalid={!!errors.password}
+                  name="password"
                   placeholder="Adresse mail"
                   type="password"
-                  value={values.signinPassword}
+                  value={values.password}
                   onBlur={handleBlur}
                   onChange={handleChange}
                 />
-                <FormFeedback type="invalid">
-                  {errors.signinPassword}
-                </FormFeedback>
+                <FormFeedback type="invalid">{errors.password}</FormFeedback>
               </FormGroup>
               <Button block disabled={isLoading} type="submit">
                 {isLoading && <Spinner size="sm" style={{ marginRight: 10 }} />}
