@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios from 'helpers/axios-clients';
 import { persistor } from 'store/store';
 
 type Tokens = {

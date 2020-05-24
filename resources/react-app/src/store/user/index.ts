@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios from 'helpers/axios-clients';
 
 type User = {
   name?: string;
@@ -29,26 +29,20 @@ const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [loadUser.pending.type]: (state) => {
-      state = {
-        ...initialState,
-        isLoading: true,
-      };
-    },
-    [loadUser.fulfilled.type]: (state, action: PayloadAction<User>) => {
-      state = {
-        ...state,
-        isLoading: false,
-        details: action.payload,
-      };
-    },
-    [loadUser.rejected.type]: (state) => {
-      state = {
-        ...state,
-        isLoading: false,
-        isError: true,
-      };
-    },
+    [loadUser.pending.type]: (state) => ({
+      ...initialState,
+      isLoading: true,
+    }),
+    [loadUser.fulfilled.type]: (state, action: PayloadAction<User>) => ({
+      ...state,
+      isLoading: false,
+      details: action.payload,
+    }),
+    [loadUser.rejected.type]: (state) => ({
+      ...state,
+      isLoading: false,
+      isError: true,
+    }),
   },
 });
 

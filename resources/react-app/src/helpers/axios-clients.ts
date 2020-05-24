@@ -22,7 +22,7 @@ const client = axios.create({
 
 client.interceptors.request.use((config) => {
   if (config.withCredentials === true) {
-    const token = get(store.getState(), 'auth.tokens.access_token');
+    const token = get(store.getState(), 'app.auth.tokens.access_token');
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;

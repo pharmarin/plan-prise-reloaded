@@ -52,7 +52,7 @@ export default <BaseProps extends AuthProps>(
   Component: React.ComponentType<BaseProps>
 ) => {
   const mapStateToProps = (state: RootState) => {
-    const tokens = get(state, 'auth.tokens');
+    const tokens = get(state, 'app.auth.tokens');
     const isValid = performValidation(tokens);
     const hasToken = keys(tokens).includes('access_token');
     const user = tokens ? getValue(get(tokens, 'access_token'), 'usr') : {};
