@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import {
-  Button,
-  Col,
-  Row,
-  FormGroup,
-  Label,
-  Input,
-  FormText,
-} from 'reactstrap';
+import { Button, Col, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { BsCheck, BsX } from 'react-icons/bs';
 import keys from 'lodash/keys';
 import { loadUser } from 'store/user';
 import { update } from 'store/app';
@@ -46,22 +39,26 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
 
   const getButtons = (property: string) =>
     isEditing !== property ? (
-      <Button block variant="link" onClick={() => setIsEditing(property)}>
-        <span className="fa fa-edit" />
+      <Button block color="link" onClick={() => setIsEditing(property)}>
+        Modifier
       </Button>
     ) : (
-      <Row>
-        <Col className="p-0" sm={6}>
-          <Button variant="success" onClick={() => setIsEditing(false)}>
-            <span className="fa fa-check" />
-          </Button>
-        </Col>
-        <Col className="p-0" sm={6}>
-          <Button variant="danger" onClick={() => setIsEditing(false)}>
-            <span className="fa fa-times" />
-          </Button>
-        </Col>
-      </Row>
+      <React.Fragment>
+        <Button
+          className="ml-auto"
+          color="success"
+          onClick={() => setIsEditing(false)}
+        >
+          <BsCheck />
+        </Button>
+        <Button
+          className="mr-auto"
+          color="danger"
+          onClick={() => setIsEditing(false)}
+        >
+          <BsX />
+        </Button>
+      </React.Fragment>
     );
 
   if (isLoading) return <span>Chargement en cours</span>;
@@ -99,7 +96,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
         <Col sm="2">{getButtons('rpps')}</Col>
       </FormGroup>
       <FormGroup row>
-        <Label for="display-name" column sm="3">
+        <Label for="display-name" sm="3">
           Nom affiché
           <FormText className="text-muted">
             Sera imprimé sur les documents
@@ -116,7 +113,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
         <Col sm="2">{getButtons('display-name')}</Col>
       </FormGroup>
       <FormGroup row>
-        <Label for="email" column sm="3">
+        <Label for="email" sm="3">
           Email
         </Label>
         <Col sm="7">
@@ -130,7 +127,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
         <Col sm="2">{getButtons('email')}</Col>
       </FormGroup>
       <FormGroup row>
-        <Label for="old-password" column sm="3">
+        <Label for="old-password" sm="3">
           {isEditing === 'password' ? 'Ancien mot de passe' : 'Mot de passe'}
         </Label>
         <Col sm="7">
@@ -148,7 +145,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
       {isEditing === 'password' && (
         <React.Fragment>
           <FormGroup row>
-            <Label for="new-password-1" column sm="3">
+            <Label for="new-password-1" sm="3">
               Nouveau mot de passe
             </Label>
             <Col sm="7">
@@ -161,7 +158,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
             <Col sm="2" />
           </FormGroup>
           <FormGroup row>
-            <Label for="new-password-2" column sm="3">
+            <Label for="new-password-2" sm="3">
               Confirmation
             </Label>
             <Col sm="7">
