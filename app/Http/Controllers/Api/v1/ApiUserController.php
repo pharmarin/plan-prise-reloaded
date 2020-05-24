@@ -10,8 +10,8 @@ use App\Http\Controllers\Controller;
 
 class ApiUserController extends Controller
 {
-/**
-     * Create a new AuthController instance.
+    /**
+     * Create a new ApiUserController instance.
      *
      * @return void
      */
