@@ -9,11 +9,12 @@ const connector = connect(null, mapDispatch);
 type AccueilProps = ConnectedProps<typeof connector>;
 
 const Accueil = (props: AccueilProps) => {
+  const { update } = props;
   useEffect(() => {
-    props.update({
+    update({
       title: 'Bienvenue',
     });
-  });
+  }, [update]);
   return <span>Welcome !!</span>;
 };
 

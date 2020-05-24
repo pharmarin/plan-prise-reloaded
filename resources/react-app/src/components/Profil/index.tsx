@@ -32,18 +32,17 @@ const connector = connect(mapState, mapDispatch);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
-  const { details, isError, isLoading } = props;
+  const { details, isError, isLoading, loadUser, update } = props;
   const [isEditing, setIsEditing] = useState<string | false>(false);
 
   useEffect(() => {
-    const { loadUser, update } = props;
     update({
       title: 'Profil',
     });
     if (keys(details).length === 0 && !isLoading && !isError) {
       loadUser();
     }
-  });
+  }, [details, isError, isLoading, loadUser, update]);
 
   const getButtons = (property: string) =>
     isEditing !== property ? (
