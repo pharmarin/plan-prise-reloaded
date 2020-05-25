@@ -20,6 +20,7 @@ class ApiFrontendController extends Controller
   public function config()
   {
     $config = [
+      "version" => "0.2",
       "validation" => Config::get('validation')
     ];
     return response()->json($config);
