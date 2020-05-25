@@ -20,9 +20,9 @@ class ApiFrontendController extends Controller
   public function config()
   {
     $config = [
-      "version" => "0.2",
       "validation" => Config::get('validation')
     ];
+    $config['version'] = md5(serialize($config));
     return response()->json($config);
   }
 }
