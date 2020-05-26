@@ -18,7 +18,7 @@ import Validator from 'validatorjs';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
 
-import { login, logout, update } from 'store/app';
+import { login, logout, updateAppNav } from 'store/app';
 import authenticator, {
   AuthProps,
 } from 'components/Authentification/Authenticator';
@@ -41,7 +41,7 @@ const mapState = (state: RootState) => ({
 const mapDispatch = {
   login: (values: { username: string; password: string }) => login(values),
   logout,
-  update,
+  updateAppNav,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -52,7 +52,7 @@ type AuthentificationProps = ConnectedProps<typeof connector> &
   };
 
 const Authentification = (props: AuthentificationProps) => {
-  const { auth, isLoading, logout, update, role } = props;
+  const { auth, isLoading, logout, updateAppNav, role } = props;
   const [isMounted, setIsMounted] = useState(false);
   const location = useLocation();
   const message = get(location, 'state.message', null);
@@ -63,10 +63,10 @@ const Authentification = (props: AuthentificationProps) => {
   }, []);
 
   useEffect(() => {
-    update({
+    updateAppNav({
       title: getTitle(role),
     });
-  }, [role, update]);
+  }, [role, updateAppNav]);
 
   useEffect(() => {
     if (role === Role.signout) logout();

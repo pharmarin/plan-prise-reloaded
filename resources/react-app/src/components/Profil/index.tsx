@@ -4,7 +4,7 @@ import { Button, Col, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { BsCheck, BsX } from 'react-icons/bs';
 import keys from 'lodash/keys';
 import { loadUser } from 'store/user';
-import { update } from 'store/app';
+import { updateAppNav } from 'store/app';
 import { RootState } from 'store/store';
 import compact from 'lodash/compact';
 import values from 'lodash/values';
@@ -17,7 +17,7 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = {
   loadUser,
-  update,
+  updateAppNav,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -25,17 +25,17 @@ const connector = connect(mapState, mapDispatch);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
-  const { details, isError, isLoading, loadUser, update } = props;
+  const { details, isError, isLoading, loadUser, updateAppNav } = props;
   const [isEditing, setIsEditing] = useState<string | false>(false);
 
   useEffect(() => {
-    update({
+    updateAppNav({
       title: 'Profil',
     });
     if (keys(details).length === 0 && !isLoading && !isError) {
       loadUser();
     }
-  }, [details, isError, isLoading, loadUser, update]);
+  }, [details, isError, isLoading, loadUser, updateAppNav]);
 
   const getButtons = (property: string) =>
     isEditing !== property ? (

@@ -20,7 +20,11 @@ class ApiFrontendController extends Controller
   public function config()
   {
     $config = [
-      "validation" => Config::get('validation')
+      "validation" => Config::get('validation'),
+      "default" => [
+        "pp_inputs" => Config::get('inputs.plan_prise'),
+        "voies_administration" => Config::get('inputs.voies_administration')
+      ]
     ];
     $config['version'] = md5(serialize($config));
     return response()->json($config);

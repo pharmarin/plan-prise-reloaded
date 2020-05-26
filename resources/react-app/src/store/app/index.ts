@@ -67,7 +67,7 @@ const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    update(state, action) {
+    updateAppNav(state, action) {
       const {
         payload: { title, return: returnObject },
       } = action;
@@ -100,7 +100,7 @@ const appSlice = createSlice({
   },
 });
 
-export const { update } = appSlice.actions;
+export const { updateAppNav } = appSlice.actions;
 export { login, logout };
 export type { AppState, Tokens };
 export default appSlice.reducer;

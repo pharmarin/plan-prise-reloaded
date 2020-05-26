@@ -1,21 +1,21 @@
 import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { update } from 'store/app';
+import { updateAppNav } from 'store/app';
 
 const mapDispatch = {
-  update,
+  updateAppNav,
 };
 const connector = connect(null, mapDispatch);
 type AccueilProps = ConnectedProps<typeof connector>;
 
 const Accueil = (props: AccueilProps) => {
-  const { update } = props;
+  const { updateAppNav } = props;
   useEffect(() => {
-    update({
+    updateAppNav({
       title: 'Bienvenue',
     });
-  }, [update]);
+  }, [updateAppNav]);
   return (
     <div>
       <p>Welcome !!</p>
