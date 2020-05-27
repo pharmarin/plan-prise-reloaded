@@ -45,15 +45,18 @@ type AuthentificationProps = WithSanctumProps<Models.User> &
   };
 
 const Authentification = (props: AuthentificationProps) => {
+  let isMounted = false;
   const { authenticated, signIn, signOut, updateAppNav, role } = props;
-  const [isMounted, setIsMounted] = useState(false);
   const location = useLocation();
   const message = get(location, 'state.message', null);
 
   useEffect(() => {
-    setIsMounted(true);
-    return () => setIsMounted(false);
-  }, []);
+    isMounted = true;
+    return () => {
+      isMounted = false;
+      return;
+    };
+  });
 
   useEffect(() => {
     updateAppNav({
