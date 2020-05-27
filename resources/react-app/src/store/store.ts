@@ -25,15 +25,8 @@ export interface RootState {
 }
 
 const rootReducer = combineReducers({
-  app: persistReducer(
-    {
-      key: 'auth',
-      storage,
-      whitelist: ['auth'],
-    },
-    appReducer
-  ),
-  data: dataReducer,
+  app: appReducer,
+  data: persistReducer({ key: 'cached_data', storage }, dataReducer),
   planPrise: planPriseReducer,
 });
 

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import find from 'lodash/find';
 import forEach from 'lodash/forEach';
 import get from 'lodash/get';

@@ -30,7 +30,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
     updateAppNav({
       title: 'Profil',
     });
-  }, []);
+  }, [updateAppNav]);
 
   if (!user) throw new CatchableError("L'utilisateur n'a pas pu être chargé");
 
