@@ -69,7 +69,7 @@ const Authentification = (props: AuthentificationProps) => {
       // de doublons / mauvais token pas supprimé
       signOut();
     }
-  });
+  }, []);
 
   const getTitle = (role: Role) => {
     switch (role) {
