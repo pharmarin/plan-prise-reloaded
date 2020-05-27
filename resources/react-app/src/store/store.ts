@@ -17,13 +17,11 @@ import concat from 'lodash/concat';
 import appReducer, { AppState } from './app';
 import dataReducer from './data/reducer';
 import planPriseReducer from './plan-prise/reducer';
-import userReducer, { UserState } from './user';
 
 export interface RootState {
   app: AppState;
   data: any;
   planPrise: any;
-  user: UserState;
 }
 
 const rootReducer = combineReducers({
@@ -37,7 +35,6 @@ const rootReducer = combineReducers({
   ),
   data: dataReducer,
   planPrise: planPriseReducer,
-  user: userReducer,
 });
 
 let store = configureStore({

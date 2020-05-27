@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/app{any?}', 'RenderController@render')->where('any', '.*')->name('app');
+//Auth::routes();
 
 /*Auth::routes();
 
@@ -41,3 +41,7 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 });*/
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

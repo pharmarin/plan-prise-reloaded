@@ -19,6 +19,7 @@
     "react-redux": "^7.2.0",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.2.0",
+    "react-sanctum": "^0.0.9",
     "react-scripts-laravel": "3.3.0-rc.3",
     "react-select": "^3.1.0",
     "react-spring": "^8.0.27",
@@ -38,7 +39,8 @@
     "serve": "php artisan serve",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postinstall": "patch-package"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -71,6 +73,8 @@
     "@types/validatorjs": "^3.15.0",
     "concurrently": "^5.2.0",
     "node-sass": "^4.14.1",
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0",
     "react-app-rewired": "^2.1.6",
     "react-scripts": "^3.4.1"
   }

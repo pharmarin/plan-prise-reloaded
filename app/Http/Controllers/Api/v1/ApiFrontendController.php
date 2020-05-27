@@ -14,7 +14,7 @@ class ApiFrontendController extends Controller
   */
   public function __construct()
   {
-    //$this->middleware('ajax');
+    $this->middleware('ajax');
   }
   
   public function config()

@@ -1,5 +1,7 @@
 import React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
+import { withSanctum, WithSanctumProps } from 'react-sanctum';
 import {
   UncontrolledCollapse,
   Navbar,
@@ -10,12 +12,8 @@ import {
   Row,
   Col,
 } from 'reactstrap';
-import authenticator, {
-  AuthProps,
-} from 'components/Authentification/Authenticator';
 import routes from './routes.json';
 import map from 'lodash/map';
-import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'store/store';
 
 const NavbarTitle = () => {
@@ -47,12 +45,13 @@ const mapState = (state: RootState) => ({
   app: state.app,
 });
 const connector = connect(mapState);
-type NavigationProps = ConnectedProps<typeof connector> & AuthProps;
+type NavigationProps = WithSanctumProps<Models.User> &
+  ConnectedProps<typeof connector>;
 
 const Navigation = (props: NavigationProps) => {
   const {
     app: { title, return: returnObject },
-    auth: { isValid },
+    authenticated,
   } = props;
   return (
     <Navbar
@@ -113,7 +112,7 @@ const Navigation = (props: NavigationProps) => {
             </Row>
           </div>
           <Nav className="ml-lg-auto" navbar>
-            {isValid
+            {authenticated
               ? map(routes.auth, (r) => <NavbarLink key={r.path} {...r} />)
               : map(routes.noauth, (r) => <NavbarLink key={r.path} {...r} />)}
           </Nav>
@@ -123,4 +122,4 @@ const Navigation = (props: NavigationProps) => {
   );
 };
 
-export default connector(authenticator(Navigation));
+export default connector(withSanctum(Navigation));

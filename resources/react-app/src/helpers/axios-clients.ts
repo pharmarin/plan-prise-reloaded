@@ -15,17 +15,8 @@ const client = axios.create({
   baseURL: BASE_URL,
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-TOKEN': token.getAttribute('content'),
   },
   responseType: 'json',
-});
-
-client.interceptors.request.use((config) => {
-  if (config.withCredentials === true) {
-    const token = get(store.getState(), 'app.auth.tokens.access_token');
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
 });
 
 export default client;

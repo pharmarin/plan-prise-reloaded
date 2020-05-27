@@ -14,8 +14,9 @@ use Illuminate\Http\Request;
 */
 
 Route::prefix('v1')->group(function () {
+  Auth::routes();
   Route::get('preload', 'Api\v1\ApiFrontendController@config');
-  Route::group(['middleware' => ['auth:api']], function () {
+  Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user', 'Api\v1\ApiUserController@info');
     Route::delete('oauth/token', 'Api\V1\ApiUserController@logout');
     Route::get('plan-prise/{pp_id?}', 'Api\PlanPriseApiController@index');

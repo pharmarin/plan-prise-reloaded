@@ -1,10 +1,8 @@
 import React from 'react';
 import { Redirect, Route as RouterRoute } from 'react-router-dom';
-import authenticator, {
-  AuthProps,
-} from 'components/Authentification/Authenticator';
+import { withSanctum, WithSanctumProps } from 'react-sanctum';
 
-type ProtectedRouteProps = AuthProps & {
+type ProtectedRouteProps = WithSanctumProps<Models.User> & {
   children: React.ReactNode;
   path: string;
 };
@@ -12,8 +10,8 @@ type ProtectedRouteProps = AuthProps & {
 const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
   props
 ) => {
-  const { auth, path } = props;
-  if (!auth.hasToken) {
+  const { authenticated, path } = props;
+  if (!authenticated) {
     console.info('Cannot access route: No token provided', path);
     const redirectTo = path;
     return (
@@ -28,22 +26,7 @@ const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
       />
     );
   }
-  if (!auth.isValid) {
-    console.info('Cannot access route: Token expired', path);
-    const redirectTo = path;
-    return (
-      <Redirect
-        to={{
-          pathname: '/connexion',
-          state: {
-            message: 'expired',
-            redirectTo,
-          },
-        }}
-      />
-    );
-  }
   return <RouterRoute {...props} />;
 };
 
-export default authenticator(ProtectedRoute);
+export default withSanctum(ProtectedRoute);

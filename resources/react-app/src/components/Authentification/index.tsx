@@ -13,15 +13,13 @@ import {
   FormText,
   Col,
 } from 'reactstrap';
+import { withSanctum, WithSanctumProps } from 'react-sanctum';
 import { Formik } from 'formik';
 import Validator from 'validatorjs';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
 
-import { login, logout, updateAppNav } from 'store/app';
-import authenticator, {
-  AuthProps,
-} from 'components/Authentification/Authenticator';
+import { updateAppNav } from 'store/app';
 import { RootState } from 'store/store';
 
 Validator.useLang('fr');
@@ -33,26 +31,21 @@ export enum Role {
   signout,
 }
 
-const mapState = (state: RootState) => ({
-  isError: state.app.auth.isError,
-  isLoading: state.app.auth.isLoading,
-});
+const mapState = (state: RootState) => ({});
 
 const mapDispatch = {
-  login: (values: { username: string; password: string }) => login(values),
-  logout,
   updateAppNav,
 };
 
 const connector = connect(mapState, mapDispatch);
 
-type AuthentificationProps = ConnectedProps<typeof connector> &
-  AuthProps & {
+type AuthentificationProps = WithSanctumProps<Models.User> &
+  ConnectedProps<typeof connector> & {
     role: Role;
   };
 
 const Authentification = (props: AuthentificationProps) => {
-  const { auth, isLoading, logout, updateAppNav, role } = props;
+  const { authenticated, signIn, signOut, updateAppNav, role } = props;
   const [isMounted, setIsMounted] = useState(false);
   const location = useLocation();
   const message = get(location, 'state.message', null);
@@ -69,12 +62,12 @@ const Authentification = (props: AuthentificationProps) => {
   }, [role, updateAppNav]);
 
   useEffect(() => {
-    if (role === Role.signout) logout();
+    if (role === Role.signout) signOut();
     if (role === Role.signin && get(location, 'state.message')) {
       // Si problème de connexion (expiré ou pas connecté),
       // on deconnecte d'abord pour être sûr de ne pas avoir
       // de doublons / mauvais token pas supprimé
-      logout();
+      signOut();
     }
   });
 
@@ -102,7 +95,7 @@ const Authentification = (props: AuthentificationProps) => {
     }
   };
 
-  if (auth.isValid) {
+  if (authenticated) {
     let redirectTo = get(location, 'state.redirectTo', '/');
     if (includes(cancelRedirect, redirectTo)) redirectTo = '/';
     return <Redirect to={redirectTo} />;
@@ -131,14 +124,10 @@ const Authentification = (props: AuthentificationProps) => {
             }
             throw new Error('Could not get validation rules. ');
           }}
-          onSubmit={({ email, password }, { setSubmitting }) => {
+          onSubmit={async ({ email, password }, { setSubmitting }) => {
             setSubmitting(true);
-            const { login } = props;
             if (email && password) {
-              login({
-                password,
-                username: email,
-              });
+              await signIn(email, password);
               if (isMounted) setSubmitting(false);
             }
           }}
@@ -150,6 +139,7 @@ const Authentification = (props: AuthentificationProps) => {
             handleChange,
             handleBlur,
             handleSubmit,
+            isSubmitting,
           }) => (
             <Form noValidate onSubmit={handleSubmit}>
               <FormGroup>
@@ -188,9 +178,11 @@ const Authentification = (props: AuthentificationProps) => {
                 />
                 <FormFeedback type="invalid">{errors.password}</FormFeedback>
               </FormGroup>
-              <Button block disabled={isLoading} type="submit">
-                {isLoading && <Spinner size="sm" style={{ marginRight: 10 }} />}
-                {isLoading ? 'Connexion en cours' : 'Se connecter'}
+              <Button block disabled={isSubmitting} type="submit">
+                {isSubmitting && (
+                  <Spinner size="sm" style={{ marginRight: 10 }} />
+                )}
+                {isSubmitting ? 'Connexion en cours' : 'Se connecter'}
               </Button>
             </Form>
           )}
@@ -207,4 +199,4 @@ const Authentification = (props: AuthentificationProps) => {
   );
 };
 
-export default connector(authenticator(Authentification));
+export default connector(withSanctum(Authentification));

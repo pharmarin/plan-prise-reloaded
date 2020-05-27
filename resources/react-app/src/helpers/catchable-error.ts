@@ -1,7 +1,7 @@
 export default class CatchableError extends Error {
-  constructor(params: any) {
+  constructor(...params: any) {
     // Passer les arguments restants (incluant ceux spécifiques au vendeur) au constructeur parent
-    super(params);
+    super(...params);
 
     // Maintenir dans la pile une trace adéquate de l'endroit où l'erreur a été déclenchée (disponible seulement en V8)
     if (Error.captureStackTrace) {
