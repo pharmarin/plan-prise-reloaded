@@ -23,10 +23,7 @@ export default () => (
     <ProtectedRoute path="/profil">
       <Profil />
     </ProtectedRoute>
-    <ProtectedRoute path="/plan-prise/:id">
-      <PlanPrise />
-    </ProtectedRoute>
-    <ProtectedRoute path="/plan-prise">
+    <ProtectedRoute path="/plan-prise/:id?">
       <PlanPrise />
     </ProtectedRoute>
   </Switch>

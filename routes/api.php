@@ -13,18 +13,18 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::prefix('v1')->group(function () {
+Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
   Auth::routes();
-  Route::get('preload', 'Api\v1\ApiFrontendController@config');
-  Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('user', 'Api\v1\ApiUserController@info');
-    Route::delete('oauth/token', 'Api\V1\ApiUserController@logout');
-    Route::get('plan-prise/{pp_id?}', 'Api\PlanPriseApiController@index');
+  Route::get('preload', 'Api\v1\FrontendController@config');
+  Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::get('user', 'Api\v1\UserController@info');
+    Route::delete('oauth/token', 'Api\V1\UserController@logout');
+    Route::get('plan-prise/{pp_id?}', 'Api\v1\PlanPriseController@index');
     Route::resource('plan-prise', 'Api\PlanPriseApiController');
   });
 });
 
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['web', 'auth:api'])->group(function () {
 
   // Plan de prise
   Route::get('all/search', 'Api\CommonApiController@search')->name('api.all.search');

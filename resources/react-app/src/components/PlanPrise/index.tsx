@@ -1,16 +1,16 @@
-import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import { connect, ConnectedProps } from 'react-redux';
 import { Button, Spinner } from 'react-bootstrap';
 import find from 'lodash/find';
 import forEach from 'lodash/forEach';
 import get from 'lodash/get';
 import map from 'lodash/map';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+//import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { updateAppNav } from 'store/app';
+import { loadList } from 'store/plan-prise';
 import {
   doAddLine,
   doInit,
@@ -24,23 +24,29 @@ import generate from 'helpers/pdf.helper';
 
 import PPCard from 'components/plan-prise/PPCard';
 import SearchMedicament from 'components/search/SearchMedicament';
-import PPSettings from 'components/plan-prise/PPSettings';
-import PPSelect from 'components/plan-prise/PPSelect';
+import Settings from './Settings';
+import Selection from './Selection';
 
-const PlanPrise = (props) => {
-  const {
-    content,
-    history,
-    isLoading,
-    repository,
-    reset,
-    ppId,
-    updateAppNav,
-  } = props;
+const mapState = (state: ReduxState) => ({
+  id: state.planPrise.id,
+  list: state.planPrise.list,
+});
+
+const mapDispatch = {
+  loadList,
+  updateAppNav,
+};
+
+const connector = connect(mapState, mapDispatch);
+
+type PlanPriseProps = ConnectedProps<typeof connector>;
+
+const PlanPrise = (props: PlanPriseProps) => {
+  const { id, list, loadList, updateAppNav } = props;
 
   const [showSettings, setShowSettings] = useState(false);
 
-  const getTitle = (id) => {
+  const getTitle = (id: number | null) => {
     if (id === -1) {
       return 'Nouveau Plan de Prise';
     }
@@ -52,7 +58,7 @@ const PlanPrise = (props) => {
     }
   };
 
-  /* ppId && !isLoading.state && (
+  /* id && !isLoading.state && (
               <Button variant="link" onClick={() => reset(history)}>
                 <span className="fa fa-arrow-left" />
                 Retour à la liste
@@ -60,33 +66,26 @@ const PlanPrise = (props) => {
             ) */
   useEffect(() => {
     updateAppNav({
-      title: getTitle(ppId),
+      title: getTitle(id),
     });
-  }, [ppId, updateAppNav]);
+  }, [id, updateAppNav]);
 
   useEffect(() => {
-    init();
-  });
-
-  const init = () => {
-    const {
-      content,
-      init,
-      list,
-      load,
-      loadList,
-      match,
-      ppId,
-      repository,
-    } = props;
-    const routeId = match.params.id;
-    if (!ppId && routeId) {
-      init(routeId);
-    }
     if (list === null) {
       loadList();
     }
-    if (content) {
+  }, []);
+
+  const init = () => {
+    const { list, loadList } = props;
+    /*const routeId = match.params.id;
+    if (!id && routeId) {
+      init(routeId);
+    }*/
+    if (list === null) {
+      loadList();
+    }
+    /*if (content) {
       forEach(content, (medicament) => {
         if (
           !repository.isLoaded(medicament) &&
@@ -95,18 +94,18 @@ const PlanPrise = (props) => {
           load(medicament);
         }
       });
-    }
+    }*/
   };
 
-  const deletePP = async (event) => {
+  /*const deletePP = async (event) => {
     event.preventDefault();
-    const { history, ppId, reset, setLoading } = props;
+    const { history, id, reset, setLoading } = props;
     setLoading({
       state: true,
       message: 'Suppression du plan de prise en cours... ',
     });
     return axios
-      .delete(`${window.php.routes.api.planprise.destroy}/${ppId}`, {
+      .delete(`${window.php.routes.api.planprise.destroy}/${id}`, {
         data: {
           token: window.php.routes.token,
         },
@@ -134,13 +133,19 @@ const PlanPrise = (props) => {
   };
 
   const generatePDF = () => {
-    const { ppId, repository } = props;
+    const { id, repository } = props;
     const { columns, values } = repository;
 
-    return generate(ppId, columns, values);
-  };
+    return generate(id, columns, values);
+  };*/
 
-  return (
+  if (id === null) {
+    return <Selection />;
+  }
+
+  return <div>Hello !</div>;
+
+  /*return (
     <React.Fragment>
       {ppId > 0 && !isLoading.state ? (
         <div className="d-flex">
@@ -180,9 +185,7 @@ const PlanPrise = (props) => {
             </div>
           );
         }
-        if (ppId === null) {
-          return <PPSelect />;
-        }
+
         return (
           <TransitionGroup className="plan-prise" enter={false}>
             {content &&
@@ -211,55 +214,16 @@ const PlanPrise = (props) => {
           </TransitionGroup>
         );
       })()}
-      <PPSettings
-        setShowSettings={setShowSettings}
-        showSettings={showSettings}
-      />
+      <Settings setShowSettings={setShowSettings} showSettings={showSettings} />
     </React.Fragment>
-  );
+  );*/
 };
 
-PlanPrise.propTypes = {
-  addLine: PropTypes.func,
-  content: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number,
-      denomination: PropTypes.string,
-    })
-  ),
-  history: PropTypes.any,
-  init: PropTypes.func,
-  isLoading: PropTypes.shape({
-    message: PropTypes.any,
-    state: PropTypes.any,
-  }),
-  list: PropTypes.any,
-  load: PropTypes.func,
-  loadList: PropTypes.func,
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      id: PropTypes.any,
-    }),
-  }),
-  ppId: PropTypes.number,
-  repository: PropTypes.shape({
-    columns: PropTypes.any,
-    isLoaded: PropTypes.func,
-    isLoading: PropTypes.func,
-    needChoice: PropTypes.bool,
-    values: PropTypes.any,
-    valuesObject: PropTypes.any,
-  }),
-  reset: PropTypes.func,
-  setLoading: PropTypes.func,
-};
-
-const mapStateToProps = (state) => {
+/*const mapStateToProps = (state) => {
   return {
     content: state.planPrise.content,
     customData: state.planPrise.customData,
     data: state.data.data,
-    isLoading: state.planPrise.isLoading,
     list: state.planPrise.list,
     ppId: state.planPrise.pp_id,
     repository: new PPRepository({
@@ -280,8 +244,6 @@ const mapDispatchToProps = {
   reset: (history = null) => doReset(history),
   setLoading: (values) => doSetLoading(values),
   updateAppNav,
-};
+};*/
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(PlanPrise)
-);
+export default connector(PlanPrise);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
 import {
@@ -20,7 +20,6 @@ import get from 'lodash/get';
 import includes from 'lodash/includes';
 
 import { updateAppNav } from 'store/app';
-import { RootState } from 'store/store';
 
 Validator.useLang('fr');
 const cancelRedirect = ['/deconnexion'];
@@ -31,7 +30,7 @@ export enum Role {
   signout,
 }
 
-const mapState = (state: RootState) => ({});
+const mapState = (state: ReduxState) => ({});
 
 const mapDispatch = {
   updateAppNav,
@@ -51,6 +50,7 @@ const Authentification = (props: AuthentificationProps) => {
   const message = get(location, 'state.message', null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     isMounted = true;
     return () => {
       isMounted = false;

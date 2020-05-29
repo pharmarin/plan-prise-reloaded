@@ -2,6 +2,8 @@ import React from 'react';
 import { Spinner, Button } from 'reactstrap';
 import { BsArrowRepeat } from 'react-icons/bs';
 
+import styles from './index.module.scss';
+
 type SplashScreenProps = {
   type: 'loading' | 'update';
 };
@@ -9,7 +11,7 @@ type SplashScreenProps = {
 export default (props: SplashScreenProps) => {
   return (
     <div
-      className="d-flex"
+      className={`${styles.splashscreen} d-flex`}
       style={{
         height: '100vh',
         width: '100vw',

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 
-class ApiUserController extends Controller
+class UserController extends Controller
 {
     /**
      * Create a new ApiUserController instance.

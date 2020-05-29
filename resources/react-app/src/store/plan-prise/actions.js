@@ -93,7 +93,7 @@ export const doInit = (id, reload = true) => (dispatch) => {
 
 export const doUpdateLine = (lineId, action, input = {}) => (
   dispatch,
-  getState,
+  getState
 ) => {
   dispatch({
     type: TYPES.UPDATE_LINE,
@@ -104,7 +104,7 @@ export const doUpdateLine = (lineId, action, input = {}) => (
   performSaveModification(
     getState().planPrise.pp_id,
     'edit',
-    getState().planPrise.customData,
+    getState().planPrise.customData
   );
 };
 
@@ -124,13 +124,13 @@ export const doLoadResult = (medicament) => {
 
 export const doAddLine = (medicament, history) => async (
   dispatch,
-  getState,
+  getState
 ) => {
   dispatch(
     doUpdate({
       type: 'add',
       value: medicament,
-    }),
+    })
   );
   performSaveModification(
     getState().planPrise.pp_id,
@@ -141,7 +141,7 @@ export const doAddLine = (medicament, history) => async (
         dispatch(doInit(ppId));
         history.push(`/plan-prise/${ppId}`);
       }
-    },
+    }
   );
   performSaveModification.flush();
 };
@@ -159,16 +159,13 @@ export const doRemoveLine = (id) => async (dispatch, getState) => {
     doUpdate({
       type: 'remove',
       value: id,
-    }),
+    })
   );
   performSaveModification(getState().planPrise.pp_id, 'remove', id);
   performSaveModification.flush();
 };
 
-export const doUpdateSettings = (input, value) => async (
-  dispatch,
-  getState,
-) => {
+export const updateSettings = (input, value) => async (dispatch, getState) => {
   dispatch({
     type: TYPES.UPDATE_SETTINGS,
     input,
@@ -177,7 +174,7 @@ export const doUpdateSettings = (input, value) => async (
   performSaveModification(
     getState().planPrise.pp_id,
     'settings',
-    getState().planPrise.settings,
+    getState().planPrise.settings
   );
 };
 

@@ -47,18 +47,17 @@ class PlanPriseRepository
     return $max_id + 1;
   }
 
-  public function index ($pp_id) {
-    if ($pp_id) {
-      $index = PlanPrise::where('user_id', Auth::id())->where('pp_id', $pp_id)->first();
-      if (!$index) {
-        return $this->_getReturnArray('error', ['data' => 'PP not exists']);
+  public function index ($id) {
+    if ($id) {
+      $item = PlanPrise::where('user_id', Auth::id())->where('pp_id', $id)->first();
+      if (!$item) {
+        abort(404, "Le plan de prise a été supprimé ou vous n'avez pas l'autorisation d'y accéder");
       }
-      $index->append('medicaments');
-      $index = $index->toArray();
+      $item->append('medicaments');
+      return $item->toArray();
     } else {
-      $index = PlanPrise::where('user_id', Auth::id())->select(['pp_id'])->get()->all();
+      return PlanPrise::where('user_id', Auth::id())->pluck('pp_id');
     }
-    return $this->_getReturnArray('success', $index, false);
   }
 
   public function update ($pp_id, $values)

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Redirect, Route as RouterRoute } from 'react-router-dom';
 import { withSanctum, WithSanctumProps } from 'react-sanctum';
+import SplashScreen from 'components/App/SplashScreen';
 
 type ProtectedRouteProps = WithSanctumProps<Models.User> & {
   children: React.ReactNode;
@@ -10,8 +11,14 @@ type ProtectedRouteProps = WithSanctumProps<Models.User> & {
 const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
   props
 ) => {
-  const { authenticated, path } = props;
-  if (!authenticated) {
+  const { checkAuthentication, path } = props;
+  const [authenticated, setAuthenticated] = useState<null | boolean>(null);
+
+  useEffect(() => {
+    checkAuthentication().then(setAuthenticated);
+  }, [checkAuthentication]);
+
+  if (authenticated === false) {
     console.info('Cannot access route: No token provided', path);
     const redirectTo = path;
     return (
@@ -26,7 +33,12 @@ const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
       />
     );
   }
-  return <RouterRoute {...props} />;
+
+  if (authenticated === true) {
+    return <RouterRoute {...props} />;
+  }
+
+  return <SplashScreen type="loading" />;
 };
 
 export default withSanctum(ProtectedRoute);

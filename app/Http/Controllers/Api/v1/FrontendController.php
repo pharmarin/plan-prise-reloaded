@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use Illuminate\Support\Facades\Config;
 use App\Http\Controllers\Controller;
 
-class ApiFrontendController extends Controller
+class FrontendController extends Controller
 {
   /**
   * Create a new ApiFrontendController instance.

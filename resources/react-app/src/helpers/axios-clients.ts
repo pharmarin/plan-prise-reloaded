@@ -15,6 +15,7 @@ const client = axios.create({
     'X-Requested-With': 'XMLHttpRequest',
   },
   responseType: 'json',
+  withCredentials: true,
 });
 
 export default client;

@@ -14,7 +14,6 @@ import {
 } from 'reactstrap';
 import routes from './routes.json';
 import map from 'lodash/map';
-import { RootState } from 'store/store';
 
 const NavbarTitle = () => {
   return <React.Fragment>plandeprise.fr</React.Fragment>;
@@ -41,7 +40,7 @@ const NavbarLink = (props: NavbarLinkProps) => {
   );
 };
 
-const mapState = (state: RootState) => ({
+const mapState = (state: ReduxState) => ({
   app: state.app,
 });
 const connector = connect(mapState);

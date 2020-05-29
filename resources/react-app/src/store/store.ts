@@ -14,15 +14,9 @@ import storage from 'redux-persist/lib/storage';
 import logger from 'redux-logger';
 import concat from 'lodash/concat';
 
-import appReducer, { AppState } from './app';
+import appReducer from './app';
 import dataReducer from './data/reducer';
-import planPriseReducer from './plan-prise/reducer';
-
-export interface RootState {
-  app: AppState;
-  data: any;
-  planPrise: any;
-}
+import planPriseReducer from './plan-prise';
 
 const rootReducer = combineReducers({
   app: appReducer,

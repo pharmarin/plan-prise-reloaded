@@ -11,11 +11,7 @@
 |
 */
 
-//Auth::routes();
-
-/*Auth::routes();
-
-Route::middleware(['auth'])->group(function () {
+/* Route::middleware(['auth'])->group(function () {
     Route::get('/approval', 'HomeController@approval')->name('approval');
 
     Route::middleware(['approved'])->group(function () {
@@ -44,4 +40,6 @@ Route::middleware(['auth'])->group(function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+/*Route::get('/{any?}', function () {
+  return view('app');
+})->name('home');*/
