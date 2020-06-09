@@ -3,13 +3,22 @@ import axios from 'helpers/axios-clients';
 import isArray from 'lodash/isArray';
 
 const loadList = createAsyncThunk('planPrise/loadList', async () => {
-  const response = await axios.get('/plan-prise', { withCredentials: true });
+  const response = await axios.get('/plan-prise');
   return response.data;
 });
+
+const loadContent = createAsyncThunk(
+  'planPrise/loadContent',
+  async (id: number) => {
+    const response = await axios.get(`/plan-prise/${id}`);
+    return response.data;
+  }
+);
 
 const initialState: ReduxState.PlanPrise = {
   id: null,
   list: null,
+  content: null,
 };
 
 const ppSlice = createSlice({
@@ -18,6 +27,7 @@ const ppSlice = createSlice({
   reducers: {
     setId: (state, action: PayloadAction<number | null>) => {
       state.id = action.payload;
+      state.content = null;
     },
   },
   extraReducers: {
@@ -34,9 +44,18 @@ const ppSlice = createSlice({
         state.list = 'error';
       }
     },
+    [loadContent.pending.type]: (state) => {
+      state.content = 'loading';
+    },
+    [loadContent.rejected.type]: (state) => {
+      state.content = 'error';
+    },
+    [loadContent.fulfilled.type]: (state, action) => {
+      state.content = action.payload;
+    },
   },
 });
 
 export const { setId } = ppSlice.actions;
-export { loadList };
+export { loadContent, loadList };
 export default ppSlice.reducer;

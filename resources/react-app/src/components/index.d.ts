@@ -6,3 +6,10 @@ declare namespace Models {
     email?: string;
   }
 }
+
+declare namespace Props {
+  interface ItemCard {
+    id: number;
+    type: string;
+  }
+}

@@ -15,15 +15,15 @@ import keys from 'lodash/keys';
 import map from 'lodash/map';
 import get from 'lodash/get';
 
-import { updateSettings } from 'store/plan-prise/actions';
+//import { updateSettings } from 'store/plan-prise/actions';
 import getConfig from 'helpers/get-config';
 
 const mapState = (state: ReduxState) => ({
-  settings: state.planPrise.settings,
+  settings: get(state, 'planPrise.content.custom_settings', {}),
 });
 
 const mapDispatch = {
-  updateSettings,
+  //updateSettings,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -34,7 +34,7 @@ type SettingsProps = ConnectedProps<typeof connector> & {
 };
 
 const Settings = (props: SettingsProps) => {
-  const { show, toggle, updateSettings } = props;
+  const { show, toggle } = props;
   const { pp_inputs: inputs } = getConfig('default');
   return (
     <Modal show={show} onHide={toggle}>
@@ -63,8 +63,8 @@ const Settings = (props: SettingsProps) => {
                         type="checkbox"
                         onChange={(
                           event: React.ChangeEvent<HTMLInputElement>
-                        ) =>
-                          updateSettings(
+                        ) => {
+                          /*updateSettings(
                             {
                               parent: 'inputs',
                               id: input.id,
@@ -74,7 +74,8 @@ const Settings = (props: SettingsProps) => {
                               value: event.target.checked,
                             }
                           )
-                        }
+                        }*/
+                        }}
                       />
                     </FormGroup>
                   );

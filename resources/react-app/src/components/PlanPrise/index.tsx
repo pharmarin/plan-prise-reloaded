@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 import { Button, Spinner } from 'react-bootstrap';
 import find from 'lodash/find';
@@ -10,22 +10,23 @@ import map from 'lodash/map';
 //import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { updateAppNav } from 'store/app';
-import { loadList } from 'store/plan-prise';
-import {
+import { loadList, setId } from 'store/plan-prise';
+/*import {
   doAddLine,
   doInit,
   doLoadList,
   doReset,
   doSetLoading,
-} from 'store/plan-prise/actions';
+} from 'store/plan-prise/actions';*/
 import { doLoad } from 'store/data/actions';
 import PPRepository from 'helpers/PPRepository.helper';
 import generate from 'helpers/pdf.helper';
 
 import PPCard from 'components/plan-prise/PPCard';
 import SearchMedicament from 'components/search/SearchMedicament';
-import Settings from './Settings';
+//import Settings from './Settings';
 import Selection from './Selection';
+import Interface from './Interface';
 
 const mapState = (state: ReduxState) => ({
   id: state.planPrise.id,
@@ -35,6 +36,7 @@ const mapState = (state: ReduxState) => ({
 const mapDispatch = {
   loadList,
   updateAppNav,
+  setId,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -42,9 +44,9 @@ const connector = connect(mapState, mapDispatch);
 type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrise = (props: PlanPriseProps) => {
-  const { id, list, loadList, updateAppNav } = props;
-
+  const { id, list, loadList, setId, updateAppNav } = props;
   const [showSettings, setShowSettings] = useState(false);
+  const routeId = get(useParams(), 'id', null);
 
   const getTitle = (id: number | null) => {
     if (id === -1) {
@@ -64,17 +66,19 @@ const PlanPrise = (props: PlanPriseProps) => {
                 Retour à la liste
               </Button>
             ) */
-  useEffect(() => {
-    updateAppNav({
-      title: getTitle(id),
-    });
-  }, [id, updateAppNav]);
 
   useEffect(() => {
-    if (list === null) {
+    setId(routeId);
+    updateAppNav({
+      title: getTitle(routeId),
+    });
+  }, [routeId, setId, updateAppNav]);
+
+  useEffect(() => {
+    if (!routeId && list === null) {
       loadList();
     }
-  }, []);
+  }, [list, loadList, routeId]);
 
   const init = () => {
     const { list, loadList } = props;
@@ -143,7 +147,7 @@ const PlanPrise = (props: PlanPriseProps) => {
     return <Selection />;
   }
 
-  return <div>Hello !</div>;
+  return <Interface />;
 
   /*return (
     <React.Fragment>

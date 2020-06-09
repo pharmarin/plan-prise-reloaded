@@ -64,14 +64,7 @@ class CommonRepository {
   {
     if (!$model) return null;
     if (get_class($model) === Medicament::class) $model->load('compositions');
-    return [
-      'type' => $type,
-      'value' => [
-        'id' => $id,
-        'denomination' => $model->custom_denomination
-      ],
-      'data' => $model
-    ];
+    return $model;
   }
 
   static function getValues ($default, $custom, $columns)

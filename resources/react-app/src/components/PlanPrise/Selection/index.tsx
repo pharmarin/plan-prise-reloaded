@@ -14,6 +14,7 @@ import {
 import classNames from 'classnames';
 import isArray from 'lodash/isArray';
 import map from 'lodash/map';
+import range from 'lodash/range';
 import sortBy from 'lodash/sortBy';
 import toNumber from 'lodash/toNumber';
 import { BsSearch } from 'react-icons/bs';
@@ -112,11 +113,12 @@ const Selection = (props: SelectionProps) => {
 
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (hasLoaded && list.includes(search)) setRedirect(true);
+    if (!hasLoaded || !search) return;
+    if (isArray(list) && list.includes(search)) setRedirect(true);
   };
 
-  if (isReady) {
-    searchSuccess = list.includes(search);
+  if (isReady && search) {
+    searchSuccess = isArray(list) && list.includes(search);
 
     if (redirect && searchSuccess)
       return <Redirect to={`/plan-prise/${search}`} />;
@@ -177,7 +179,7 @@ const Selection = (props: SelectionProps) => {
             </Link>
           </Square>
         </Col>
-        {map(sortBy(list).reverse(), (item) => (
+        {map(sortBy(isArray(list) ? list : range(5)).reverse(), (item) => (
           <Col {...cardSize} key={item} className="mb-4">
             <Square>
               <ReactPlaceholder
