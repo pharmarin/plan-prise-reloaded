@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, Button, Spinner, CardBody } from 'reactstrap';
+import { Card, CardHeader, Button, CardBody } from 'reactstrap';
 import isObject from 'lodash/isObject';
 import CatchableError from 'helpers/catchable-error';
 import { connect, ConnectedProps } from 'react-redux';
@@ -8,7 +8,7 @@ import find from 'lodash/find';
 import { BsTrash, BsCaretDown, BsCaretUpFill } from 'react-icons/bs';
 
 const mapState = (state: ReduxState) => ({
-  content: state.planPrise.content,
+  storedMedicaments: state.cache.medicaments,
 });
 
 const connector = connect(mapState);
@@ -16,15 +16,9 @@ const connector = connect(mapState);
 type ItemCardProps = Props.ItemCard & ConnectedProps<typeof connector>;
 
 const ItemCard = (props: ItemCardProps) => {
-  const { content, id, type } = props;
-  const medicament = find(get(content, 'medicaments'), {
-    id,
-    type,
-  }) as Medicament;
-  if (!isObject(content))
-    throw new CatchableError(
-      'ItemCard doit recevoir du contenu pour son rendu. '
-    );
+  const { storedMedicaments, id } = props;
+  const medicament = find(storedMedicaments, id) as Medicament;
+  console.log(storedMedicaments, id, medicament);
   const [isOpened, setIsOpened] = useState(false);
   return (
     <Card className="mb-3">

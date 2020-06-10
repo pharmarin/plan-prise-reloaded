@@ -26,8 +26,7 @@ class PlanPriseController extends Controller
    */
   public function index($pp_id = null)
   {
-    return response()->json(
-      $this->pp_repository->index($pp_id)
-    );
+    $plan_prise = $this->pp_repository->index($pp_id);
+    return response()->json($plan_prise);
   }
 }

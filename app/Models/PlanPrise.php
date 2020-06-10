@@ -14,8 +14,6 @@ class PlanPrise extends Model
 
   protected $table = 'plans_prise';
 
-  protected $hidden = ['medic_data'];
-
   protected $attributes = [
     'medic_data' => '[]',
     'custom_data' => '{}',
@@ -33,11 +31,11 @@ class PlanPrise extends Model
     return $this->belongsTo('App\Models\User');
   }
 
-  public function getMedicamentsAttribute ()
+  public function getDataAttribute ()
   {
     $reference_array = $this->medic_data;
     return $reference_array ? $reference_array->map(function ($reference) {
-      return CommonRepository::find($reference['value'], $reference['type']);
+      return CommonRepository::find($reference['id'], $reference['type']);
     })->values()->all() : [];
   }
 

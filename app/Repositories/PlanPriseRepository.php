@@ -53,8 +53,10 @@ class PlanPriseRepository
       if (!$item) {
         abort(404, "Le plan de prise a été supprimé ou vous n'avez pas l'autorisation d'y accéder");
       }
-      $item->append('medicaments');
-      return $item->toArray();
+      return [
+        'data' => $item,
+        'source' => $item->data
+      ];
     } else {
       return PlanPrise::where('user_id', Auth::id())->pluck('pp_id');
     }
@@ -94,7 +96,7 @@ class PlanPriseRepository
       $new_line = [
         [
         'type' => $values['type'],
-        'value' => $values['id']
+        'id' => $values['id']
         ]
       ];
       $medic_data = $this->plan_prise->medic_data->merge($new_line);

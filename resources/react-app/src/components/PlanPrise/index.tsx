@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useLocation, useParams } from 'react-router-dom';
+//import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-import { Button, Spinner } from 'react-bootstrap';
-import find from 'lodash/find';
-import forEach from 'lodash/forEach';
+//import { Button, Spinner } from 'react-bootstrap';
+//import find from 'lodash/find';
+//import forEach from 'lodash/forEach';
 import get from 'lodash/get';
-import map from 'lodash/map';
+//import map from 'lodash/map';
 //import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { updateAppNav } from 'store/app';
@@ -18,12 +18,12 @@ import { loadList, setId } from 'store/plan-prise';
   doReset,
   doSetLoading,
 } from 'store/plan-prise/actions';*/
-import { doLoad } from 'store/data/actions';
-import PPRepository from 'helpers/PPRepository.helper';
-import generate from 'helpers/pdf.helper';
+//import { doLoad } from 'store/data/actions';
+//import PPRepository from 'helpers/PPRepository.helper';
+//import generate from 'helpers/pdf.helper';
 
-import PPCard from 'components/plan-prise/PPCard';
-import SearchMedicament from 'components/search/SearchMedicament';
+//import PPCard from 'components/plan-prise/PPCard';
+//import SearchMedicament from 'components/search/SearchMedicament';
 //import Settings from './Settings';
 import Selection from './Selection';
 import Interface from './Interface';
@@ -45,7 +45,7 @@ type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrise = (props: PlanPriseProps) => {
   const { id, list, loadList, setId, updateAppNav } = props;
-  const [showSettings, setShowSettings] = useState(false);
+  //const [showSettings, setShowSettings] = useState(false);
   const routeId = get(useParams(), 'id', null);
 
   const getTitle = (id: number | null) => {

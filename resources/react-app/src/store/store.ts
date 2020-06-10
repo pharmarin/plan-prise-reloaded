@@ -15,12 +15,12 @@ import logger from 'redux-logger';
 import concat from 'lodash/concat';
 
 import appReducer from './app';
-import dataReducer from './data/reducer';
+import cacheReducer from './cache';
 import planPriseReducer from './plan-prise';
 
 const rootReducer = combineReducers({
   app: appReducer,
-  data: persistReducer({ key: 'cached_data', storage }, dataReducer),
+  data: persistReducer({ key: 'pp_cache', storage }, cacheReducer),
   planPrise: planPriseReducer,
 });
 

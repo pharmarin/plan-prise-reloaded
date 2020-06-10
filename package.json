@@ -59,7 +59,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8000",
+  "proxy": "http://dev-pi.local:8080",
   "devDependencies": {
     "@types/classnames": "^2.2.10",
     "@types/jest": "^25.2.3",

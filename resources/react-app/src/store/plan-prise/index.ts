@@ -1,6 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'helpers/axios-clients';
 import isArray from 'lodash/isArray';
+import forEach from 'lodash/forEach';
+import get from 'lodash/get';
+import find from 'lodash/find';
+import { cache } from 'store/cache';
 
 const loadList = createAsyncThunk('planPrise/loadList', async () => {
   const response = await axios.get('/plan-prise');
@@ -9,9 +13,16 @@ const loadList = createAsyncThunk('planPrise/loadList', async () => {
 
 const loadContent = createAsyncThunk(
   'planPrise/loadContent',
-  async (id: number) => {
+  async (id: number, { dispatch, getState }) => {
     const response = await axios.get(`/plan-prise/${id}`);
-    return response.data;
+    const cachedMedicaments = (getState() as ReduxState).cache.medicaments;
+    forEach(get(response, 'data.source', []), (medicament) => {
+      const isInStore = find(cachedMedicaments, medicament);
+      if (!isInStore) {
+        dispatch(cache(medicament));
+      }
+    });
+    return response.data.data;
   }
 );
 

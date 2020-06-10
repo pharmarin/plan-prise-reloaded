@@ -9,7 +9,6 @@ declare namespace Models {
 
 declare namespace Props {
   interface ItemCard {
-    id: number;
-    type: string;
+    id: MedicamentID;
   }
 }

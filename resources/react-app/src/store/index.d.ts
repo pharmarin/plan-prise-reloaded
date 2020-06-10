@@ -11,9 +11,12 @@ interface Composition {
   precautions: number[];
 }
 
-interface Medicament {
+interface MedicamentID {
   id: number;
   type: string;
+}
+
+interface Medicament extends MedicamentID {
   compositions?: Composition[];
   custom_denomination?: string;
 }
@@ -31,7 +34,7 @@ declare namespace ReduxState {
       tokens: Tokens | null;
     };
   }
-  interface Data {
+  interface Cache {
     medicaments: Medicament[];
   }
   interface PlanPrise {
@@ -42,11 +45,11 @@ declare namespace ReduxState {
       | 'error'
       | {
           created_at: string;
-          custom_data: { [number]: { [string]: string } };
+          custom_data: { [key: number]: { [key: string]: string } };
           custom_settings: {};
           deleted_at: string | null;
           id: number;
-          medicaments: Medicament[];
+          medic_data: { [key: number]: MedicamentID };
           pp_id: number;
           updated_at: string;
           user_id: number;
@@ -57,6 +60,6 @@ declare namespace ReduxState {
 
 declare interface ReduxState {
   app: ReduxState.App;
-  data: any;
+  cache: ReduxState.Cache;
   planPrise: ReduxState.PlanPrise;
 }

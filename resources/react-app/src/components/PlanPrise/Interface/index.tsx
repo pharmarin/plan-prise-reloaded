@@ -2,11 +2,11 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 import CatchableError from 'helpers/catchable-error';
-import find from 'lodash/find';
 import get from 'lodash/get';
+import toNumber from 'lodash/toNumber';
 import { loadContent } from 'store/plan-prise';
 import Card from './Card';
-import toNumber from 'lodash/toNumber';
+import keys from 'lodash/keys';
 
 const mapState = (state: ReduxState) => ({
   content: state.planPrise.content,
@@ -38,13 +38,16 @@ const Interface = (props: InterfaceProps) => {
   if (content === 'error')
     return <React.Fragment>Erreur lors du chargement</React.Fragment>;
 
-  const { medicaments } = content;
+  const { medic_data: medicaments } = content;
 
   return (
     <React.Fragment>
-      {medicaments.map((medicament) => (
-        <Card key={medicament.id} id={medicament.id} type={medicament.type} />
-      ))}
+      {keys(medicaments)
+        .sort()
+        .map((key) => {
+          const k = toNumber(key);
+          return <Card key={medicaments[k].id} id={medicaments[k]} />;
+        })}
     </React.Fragment>
   );
 };
