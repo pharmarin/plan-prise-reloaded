@@ -20,7 +20,7 @@ import planPriseReducer from './plan-prise';
 
 const rootReducer = combineReducers({
   app: appReducer,
-  data: persistReducer({ key: 'pp_cache', storage }, cacheReducer),
+  cache: persistReducer({ key: 'pp_cache', storage }, cacheReducer),
   planPrise: planPriseReducer,
 });
 
