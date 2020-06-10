@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 import CatchableError from 'helpers/catchable-error';
 import get from 'lodash/get';
+import map from 'lodash/map';
 import toNumber from 'lodash/toNumber';
 import { loadContent } from 'store/plan-prise';
 import Card from './Card';
@@ -42,12 +43,11 @@ const Interface = (props: InterfaceProps) => {
 
   return (
     <React.Fragment>
-      {keys(medicaments)
+      {map(keys(medicaments), toNumber)
         .sort()
-        .map((key) => {
-          const k = toNumber(key);
-          return <Card key={medicaments[k].id} id={medicaments[k]} />;
-        })}
+        .map((key: number) => (
+          <Card key={medicaments[key].id} id={medicaments[key]} />
+        ))}
     </React.Fragment>
   );
 };

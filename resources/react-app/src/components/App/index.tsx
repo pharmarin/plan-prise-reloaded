@@ -9,7 +9,7 @@ import Navigation from 'components/Navigation';
 import Switch from 'components/Navigation/Switch';
 import SplashScreen from './SplashScreen';
 import axios from 'helpers/axios-clients';
-import getConfig, { storeConfig } from 'helpers/get-config';
+import useConfig, { storeConfig } from 'helpers/hooks/use-config';
 import CatchableError from 'helpers/catchable-error';
 
 const sanctumConfig = {
@@ -26,7 +26,7 @@ export default () => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [needUpdate, setNeedUpdate] = useState(false);
 
-  const config = getConfig();
+  const config = useConfig();
 
   if (!isLoading && !hasLoaded) {
     if (!config) setIsLoading(true);

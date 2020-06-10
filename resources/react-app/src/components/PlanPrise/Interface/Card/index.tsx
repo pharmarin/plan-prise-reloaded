@@ -6,20 +6,27 @@ import { connect, ConnectedProps } from 'react-redux';
 import get from 'lodash/get';
 import find from 'lodash/find';
 import { BsTrash, BsCaretDown, BsCaretUpFill } from 'react-icons/bs';
+import useConfig from 'helpers/hooks/use-config';
+import map from 'lodash/map';
+import keys from 'lodash/keys';
+import includes from 'lodash/includes';
+import Input from '../Input';
 
 const mapState = (state: ReduxState) => ({
+  settings: get(state, 'planPrise.content.custom_settings', {}),
   storedMedicaments: state.cache.medicaments,
 });
 
 const connector = connect(mapState);
 
-type ItemCardProps = Props.ItemCard & ConnectedProps<typeof connector>;
+type CardProps = Props.Card & ConnectedProps<typeof connector>;
 
-const ItemCard = (props: ItemCardProps) => {
-  const { storedMedicaments, id } = props;
+const ItemCard = (props: CardProps) => {
+  const { storedMedicaments, id, settings } = props;
   const medicament = find(storedMedicaments, id) as Medicament;
-  console.log(storedMedicaments, id, medicament);
+  const inputs = useConfig('default.pp_inputs');
   const [isOpened, setIsOpened] = useState(false);
+
   return (
     <Card className="mb-3">
       <CardHeader
@@ -51,20 +58,22 @@ const ItemCard = (props: ItemCardProps) => {
         </div>
         <div className="d-flex flex-shrink-0 flex-column">
           <Button
-            className="rounded-pill text-danger ml-auto py-0 prevent-toggle"
+            block={true}
+            className="rounded-pill text-danger py-0 prevent-toggle"
             size="sm"
             tabIndex={-1}
-            color="light"
+            color="neutral"
             //onClick={() => removeLine(id)}
           >
             <small className="mr-1 prevent-toggle">Supprimer la ligne</small>
             <BsTrash className="prevent-toggle" />
           </Button>
           <Button
-            className="rounded-pill text-muted ml-auto py-0 mt-1"
+            block={true}
+            className="rounded-pill text-muted py-0 mt-1"
             size="sm"
             tabIndex={-1}
-            color="light"
+            color="neutral"
           >
             {isOpened ? (
               <React.Fragment>
@@ -81,7 +90,7 @@ const ItemCard = (props: ItemCardProps) => {
         </div>
       </CardHeader>
       <CardBody className="row">
-        {/*map(keys(inputs), (sectionKey) => {
+        {map(keys(inputs), (sectionKey) => {
           const section = inputs[sectionKey];
           if (!section.collapse || isOpened) {
             return (
@@ -93,18 +102,30 @@ const ItemCard = (props: ItemCardProps) => {
                     : section.class
                 }
               >
-                {map(section.inputs, (input) => (
-                  <PPInputGroup
+                {map(section.inputs, (input) => {
+                  /*<PPInputGroup
                     key={input}
                     input={input}
                     lineId={id}
                     values={details.data}
-                  />
-                ))}
+                  />*/
+                  let displayInput = true;
+                  if (sectionKey === 'posologies') displayInput = input.default;
+                  if (
+                    get(settings, `${input.id}.checked`, undefined) !==
+                    undefined
+                  )
+                    displayInput = get(settings, `${input.id}.checked`);
+                  return displayInput ? (
+                    <Input key={input.id} input={input} />
+                  ) : (
+                    false
+                  );
+                })}
               </div>
             );
           }
-          const needChoiceInputs = find(section.inputs, (i) =>
+          /*const needChoiceInputs = find(section.inputs, (i) =>
             includes(needChoice, i.id)
           );
           return (
@@ -120,8 +141,9 @@ const ItemCard = (props: ItemCardProps) => {
                 />
               </div>
             )
-          );
-        })*/}
+          );*/
+          return null;
+        })}
       </CardBody>
     </Card>
   );

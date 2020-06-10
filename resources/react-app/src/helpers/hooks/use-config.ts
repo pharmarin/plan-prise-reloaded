@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+
 export type Config = {
   [key: string]: any;
   version: string;
@@ -29,6 +31,6 @@ export default (key: string | undefined = undefined) => {
   if (!localStorage) {
     return null;
   }
-  if (key) return localStorage[key];
+  if (key) return get(localStorage, key);
   return localStorage;
 };

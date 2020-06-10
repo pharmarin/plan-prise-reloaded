@@ -16,7 +16,7 @@ import map from 'lodash/map';
 import get from 'lodash/get';
 
 //import { updateSettings } from 'store/plan-prise/actions';
-import getConfig from 'helpers/get-config';
+import useConfig from 'helpers/hooks/use-config';
 
 const mapState = (state: ReduxState) => ({
   settings: get(state, 'planPrise.content.custom_settings', {}),
@@ -35,7 +35,7 @@ type SettingsProps = ConnectedProps<typeof connector> & {
 
 const Settings = (props: SettingsProps) => {
   const { show, toggle } = props;
-  const { pp_inputs: inputs } = getConfig('default');
+  const { pp_inputs: inputs } = useConfig('default');
   return (
     <Modal show={show} onHide={toggle}>
       <ModalHeader toggle={toggle}>Options</ModalHeader>
