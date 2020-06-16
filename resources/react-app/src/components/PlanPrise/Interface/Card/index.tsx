@@ -13,7 +13,7 @@ import includes from 'lodash/includes';
 import Input from '../Input';
 
 const mapState = (state: ReduxState) => ({
-  settings: get(state, 'planPrise.content.custom_settings', {}),
+  settings: get(state.planPrise, 'content.custom_settings', {}),
   storedMedicaments: state.cache.medicaments,
 });
 
@@ -26,6 +26,12 @@ const ItemCard = (props: CardProps) => {
   const medicament = find(storedMedicaments, id) as Medicament;
   const inputs = useConfig('default.pp_inputs');
   const [isOpened, setIsOpened] = useState(false);
+
+  if (!medicament) {
+    throw new CatchableError(
+      "Nous n'avons pas pu obtenir les données pour le médicament #" + id.id
+    );
+  }
 
   return (
     <Card className="mb-3">
@@ -117,7 +123,11 @@ const ItemCard = (props: CardProps) => {
                   )
                     displayInput = get(settings, `${input.id}.checked`);
                   return displayInput ? (
-                    <Input key={input.id} input={input} />
+                    <Input
+                      key={input.id}
+                      input={input}
+                      medicament={medicament}
+                    />
                   ) : (
                     false
                   );

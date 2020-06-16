@@ -5,6 +5,8 @@ import forEach from 'lodash/forEach';
 import get from 'lodash/get';
 import find from 'lodash/find';
 import { cache } from 'store/cache';
+import { set } from 'lodash';
+import CatchableError from 'helpers/catchable-error';
 
 const loadList = createAsyncThunk('planPrise/loadList', async () => {
   const response = await axios.get('/plan-prise');
@@ -40,6 +42,17 @@ const ppSlice = createSlice({
       state.id = action.payload;
       state.content = null;
     },
+    setValue: (state, action: PayloadAction<{ id: string; value: any }>) => {
+      if (
+        state.content === null ||
+        state.content === 'error' ||
+        state.content === 'loading'
+      )
+        throw new CatchableError(
+          'Impossible de mettre à jour un plan de prise inexistant'
+        );
+      set(state.content.custom_data, action.payload.id, action.payload.value);
+    },
   },
   extraReducers: {
     [loadList.pending.type]: (state) => {
@@ -67,6 +80,6 @@ const ppSlice = createSlice({
   },
 });
 
-export const { setId } = ppSlice.actions;
+export const { setId, setValue } = ppSlice.actions;
 export { loadContent, loadList };
 export default ppSlice.reducer;

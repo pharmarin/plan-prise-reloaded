@@ -12,6 +12,11 @@ declare namespace Props {
     id: MedicamentID;
   }
   interface Input {
-    input: any;
+    input: {
+      id: string;
+      default: boolean;
+      label: string;
+    };
+    medicament: MedicamentID;
   }
 }
