@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, Button, CardBody } from 'reactstrap';
-import isObject from 'lodash/isObject';
 import CatchableError from 'helpers/catchable-error';
 import { connect, ConnectedProps } from 'react-redux';
 import get from 'lodash/get';
@@ -9,8 +8,7 @@ import { BsTrash, BsCaretDown, BsCaretUpFill } from 'react-icons/bs';
 import useConfig from 'helpers/hooks/use-config';
 import map from 'lodash/map';
 import keys from 'lodash/keys';
-import includes from 'lodash/includes';
-import Input from '../Input';
+import InputGroup from '../Input/Group';
 
 const mapState = (state: ReduxState) => ({
   settings: get(state.planPrise, 'content.custom_settings', {}),
@@ -123,7 +121,7 @@ const ItemCard = (props: CardProps) => {
                   )
                     displayInput = get(settings, `${input.id}.checked`);
                   return displayInput ? (
-                    <Input
+                    <InputGroup
                       key={input.id}
                       input={input}
                       medicament={medicament}
