@@ -16,6 +16,7 @@ declare namespace Props {
       id: string;
       default: boolean;
       display?: string;
+      help?: string;
       join?: string;
       label: string;
       multiple?: boolean;
@@ -23,7 +24,10 @@ declare namespace Props {
     medicament: MedicamentID;
   }
   interface InputItem {
-    multiple?: boolean;
+    checked: boolean;
+    display: string;
+    help?: string;
+    multiple?: 'checkbox' | 'radio';
     name: string;
     value: string;
   }

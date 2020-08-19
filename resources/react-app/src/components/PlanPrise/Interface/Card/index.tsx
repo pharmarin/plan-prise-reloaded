@@ -23,7 +23,7 @@ const ItemCard = (props: CardProps) => {
   const { storedMedicaments, id, settings } = props;
   const medicament = find(storedMedicaments, id) as Medicament;
   const inputs = useConfig('default.pp_inputs');
-  const [isOpened, setIsOpened] = useState(false);
+  const [isOpened, setIsOpened] = useState(true); //useState(false);
 
   if (!medicament) {
     throw new CatchableError(

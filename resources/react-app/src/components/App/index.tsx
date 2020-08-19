@@ -37,13 +37,13 @@ export default () => {
           if (config) setNeedUpdate(true);
           storeConfig(response.data);
         }
-
         setIsLoading(false);
         setHasLoaded(true);
       })
       .catch((error) => {
+        console.log(error.data);
         throw new CatchableError(
-          "Quelque chose s'est mal déroulé.",
+          "Une erreur est survenue lors du chargement de l'application. ",
           error.data
         );
       });
