@@ -4,6 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { FormGroup, Label } from 'reactstrap';
 import Item from '../Item';
 import isArray from 'lodash/isArray';
+import keys from 'lodash/keys';
 import map from 'lodash/map';
 import CatchableError from 'helpers/catchable-error';
 import { castArray } from 'lodash';
@@ -31,30 +32,51 @@ const InputGroup = (props: InputGroupProps) => {
   const inputDefault = get(medicament, `${input.id}`, '');
   const inputName = `${medicament.type}-${medicament.id}.${input.id}`;
   const inputValue = get(customData, inputName, inputDefault);
+  const addedCustomName = `${medicament.type}-${medicament.id}.custom_${input.id}`;
+  const addedCustomValue = get(
+    customData,
+    `${medicament.type}-${medicament.id}.custom_${input.id}`
+  );
   let inputsArray;
 
   if (input.multiple) {
-    inputsArray = map(inputDefault, (precaution) => {
-      if (input.display === undefined)
-        throw new CatchableError('Il manque une propriété pour continuer. ');
-      return {
-        id: precaution.id,
-        checked: get(
-          inputValue,
-          `${precaution.id}.checked`,
-          input.help ? precaution[input.help] === null : false
-        ),
-        display: input.display,
-        help: input.help ? precaution[input.help] : undefined,
-        name: `${inputName}.${precaution.id}`,
-        readOnly: input.readOnly,
-        value: get(
-          inputValue,
-          `${precaution.id}.${input.display}`,
-          precaution[input.display]
-        ),
-      };
-    }) as InputProperties;
+    inputsArray = [
+      ...map(inputDefault, (precaution) => {
+        if (input.display === undefined)
+          throw new CatchableError('Il manque une propriété pour continuer. ');
+        return {
+          id: precaution.id,
+          checked: get(
+            inputValue,
+            `${precaution.id}.checked`,
+            input.help ? precaution[input.help] === null : false
+          ),
+          display: input.display,
+          help: input.help ? precaution[input.help] : undefined,
+          name: `${inputName}.${precaution.id}`,
+          readOnly: input.readOnly,
+          value: get(
+            inputValue,
+            `${precaution.id}.${input.display}`,
+            precaution[input.display]
+          ),
+        };
+      }),
+      /* Précautions ajoutées par l'utilisateur */
+      ...map(keys(addedCustomValue), (addedCustomID) => {
+        return {
+          id: addedCustomID,
+          checked: get(addedCustomValue, `${addedCustomID}.checked`, true),
+          display: `custom_${input.id}`,
+          name: `${addedCustomName}.${addedCustomID}`,
+          value: get(
+            addedCustomValue,
+            `${addedCustomID}.custom_${input.id}`,
+            ''
+          ),
+        };
+      }),
+    ] as InputProperties;
   } else {
     inputsArray = castArray({
       id: input.id,
