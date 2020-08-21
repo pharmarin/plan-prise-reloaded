@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class ApiMedicamentRepository {
 
-  private $root = "https://api.plandeprise.fr/api";
+  private $root = "https://api.plandeprise.fr";
 
   public function find ($cis) {
     $response = $this->call_api("/medicaments/" . $cis);
