@@ -20,6 +20,7 @@ declare namespace Props {
       join?: string;
       label: string;
       multiple?: boolean;
+      readOnly?: boolean;
     };
     medicament: MedicamentID;
   }
@@ -29,6 +30,7 @@ declare namespace Props {
     help?: string;
     multiple?: 'checkbox' | 'radio';
     name: string;
+    readOnly?: boolean;
     value: string;
   }
 }
