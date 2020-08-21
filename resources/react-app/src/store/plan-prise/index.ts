@@ -24,7 +24,13 @@ const loadContent = createAsyncThunk(
         dispatch(cache(medicament));
       }
     });
-    return response.data.data;
+    const data = response.data.data;
+    return {
+      id: data.pp_id,
+      medic_data: data.medic_data,
+      custom_data: data.custom_data,
+      custom_settings: data.custom_settings,
+    };
   }
 );
 
