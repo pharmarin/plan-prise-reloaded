@@ -25,7 +25,7 @@ class MedicamentController extends Controller
     public function index()
     {
       $medicaments = $this->medicament_repository->all();
-      $columns = ['custom_denomination'];
+      $columns = ['denomination'];
       return view('medicament.index')->with(compact('medicaments', 'columns'));
     }
 
@@ -33,7 +33,7 @@ class MedicamentController extends Controller
     {
       if ($request->has('query')) {
         $medicaments = $this->medicament_repository->getLike($request->input('query'));
-        $columns = ['custom_denomination'];
+        $columns = ['denomination'];
         return view('medicament.search')->with(compact('medicaments', 'columns'));
       }
       return view('medicament.search');

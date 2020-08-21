@@ -6,7 +6,7 @@
       Import de {{ $old_medicament->nomMedicament }}
       @break
     @case('EDIT')
-      Modification de {{ $medicament->custom_denomination }}
+      Modification de {{ $medicament->denomination }}
       @break
     @default
       Ajout d'un médicament
@@ -24,7 +24,7 @@
             Import de {{ $old_medicament->nomMedicament }}
             @break
           @case('EDIT')
-            Modification de {{ $medicament->custom_denomination }}
+            Modification de {{ $medicament->denomination }}
             @break
           @default
             Ajout d'un médicament

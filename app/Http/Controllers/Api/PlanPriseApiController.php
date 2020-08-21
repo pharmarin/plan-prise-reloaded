@@ -20,7 +20,7 @@ class PlanPriseApiController extends Controller
     public function searchMedicaments (Request $request)
     {
       $query = $request->input('query') . '%';
-      $medicaments = \App\Models\Medicament::where('custom_denomination', 'LIKE', $query)->get(['id as value', 'custom_denomination as label']);
+      $medicaments = \App\Models\Medicament::where('denomination', 'LIKE', $query)->get(['id as value', 'denomination as label']);
       $old_medicaments = \App\Models\OldMedicament::where('nomMedicament', 'LIKE', $query)->whereNull('import')->get(['id as value', 'nomMedicament as label']);
       $bdpm = \App\Models\BdpmCis::where('denomination', 'LIKE', $query)->whereDoesntHave('medicament')->get(['code_cis as value', 'denomination as label']);
       $created = collect();

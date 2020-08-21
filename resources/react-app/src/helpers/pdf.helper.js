@@ -18,8 +18,7 @@ export default function generate(ppId, columns, values) {
     header: {
       stack: [
         {
-          text:
-            'Un plan pour vous aider à mieux prendre vos médicaments',
+          text: 'Un plan pour vous aider à mieux prendre vos médicaments',
           style: 'header',
         },
         { text: "Ceci n'est pas une ordonnance", style: 'header' },
@@ -55,9 +54,7 @@ export default function generate(ppId, columns, values) {
             [
               ...map(columns, (column) => ({
                 text: column.header,
-                alignment: startsWith(column.id, 'poso_')
-                  ? 'center'
-                  : 'left',
+                alignment: startsWith(column.id, 'poso_') ? 'center' : 'left',
                 style: ['tableHeader', column.id],
               })),
             ],
@@ -66,12 +63,12 @@ export default function generate(ppId, columns, values) {
                 get(line, column.id, {
                   text: ' ',
                   style: column.id,
-                }),
+                })
               ),
             ]),
           ],
           widths: map(columns, (column) =>
-            startsWith(column.id, 'poso_') ? 40 : 'auto',
+            startsWith(column.id, 'poso_') ? 40 : 'auto'
           ),
         },
       },
@@ -96,7 +93,7 @@ export default function generate(ppId, columns, values) {
       interline: {
         fontSize: 2,
       },
-      custom_denomination: {
+      denomination: {
         bold: true,
       },
       compositions: {
@@ -117,8 +114,8 @@ export default function generate(ppId, columns, values) {
                 fillColor: poso.color,
               },
             ];
-          }),
-        ),
+          })
+        )
       ),
     },
   };

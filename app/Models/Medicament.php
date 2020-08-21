@@ -29,7 +29,7 @@ class Medicament extends Model
     }
 
     public function getTypeAttribute () {
-      return get_class($this);
+      return 1;
     }
 
     public function getPrecautionsAttribute ()

@@ -31,13 +31,11 @@ class PPItem {
     if (input.id === 'denomination') {
       return [
         {
-          value: medicament.custom_denomination,
-          style: 'custom_denomination',
+          value: medicament.denomination,
+          style: 'denomination',
         },
         {
-          value: map(medicament.compositions, 'denomination').join(
-            ' + ',
-          ),
+          value: map(medicament.compositions, 'denomination').join(' + '),
           style: 'compositions',
         },
         {
@@ -45,15 +43,14 @@ class PPItem {
             toLower(
               window.php.default.voies_administration[
                 medicament.voies_administration
-              ],
+              ]
             ) || ''
           })`,
           style: 'voies_administration',
         },
       ];
     }
-    const returnValue =
-      customValue.length > 0 ? customValue : defaultValue;
+    const returnValue = customValue.length > 0 ? customValue : defaultValue;
     if (needChoice) {
       if (input.multiple) {
         return concat(
@@ -61,17 +58,17 @@ class PPItem {
             const customItemData = get(
               customValue,
               `${item.id}.${input.display}`,
-              get(item, input.display, ''),
+              get(item, input.display, '')
             );
             const customItemChecked = get(
               customValue,
               `${item.id}.checked`,
-              item.population === null,
+              item.population === null
             );
             const customItemHelp = get(
               item,
               input.help,
-              get(input, 'label', null),
+              get(input, 'label', null)
             );
             return {
               checked: customItemChecked,
@@ -85,7 +82,7 @@ class PPItem {
             checked: item.checked,
             id: keys(addedData)[i],
             addedData: true,
-          })),
+          }))
         );
       }
       return map(returnValue, (item) => ({
@@ -100,9 +97,7 @@ class PPItem {
         case 1:
           return returnValue[0][input.display];
         default:
-          return map(returnValue, (item) =>
-            get(item, input.display, null),
-          );
+          return map(returnValue, (item) => get(item, input.display, null));
       }
     } else {
       return returnValue;
@@ -135,13 +130,12 @@ export default class PPRepository {
         const isChecked = get(
           this.settings,
           `inputs.${posologie.id}.checked`,
-          null,
+          null
         );
         const isDefault = posologie.default;
-        const isDisplayed =
-          isChecked || (isChecked === null && isDefault);
+        const isDisplayed = isChecked || (isChecked === null && isDefault);
         return isDisplayed ? posologie : null;
-      }),
+      })
     );
 
     return [
@@ -176,13 +170,12 @@ export default class PPRepository {
         const isChecked = get(
           this.settings,
           `inputs.${posologie.id}.checked`,
-          null,
+          null
         );
         const isDefault = posologie.default;
-        const isDisplayed =
-          isChecked || (isChecked === null && isDefault);
+        const isDisplayed = isChecked || (isChecked === null && isDefault);
         return isDisplayed ? posologie : null;
-      }),
+      })
     );
 
     return inputs;
@@ -194,11 +187,7 @@ export default class PPRepository {
       const medicament = find(this.data, line);
       forEach(this.columns, (column) => {
         const defaultValue = get(medicament, `data.${column.id}`, []);
-        const customValue = get(
-          this.customData,
-          `${line.id}.${column.id}`,
-          [],
-        );
+        const customValue = get(this.customData, `${line.id}.${column.id}`, []);
         const needChoice =
           column.multiple ||
           (customValue.length === 0 &&
@@ -207,7 +196,7 @@ export default class PPRepository {
         const addedData = get(
           this.customData,
           `${line.id}.custom_${column.id}`,
-          [],
+          []
         );
         const item = new PPItem({
           defaultValue,
@@ -222,9 +211,7 @@ export default class PPRepository {
           set(
             this.needChoiceObject,
             line.id,
-            concat(get(this.needChoiceObject, line.id, []), [
-              column.id,
-            ]),
+            concat(get(this.needChoiceObject, line.id, []), [column.id])
           );
         }
       });
@@ -264,18 +251,18 @@ export default class PPRepository {
               })).flatMap((e, index) =>
                 index
                   ? [e, { text: ' ', style: 'interline' }]
-                  : [e, { text: ' ', style: 'interline' }],
+                  : [e, { text: ' ', style: 'interline' }]
               ), // add interline https://stackoverflow.com/questions/46528616/how-to-insert-a-new-element-in-between-all-elements-of-a-js-array
             };
           if (input.join)
             return {
-              text: map(value, (i) =>
-                isString(i) ? i : i.value,
-              ).join(input.join),
+              text: map(value, (i) => (isString(i) ? i : i.value)).join(
+                input.join
+              ),
             };
         }
         return '';
-      }),
+      })
     );
   }
 

@@ -46,9 +46,7 @@ const ItemCard = (props: CardProps) => {
           }}
         >
           <div className="d-flex">
-            <div className="text-truncate">
-              {medicament.custom_denomination}
-            </div>
+            <div className="text-truncate">{medicament.denomination}</div>
           </div>
           {medicament.compositions && (
             <div className="text-muted text-truncate">

@@ -26,7 +26,7 @@ class MedicamentApiController extends Controller
     public function index()
     {
       $medicaments = $this->medicament_repository->all();
-      $columns = ['custom_denomination'];
+      $columns = ['denomination'];
       return response()->json($medicaments);
     }
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $medicament->custom_denomination)
+@section('title', $medicament->denomination)
 
 @section('content')
     <div class="container">
@@ -16,7 +16,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                      <h4>{{ $medicament->custom_denomination }}</h4>
+                      <h4>{{ $medicament->denomination }}</h4>
                       <h6>{{ implode(' + ', $medicament->compositions->pluck('denomination')->all()) }}</h6>
                       <ul class="list-unstyled mb-0">
                       </ul>

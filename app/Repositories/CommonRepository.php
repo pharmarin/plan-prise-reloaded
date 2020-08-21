@@ -13,8 +13,23 @@ use Illuminate\Support\Facades\Config;
 
 class CommonRepository {
 
+  static function getTypeByID ($type_id)
+  {
+    switch ($type_id) {
+      case 0:
+        return OldMedicament::class;
+      case 1:
+        return Medicament::class;
+      case 2:
+        return BdpmCis::class;
+      default:
+        return null;
+    }
+  }
+
   static function find ($id, $type)
   {
+    $type = is_numeric($type) ? CommonRepository::getTypeByID($type) : $type;
     switch ($type) {
       case Medicament::class:
         $model = Medicament::find($id);

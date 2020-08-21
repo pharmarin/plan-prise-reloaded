@@ -26,12 +26,12 @@ return [
       ],
       'emptyObject' => ''
     ],
-    'custom_denomination' => [
+    'denomination' => [
       'isRepeated' => false,
       'label' => 'Nom du médicament',
       'hint' => 'Nom du médicament qui sera affiché sur le plan de prise. ',
       'inputs' => [
-        'custom_denomination' => [
+        'denomination' => [
           'type' => 'text',
           'placeholder' => 'Nom du médicament'
         ]

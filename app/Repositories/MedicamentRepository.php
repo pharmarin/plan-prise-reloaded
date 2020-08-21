@@ -36,13 +36,13 @@ class MedicamentRepository {
   public function all ($options = [])
   {
     $paginate = isset($options['paginate']) ? $options['paginate'] : 20;
-    $order_by = isset($options['order_by']) ? $options['order_by'] : 'custom_denomination';
+    $order_by = isset($options['order_by']) ? $options['order_by'] : 'denomination';
     return $this->medicamentCustom::orderBy($order_by)->paginate($paginate);
   }
 
   public function getLike ($string)
   {
-    return $this->medicamentCustom::where('custom_denomination', 'LIKE', '%' . $string . '%')->paginate(20);
+    return $this->medicamentCustom::where('denomination', 'LIKE', '%' . $string . '%')->paginate(20);
   }
 
   public function getMedicamentByCIS ($cis) {
@@ -58,7 +58,7 @@ class MedicamentRepository {
    */
   public function saveFromForm (Request $request) {
 
-    $guard = Medicament::where('custom_denomination', '=', $request->input('custom_denomination'))->get();
+    $guard = Medicament::where('denomination', '=', $request->input('denomination'))->get();
     if (count($guard) > 0) throw new \Exception('Un médicament portant ce nom existe déjà. ');
 
     $this->medicamentCustom = $this->_populateModelFromForm($request, $this->medicamentCustom);
@@ -124,7 +124,7 @@ class MedicamentRepository {
    */
   private function _populateModelFromForm (Request $request, Medicament $medicament) {
 
-    $medicament->custom_denomination = $request->input('custom_denomination');
+    $medicament->denomination = $request->input('denomination');
 
     $medicament->custom_indications = json_encode($request->input('custom_indications'));
 

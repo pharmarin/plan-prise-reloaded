@@ -28,31 +28,29 @@ class Medicament extends React.Component {
       };
 
       this.newInputs.old_medicament.defaultValue = old_medicament.id;
-      this.newInputs.custom_denomination.defaultValue =
-        old_medicament.nomMedicament;
+      this.newInputs.denomination.defaultValue = old_medicament.nomMedicament;
       this.newInputs.custom_indications.defaultValue = this.getValueFromOldMedicament(
         'custom_indications',
-        old_medicament.indication,
+        old_medicament.indication
       );
-      this.newInputs.conservation_frigo.defaultValue =
-        old_medicament.frigo;
+      this.newInputs.conservation_frigo.defaultValue = old_medicament.frigo;
       this.newInputs.conservation_duree.defaultValue = this.getValueFromOldMedicament(
         'conservation_duree',
-        old_medicament.dureeConservation,
+        old_medicament.dureeConservation
       );
       this.newInputs.voies_administration.defaultValue = this.getValueFromOldMedicament(
         'voies_administration',
-        old_medicament.voieAdministration,
+        old_medicament.voieAdministration
       );
       const precautions_compo = old_medicament.nomGenerique
         .map((nomGe) => nomGe.precautions)
         .flat();
       const precautions_medic = this.getValueFromOldMedicament(
         'commentaires',
-        old_medicament.commentaire,
+        old_medicament.commentaire
       );
       this.newInputs.commentaires.defaultValue = precautions_medic.concat(
-        precautions_compo,
+        precautions_compo
       );
     }
 
@@ -63,16 +61,12 @@ class Medicament extends React.Component {
 
       this.medicament_edit = edit;
 
-      this.newInputs.custom_denomination.defaultValue =
-        edit.custom_denomination;
-      this.newInputs.custom_indications.defaultValue =
-        edit.custom_indications;
-      this.newInputs.conservation_frigo.defaultValue =
-        edit.conservation_frigo;
-      this.newInputs.conservation_duree.defaultValue =
-        edit.conservation_duree;
+      this.newInputs.denomination.defaultValue = edit.denomination;
+      this.newInputs.custom_indications.defaultValue = edit.custom_indications;
+      this.newInputs.conservation_frigo.defaultValue = edit.conservation_frigo;
+      this.newInputs.conservation_duree.defaultValue = edit.conservation_duree;
       this.newInputs.voies_administration.defaultValue = JSON.parse(
-        edit.voies_administration,
+        edit.voies_administration
       );
       this.newInputs.commentaires.defaultValue = edit.precautions;
     }
@@ -109,9 +103,7 @@ class Medicament extends React.Component {
           return string;
       }
     } catch (e) {
-      console.log(
-        `${inputName} field in database contains invalid json`,
-      );
+      console.log(`${inputName} field in database contains invalid json`);
       switch (inputName) {
         case 'voies_administration':
           var value = 0;

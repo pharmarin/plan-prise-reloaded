@@ -30,8 +30,8 @@ class BdpmCis extends Model
     {
       return (object) [
         'id' => $this->code_cis,
-        'custom_denomination' => $this->denomination,
-        'type' => get_class($this)
+        'denomination' => $this->denomination,
+        'type' => 2
       ];
     }
 }

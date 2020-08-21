@@ -1,15 +1,15 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { Button, Card, Spinner } from "react-bootstrap";
-import get from "lodash/get";
-import find from "lodash/find";
-import map from "lodash/map";
-import keys from "lodash/keys";
-import includes from "lodash/includes";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Button, Card, Spinner } from 'react-bootstrap';
+import get from 'lodash/get';
+import find from 'lodash/find';
+import map from 'lodash/map';
+import keys from 'lodash/keys';
+import includes from 'lodash/includes';
 
-import PPInputGroup from "./PPInputGroup";
-import { doAddCustomItem, doRemoveLine } from "store/plan-prise/actions";
+import PPInputGroup from './PPInputGroup';
+import { doAddCustomItem, doRemoveLine } from 'store/plan-prise/actions';
 
 class PPCard extends React.Component {
   constructor(props) {
@@ -30,7 +30,7 @@ class PPCard extends React.Component {
       repository,
     } = this.props;
     const { isOpened } = this.state;
-    const data = get(details, "data", null);
+    const data = get(details, 'data', null);
     const id = lineId;
     const { inputs } = repository;
 
@@ -39,7 +39,7 @@ class PPCard extends React.Component {
         <Card.Header
           className="d-flex"
           onClick={(event) =>
-            !event.target.classList.contains("prevent-toggle") &&
+            !event.target.classList.contains('prevent-toggle') &&
             data &&
             this.setState({ isOpened: !isOpened })
           }
@@ -47,32 +47,32 @@ class PPCard extends React.Component {
           <div
             className="d-flex flex-column flex-grow-1"
             style={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
             <div className="d-flex">
               <div className="text-truncate">
                 {data &&
                 find(data.denomination, {
-                  style: "custom_denomination",
+                  style: 'denomination',
                 })
                   ? find(data.denomination, {
-                      style: "custom_denomination",
+                      style: 'denomination',
                     }).value
                   : `Chargement de ${denomination} en cours... `}
               </div>
             </div>
             {data &&
               find(data.denomination, {
-                style: "compositions",
+                style: 'compositions',
               }) && (
                 <div className="text-muted text-truncate">
                   <small>
                     {
                       find(data.denomination, {
-                        style: "compositions",
+                        style: 'compositions',
                       }).value
                     }
                   </small>
@@ -137,7 +137,7 @@ class PPCard extends React.Component {
                     key={sectionKey}
                     className={
                       !isOpened && !section.collapse
-                        ? "col-md-12 d-flex justify-content-around"
+                        ? 'col-md-12 d-flex justify-content-around'
                         : section.class
                     }
                   >

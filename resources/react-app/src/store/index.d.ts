@@ -18,7 +18,7 @@ interface MedicamentID {
 
 interface Medicament extends MedicamentID {
   compositions?: Composition[];
-  custom_denomination?: string;
+  denomination?: string;
 }
 
 declare namespace ReduxState {

@@ -40,7 +40,7 @@ class OldMedicament extends Model
     $commentaire = json_decode($this->commentaire, true) ?? [];
     return (object) [
       'id' => $this->id,
-      'custom_denomination' => $this->nomMedicament,
+      'denomination' => $this->nomMedicament,
       'custom_indications' => array_map(function ($indication) {
         return ['custom_indications' => $indication];
       }, explode(' OU ', $this->indication)),
@@ -60,7 +60,7 @@ class OldMedicament extends Model
         ];
       }, $commentaire, array_keys($commentaire)),
       'compositions' => $this->nomGenerique,
-      'type' => get_class($this)
+      'type' => 0
     ];
   }
 
