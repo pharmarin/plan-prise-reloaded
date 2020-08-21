@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
-
 use App\Models\BdpmCis;
 use App\Models\Medicament;
 use App\Models\OldMedicament;
+use App\Repositories\ApiMedicamentRepository;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,15 +21,16 @@ class CommonRepository {
       case 1:
         return Medicament::class;
       case 2:
-        return BdpmCis::class;
+        return ApiMedicament::class;
       default:
         return null;
     }
   }
 
   static function find ($id, $type)
-  {
+  {        
     $type = is_numeric($type) ? CommonRepository::getTypeByID($type) : $type;
+    $api_repository = new ApiMedicamentRepository();
     switch ($type) {
       case Medicament::class:
         $model = Medicament::find($id);
@@ -38,9 +39,9 @@ class CommonRepository {
         $model = OldMedicament::find($id);
         $model = $model ? $model->to_medicament : null;
         break;
-      case BdpmCis::class:
-        $model = BdpmCis::find($id);
-        $model = $model ? $model->to_medicament : null;
+      case ApiMedicament::class:
+        $model = $api_repository->find($id);
+        $model = $model ? $model->to_medicament() : null;
         break;
       default:
         throw new \Exception('Type de modèle non envoyé. ');
@@ -54,7 +55,12 @@ class CommonRepository {
     $limit = 10;
     $medicaments = Medicament::where('custom_denomination', 'LIKE', $query)->take($limit)->get(['id as value', 'custom_denomination as label']);
     $old_medicaments = OldMedicament::where('nomMedicament', 'LIKE', $query)->whereNull('import')->take($limit)->get(['id as value', 'nomMedicament as label']);
-    $bdpm = BdpmCis::where('denomination', 'LIKE', $query)->whereDoesntHave('medicament')->take($limit)->get(['code_cis as value', 'denomination as label']);
+    $bdpm = array_map(function ($api_item) {
+      return (object) [
+        "value" => $api_item->cis,
+        "label" => $api_item->denomination
+      ];
+    }, (new ApiMedicamentRepository)->search($query));
     $created = collect();
     $created = $created->merge($medicaments)->merge($old_medicaments);
     return [

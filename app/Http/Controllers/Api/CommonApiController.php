@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 
 use \App\Models\Medicament;
 use \App\Models\OldMedicament;
-use \App\Models\BdpmCis;
 use \App\Repositories\CommonRepository;
 
 class CommonApiController extends Controller
