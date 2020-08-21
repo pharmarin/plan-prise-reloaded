@@ -40,7 +40,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "serve": "concurrently -n JS,PHP \"yarn start\" \"php artisan serve\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -72,6 +73,7 @@
     "@types/reactstrap": "^8.4.2",
     "@types/redux-logger": "^3.0.7",
     "@types/validatorjs": "^3.15.0",
+    "concurrently": "^5.3.0",
     "node-sass": "^4.14.1",
     "patch-package": "^6.2.2",
     "postinstall-postinstall": "^2.1.0",
