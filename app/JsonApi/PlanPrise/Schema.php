@@ -38,6 +38,7 @@ class Schema extends SchemaProvider
         return [
             'pp-id' => $resource->pp_id,
             'custom-data' => $resource->custom_data,
+            'custom-settings' => $resource->custom_settings,
             'created-at' => $resource->created_at->toAtomString(),
             'updated-at' => $resource->updated_at->toAtomString(),
         ];
