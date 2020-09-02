@@ -5,12 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use \App\Repositories\CommonRepository;
+use App\Builders\MultipleTypesBuilder;
 
 class PlanPrise extends Model
 {
 
   use SoftDeletes;
+  use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
+
+  public function newEloquentBuilder($query)
+  {
+    return new MultipleTypesBuilder($query);
+  }
 
   protected $table = 'plans_prise';
 
@@ -21,7 +27,7 @@ class PlanPrise extends Model
   ];
 
   protected $casts = [
-    'medic_data' => 'collection',
+    'medic_data' => 'json',
     'custom_data' => 'collection',
     'custom_settings' => 'object'
   ];
@@ -31,12 +37,9 @@ class PlanPrise extends Model
     return $this->belongsTo('App\Models\User');
   }
 
-  public function getDataAttribute ()
+  public function medic_data()
   {
-    $reference_array = $this->medic_data;
-    return $reference_array ? $reference_array->map(function ($reference) {
-      return CommonRepository::find($reference['id'], $reference['type']);
-    })->values()->all() : [];
+    return $this->hasMany(Medicament::class);
   }
 
 }

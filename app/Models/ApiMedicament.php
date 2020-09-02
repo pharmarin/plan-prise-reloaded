@@ -2,21 +2,24 @@
 
 namespace App\Models;
 
-class ApiMedicament
-{
-  private $cis;
-  private $denomination;
+use Jenssegers\Model\Model;
 
-  public function __construct ($object) {
-    $this->cis = (int) $object->cis;
-    $this->denomination = $object->denomination;
+class ApiMedicament extends Model
+{
+
+  static function find($cis)
+  {
+    return new ApiMedicament([
+      'cis' => $cis,
+      'denomination' => 'test'
+    ]);
   }
 
   public function to_medicament () {
-    return (object) [
-        'id' => $this->cis,
-        'denomination' => $this->denomination,
-        'type' => 2
-      ];
+    return $this;
+  }
+
+  public function getTypeAttribute() {
+    return 2;
   }
 }

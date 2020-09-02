@@ -21,7 +21,21 @@ class CommonRepository {
       case 1:
         return Medicament::class;
       case 2:
-        return ApiMedicament::class;
+        return BdpmCis::class;
+      default:
+        return null;
+    }
+  }
+
+  static function typeCodeToJSON ($type_id)
+  {
+    switch ($type_id) {
+      case 0:
+        return "old-medicaments";
+      case 1:
+        return "medicaments";
+      case 2:
+        return "api-medicaments";
       default:
         return null;
     }
@@ -39,7 +53,7 @@ class CommonRepository {
         $model = OldMedicament::find($id);
         $model = $model ? $model->to_medicament : null;
         break;
-      case ApiMedicament::class:
+      case BdpmCis::class:
         $model = $api_repository->find($id);
         $model = $model ? $model->to_medicament() : null;
         break;

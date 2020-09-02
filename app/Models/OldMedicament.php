@@ -37,6 +37,7 @@ class OldMedicament extends Model
 
   public function getToMedicamentAttribute ()
   {
+    return $this;
     $commentaire = json_decode($this->commentaire, true) ?? [];
     return (object) [
       'id' => $this->id,
