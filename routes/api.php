@@ -17,15 +17,14 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
   Auth::routes();
   Route::get('preload', 'Api\v1\FrontendController@config');
   Route::group(['middleware' => 'auth:sanctum'], function () {
-    //Route::get('user', 'Api\v1\UserController@info');
+    Route::get('user', 'Api\v1\UserController@info');
     Route::delete('oauth/token', 'Api\V1\UserController@logout');
     //Route::get('plan-prise/{pp_id?}', 'Api\v1\PlanPriseController@index');
     //Route::resource('plan-prise', 'Api\PlanPriseApiController');
-  });
-  // A remettre dans middleware
-  JsonApi::register('default')->routes(function ($api) {
-    $api->resource('plan-prise', ['has-many' => 'plan-prise-content']);
-    $api->resource('plan-prise-content');
+    JsonApi::register('default')->routes(function ($api) {
+      $api->resource('plan-prise', ['has-many' => 'plan-prise-content']);
+      $api->resource('plan-prise-content');
+    });
   });
 });
 
