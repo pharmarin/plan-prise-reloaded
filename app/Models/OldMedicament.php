@@ -10,7 +10,7 @@ class OldMedicament extends Model
   public $timestamps = false;
   public $appends = ['nomGenerique'];
 
-  public function getNomGeneriqueAttribute ()
+  public function getCompositionsAttribute ()
   {
     if (!isset($this->getAttributes()['nomGenerique'])) return null;
     $composition_array = explode(' + ', $this->getAttributes()['nomGenerique']);
@@ -35,6 +35,49 @@ class OldMedicament extends Model
     }, $composition_array);
   }
 
+  public function getDenominationAttribute()
+  {
+    return $this->nomMedicament;
+  }
+
+  public function getCustomIndicationsAttribute()
+  {
+    return explode(' OU ', $this->indication);
+  }
+
+  public function getConservationFrigoAttribute()
+  {
+    return $this->frigo;
+  }
+
+  public function getConservationDureeAttribute ()
+  {
+    $conservation = json_decode($this->dureeConservation, true);
+    return $conservation ? array_map(function ($duree, $laboratoire) {
+        return [
+          'laboratoire' => $laboratoire,
+          'duree' => $duree
+        ];
+      }, array_keys($conservation), $conservation) : $this->dureeConservation;
+  }
+
+  public function getVoiesAdministrationAttribute()
+  {
+    return $this->_switchVoieAdminitration($this->voieAdministration);
+  }
+
+  public function getPrecautionsAttribute()
+  {
+    $commentaire = json_decode($this->commentaire, true) ?? [];
+    return array_map(function ($precaution, $key) {
+        return [
+          'population' => $precaution['span'] == "" ? null : $precaution['span'],
+          'commentaire' => str_replace(['<br>'], "", $precaution['text']),
+          'id' => 'old_' . $key
+        ];
+      }, $commentaire, array_keys($commentaire));
+  }
+
   public function getToMedicamentAttribute ()
   {
     return $this;
@@ -42,10 +85,8 @@ class OldMedicament extends Model
     return (object) [
       'id' => $this->id,
       'denomination' => $this->nomMedicament,
-      'custom_indications' => array_map(function ($indication) {
-        return ['custom_indications' => $indication];
-      }, explode(' OU ', $this->indication)),
-      'conservation_frigo' => $this->frigo,
+      'custom_indications' => $this->custom_indications,
+      'conservation_frigo' => $this->conservation_frigo,
       'conservation_duree' => json_decode($this->dureeConservation) ? array_map(function ($duree, $laboratoire) {
         return [
           'laboratoire' => $laboratoire,

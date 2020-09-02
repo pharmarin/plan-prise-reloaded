@@ -30,7 +30,8 @@ class Schema extends SchemaProvider
     public function getAttributes($resource)
     {
         return [
-            'denomination' => $resource->denomination
+            'denomination' => $resource->denomination,
+            'loaded' => $resource->loaded,
         ];
     }
 }
