@@ -4,32 +4,36 @@ import isArray from 'lodash/isArray';
 import forEach from 'lodash/forEach';
 import get from 'lodash/get';
 import find from 'lodash/find';
+import map from 'lodash/map';
+import set from 'lodash/set';
 import { cache } from 'store/cache';
-import { set } from 'lodash';
 import CatchableError from 'helpers/catchable-error';
 
 const loadList = createAsyncThunk('planPrise/loadList', async () => {
   const response = await axios.get('/plan-prise');
-  return response.data;
+  return map(response.data.data, (pp: any) => pp.attributes['pp-id']);
 });
 
 const loadContent = createAsyncThunk(
   'planPrise/loadContent',
   async (id: number, { dispatch, getState }) => {
-    const response = await axios.get(`/plan-prise/${id}`);
+    const response = await axios.get(`/plan-prise/${id}?include=medicaments`);
     const cachedMedicaments = (getState() as ReduxState).cache.medicaments;
-    forEach(get(response, 'data.source', []), (medicament) => {
-      const isInStore = find(cachedMedicaments, medicament);
+    forEach(get(response, 'data.included', []), (medicament) => {
+      const isInStore = find(cachedMedicaments, {
+        type: medicament.type,
+        id: medicament.id,
+      });
       if (!isInStore) {
         dispatch(cache(medicament));
       }
     });
     const data = response.data.data;
     return {
-      id: data.pp_id,
-      medic_data: data.medic_data,
-      custom_data: data.custom_data,
-      custom_settings: data.custom_settings,
+      id: data.attributes['pp-id'],
+      medic_data: data.relationships.medicaments.data,
+      custom_data: data.attributes['custom-data'],
+      custom_settings: data.attributes['custom-settings'],
     };
   }
 );
