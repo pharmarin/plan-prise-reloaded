@@ -1,7 +1,7 @@
 import React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-const InputItem = (props: Props.InputItem) => {
+const CustomInput = (props: Props.CustomInput) => {
   const { onChange, readOnly, value } = props;
 
   return (
@@ -14,4 +14,4 @@ const InputItem = (props: Props.InputItem) => {
   );
 };
 
-export default InputItem;
+export default CustomInput;

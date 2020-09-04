@@ -24,7 +24,7 @@ declare namespace Props {
     };
     medicament: MedicamentID;
   }
-  interface InputItem {
+  interface CustomInput {
     onChange: (value: string) => function;
     readOnly?: boolean;
     value: string;

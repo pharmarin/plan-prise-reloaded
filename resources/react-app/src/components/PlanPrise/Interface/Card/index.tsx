@@ -25,7 +25,7 @@ import map from 'lodash/map';
 import { removeValue, setValue } from 'store/plan-prise';
 import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
-import InputItem from '../Input/Item';
+import CustomInput from './CustomInput';
 import { uniqueId, has } from 'lodash';
 
 const mapState = (state: ReduxState) => ({
@@ -142,7 +142,7 @@ const ItemCard = (props: CardProps) => {
             <div>
               <Label>Indication</Label>
               <FormGroup>
-                <InputItem
+                <CustomInput
                   onChange={(value) =>
                     setValue({ id: `${uid}.custom_indications`, value })
                   }
@@ -175,7 +175,7 @@ const ItemCard = (props: CardProps) => {
             )}
             <FormGroup>
               {(customConservationDuree || conservationDuree.length === 1) && (
-                <InputItem
+                <CustomInput
                   onChange={() => null}
                   value={
                     (
@@ -219,7 +219,7 @@ const ItemCard = (props: CardProps) => {
                 <div key={p.id}>
                   <Label>{p.label}</Label>
                   <FormGroup>
-                    <InputItem
+                    <CustomInput
                       onChange={(value) =>
                         setValue({ id: `${uid}.${p.id}`, value })
                       }
@@ -257,7 +257,7 @@ const ItemCard = (props: CardProps) => {
                           })
                         }
                       />
-                      <InputItem
+                      <CustomInput
                         onChange={(value) =>
                           setValue({
                             id: `${uid}.precautions.${precaution.id}.commentaire`,
@@ -290,7 +290,7 @@ const ItemCard = (props: CardProps) => {
                     >
                       <BsXCircle />
                     </Button>
-                    <InputItem
+                    <CustomInput
                       onChange={(value) =>
                         setValue({
                           id: `${uid}.custom_precautions.${custom}`,
