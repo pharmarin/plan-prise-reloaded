@@ -52,13 +52,19 @@ class OldMedicament extends Model
 
   public function getConservationDureeAttribute ()
   {
-    $conservation = json_decode($this->dureeConservation, true);
-    return $conservation ? array_map(function ($duree, $laboratoire) {
+    $json = json_decode($this->dureeConservation, true);
+    if ($json) {
+      return array_map(function ($laboratoire, $duree) {
         return [
           'laboratoire' => $laboratoire,
           'duree' => $duree
         ];
-      }, array_keys($conservation), $conservation) : $this->dureeConservation;
+      }, array_keys($json), $json);
+    }
+    if ($this->dureeConservation === "") {
+      return [];
+    }
+    return[["duree" => $this->dureeConservation, "laboratoire" => null]];
   }
 
   public function getVoiesAdministrationAttribute()
