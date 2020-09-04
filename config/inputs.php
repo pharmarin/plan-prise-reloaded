@@ -117,93 +117,48 @@ return [
       'emptyObject' => (object) [ 'id' => '', 'cible_id' => 0, 'cible_type' => \App\Models\Medicament::class, 'voie_administration' => 0, 'option' => '', 'commentaire' => '' ]
     ]
   ],
-  'plan_prise' => [
-    'properties' => [
-      'class' => 'col-md-3',
-      'collapse' => true,
-      'inputs' => [
-        [
-          'id' => "custom_indications",
-          'label' => "Indication",
-          'choose' => "custom_indications",
-          'display' => "custom_indications",
-          'join' => ' ou '
-        ],
-        [
-          'id' => "conservation_duree",
-          'label' => "Conservation après ouverture",
-          'display' => "duree",
-          'choose' => "laboratoire",
-          'readOnly' => true
-        ]
-      ]
-    ],
-    'posologies' => [
-      'class' => 'col-md-3',
-      'collapse' => false,
-      'inputs' => [
-        [
-          'id' => 'poso_lever',
-          'label' => 'Lever',
-          'color' => '#66ffd5'
-        ],
-        [
-          'id' => 'poso_matin',
-          'label' => 'Matin',
-          'default' => true,
-          'color' => '#90e793'
-        ],
-        [
-          'id' => 'poso_10h',
-          'label' => '10h',
-          'color' => '#fff566'
-        ],
-        [
-          'id' => 'poso_midi',
-          'label' => 'Midi',
-          'default' => true,
-          'color' => '#ffbc81'
-        ],
-        [
-          'id' => 'poso_16h',
-          'label' => '16h',
-          'color' => '#e68ec7'
-        ],
-        [
-          'id' => 'poso_18h',
-          'label' => '18h',
-          'color' => '#c48ee6'
-        ],
-        [
-          'id' => 'poso_soir',
-          'label' => 'Soir',
-          'default' => true,
-          'color' => '#ffa19c'
-        ],
-        [
-          'id' => 'poso_coucher',
-          'label' => 'Coucher',
-          'color' => '#b8e4f5'
-        ]
-      ]
-    ],
-    'commentaires' => [
-      'class' => 'col-md-6',
-      'collapse' => true,
-      'inputs' => [
-        [
-          'id' => "precautions",
-          'label' => "Commentaires",
-          'display' => 'commentaire',
-          'help' => 'population',
-          'multiple' => true,
-          'class' => [
-            'population' => 'col-md-4',
-            'commentaire' => 'col-md-8'
-          ]
-        ]
-      ]
-    ]
+  'posologies' => [[
+    'id' => 'poso_lever',
+    'label' => 'Lever',
+    'color' => '#66ffd5'
   ],
+  [
+    'id' => 'poso_matin',
+    'label' => 'Matin',
+    'default' => true,
+    'color' => '#90e793'
+  ],
+  [
+    'id' => 'poso_10h',
+    'label' => '10h',
+    'color' => '#fff566'
+  ],
+  [
+    'id' => 'poso_midi',
+    'label' => 'Midi',
+    'default' => true,
+    'color' => '#ffbc81'
+  ],
+  [
+    'id' => 'poso_16h',
+    'label' => '16h',
+    'color' => '#e68ec7'
+  ],
+  [
+    'id' => 'poso_18h',
+    'label' => '18h',
+    'color' => '#c48ee6'
+  ],
+  [
+    'id' => 'poso_soir',
+    'label' => 'Soir',
+    'default' => true,
+    'color' => '#ffa19c'
+  ],
+  [
+    'id' => 'poso_coucher',
+    'label' => 'Coucher',
+    'color' => '#b8e4f5'
+  ]],
   'voies_administration' => $voiesAdministration
 ];

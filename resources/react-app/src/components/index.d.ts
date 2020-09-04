@@ -25,11 +25,7 @@ declare namespace Props {
     medicament: MedicamentID;
   }
   interface InputItem {
-    checked: boolean;
-    display: string;
-    help?: string;
-    multiple?: 'checkbox' | 'radio';
-    name: string;
+    onChange: (value: string) => function;
     readOnly?: boolean;
     value: string;
   }

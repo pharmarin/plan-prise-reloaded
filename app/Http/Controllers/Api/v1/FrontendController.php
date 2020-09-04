@@ -22,7 +22,7 @@ class FrontendController extends Controller
     $config = [
       "validation" => Config::get('validation'),
       "default" => [
-        "pp_inputs" => Config::get('inputs.plan_prise'),
+        "posologies" => Config::get('inputs.posologies'),
         "voies_administration" => Config::get('inputs.voies_administration')
       ]
     ];
