@@ -10,43 +10,41 @@ use Illuminate\Support\Collection;
 
 class Adapter extends AbstractAdapter
 {
+  /**
+   * Mapping of JSON API attribute field names to model keys.
+   *
+   * @var array
+   */
+  protected $includePaths = [
+    'medicaments' => 'medic_data',
+  ];
 
-    /**
-     * Mapping of JSON API attribute field names to model keys.
-     *
-     * @var array
-     */
-    protected $includePaths = [
-        "medicaments" => "medic_data"
-    ];
+  /**
+   * Mapping of JSON API filter names to model scopes.
+   *
+   * @var array
+   */
+  protected $filterScopes = [];
 
-    /**
-     * Mapping of JSON API filter names to model scopes.
-     *
-     * @var array
-     */
-    protected $filterScopes = [];
+  protected $relationships = ['medicaments'];
 
-    protected $relationships = ['medicaments'];
+  /**
+   * Adapter constructor.
+   *
+   * @param StandardStrategy $paging
+   */
+  public function __construct(StandardStrategy $paging)
+  {
+    parent::__construct(new PlanPrise(), $paging);
+  }
 
-    /**
-     * Adapter constructor.
-     *
-     * @param StandardStrategy $paging
-     */
-    public function __construct(StandardStrategy $paging)
-    {
-        parent::__construct(new PlanPrise(), $paging);
-    }
-
-    /**
-     * @param Builder $query
-     * @param Collection $filters
-     * @return void
-     */
-    protected function filter($query, Collection $filters)
-    {
-        $this->filterWithScopes($query, $filters);
-    }
-
+  /**
+   * @param Builder $query
+   * @param Collection $filters
+   * @return void
+   */
+  protected function filter($query, Collection $filters)
+  {
+    $this->filterWithScopes($query, $filters);
+  }
 }

@@ -8,16 +8,16 @@ use App\Repositories\PlanPriseRepository;
 class PlanPriseController extends Controller
 {
   /**
-  * Create a new ApiFrontendController instance.
-  *
-  * @return void
-  */
+   * Create a new ApiFrontendController instance.
+   *
+   * @return void
+   */
   public function __construct(PlanPriseRepository $pp_repository)
   {
     $this->middleware('ajax');
     $this->pp_repository = $pp_repository;
   }
-  
+
   /**
    * Obtenir la liste des plans de prise
    * ou le plan de prise si un ID est fourni.

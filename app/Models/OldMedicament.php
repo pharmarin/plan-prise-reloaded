@@ -10,12 +10,18 @@ class OldMedicament extends Model
   public $timestamps = false;
   public $appends = ['nomGenerique'];
 
-  public function getCompositionsAttribute ()
+  public function getCompositionsAttribute()
   {
-    if (!isset($this->getAttributes()['nomGenerique'])) return null;
+    if (!isset($this->getAttributes()['nomGenerique'])) {
+      return null;
+    }
     $composition_array = explode(' + ', $this->getAttributes()['nomGenerique']);
     return array_map(function ($composition) {
-      $composition_models = Composition::where('denomination', '=', $composition)->get();
+      $composition_models = Composition::where(
+        'denomination',
+        '=',
+        $composition
+      )->get();
       if (count($composition_models) === 0) {
         $id = $composition;
         $precautions = [];
@@ -25,12 +31,14 @@ class OldMedicament extends Model
         $composition = $first_composition->denomination;
         $precautions = $first_composition->precautions;
       } else {
-        throw new \Exception('Found more than 1 composition for denomination ' . $composition);
+        throw new \Exception(
+          'Found more than 1 composition for denomination ' . $composition
+        );
       }
       return (object) [
         'id' => $id,
         'denomination' => $composition,
-        'precautions' => $precautions
+        'precautions' => $precautions,
       ];
     }, $composition_array);
   }
@@ -50,21 +58,25 @@ class OldMedicament extends Model
     return $this->frigo;
   }
 
-  public function getConservationDureeAttribute ()
+  public function getConservationDureeAttribute()
   {
     $json = json_decode($this->dureeConservation, true);
     if ($json) {
-      return array_map(function ($laboratoire, $duree) {
-        return [
-          'laboratoire' => $laboratoire,
-          'duree' => $duree
-        ];
-      }, array_keys($json), $json);
+      return array_map(
+        function ($laboratoire, $duree) {
+          return [
+            'laboratoire' => $laboratoire,
+            'duree' => $duree,
+          ];
+        },
+        array_keys($json),
+        $json
+      );
     }
-    if ($this->dureeConservation === "") {
+    if ($this->dureeConservation === '') {
       return [];
     }
-    return[["duree" => $this->dureeConservation, "laboratoire" => null]];
+    return [['duree' => $this->dureeConservation, 'laboratoire' => null]];
   }
 
   public function getVoiesAdministrationAttribute()
@@ -75,16 +87,21 @@ class OldMedicament extends Model
   public function getPrecautionsAttribute()
   {
     $commentaire = json_decode($this->commentaire, true) ?? [];
-    return array_map(function ($precaution, $key) {
+    return array_map(
+      function ($precaution, $key) {
         return [
-          'population' => $precaution['span'] == "" ? null : $precaution['span'],
-          'commentaire' => str_replace(['<br>'], "", $precaution['text']),
-          'id' => 'old_' . $key
+          'population' =>
+            $precaution['span'] == '' ? null : $precaution['span'],
+          'commentaire' => str_replace(['<br>'], '', $precaution['text']),
+          'id' => 'old_' . $key,
         ];
-      }, $commentaire, array_keys($commentaire));
+      },
+      $commentaire,
+      array_keys($commentaire)
+    );
   }
 
-  public function getToMedicamentAttribute ()
+  public function getToMedicamentAttribute()
   {
     return $this;
     $commentaire = json_decode($this->commentaire, true) ?? [];
@@ -93,41 +110,80 @@ class OldMedicament extends Model
       'denomination' => $this->nomMedicament,
       'custom_indications' => $this->custom_indications,
       'conservation_frigo' => $this->conservation_frigo,
-      'conservation_duree' => json_decode($this->dureeConservation) ? array_map(function ($duree, $laboratoire) {
-        return [
-          'laboratoire' => $laboratoire,
-          'duree' => $duree
-        ];
-      }, array_keys(json_decode($this->dureeConservation, true)), json_decode($this->dureeConservation, true)) : $this->dureeConservation,
-      'voies_administration' => $this->_switchVoieAdminitration($this->voieAdministration),
-      'precautions' => array_map(function ($precaution, $key) {
-        return [
-          'population' => $precaution['span'] == "" ? null : $precaution['span'],
-          'commentaire' => str_replace(['<br>'], "", $precaution['text']),
-          'id' => 'old_' . $key
-        ];
-      }, $commentaire, array_keys($commentaire)),
+      'conservation_duree' => json_decode($this->dureeConservation)
+        ? array_map(
+          function ($duree, $laboratoire) {
+            return [
+              'laboratoire' => $laboratoire,
+              'duree' => $duree,
+            ];
+          },
+          array_keys(json_decode($this->dureeConservation, true)),
+          json_decode($this->dureeConservation, true)
+        )
+        : $this->dureeConservation,
+      'voies_administration' => $this->_switchVoieAdminitration(
+        $this->voieAdministration
+      ),
+      'precautions' => array_map(
+        function ($precaution, $key) {
+          return [
+            'population' =>
+              $precaution['span'] == '' ? null : $precaution['span'],
+            'commentaire' => str_replace(['<br>'], '', $precaution['text']),
+            'id' => 'old_' . $key,
+          ];
+        },
+        $commentaire,
+        array_keys($commentaire)
+      ),
       'compositions' => $this->nomGenerique,
-      'type' => 0
+      'type' => 0,
     ];
   }
 
-  private function _switchVoieAdminitration ($voie_administration)
+  private function _switchVoieAdminitration($voie_administration)
   {
     switch ($voie_administration) {
-      case 'Orale': return 1; break;
-      case 'Cutanée': return 2; break;
-      case 'Auriculaire': return 3; break;
-      case 'Nasale': return 4; break;
-      case 'Inhalée': return 5; break;
-      case 'Vaginale': return 6; break;
-      case 'Oculaire': return 7; break;
-      case 'Rectale': return 8; break;
-      case 'Sous-cutanée': return 9; break;
-      case 'Intra-musculaire': return 10; break;
-      case 'Intra-veineux': return 11; break;
-      case 'Intra-urétrale': return 12; break;
-      default: return 0; break;
+      case 'Orale':
+        return 1;
+        break;
+      case 'Cutanée':
+        return 2;
+        break;
+      case 'Auriculaire':
+        return 3;
+        break;
+      case 'Nasale':
+        return 4;
+        break;
+      case 'Inhalée':
+        return 5;
+        break;
+      case 'Vaginale':
+        return 6;
+        break;
+      case 'Oculaire':
+        return 7;
+        break;
+      case 'Rectale':
+        return 8;
+        break;
+      case 'Sous-cutanée':
+        return 9;
+        break;
+      case 'Intra-musculaire':
+        return 10;
+        break;
+      case 'Intra-veineux':
+        return 11;
+        break;
+      case 'Intra-urétrale':
+        return 12;
+        break;
+      default:
+        return 0;
+        break;
     }
   }
 }

@@ -6,27 +6,26 @@ use Neomerx\JsonApi\Schema\SchemaProvider;
 
 class Schema extends SchemaProvider
 {
-  
   /**
-  * @var string
-  */
+   * @var string
+   */
   protected $resourceType = 'old-medicament';
-  
+
   /**
-  * @param \\App\Models\OldMedicament $resource
-  *      the domain record being serialized.
-  * @return string
-  */
+   * @param \\App\Models\OldMedicament $resource
+   *      the domain record being serialized.
+   * @return string
+   */
   public function getId($resource)
   {
     return (string) $resource->getRouteKey();
   }
-  
+
   /**
-  * @param \\App\Models\OldMedicament $resource
-  *      the domain record being serialized.
-  * @return array
-  */
+   * @param \\App\Models\OldMedicament $resource
+   *      the domain record being serialized.
+   * @return array
+   */
   public function getAttributes($resource)
   {
     return [

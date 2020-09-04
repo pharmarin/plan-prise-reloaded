@@ -22,21 +22,23 @@ class ApiMedicament extends Model
       return new ApiMedicament([
         'cis' => $cis,
         'denomination' => $object->denomination,
-        'loaded' => true
+        'loaded' => true,
       ]);
     } else {
       return new ApiMedicament([
         'cis' => $cis,
-        'loaded' => false
+        'loaded' => false,
       ]);
     }
   }
 
-  public function to_medicament () {
+  public function to_medicament()
+  {
     return $this;
   }
 
-  public function getTypeAttribute() {
+  public function getTypeAttribute()
+  {
     return 2;
   }
 }

@@ -9,7 +9,6 @@ use App\Builders\MultipleTypesBuilder;
 
 class PlanPrise extends Model
 {
-
   use SoftDeletes;
   use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
@@ -23,16 +22,16 @@ class PlanPrise extends Model
   protected $attributes = [
     'medic_data' => '[]',
     'custom_data' => '{}',
-    'custom_settings' => '{}'
+    'custom_settings' => '{}',
   ];
 
   protected $casts = [
     'medic_data' => 'json',
     'custom_data' => 'collection',
-    'custom_settings' => 'object'
+    'custom_settings' => 'object',
   ];
 
-  public function user_id ()
+  public function user_id()
   {
     return $this->belongsTo('App\Models\User');
   }
@@ -41,5 +40,4 @@ class PlanPrise extends Model
   {
     return $this->hasMany(Medicament::class);
   }
-
 }

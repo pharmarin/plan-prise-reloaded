@@ -10,29 +10,31 @@ use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
-    /**
-     * Create a new ApiUserController instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('ajax');
-    }
+  /**
+   * Create a new ApiUserController instance.
+   *
+   * @return void
+   */
+  public function __construct()
+  {
+    $this->middleware('ajax');
+  }
 
-    /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function info()
-    {
-        return response()->json(Auth::user());
-    }
+  /**
+   * Get the authenticated User.
+   *
+   * @return \Illuminate\Http\JsonResponse
+   */
+  public function info()
+  {
+    return response()->json(Auth::user());
+  }
 
-    public function logout(Request $request)
-    {
-        Auth::user()->token()->revoke();
-        return response()->json("Success");
-    }
+  public function logout(Request $request)
+  {
+    Auth::user()
+      ->token()
+      ->revoke();
+    return response()->json('Success');
+  }
 }

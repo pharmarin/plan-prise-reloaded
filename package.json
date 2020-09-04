@@ -60,6 +60,7 @@
   },
   "proxy": "http://localhost:8000",
   "devDependencies": {
+    "@prettier/plugin-php": "^0.14.3",
     "@types/classnames": "^2.2.10",
     "@types/jest": "^25.2.3",
     "@types/jsonwebtoken": "^8.5",
@@ -77,6 +78,7 @@
     "node-sass": "^4.14.1",
     "patch-package": "^6.2.2",
     "postinstall-postinstall": "^2.1.0",
+    "prettier": "^2.1.1",
     "react-app-rewired": "^2.1.6",
     "react-scripts": "^3.4.1"
   }
