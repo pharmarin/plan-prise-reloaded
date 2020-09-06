@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-import CatchableError from 'helpers/catchable-error';
 import get from 'lodash/get';
 import map from 'lodash/map';
 import toNumber from 'lodash/toNumber';
@@ -19,14 +18,10 @@ const mapDisptach = {
 
 const connector = connect(mapState, mapDisptach);
 
-type InterfaceProps = ConnectedProps<typeof connector>;
+type InterfaceProps = Props.Interface & ConnectedProps<typeof connector>;
 
 const Interface = (props: InterfaceProps) => {
-  const routeId = toNumber(get(useParams(), 'id'));
-  const { content, loadContent } = props;
-
-  if (!routeId || routeId === 0)
-    throw new CatchableError("L'interface doit recevoir un id. ");
+  const { routeId, content, loadContent } = props;
 
   if (!content) {
     loadContent(routeId);

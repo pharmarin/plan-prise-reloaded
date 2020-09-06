@@ -26,10 +26,14 @@ interface Medicament extends MedicamentID {
 declare namespace ReduxState {
   interface App {
     title: string;
-    return: {
+    returnTo?: {
       label: string;
       path: string;
-    } | null;
+    };
+    options?: {
+      label: string;
+      path: string;
+    }[];
     auth: {
       isError: boolean | string;
       isLoading: boolean;

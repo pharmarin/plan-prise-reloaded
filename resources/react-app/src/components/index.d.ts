@@ -11,6 +11,11 @@ declare namespace Props {
   interface Card {
     id: MedicamentID;
   }
+  interface CustomInput {
+    onChange: (value: string) => function;
+    readOnly?: boolean;
+    value: string;
+  }
   interface InputGroup {
     input: {
       id: string;
@@ -24,9 +29,12 @@ declare namespace Props {
     };
     medicament: MedicamentID;
   }
-  interface CustomInput {
-    onChange: (value: string) => function;
-    readOnly?: boolean;
-    value: string;
+  interface Interface {
+    routeId: number;
+  }
+  interface NavbarLinkProps {
+    className?: string;
+    label: string;
+    path: string;
   }
 }

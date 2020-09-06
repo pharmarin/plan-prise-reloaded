@@ -14,26 +14,28 @@ import {
 } from 'reactstrap';
 import routes from './routes.json';
 import map from 'lodash/map';
+import { FaArrowLeft, FaCog } from 'react-icons/fa';
 
 const NavbarTitle = () => {
   return <React.Fragment>plandeprise.fr</React.Fragment>;
 };
 
-type NavbarLinkProps = {
-  className?: string;
-  label: string;
-  path: string;
-};
-
-const NavbarLink = (props: NavbarLinkProps) => {
+const NavbarLink = (props: Props.NavbarLinkProps) => {
   const location = useLocation().pathname;
   const { className, label, path } = props;
   const isActive = location === path;
+
+  const switchLabel = (string: string) => {
+    if (string === 'arrow-left') return <FaArrowLeft />;
+    if (string === 'cog') return <FaCog />;
+    return string;
+  };
+
   return (
     <NavItem className={className}>
       <NavLink active={isActive} to={path} tag={Link}>
         <span className={'nav-link-inner--text' + isActive ? '' : 'text-light'}>
-          {label}
+          {switchLabel(label)}
         </span>
       </NavLink>
     </NavItem>
@@ -49,7 +51,7 @@ type NavigationProps = WithSanctumProps<Models.User> &
 
 const Navigation = (props: NavigationProps) => {
   const {
-    app: { title, return: returnObject },
+    app: { options, returnTo, title },
     authenticated,
   } = props;
   return (
@@ -64,10 +66,14 @@ const Navigation = (props: NavigationProps) => {
             path="/"
             label="plandeprise.fr"
           />
-          {returnObject && <NavbarLink {...returnObject} />}
         </Nav>
         <Nav className="mx-auto" navbar>
-          <span className="h5 m-0 text-light">{title}</span>
+          {returnTo && <NavbarLink {...returnTo} />}
+          <span className="h5 my-auto text-light">{title}</span>
+          {options &&
+            options.map((option) => (
+              <NavbarLink key={option.path} {...option} />
+            ))}
         </Nav>
         <button
           aria-controls="navbar-default"

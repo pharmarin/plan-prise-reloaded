@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 //import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, Link, Redirect } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 //import { Button, Spinner } from 'react-bootstrap';
 //import find from 'lodash/find';
 //import forEach from 'lodash/forEach';
 import get from 'lodash/get';
+import toNumber from 'lodash/toNumber';
 //import map from 'lodash/map';
 //import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { updateAppNav } from 'store/app';
-import { loadList, setId } from 'store/plan-prise';
+import { loadList, resetId, setId } from 'store/plan-prise';
 /*import {
   doAddLine,
   doInit,
@@ -27,6 +28,10 @@ import { loadList, setId } from 'store/plan-prise';
 //import Settings from './Settings';
 import Selection from './Selection';
 import Interface from './Interface';
+import { Card, CardHeader, Button } from 'reactstrap';
+import { FaArrowLeft } from 'react-icons/fa';
+import { listenerCount } from 'process';
+import { includes, isArray, isNumber } from 'lodash';
 
 const mapState = (state: ReduxState) => ({
   id: state.planPrise.id,
@@ -35,8 +40,9 @@ const mapState = (state: ReduxState) => ({
 
 const mapDispatch = {
   loadList,
-  updateAppNav,
+  resetId,
   setId,
+  updateAppNav,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -44,41 +50,60 @@ const connector = connect(mapState, mapDispatch);
 type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrise = (props: PlanPriseProps) => {
-  const { id, list, loadList, setId, updateAppNav } = props;
-  //const [showSettings, setShowSettings] = useState(false);
-  const routeId = get(useParams(), 'id', null);
+  const { id, list, loadList, resetId, setId, updateAppNav } = props;
+  const showSettings = get(useParams(), 'showSettings') === 'settings';
+  const routeIdParam = get(useParams(), 'id', null);
+  const routeId =
+    !isNaN(Number(routeIdParam)) && routeIdParam !== 0
+      ? Number(routeIdParam)
+      : null;
+  const isRootRoute = routeId === 0;
 
   const getTitle = (id: number | null) => {
     if (id === -1) {
       return 'Nouveau Plan de Prise';
     }
-    if (id === null) {
-      return 'Que voulez-vous faire ? ';
-    }
-    if (id > 0) {
+    if (id && id > 0) {
       return `Plan de prise n°${id}`;
     }
+    return 'Que voulez-vous faire ? ';
   };
-
-  /* id && !isLoading.state && (
-              <Button variant="link" onClick={() => reset(history)}>
-                <span className="fa fa-arrow-left" />
-                Retour à la liste
-              </Button>
-            ) */
 
   useEffect(() => {
     setId(routeId);
-    updateAppNav({
-      title: getTitle(routeId),
-    });
-  }, [routeId, setId, updateAppNav]);
+  }, [id, routeId, setId, updateAppNav]);
 
   useEffect(() => {
-    if (!routeId && list === null) {
+    updateAppNav({
+      title: getTitle(id),
+      returnTo: isNumber(id)
+        ? {
+            path: '/plan-prise',
+            label: 'arrow-left',
+          }
+        : undefined,
+      options: isNumber(id)
+        ? [
+            {
+              path: `/plan-prise/${id}/settings`,
+              label: 'cog',
+            },
+          ]
+        : undefined,
+    });
+  }, [id, updateAppNav]);
+
+  useEffect(() => {
+    if (isRootRoute && list === null) {
       loadList();
     }
-  }, [list, loadList, routeId]);
+  }, [isRootRoute, list, loadList]);
+
+  useEffect(() => {
+    if (isNumber(id) && !routeId) {
+      resetId();
+    }
+  }, [id, resetId, routeId]);
 
   const init = () => {
     const { list, loadList } = props;
@@ -143,11 +168,20 @@ const PlanPrise = (props: PlanPriseProps) => {
     return generate(id, columns, values);
   };*/
 
-  if (id === null) {
+  if (!routeId && !isRootRoute) {
+    console.log(routeId);
+    return <Redirect to="/plan-prise" />;
+  }
+
+  if (isRootRoute) {
     return <Selection />;
   }
 
-  return <Interface />;
+  if (routeId) {
+    return <Interface routeId={routeId} />;
+  }
+
+  return <div>Erreur</div>;
 
   /*return (
     <React.Fragment>
@@ -222,32 +256,5 @@ const PlanPrise = (props: PlanPriseProps) => {
     </React.Fragment>
   );*/
 };
-
-/*const mapStateToProps = (state) => {
-  return {
-    content: state.planPrise.content,
-    customData: state.planPrise.customData,
-    data: state.data.data,
-    list: state.planPrise.list,
-    ppId: state.planPrise.pp_id,
-    repository: new PPRepository({
-      content: state.planPrise.content,
-      customData: state.planPrise.customData,
-      data: state.data.data,
-      settings: state.planPrise.settings,
-    }),
-    settings: state.planPrise.settings,
-  };
-};
-
-const mapDispatchToProps = {
-  addLine: (medicament, history) => doAddLine(medicament, history),
-  init: (id) => doInit(id),
-  load: (medicament) => doLoad(medicament),
-  loadList: () => doLoadList(),
-  reset: (history = null) => doReset(history),
-  setLoading: (values) => doSetLoading(values),
-  updateAppNav,
-};*/
 
 export default connector(PlanPrise);

@@ -8,7 +8,7 @@ import map from 'lodash/map';
 import set from 'lodash/set';
 import { cache } from 'store/cache';
 import CatchableError from 'helpers/catchable-error';
-import { unset } from 'lodash';
+import { unset, isNumber } from 'lodash';
 
 const loadList = createAsyncThunk('planPrise/loadList', async () => {
   const response = await axios.get('/plan-prise');
@@ -31,7 +31,7 @@ const loadContent = createAsyncThunk(
     });
     const data = response.data.data;
     return {
-      id: data.attributes['pp-id'],
+      id: Number(data.attributes['pp-id']),
       medic_data: data.relationships.medicaments.data,
       custom_data: data.attributes['custom-data'],
       custom_settings: data.attributes['custom-settings'],
@@ -50,7 +50,11 @@ const ppSlice = createSlice({
   initialState,
   reducers: {
     setId: (state, action: PayloadAction<number | null>) => {
-      state.id = action.payload;
+      state.id = action.payload ? action.payload : null;
+      state.content = null;
+    },
+    resetId: (state, action: PayloadAction<undefined>) => {
+      state.id = null;
       state.content = null;
     },
     setValue: (state, action: PayloadAction<{ id: string; value: any }>) => {
@@ -102,6 +106,6 @@ const ppSlice = createSlice({
   },
 });
 
-export const { removeValue, setId, setValue } = ppSlice.actions;
+export const { removeValue, resetId, setId, setValue } = ppSlice.actions;
 export { loadContent, loadList };
 export default ppSlice.reducer;
