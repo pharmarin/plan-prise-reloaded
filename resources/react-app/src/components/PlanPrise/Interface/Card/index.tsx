@@ -306,32 +306,34 @@ const ItemCard = (props: CardProps) => {
                   </div>
                 )
               )}
-              <Button
-                className="form-check-input p-0"
-                color="link"
-                onClick={(e) => {
-                  let newID;
-                  const customPrecautions = get(
-                    customData,
-                    `${uid}.custom_precautions`,
-                    ''
-                  );
-                  while (true) {
-                    newID = uniqueId(`custom_precautions_`);
-                    if (!has(customPrecautions, newID)) {
-                      break;
+              <div className="mb-1">
+                <Button
+                  className="form-check-input p-0"
+                  color="link"
+                  onClick={(e) => {
+                    let newID;
+                    const customPrecautions = get(
+                      customData,
+                      `${uid}.custom_precautions`,
+                      ''
+                    );
+                    while (true) {
+                      newID = uniqueId(`custom_precautions_`);
+                      if (!has(customPrecautions, newID)) {
+                        break;
+                      }
                     }
-                  }
-                  setValue({
-                    id: `${uid}.custom_precautions.${newID}`,
-                    value: '',
-                  });
-                }}
-                size="sm"
-                style={{ position: 'absolute' }}
-              >
-                <BsPlusCircle />
-              </Button>
+                    setValue({
+                      id: `${uid}.custom_precautions.${newID}`,
+                      value: '',
+                    });
+                  }}
+                  size="sm"
+                  style={{ position: 'relative' }}
+                >
+                  <BsPlusCircle />
+                </Button>
+              </div>
             </FormGroup>
           </div>
         )}
