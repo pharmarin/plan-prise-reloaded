@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 //import axios from 'axios';
-import { useParams, Link, Redirect } from 'react-router-dom';
+import { useParams, Redirect, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 //import { Button, Spinner } from 'react-bootstrap';
 //import find from 'lodash/find';
 //import forEach from 'lodash/forEach';
 import get from 'lodash/get';
-import toNumber from 'lodash/toNumber';
 //import map from 'lodash/map';
 //import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { updateAppNav } from 'store/app';
-import { loadList, resetId, setId } from 'store/plan-prise';
+import { loadContent, loadList, resetId, setId } from 'store/plan-prise';
 /*import {
   doAddLine,
   doInit,
@@ -28,17 +27,17 @@ import { loadList, resetId, setId } from 'store/plan-prise';
 //import Settings from './Settings';
 import Selection from './Selection';
 import Interface from './Interface';
-import { Card, CardHeader, Button } from 'reactstrap';
-import { FaArrowLeft } from 'react-icons/fa';
-import { listenerCount } from 'process';
-import { includes, isArray, isNumber } from 'lodash';
+import { isNumber } from 'lodash';
+import Settings from './Settings';
 
 const mapState = (state: ReduxState) => ({
+  content: state.planPrise.content,
   id: state.planPrise.id,
   list: state.planPrise.list,
 });
 
 const mapDispatch = {
+  loadContent,
   loadList,
   resetId,
   setId,
@@ -50,14 +49,23 @@ const connector = connect(mapState, mapDispatch);
 type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrise = (props: PlanPriseProps) => {
-  const { id, list, loadList, resetId, setId, updateAppNav } = props;
+  const {
+    content,
+    id,
+    list,
+    loadContent,
+    loadList,
+    resetId,
+    setId,
+    updateAppNav,
+  } = props;
+  const history = useHistory();
   const showSettings = get(useParams(), 'showSettings') === 'settings';
   const routeIdParam = get(useParams(), 'id', null);
-  const routeId =
-    !isNaN(Number(routeIdParam)) && routeIdParam !== 0
-      ? Number(routeIdParam)
-      : null;
-  const isRootRoute = routeId === 0;
+  const isValidRoute = !isNaN(Number(routeIdParam));
+  const isRootRoute = routeIdParam === null;
+  const routeId = Number(routeIdParam);
+  const contentLoaded = get(content, 'id') === routeId;
 
   const getTitle = (id: number | null) => {
     if (id === -1) {
@@ -70,8 +78,28 @@ const PlanPrise = (props: PlanPriseProps) => {
   };
 
   useEffect(() => {
-    setId(routeId);
-  }, [id, routeId, setId, updateAppNav]);
+    if (isRootRoute && list === null) {
+      loadList();
+    }
+  }, [isRootRoute, list, loadList]);
+
+  useEffect(() => {
+    if (isNumber(id) && !routeId) resetId();
+    if (isValidRoute && !isRootRoute && routeId) {
+      if (id !== routeId) setId(routeId);
+      if (!contentLoaded && content !== 'loading') loadContent(routeId);
+    }
+  }, [
+    content,
+    contentLoaded,
+    id,
+    isRootRoute,
+    isValidRoute,
+    loadContent,
+    resetId,
+    routeId,
+    setId,
+  ]);
 
   useEffect(() => {
     updateAppNav({
@@ -92,39 +120,6 @@ const PlanPrise = (props: PlanPriseProps) => {
         : undefined,
     });
   }, [id, updateAppNav]);
-
-  useEffect(() => {
-    if (isRootRoute && list === null) {
-      loadList();
-    }
-  }, [isRootRoute, list, loadList]);
-
-  useEffect(() => {
-    if (isNumber(id) && !routeId) {
-      resetId();
-    }
-  }, [id, resetId, routeId]);
-
-  const init = () => {
-    const { list, loadList } = props;
-    /*const routeId = match.params.id;
-    if (!id && routeId) {
-      init(routeId);
-    }*/
-    if (list === null) {
-      loadList();
-    }
-    /*if (content) {
-      forEach(content, (medicament) => {
-        if (
-          !repository.isLoaded(medicament) &&
-          !repository.isLoading(medicament)
-        ) {
-          load(medicament);
-        }
-      });
-    }*/
-  };
 
   /*const deletePP = async (event) => {
     event.preventDefault();
@@ -168,18 +163,23 @@ const PlanPrise = (props: PlanPriseProps) => {
     return generate(id, columns, values);
   };*/
 
-  if (!routeId && !isRootRoute) {
+  if (!isValidRoute) {
     console.log(routeId);
     return <Redirect to="/plan-prise" />;
   }
 
-  if (isRootRoute) {
-    return <Selection />;
-  }
+  if (isRootRoute) return <Selection />;
 
-  if (routeId) {
-    return <Interface routeId={routeId} />;
-  }
+  if (isValidRoute && routeId)
+    return (
+      <React.Fragment>
+        <Interface />
+        <Settings
+          show={contentLoaded && showSettings}
+          toggle={() => history.replace(`/plan-prise/${routeId}`)}
+        />
+      </React.Fragment>
+    );
 
   return <div>Erreur</div>;
 

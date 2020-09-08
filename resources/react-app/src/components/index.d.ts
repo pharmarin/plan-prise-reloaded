@@ -29,9 +29,7 @@ declare namespace Props {
     };
     medicament: MedicamentID;
   }
-  interface Interface {
-    routeId: number;
-  }
+  interface Interface {}
   interface NavbarLinkProps {
     className?: string;
     label: string;

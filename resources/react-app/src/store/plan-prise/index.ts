@@ -8,7 +8,7 @@ import map from 'lodash/map';
 import set from 'lodash/set';
 import { cache } from 'store/cache';
 import CatchableError from 'helpers/catchable-error';
-import { unset, isNumber } from 'lodash';
+import { unset } from 'lodash';
 
 const loadList = createAsyncThunk('planPrise/loadList', async () => {
   const response = await axios.get('/plan-prise');
@@ -45,39 +45,52 @@ const initialState: ReduxState.PlanPrise = {
   content: null,
 };
 
+const checkLoaded = (state: ReduxState.PlanPrise) => {
+  if (
+    state.content === null ||
+    state.content === 'error' ||
+    state.content === 'loading'
+  ) {
+    throw new CatchableError(
+      'Impossible de mettre à jour un plan de prise inexistant'
+    );
+  }
+  return true;
+};
+
 const ppSlice = createSlice({
   name: 'planPrise',
   initialState,
   reducers: {
     setId: (state, action: PayloadAction<number | null>) => {
-      state.id = action.payload ? action.payload : null;
-      state.content = null;
+      return {
+        ...initialState,
+        id: action.payload ? action.payload : null,
+        list: state.list,
+      };
     },
     resetId: (state, action: PayloadAction<undefined>) => {
-      state.id = null;
-      state.content = null;
+      return { ...initialState, list: state.list };
+    },
+    setSettings: (state, action: PayloadAction<{ id: string; value: any }>) => {
+      if (checkLoaded(state))
+        set(
+          state,
+          `content.custom_settings.${action.payload.id}`,
+          action.payload.value
+        );
     },
     setValue: (state, action: PayloadAction<{ id: string; value: any }>) => {
-      if (
-        state.content === null ||
-        state.content === 'error' ||
-        state.content === 'loading'
-      )
-        throw new CatchableError(
-          'Impossible de mettre à jour un plan de prise inexistant'
+      if (checkLoaded(state))
+        set(
+          state,
+          `content.custom_data.${action.payload.id}`,
+          action.payload.value
         );
-      set(state.content.custom_data, action.payload.id, action.payload.value);
     },
     removeValue: (state, action: PayloadAction<{ id: string }>) => {
-      if (
-        state.content === null ||
-        state.content === 'error' ||
-        state.content === 'loading'
-      )
-        throw new CatchableError(
-          'Impossible de mettre à jour un plan de prise inexistant'
-        );
-      unset(state.content.custom_data, action.payload.id);
+      if (checkLoaded(state))
+        unset(state, `content.custom_data.${action.payload.id}`);
     },
   },
   extraReducers: {
@@ -106,6 +119,12 @@ const ppSlice = createSlice({
   },
 });
 
-export const { removeValue, resetId, setId, setValue } = ppSlice.actions;
+export const {
+  removeValue,
+  resetId,
+  setId,
+  setSettings,
+  setValue,
+} = ppSlice.actions;
 export { loadContent, loadList };
 export default ppSlice.reducer;

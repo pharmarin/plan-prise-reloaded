@@ -1,30 +1,20 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-import get from 'lodash/get';
-import map from 'lodash/map';
-import toNumber from 'lodash/toNumber';
-import { loadContent } from 'store/plan-prise';
+import { keys, map, toNumber } from 'lodash';
 import Card from './Card';
-import keys from 'lodash/keys';
 
 const mapState = (state: ReduxState) => ({
   content: state.planPrise.content,
 });
 
-const mapDisptach = {
-  loadContent,
-};
+const connector = connect(mapState);
 
-const connector = connect(mapState, mapDisptach);
-
-type InterfaceProps = Props.Interface & ConnectedProps<typeof connector>;
+type InterfaceProps = ConnectedProps<typeof connector> & Props.Interface;
 
 const Interface = (props: InterfaceProps) => {
-  const { routeId, content, loadContent } = props;
+  const { content } = props;
 
   if (!content) {
-    loadContent(routeId);
     return <React.Fragment>Need Loading</React.Fragment>;
   }
 
@@ -38,7 +28,7 @@ const Interface = (props: InterfaceProps) => {
 
   return (
     <React.Fragment>
-      {map(keys(medicaments), toNumber)
+      {map(keys(content.medic_data), toNumber)
         .sort()
         .map((key: number) => (
           <Card key={medicaments[key].id} id={medicaments[key]} />

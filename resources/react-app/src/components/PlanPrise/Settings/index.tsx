@@ -7,15 +7,11 @@ import {
   ModalHeader,
   ModalBody,
   FormGroup,
-  Input,
+  CustomInput,
 } from 'reactstrap';
-import ceil from 'lodash/ceil';
-import chunk from 'lodash/chunk';
-import keys from 'lodash/keys';
-import map from 'lodash/map';
-import get from 'lodash/get';
+import { ceil, chunk, keys, map, get } from 'lodash';
 
-//import { updateSettings } from 'store/plan-prise/actions';
+import { setSettings } from 'store/plan-prise';
 import useConfig from 'helpers/hooks/use-config';
 
 const mapState = (state: ReduxState) => ({
@@ -23,58 +19,49 @@ const mapState = (state: ReduxState) => ({
 });
 
 const mapDispatch = {
-  //updateSettings,
+  setSettings,
 };
 
 const connector = connect(mapState, mapDispatch);
 
 type SettingsProps = ConnectedProps<typeof connector> & {
   show: boolean;
-  toggle: () => boolean;
+  toggle: () => any;
 };
 
 const Settings = (props: SettingsProps) => {
-  const { show, toggle } = props;
-  const { pp_inputs: inputs } = useConfig('default');
+  const { setSettings, show, toggle } = props;
+  const posologies = useConfig('default.posologies');
   return (
-    <Modal show={show} onHide={toggle}>
+    <Modal centered={true} isOpen={show} toggle={toggle}>
       <ModalHeader toggle={toggle}>Options</ModalHeader>
       <ModalBody>
         <h5>Colonnes à afficher</h5>
         <Row>
           {map(
-            chunk(
-              keys(inputs.posologies.inputs),
-              ceil(inputs.posologies.inputs.length / 2)
-            ),
+            chunk(keys(posologies), ceil(posologies.length / 2)),
             (c, ckey) => (
               <Col key={ckey} sm={6}>
                 {map(c, (key) => {
-                  const input = inputs.posologies.inputs[key];
+                  const input = posologies[key];
                   return (
-                    <FormGroup key={key} className="mb-0" controlId={key} check>
-                      <Input
+                    <FormGroup key={key} className="mb-0" check>
+                      <CustomInput
+                        id={input.id}
                         checked={get(
                           props,
                           `settings.inputs.${input.id}.checked`,
                           input.default || false
                         )}
                         label={input.label}
-                        type="checkbox"
+                        type="switch"
                         onChange={(
                           event: React.ChangeEvent<HTMLInputElement>
                         ) => {
-                          /*updateSettings(
-                            {
-                              parent: 'inputs',
-                              id: input.id,
-                            },
-                            {
-                              action: 'check',
-                              value: event.target.checked,
-                            }
-                          )
-                        }*/
+                          setSettings({
+                            id: `inputs.${input.id}.checked`,
+                            value: event.currentTarget.checked,
+                          });
                         }}
                       />
                     </FormGroup>
