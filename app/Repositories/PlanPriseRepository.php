@@ -19,15 +19,6 @@ class PlanPriseRepository
     $this->medicament_repository = $medicament_repository;
   }
 
-  public function get($pp_id)
-  {
-    if ($this->_init($pp_id) === true) {
-      return $this->plan_prise;
-    } else {
-      return abort(404);
-    }
-  }
-
   private function _init($pp_id)
   {
     if ($pp_id > 0) {
@@ -53,6 +44,15 @@ class PlanPriseRepository
       ->max('pp_id');
     $max_id = $max_id ?: 0;
     return $max_id + 1;
+  }
+
+  public function get($pp_id)
+  {
+    if ($this->_init($pp_id) === true) {
+      return $this->plan_prise;
+    } else {
+      return abort(404);
+    }
   }
 
   public function index($id)
@@ -137,13 +137,15 @@ class PlanPriseRepository
     }
   }
 
-  private function _getReturnArray($status, $array = [], $join = true)
+  private function _getReturnArray($status, $array = null, $join = true)
   {
-    return [
-      'status' => $status,
-      'data' => $join
-        ? array_merge($array, ['pp_id' => $this->plan_prise->pp_id])
-        : $array,
-    ];
+    switch ($status) {
+      case 'success':
+        return response()->json($array, 200);
+      case 'error':
+        return response()->json($array, 404);
+      default:
+        return response()->json($array, 500);
+    }
   }
 }

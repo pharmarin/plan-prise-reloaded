@@ -13,6 +13,7 @@ import {
 import storage from 'redux-persist/lib/storage';
 import logger from 'redux-logger';
 import concat from 'lodash/concat';
+import saveToAPI from 'store/middleware/save-data';
 
 import appReducer from './app';
 import cacheReducer from './cache';
@@ -32,7 +33,8 @@ let store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
-    logger
+    logger,
+    saveToAPI
   ),
 });
 let persistor = persistStore(store);

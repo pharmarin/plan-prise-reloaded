@@ -1,8 +1,7 @@
 <?php
 
 return [
-
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Resolver
     |--------------------------------------------------------------------------
@@ -12,9 +11,9 @@ return [
     | resource types. We recommend using our default implementation but you
     | can override it here if desired.
     */
-    'resolver' => \CloudCreativity\LaravelJsonApi\Resolver\ResolverFactory::class,
+  'resolver' => \CloudCreativity\LaravelJsonApi\Resolver\ResolverFactory::class,
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Root Namespace
     |--------------------------------------------------------------------------
@@ -36,10 +35,10 @@ return [
     |   - e.g. App\JsonApi\Validators\{PostValidator, CommentValidator}
     |
     */
-    'namespace' => null,
-    'by-resource' => true,
+  'namespace' => null,
+  'by-resource' => true,
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Model Namespace
     |--------------------------------------------------------------------------
@@ -50,9 +49,9 @@ return [
     | different here. E.g. `App\Models`.
     |
     */
-    'model-namespace' => '\App\Models',
+  'model-namespace' => '\App\Models',
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Resources
     |--------------------------------------------------------------------------
@@ -65,15 +64,15 @@ return [
     |
     | `'posts' => App\Post::class`
     */
-    'resources' => [
-        'user' => App\App\Models\User::class,
-        'plan-prise' => App\Models\PlanPrise::class,
-        'old-medicament' => App\Models\OldMedicament::class,
-        'api-medicament' => App\Models\ApiMedicament::class,
-        'medicament' => App\Models\Medicament::class,
-    ],
+  'resources' => [
+    'user' => App\App\Models\User::class,
+    'plan-prise' => App\Models\PlanPrise::class,
+    'old-medicament' => App\Models\OldMedicament::class,
+    'api-medicament' => App\Models\ApiMedicament::class,
+    'medicament' => App\Models\Medicament::class,
+  ],
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Eloquent
     |--------------------------------------------------------------------------
@@ -86,9 +85,9 @@ return [
     | override it; if the setting is `false`, then `--eloquent` is the override.
     |
     */
-    'use-eloquent' => true,
+  'use-eloquent' => true,
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | URL
     |--------------------------------------------------------------------------
@@ -105,13 +104,13 @@ return [
     | The name setting is the prefix for route names within this API.
     |
     */
-    'url' => [
-        'host' => null,
-        'namespace' => '/',
-        'name' => 'api:v1:',
-    ],
+  'url' => [
+    'host' => null,
+    'namespace' => '/',
+    'name' => 'api:v1:',
+  ],
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Controllers
     |--------------------------------------------------------------------------
@@ -121,12 +120,12 @@ return [
     | want to turn transactions off, set `transactions` to `false`.
     |
     */
-    'controllers' => [
-        'transactions' => true,
-        'connection' => null,
-    ],
+  'controllers' => [
+    'transactions' => true,
+    'connection' => null,
+  ],
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Jobs
     |--------------------------------------------------------------------------
@@ -139,12 +138,12 @@ return [
     | asynchronous process interface.
     |
     */
-    'jobs' => [
-        'resource' => 'queue-jobs',
-        'model' => \CloudCreativity\LaravelJsonApi\Queue\ClientJob::class,
-    ],
+  'jobs' => [
+    'resource' => 'queue-jobs',
+    'model' => \CloudCreativity\LaravelJsonApi\Queue\ClientJob::class,
+  ],
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Encoding Media Types
     |--------------------------------------------------------------------------
@@ -163,11 +162,13 @@ return [
     | Content Negotiation chapter in the docs for details.
     |
     */
-    'encoding' => [
-        'application/vnd.api+json',
-    ],
+  'encoding' => [
+    'application/vnd.api+json',
+    'application/json',
+    'application/json;charset=UTF-8',
+  ],
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Decoding Media Types
     |--------------------------------------------------------------------------
@@ -185,11 +186,13 @@ return [
     | Content Negotiation chapter in the docs for details.
     |
     */
-    'decoding' => [
-        'application/vnd.api+json',
-    ],
+  'decoding' => [
+    'application/vnd.api+json',
+    'application/json',
+    'application/json;charset=UTF-8',
+  ],
 
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Providers
     |--------------------------------------------------------------------------
@@ -203,6 +206,5 @@ return [
     | `Vendor\ShoppingCart\JsonApi\ResourceProvider`.
     |
     */
-    'providers' => [],
-
+  'providers' => [],
 ];

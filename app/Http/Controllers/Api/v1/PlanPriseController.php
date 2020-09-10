@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\PlanPriseRepository;
 
@@ -18,15 +19,8 @@ class PlanPriseController extends Controller
     $this->pp_repository = $pp_repository;
   }
 
-  /**
-   * Obtenir la liste des plans de prise
-   * ou le plan de prise si un ID est fourni.
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function index($pp_id = null)
+  public function update(Request $request, $id)
   {
-    $plan_prise = $this->pp_repository->index($pp_id);
-    return response()->json($plan_prise);
+    return $this->pp_repository->update($id, $request['value']);
   }
 }
