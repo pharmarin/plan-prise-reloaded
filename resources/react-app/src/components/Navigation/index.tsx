@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { withSanctum, WithSanctumProps } from 'react-sanctum';
 import {
-  Button,
   UncontrolledCollapse,
   Navbar,
   NavItem,
@@ -16,7 +15,6 @@ import {
 import routes from './routes.json';
 import map from 'lodash/map';
 import { FaArrowLeft, FaCog } from 'react-icons/fa';
-import Sidebar from 'react-sidebar';
 
 const NavbarTitle = () => {
   return <React.Fragment>plandeprise.fr</React.Fragment>;
@@ -58,7 +56,6 @@ const Navigation = (props: NavigationProps) => {
     app: { options, returnTo, title },
     authenticated,
   } = props;
-  const [showSettings, setShowSettings] = useState(false);
 
   return (
     <Navbar
