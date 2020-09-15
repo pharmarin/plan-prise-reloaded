@@ -12,7 +12,7 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import logger from 'redux-logger';
-import concat from 'lodash/concat';
+import { concat } from 'lodash';
 import saveToAPI from 'store/middleware/save-data';
 
 import appReducer from './app';

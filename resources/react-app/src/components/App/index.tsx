@@ -11,6 +11,7 @@ import SplashScreen from './SplashScreen';
 import axios from 'helpers/axios-clients';
 import useConfig, { storeConfig } from 'helpers/hooks/use-config';
 import CatchableError from 'helpers/catchable-error';
+import NotificationStack from './NotificationStack';
 
 const sanctumConfig = {
   api_url: '',
@@ -58,6 +59,7 @@ export default () => {
         loading={<SplashScreen type="loading" />}
         persistor={persistor}
       >
+        <NotificationStack />
         <Sanctum config={sanctumConfig}>
           <Router basename="/">
             <Navigation />

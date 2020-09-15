@@ -23,22 +23,31 @@ interface Medicament extends MedicamentID {
   };
 }
 
+interface CustomNotification {
+  id: string;
+  header?: string;
+  content?: string;
+  icon?: string;
+  timer?: number;
+}
+
 declare namespace ReduxState {
   interface App {
-    title: string;
-    returnTo?: {
-      label: string;
-      path: string;
-    };
-    options?: {
-      label: string;
-      path: string;
-    }[];
     auth: {
       isError: boolean | string;
       isLoading: boolean;
       tokens: Tokens | null;
     };
+    notifications: CustomNotification[];
+    options?: {
+      label: string;
+      path: string;
+    }[];
+    returnTo?: {
+      label: string;
+      path: string;
+    };
+    title: string;
   }
   interface Cache {
     medicaments: Medicament[];
