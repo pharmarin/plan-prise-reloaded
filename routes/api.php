@@ -19,13 +19,13 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
   Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('user', 'Api\v1\UserController@info');
     Route::delete('oauth/token', 'Api\V1\UserController@logout');
+    Route::resource('plan-prise', 'Api\V1\PlanPriseController');
     JsonApi::register('default')->routes(function ($api) {
       $api
         ->resource('plan-prise', ['has-many' => 'plan-prise-content'])
         ->only('index', 'read');
       $api->resource('plan-prise-content');
     });
-    Route::resource('plan-prise', 'Api\V1\PlanPriseController');
   });
 });
 
