@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { filter, find, findIndex, uniqueId } from 'lodash';
+import { filter, findIndex, uniqueId } from 'lodash';
 
 const initialState: ReduxState.App = {
   auth: { isLoading: false, isError: false, tokens: null },
