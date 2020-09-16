@@ -1,53 +1,18 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { withSanctum, WithSanctumProps } from 'react-sanctum';
 import {
   UncontrolledCollapse,
   Navbar,
-  NavItem,
-  NavLink,
   Nav,
   Container,
   Row,
   Col,
 } from 'reactstrap';
-import { FaArrowLeft, FaCog } from 'react-icons/fa';
+import NavbarLink from './NavbarLink';
 
-const NavbarTitle = () => {
-  return <React.Fragment>plandeprise.fr</React.Fragment>;
-};
-
-const NavbarLink = ({
-  className,
-  label,
-  light,
-  path,
-}: Props.NavbarLinkProps) => {
-  const location = useLocation().pathname;
-  const isActive = location === path;
-  console.log(location, path, isActive);
-
-  const switchLabel = (string: string) => {
-    if (string === 'arrow-left') return <FaArrowLeft />;
-    if (string === 'cog') return <FaCog />;
-    return string;
-  };
-
-  return (
-    <NavItem className={className}>
-      <NavLink active={isActive} disabled={isActive} to={path} tag={Link}>
-        <span
-          className={
-            'nav-link-inner--text' + (isActive ? ' text-white-50' : '')
-          }
-        >
-          {switchLabel(label)}
-        </span>
-      </NavLink>
-    </NavItem>
-  );
-};
+const NAVBAR_TITLE = 'plandeprise.fr';
 
 const mapState = (state: ReduxState) => ({
   app: state.app,
@@ -74,7 +39,7 @@ const Navigation = (props: NavigationProps) => {
           <NavbarLink
             className="d-none d-lg-block"
             path="/"
-            label="plandeprise.fr"
+            label={NAVBAR_TITLE}
           />
         </Nav>
         <Nav className="mx-auto flex-row" navbar>
@@ -105,9 +70,7 @@ const Navigation = (props: NavigationProps) => {
           <div className="navbar-collapse-header">
             <Row>
               <Col className="collapse-brand" xs="6">
-                <Link to="/">
-                  <NavbarTitle />
-                </Link>
+                <RouterLink to="/">{NAVBAR_TITLE}</RouterLink>
               </Col>
               <Col className="collapse-close" xs="6">
                 <button
