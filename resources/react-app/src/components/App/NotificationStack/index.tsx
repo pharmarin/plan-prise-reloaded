@@ -16,7 +16,7 @@ const NotificationStack = ({ notifications }: NotificationStackProps) => {
     <Col
       className="p-2"
       sm={5}
-      style={{ position: 'absolute', top: 0, right: 0, zIndex: 99999 }}
+      style={{ position: 'fixed', top: 0, right: 0, zIndex: 99999 }}
     >
       {notifications.map((notification) => (
         <Notification key={notification.id} notification={notification} />
