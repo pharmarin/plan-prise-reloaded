@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { BsFillExclamationDiamondFill } from 'react-icons/bs';
+import {
+  BsFillExclamationDiamondFill,
+  BsFillExclamationOctagonFill,
+} from 'react-icons/bs';
 import { connect, ConnectedProps } from 'react-redux';
 import { Spinner, Toast, ToastBody, ToastHeader } from 'reactstrap';
 import { removeNotification } from 'store/app';
@@ -40,6 +43,8 @@ const Notification = ({
         return <Spinner size="sm" />;
       case 'warning':
         return <BsFillExclamationDiamondFill className="text-warning" />;
+      case 'danger':
+        return <BsFillExclamationOctagonFill className="text-danger" />;
       default:
         return null;
     }

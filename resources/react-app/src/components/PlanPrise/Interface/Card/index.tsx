@@ -5,12 +5,14 @@ import { BsTrash, BsCaretDown, BsCaretUpFill } from 'react-icons/bs';
 import { find, get } from 'lodash';
 import { loadItem, removeItem, setLoading } from 'store/plan-prise';
 import Content from './Content';
+import { addNotification } from 'store/app';
 
 const mapState = (state: ReduxState) => ({
   storedMedicaments: state.cache.medicaments,
 });
 
 const mapDispatch = {
+  addNotification,
   loadItem,
   removeItem,
   setLoading,
@@ -21,6 +23,7 @@ const connector = connect(mapState, mapDispatch);
 type CardProps = Props.Card & ConnectedProps<typeof connector>;
 
 const ItemCard = ({
+  addNotification,
   id,
   loadItem,
   removeItem,
@@ -79,7 +82,14 @@ const ItemCard = ({
                 size="sm"
                 tabIndex={-1}
                 color="neutral"
-                onClick={() => removeItem(id)}
+                onClick={() => {
+                  removeItem(id);
+                  addNotification({
+                    header: `Suppression de ${medicament.attributes.denomination}`,
+                    icon: 'danger',
+                    timer: 2000,
+                  });
+                }}
               >
                 <small className="mr-1 prevent-toggle">
                   Supprimer la ligne
