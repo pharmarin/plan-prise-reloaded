@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\PlanPrise;
 use App\Repositories\PlanPriseRepository;
-use App\Repositories\CommonRepository;
+use App\Repositories\GenericRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -82,7 +82,7 @@ class PlanPriseController extends Controller
       $custom_data,
       $columns
     ) {
-      return CommonRepository::getValues(
+      return GenericRepository::getValues(
         $medicament,
         $custom_data[$medicament['value']['id']] ?? null,
         $columns
@@ -130,7 +130,7 @@ class PlanPriseController extends Controller
       $custom_data,
       $columns
     ) {
-      return CommonRepository::getValues(
+      return GenericRepository::getValues(
         $medicament,
         $custom_data[$medicament['value']['id']] ?? null,
         $columns

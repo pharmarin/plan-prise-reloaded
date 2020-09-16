@@ -1,33 +1,31 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'helpers/axios-clients';
-import isArray from 'lodash/isArray';
-import forEach from 'lodash/forEach';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import map from 'lodash/map';
-import set from 'lodash/set';
-import { cache } from 'store/cache';
+import { cache, inCache } from 'store/cache';
 import CatchableError from 'helpers/catchable-error';
-import { unset } from 'lodash';
+import {
+  findIndex,
+  forEach,
+  get,
+  isArray,
+  map,
+  remove,
+  set,
+  unset,
+} from 'lodash';
 
-const loadList = createAsyncThunk('planPrise/loadList', async () => {
+const loadList = createAsyncThunk<number[]>('planPrise/loadList', async () => {
   const response = await axios.get('/plan-prise');
   return map(response.data.data, (pp: any) => pp.attributes['pp-id']);
 });
 
-const loadContent = createAsyncThunk(
+const loadContent = createAsyncThunk<PlanPriseContent, number>(
   'planPrise/loadContent',
-  async (id: number, { dispatch, getState }) => {
+  async (id, { dispatch, getState }) => {
     const response = await axios.get(`/plan-prise/${id}?include=medicaments`);
-    const cachedMedicaments = (getState() as ReduxState).cache.medicaments;
+    const state = getState() as ReduxState;
     forEach(get(response, 'data.included', []), (medicament) => {
-      const isInStore = find(cachedMedicaments, {
-        type: medicament.type,
-        id: medicament.id,
-      });
-      if (!isInStore) {
+      if (!inCache({ id: medicament.id, type: medicament.type }, state.cache))
         dispatch(cache(medicament));
-      }
     });
     const data = response.data.data;
     return {
@@ -39,92 +37,130 @@ const loadContent = createAsyncThunk(
   }
 );
 
+const loadItem = createAsyncThunk<boolean, MedicamentID>(
+  'planPrise/loadItem',
+  async ({ id, type }, { dispatch, getState, rejectWithValue }) => {
+    return await axios
+      .get(`/${type}/${id}`)
+      .then((response) => {
+        const data = response.data.data;
+        const state = getState() as ReduxState;
+        if (!inCache({ id, type }, state.cache)) {
+          dispatch(
+            cache({ id: data.id, type: data.type, attributes: data.attributes })
+          );
+        }
+        return true;
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch(removeItem({ id, type }));
+        return rejectWithValue(false);
+      });
+  }
+);
+
 const initialState: ReduxState.PlanPrise = {
   id: null,
   list: null,
   content: null,
 };
 
-const checkLoaded = (state: ReduxState.PlanPrise) => {
-  if (
-    state.content === null ||
-    state.content === 'error' ||
-    state.content === 'loading'
-  ) {
-    throw new CatchableError(
-      'Impossible de mettre à jour un plan de prise inexistant'
-    );
-  }
-  return true;
+const checkLoaded = (
+  content: null | 'loading' | 'error' | PlanPriseContent
+): content is PlanPriseContent => {
+  if (content !== null && content !== 'error' && content !== 'loading')
+    return true;
+  throw new CatchableError(
+    'Impossible de mettre à jour un plan de prise inexistant'
+  );
 };
 
 const ppSlice = createSlice({
   name: 'planPrise',
   initialState,
   reducers: {
-    setId: (state, action: PayloadAction<number | null>) => {
+    addItem: (state, { payload }: PayloadAction<MedicamentID>) => {
+      if (checkLoaded(state.content)) {
+        state.content.medic_data.push(payload);
+      }
+    },
+    removeItem: (state, { payload }: PayloadAction<MedicamentID>) => {
+      if (checkLoaded(state.content)) remove(state.content.medic_data, payload);
+    },
+    setLoading: (
+      state,
+      { payload }: PayloadAction<{ id: MedicamentID; status: boolean }>
+    ) => {
+      if (checkLoaded(state.content)) {
+        const index = findIndex(state.content.medic_data, payload.id);
+        state.content.medic_data[index].loading = payload.status;
+      }
+    },
+    setId: (state, { payload }: PayloadAction<number | null>) => {
       return {
         ...initialState,
-        id: action.payload ? action.payload : null,
+        id: payload ? payload : null,
         list: state.list,
       };
     },
-    resetId: (state, action: PayloadAction<undefined>) => {
+    resetId: (state) => {
       return { ...initialState, list: state.list };
     },
-    setSettings: (state, action: PayloadAction<{ id: string; value: any }>) => {
-      if (checkLoaded(state))
-        set(
-          state,
-          `content.custom_settings.${action.payload.id}`,
-          action.payload.value
-        );
+    setSettings: (
+      state,
+      { payload }: PayloadAction<{ id: string; value: any }>
+    ) => {
+      if (checkLoaded(state.content))
+        set(state.content, `custom_settings.${payload.id}`, payload.value);
     },
-    setValue: (state, action: PayloadAction<{ id: string; value: any }>) => {
-      if (checkLoaded(state))
-        set(
-          state,
-          `content.custom_data.${action.payload.id}`,
-          action.payload.value
-        );
+    setValue: (
+      state,
+      { payload }: PayloadAction<{ id: string; value: any }>
+    ) => {
+      if (checkLoaded(state.content))
+        set(state.content, `custom_data.${payload.id}`, payload.value);
     },
-    removeValue: (state, action: PayloadAction<{ id: string }>) => {
-      if (checkLoaded(state))
-        unset(state, `content.custom_data.${action.payload.id}`);
+    removeValue: (state, { payload }: PayloadAction<{ id: string }>) => {
+      if (checkLoaded(state.content))
+        unset(state.content, `custom_data.${payload.id}`);
     },
   },
-  extraReducers: {
-    [loadList.pending.type]: (state) => {
+  extraReducers: (builder) => {
+    builder.addCase(loadList.pending, (state) => {
       state.list = 'loading';
-    },
-    [loadList.rejected.type]: (state) => {
+    });
+    builder.addCase(loadList.rejected, (state) => {
       state.list = 'error';
-    },
-    [loadList.fulfilled.type]: (state, action) => {
-      if (isArray(action.payload)) {
-        state.list = action.payload;
+    });
+    builder.addCase(loadList.fulfilled, (state, { payload }) => {
+      if (isArray(payload)) {
+        state.list = payload;
       } else {
         state.list = 'error';
       }
-    },
-    [loadContent.pending.type]: (state) => {
+    });
+    builder.addCase(loadContent.pending, (state) => {
       state.content = 'loading';
-    },
-    [loadContent.rejected.type]: (state) => {
+    });
+    builder.addCase(loadContent.rejected, (state) => {
       state.content = 'error';
-    },
-    [loadContent.fulfilled.type]: (state, action) => {
-      state.content = action.payload;
-    },
+    });
+    builder.addCase(loadContent.fulfilled, (state, { payload }) => {
+      state.content = payload;
+    });
   },
 });
 
 export const {
+  addItem,
+  removeItem,
   removeValue,
   resetId,
   setId,
+  setLoading,
   setSettings,
   setValue,
 } = ppSlice.actions;
-export { loadContent, loadList };
+export { loadContent, loadItem, loadList };
 export default ppSlice.reducer;

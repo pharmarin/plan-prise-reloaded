@@ -11,6 +11,10 @@ declare namespace Props {
   interface Card {
     id: MedicamentID;
   }
+  interface Content {
+    isOpened: boolean;
+    medicament: Medicament;
+  }
   interface CustomInput {
     onChange: (value: string) => function;
     readOnly?: boolean;

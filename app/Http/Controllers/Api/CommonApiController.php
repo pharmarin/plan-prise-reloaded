@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Medicament;
 use App\Models\OldMedicament;
-use App\Repositories\CommonRepository;
+use App\Repositories\GenericRepository;
 
 class CommonApiController extends Controller
 {
@@ -18,13 +18,15 @@ class CommonApiController extends Controller
 
   public function search(Request $request)
   {
-    return response()->json(CommonRepository::search($request->input('query')));
+    return response()->json(
+      GenericRepository::search($request->input('query'))
+    );
   }
 
   public function show(Request $request)
   {
     return response()->json(
-      CommonRepository::find($request->input('id'), $request->input('type'))
+      GenericRepository::find($request->input('id'), $request->input('type'))
     );
   }
 }

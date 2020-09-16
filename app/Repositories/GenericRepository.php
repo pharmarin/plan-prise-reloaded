@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\BdpmCis;
+use App\Models\ApiMedicament;
 use App\Models\Medicament;
 use App\Models\OldMedicament;
 use App\Repositories\ApiMedicamentRepository;
@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 
-class CommonRepository
+class GenericRepository
 {
   static function getTypeByID($type_id)
   {
@@ -21,7 +21,7 @@ class CommonRepository
       case 1:
         return Medicament::class;
       case 2:
-        return BdpmCis::class;
+        return ApiMedicament::class;
       default:
         return null;
     }
@@ -43,7 +43,7 @@ class CommonRepository
 
   static function find($id, $type)
   {
-    $type = is_numeric($type) ? CommonRepository::getTypeByID($type) : $type;
+    $type = is_numeric($type) ? GenericRepository::getTypeByID($type) : $type;
     $api_repository = new ApiMedicamentRepository();
     switch ($type) {
       case Medicament::class:
@@ -61,44 +61,24 @@ class CommonRepository
         throw new \Exception('Type de modèle non envoyé. ');
         break;
     }
-    return CommonRepository::_getObject($id, $type, $model);
+    return GenericRepository::_getObject($id, $type, $model);
   }
 
   static function search($request)
   {
     $query = $request . '%';
     $limit = 10;
-    $medicaments = Medicament::where('custom_denomination', 'LIKE', $query)
+    $medicaments = Medicament::where('denomination', 'LIKE', $query)
       ->take($limit)
-      ->get(['id as value', 'custom_denomination as label']);
+      ->get(['id', 'denomination']);
     $old_medicaments = OldMedicament::where('nomMedicament', 'LIKE', $query)
       ->whereNull('import')
       ->take($limit)
-      ->get(['id as value', 'nomMedicament as label']);
-    $bdpm = array_map(function ($api_item) {
-      return (object) [
-        'value' => $api_item->cis,
-        'label' => $api_item->denomination,
-      ];
-    }, (new ApiMedicamentRepository())->search($query));
-    $created = collect();
-    $created = $created->merge($medicaments)->merge($old_medicaments);
-    return [
-      [
-        'label' => 'Médicament créés',
-        'options' => $created->map(function ($item) {
-          $item['type'] = get_class($item);
-          return $item;
-        }),
-      ],
-      [
-        'label' => 'Base de données publique',
-        'options' => $bdpm->map(function ($item) {
-          $item['type'] = get_class($item);
-          return $item;
-        }),
-      ],
-    ];
+      ->get(['id', 'nomMedicament']);
+    $api_medicaments = ApiMedicament::where('denomination', $query)->take(
+      $limit
+    );
+    return [...$medicaments, ...$old_medicaments, ...$api_medicaments];
   }
 
   static function _getObject($id, $type, $model)

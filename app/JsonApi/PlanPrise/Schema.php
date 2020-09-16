@@ -3,7 +3,7 @@
 namespace App\JsonApi\PlanPrise;
 
 use Neomerx\JsonApi\Schema\SchemaProvider;
-use App\Repositories\CommonRepository;
+use App\Repositories\GenericRepository;
 use App\Models\OldMedicament;
 use App\Models\Medicament;
 use App\Models\ApiMedicament;

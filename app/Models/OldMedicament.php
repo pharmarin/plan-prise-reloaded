@@ -8,7 +8,8 @@ class OldMedicament extends Model
 {
   protected $table = 'medics_simple';
   public $timestamps = false;
-  public $appends = ['nomGenerique'];
+  public $appends = ['denomination', 'type'];
+  public $hidden = ['nomMedicament'];
 
   public function getCompositionsAttribute()
   {
@@ -101,7 +102,12 @@ class OldMedicament extends Model
     );
   }
 
-  public function getToMedicamentAttribute()
+  public function getTypeAttribute()
+  {
+    return 'old-medicament';
+  }
+
+  public function toMedicament()
   {
     return $this;
     $commentaire = json_decode($this->commentaire, true) ?? [];

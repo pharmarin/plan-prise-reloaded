@@ -18,7 +18,7 @@ class Schema extends SchemaProvider
    */
   public function getId($resource)
   {
-    return (string) $resource->cis;
+    return (string) $resource->id;
   }
 
   /**

@@ -6,6 +6,9 @@ use Jenssegers\Model\Model;
 
 class ApiMedicament extends Model
 {
+  public $fillable = ['id', 'denomination', 'loaded'];
+  protected $appends = ['type'];
+
   static function init()
   {
     return new \GuzzleHttp\Client([
@@ -13,22 +16,40 @@ class ApiMedicament extends Model
     ]);
   }
 
-  static function find($cis)
+  static function find(int $cis)
   {
-    $response = static::init()->get('/medicaments/' . $cis);
+    $response = static::init()->get("/medicaments/${cis}");
     if ($response->getStatusCode() === 200) {
       $json = $response->getBody()->getContents();
       $object = json_decode($json);
       return new ApiMedicament([
-        'cis' => $cis,
+        'id' => $cis,
         'denomination' => $object->denomination,
         'loaded' => true,
       ]);
     } else {
       return new ApiMedicament([
-        'cis' => $cis,
+        'id' => $cis,
         'loaded' => false,
       ]);
+    }
+  }
+
+  static function where($field, $query)
+  {
+    $response = static::init()->get("/medicaments/?${field}=${query}");
+    if ($response->getStatusCode() === 200) {
+      $json = $response->getBody()->getContents();
+      $collection = collect(json_decode($json));
+      return $collection->map(function ($o) {
+        return new ApiMedicament([
+          'id' => $o->cis,
+          'denomination' => $o->denomination,
+          'loaded' => true,
+        ]);
+      });
+    } else {
+      return collect([]);
     }
   }
 
@@ -39,6 +60,6 @@ class ApiMedicament extends Model
 
   public function getTypeAttribute()
   {
-    return 2;
+    return 'api-medicament';
   }
 }

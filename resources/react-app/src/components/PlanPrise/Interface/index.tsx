@@ -11,9 +11,7 @@ const connector = connect(mapState);
 
 type InterfaceProps = ConnectedProps<typeof connector> & Props.Interface;
 
-const Interface = (props: InterfaceProps) => {
-  const { content } = props;
-
+const Interface = ({ content }: InterfaceProps) => {
   if (!content) {
     return <React.Fragment>Need Loading</React.Fragment>;
   }

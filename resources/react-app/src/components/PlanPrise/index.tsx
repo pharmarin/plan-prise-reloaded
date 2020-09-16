@@ -1,33 +1,26 @@
 import React, { useEffect } from 'react';
-//import axios from 'axios';
 import { useParams, Redirect, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-//import { Button, Spinner } from 'react-bootstrap';
-//import find from 'lodash/find';
-//import forEach from 'lodash/forEach';
-import get from 'lodash/get';
-//import map from 'lodash/map';
+import { ActionMeta, ValueType } from 'react-select';
+import AsyncSelect from 'react-select/async';
+import { get, isArray, isNumber } from 'lodash';
+
 //import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { updateAppNav } from 'store/app';
-import { loadContent, loadList, resetId, setId } from 'store/plan-prise';
-/*import {
-  doAddLine,
-  doInit,
-  doLoadList,
-  doReset,
-  doSetLoading,
-} from 'store/plan-prise/actions';*/
-//import { doLoad } from 'store/data/actions';
+import {
+  addItem,
+  loadContent,
+  loadList,
+  resetId,
+  setId,
+} from 'store/plan-prise';
+import useLoadAsync from 'helpers/hooks/use-load-async';
 //import PPRepository from 'helpers/PPRepository.helper';
 //import generate from 'helpers/pdf.helper';
 
-//import PPCard from 'components/plan-prise/PPCard';
-//import SearchMedicament from 'components/search/SearchMedicament';
-//import Settings from './Settings';
 import Selection from './Selection';
 import Interface from './Interface';
-import { isNumber } from 'lodash';
 import Settings from './Settings';
 
 const mapState = (state: ReduxState) => ({
@@ -37,6 +30,7 @@ const mapState = (state: ReduxState) => ({
 });
 
 const mapDispatch = {
+  addItem,
   loadContent,
   loadList,
   resetId,
@@ -48,18 +42,19 @@ const connector = connect(mapState, mapDispatch);
 
 type PlanPriseProps = ConnectedProps<typeof connector>;
 
-const PlanPrise = (props: PlanPriseProps) => {
-  const {
-    content,
-    id,
-    list,
-    loadContent,
-    loadList,
-    resetId,
-    setId,
-    updateAppNav,
-  } = props;
+const PlanPrise = ({
+  addItem,
+  content,
+  id,
+  list,
+  loadContent,
+  loadList,
+  resetId,
+  setId,
+  updateAppNav,
+}: PlanPriseProps) => {
   const history = useHistory();
+  const { loadGeneric } = useLoadAsync();
   const showSettings = get(useParams(), 'showSettings') === 'settings';
   const routeIdParam = get(useParams(), 'id', null);
   const isValidRoute = !isNaN(Number(routeIdParam));
@@ -75,6 +70,22 @@ const PlanPrise = (props: PlanPriseProps) => {
       return `Plan de prise n°${id}`;
     }
     return 'Que voulez-vous faire ? ';
+  };
+
+  const handleChange = (
+    value: ValueType<{ label: string; value: string; type: string }>,
+    { action }: ActionMeta<{ label: string; value: string; type: string }>
+  ) => {
+    if (
+      action === 'select-option' &&
+      value &&
+      'value' in value &&
+      'type' in value
+    ) {
+      if (isArray(value))
+        throw new Error('Un seul médicament peut être ajouté à la fois');
+      addItem({ id: value.value, type: value.type });
+    }
   };
 
   useEffect(() => {
@@ -173,6 +184,19 @@ const PlanPrise = (props: PlanPriseProps) => {
   if (isValidRoute && routeId)
     return (
       <React.Fragment>
+        <AsyncSelect
+          className="mb-4"
+          loadOptions={loadGeneric}
+          loadingMessage={() => 'Chargement des résultats en cours'}
+          noOptionsMessage={(p) =>
+            p.inputValue.length > 0
+              ? 'Aucun résultat'
+              : "Taper le nom d'un médicament pour commencer la recherche"
+          }
+          onChange={handleChange}
+          placeholder="Ajouter un médicament au plan de prise"
+          value={null}
+        />
         <Interface />
         <Settings
           show={contentLoaded && showSettings}

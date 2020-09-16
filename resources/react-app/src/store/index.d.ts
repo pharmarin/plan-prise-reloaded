@@ -12,8 +12,9 @@ interface Composition {
 }
 
 interface MedicamentID {
-  id: number;
+  id: string;
   type: string;
+  loading?: boolean;
 }
 
 interface Medicament extends MedicamentID {
@@ -21,6 +22,13 @@ interface Medicament extends MedicamentID {
     compositions?: Composition[];
     denomination?: string;
   };
+}
+
+interface PlanPriseContent {
+  id: number;
+  custom_data: { [key: number]: { [key: string]: string } };
+  custom_settings: { inputs: { [key: string]: { checked: boolean } } };
+  medic_data: MedicamentID[];
 }
 
 interface CustomNotification {
@@ -54,21 +62,7 @@ declare namespace ReduxState {
   }
   interface PlanPrise {
     id: number | null;
-    content:
-      | null
-      | 'loading'
-      | 'error'
-      | {
-          created_at: string;
-          custom_data: { [key: number]: { [key: string]: string } };
-          custom_settings: {};
-          deleted_at: string | null;
-          id: number;
-          medic_data: { [key: number]: MedicamentID };
-          pp_id: number;
-          updated_at: string;
-          user_id: number;
-        };
+    content: null | 'loading' | 'error' | PlanPriseContent;
     list: null | 'loading' | 'error' | number[];
   }
 }

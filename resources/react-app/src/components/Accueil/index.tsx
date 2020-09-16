@@ -11,11 +11,13 @@ type AccueilProps = ConnectedProps<typeof connector>;
 
 const Accueil = (props: AccueilProps) => {
   const { updateAppNav } = props;
+
   useEffect(() => {
     updateAppNav({
       title: 'Bienvenue',
     });
   }, [updateAppNav]);
+
   return (
     <div>
       <p>Welcome !!</p>
