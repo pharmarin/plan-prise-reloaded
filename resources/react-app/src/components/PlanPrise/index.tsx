@@ -15,6 +15,7 @@ import {
   resetId,
   setId,
 } from 'store/plan-prise';
+import { cache, inCache } from 'store/cache';
 import useLoadAsync from 'helpers/hooks/use-load-async';
 //import PPRepository from 'helpers/PPRepository.helper';
 //import generate from 'helpers/pdf.helper';
@@ -24,6 +25,7 @@ import Interface from './Interface';
 import Settings from './Settings';
 
 const mapState = (state: ReduxState) => ({
+  cacheState: state.cache,
   content: state.planPrise.content,
   id: state.planPrise.id,
   list: state.planPrise.list,
@@ -31,6 +33,7 @@ const mapState = (state: ReduxState) => ({
 
 const mapDispatch = {
   addItem,
+  cache,
   loadContent,
   loadList,
   resetId,
@@ -44,6 +47,8 @@ type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrise = ({
   addItem,
+  cache,
+  cacheState,
   content,
   id,
   list,
@@ -85,6 +90,16 @@ const PlanPrise = ({
       if (isArray(value))
         throw new Error('Un seul médicament peut être ajouté à la fois');
       addItem({ id: value.value, type: value.type });
+      if (
+        value.type === 'api-medicament' &&
+        !inCache({ id: value.value, type: value.type }, cacheState)
+      ) {
+        cache({
+          id: value.value,
+          type: value.type,
+          attributes: { denomination: value.label },
+        });
+      }
     }
   };
 
