@@ -13,6 +13,7 @@ import {
   set,
   unset,
 } from 'lodash';
+import { typeToInt } from 'helpers/type-switcher';
 
 const loadList = createAsyncThunk<number[]>('planPrise/loadList', async () => {
   const response = await axios.get('/plan-prise');
@@ -84,11 +85,23 @@ const ppSlice = createSlice({
     addItem: (state, { payload }: PayloadAction<MedicamentID>) => {
       if (checkLoaded(state.content)) {
         if (!find(state.content.medic_data, payload))
-          state.content.medic_data.push(payload);
+          state.content.medic_data.push({
+            id: payload.id,
+            type: payload.type,
+          });
       }
     },
     removeItem: (state, { payload }: PayloadAction<MedicamentID>) => {
-      if (checkLoaded(state.content)) remove(state.content.medic_data, payload);
+      if (checkLoaded(state.content)) {
+        remove(state.content.medic_data, {
+          id: payload.id,
+          type: payload.type,
+        });
+        unset(
+          state.content,
+          `custom_data.${typeToInt(payload.type)}-${payload.id}`
+        );
+      }
     },
     setLoading: (
       state,

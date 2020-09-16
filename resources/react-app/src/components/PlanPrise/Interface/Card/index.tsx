@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Card, CardHeader, Button, CardBody, Spinner } from 'reactstrap';
 import { BsTrash, BsCaretDown, BsCaretUpFill } from 'react-icons/bs';
 import { find, get } from 'lodash';
-import { loadItem, setLoading } from 'store/plan-prise';
+import { loadItem, removeItem, setLoading } from 'store/plan-prise';
 import Content from './Content';
 
 const mapState = (state: ReduxState) => ({
@@ -12,6 +12,7 @@ const mapState = (state: ReduxState) => ({
 
 const mapDispatch = {
   loadItem,
+  removeItem,
   setLoading,
 };
 
@@ -22,6 +23,7 @@ type CardProps = Props.Card & ConnectedProps<typeof connector>;
 const ItemCard = ({
   id,
   loadItem,
+  removeItem,
   setLoading,
   storedMedicaments,
 }: CardProps) => {
@@ -77,7 +79,7 @@ const ItemCard = ({
                 size="sm"
                 tabIndex={-1}
                 color="neutral"
-                //onClick={() => removeLine(id)}
+                onClick={() => removeItem(id)}
               >
                 <small className="mr-1 prevent-toggle">
                   Supprimer la ligne
