@@ -11,7 +11,6 @@ const NavbarLink = ({
 }: Props.NavbarLinkProps) => {
   const location = useLocation().pathname;
   const isActive = location === path;
-  console.log(location, path, isActive);
 
   const switchLabel = (string: string) => {
     if (string === 'arrow-left') return <FaArrowLeft />;
