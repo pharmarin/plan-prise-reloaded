@@ -8,7 +8,7 @@ const CustomInput = (props: Props.CustomInput) => {
     <TextareaAutosize
       disabled={readOnly}
       className="form-control"
-      value={value}
+      value={value || ''}
       onChange={(e) => onChange(e.currentTarget.value)}
     />
   );
