@@ -1,22 +1,9 @@
 import React, { useEffect } from 'react';
 import { useParams, Redirect, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-import { ActionMeta, ValueType } from 'react-select';
-import AsyncSelect from 'react-select/async';
-import { get, isArray, isNumber } from 'lodash';
-
-//import { CSSTransition, TransitionGroup } from 'react-transition-group';
-
+import { get, isNumber } from 'lodash';
 import { updateAppNav } from 'store/app';
-import {
-  addItem,
-  loadContent,
-  loadList,
-  resetId,
-  setId,
-} from 'store/plan-prise';
-import { cache, inCache } from 'store/cache';
-import useLoadAsync from 'helpers/hooks/use-load-async';
+import { loadContent, loadList, resetId, setId } from 'store/plan-prise';
 //import PPRepository from 'helpers/PPRepository.helper';
 //import generate from 'helpers/pdf.helper';
 
@@ -25,15 +12,12 @@ import Interface from './Interface';
 import Settings from './Settings';
 
 const mapState = (state: ReduxState) => ({
-  cacheState: state.cache,
   content: state.planPrise.content,
   id: state.planPrise.id,
   list: state.planPrise.list,
 });
 
 const mapDispatch = {
-  addItem,
-  cache,
   loadContent,
   loadList,
   resetId,
@@ -46,9 +30,6 @@ const connector = connect(mapState, mapDispatch);
 type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrise = ({
-  addItem,
-  cache,
-  cacheState,
   content,
   id,
   list,
@@ -59,7 +40,6 @@ const PlanPrise = ({
   updateAppNav,
 }: PlanPriseProps) => {
   const history = useHistory();
-  const { loadGeneric } = useLoadAsync();
   const showSettings = get(useParams(), 'showSettings') === 'settings';
   const routeIdParam = get(useParams(), 'id', null);
   const isValidRoute = !isNaN(Number(routeIdParam));
@@ -75,32 +55,6 @@ const PlanPrise = ({
       return `Plan de prise n°${id}`;
     }
     return 'Que voulez-vous faire ? ';
-  };
-
-  const handleChange = (
-    value: ValueType<{ label: string; value: string; type: string }>,
-    { action }: ActionMeta<{ label: string; value: string; type: string }>
-  ) => {
-    if (
-      action === 'select-option' &&
-      value &&
-      'value' in value &&
-      'type' in value
-    ) {
-      if (isArray(value))
-        throw new Error('Un seul médicament peut être ajouté à la fois');
-      addItem({ id: value.value, type: value.type });
-      if (
-        value.type === 'api-medicament' &&
-        !inCache({ id: value.value, type: value.type }, cacheState)
-      ) {
-        cache({
-          id: value.value,
-          type: value.type,
-          attributes: { denomination: value.label },
-        });
-      }
-    }
   };
 
   useEffect(() => {
@@ -199,19 +153,6 @@ const PlanPrise = ({
   if (isValidRoute && routeId)
     return (
       <React.Fragment>
-        <AsyncSelect
-          className="mb-4"
-          loadOptions={loadGeneric}
-          loadingMessage={() => 'Chargement des résultats en cours'}
-          noOptionsMessage={(p) =>
-            p.inputValue.length > 0
-              ? 'Aucun résultat'
-              : "Taper le nom d'un médicament pour commencer la recherche"
-          }
-          onChange={handleChange}
-          placeholder="Ajouter un médicament au plan de prise"
-          value={null}
-        />
         <Interface />
         <Settings
           show={contentLoaded && showSettings}

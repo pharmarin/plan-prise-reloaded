@@ -2,6 +2,7 @@ import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { keys, map, toNumber } from 'lodash';
 import Card from './Card';
+import Select from './Select';
 
 const mapState = (state: ReduxState) => ({
   content: state.planPrise.content,
@@ -26,6 +27,7 @@ const Interface = ({ content }: InterfaceProps) => {
 
   return (
     <React.Fragment>
+      <Select />
       {map(keys(content.medic_data), toNumber)
         .sort()
         .map((key: number) => (
