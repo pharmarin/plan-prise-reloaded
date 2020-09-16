@@ -79,6 +79,7 @@ const Select = ({
       className="mb-4"
       loadOptions={loadGeneric}
       loadingMessage={() => 'Chargement des résultats en cours'}
+      menuPlacement="top"
       noOptionsMessage={(p) =>
         p.inputValue.length > 0
           ? 'Aucun résultat'

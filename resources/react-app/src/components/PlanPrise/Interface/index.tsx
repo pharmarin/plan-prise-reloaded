@@ -27,12 +27,12 @@ const Interface = ({ content }: InterfaceProps) => {
 
   return (
     <React.Fragment>
-      <Select />
       {map(keys(content.medic_data), toNumber)
         .sort()
         .map((key: number) => (
           <Card key={medicaments[key].id} id={medicaments[key]} />
         ))}
+      <Select />
     </React.Fragment>
   );
 };
