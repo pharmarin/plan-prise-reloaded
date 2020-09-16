@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { BsFillExclamationDiamondFill } from 'react-icons/bs';
 import { connect, ConnectedProps } from 'react-redux';
 import { Spinner, Toast, ToastBody, ToastHeader } from 'reactstrap';
 import { removeNotification } from 'store/app';
@@ -37,6 +38,8 @@ const Notification = ({
     switch (icon) {
       case 'spinner':
         return <Spinner size="sm" />;
+      case 'warning':
+        return <BsFillExclamationDiamondFill className="text-warning" />;
       default:
         return null;
     }
@@ -45,17 +48,14 @@ const Notification = ({
   return (
     <Toast className="ml-auto" isOpen={show}>
       {(notification.header || notification.icon) && (
-        <ToastHeader icon={getIcon(notification.icon)} toggle={toggle}>
+        <ToastHeader
+          icon={getIcon(notification.icon)}
+          toggle={!notification.timer ? toggle : undefined}
+        >
           {notification.header}
         </ToastHeader>
       )}
-      {notification.content && (
-        <ToastBody>
-          {notification.content}
-          <br />
-          Toast n°{notification.id}
-        </ToastBody>
-      )}
+      {notification.content && <ToastBody>{notification.content}</ToastBody>}
     </Toast>
   );
 };

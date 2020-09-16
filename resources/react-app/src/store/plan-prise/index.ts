@@ -3,6 +3,7 @@ import axios from 'helpers/axios-clients';
 import { cache, inCache } from 'store/cache';
 import CatchableError from 'helpers/catchable-error';
 import {
+  find,
   findIndex,
   forEach,
   get,
@@ -82,7 +83,8 @@ const ppSlice = createSlice({
   reducers: {
     addItem: (state, { payload }: PayloadAction<MedicamentID>) => {
       if (checkLoaded(state.content)) {
-        state.content.medic_data.push(payload);
+        if (!find(state.content.medic_data, payload))
+          state.content.medic_data.push(payload);
       }
     },
     removeItem: (state, { payload }: PayloadAction<MedicamentID>) => {
@@ -94,7 +96,11 @@ const ppSlice = createSlice({
     ) => {
       if (checkLoaded(state.content)) {
         const index = findIndex(state.content.medic_data, payload.id);
-        state.content.medic_data[index].loading = payload.status;
+        if (payload.status === true) {
+          state.content.medic_data[index].loading = payload.status;
+        } else {
+          unset(state.content.medic_data, `${index}.loading`);
+        }
       }
     },
     setId: (state, { payload }: PayloadAction<number | null>) => {
