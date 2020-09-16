@@ -12,18 +12,21 @@ import {
   Row,
   Col,
 } from 'reactstrap';
-import routes from './routes.json';
-import map from 'lodash/map';
 import { FaArrowLeft, FaCog } from 'react-icons/fa';
 
 const NavbarTitle = () => {
   return <React.Fragment>plandeprise.fr</React.Fragment>;
 };
 
-const NavbarLink = (props: Props.NavbarLinkProps) => {
+const NavbarLink = ({
+  className,
+  label,
+  light,
+  path,
+}: Props.NavbarLinkProps) => {
   const location = useLocation().pathname;
-  const { className, label, path } = props;
   const isActive = location === path;
+  console.log(location, path, isActive);
 
   const switchLabel = (string: string) => {
     if (string === 'arrow-left') return <FaArrowLeft />;
@@ -33,8 +36,12 @@ const NavbarLink = (props: Props.NavbarLinkProps) => {
 
   return (
     <NavItem className={className}>
-      <NavLink active={isActive} to={path} tag={Link}>
-        <span className={'nav-link-inner--text' + isActive ? '' : 'text-light'}>
+      <NavLink active={isActive} disabled={isActive} to={path} tag={Link}>
+        <span
+          className={
+            'nav-link-inner--text' + (isActive ? ' text-white-50' : '')
+          }
+        >
           {switchLabel(label)}
         </span>
       </NavLink>
@@ -70,12 +77,12 @@ const Navigation = (props: NavigationProps) => {
             label="plandeprise.fr"
           />
         </Nav>
-        <Nav className="mx-auto" navbar>
-          {returnTo && <NavbarLink {...returnTo} />}
-          <span className="h5 my-auto text-light">{title}</span>
+        <Nav className="mx-auto flex-row" navbar>
+          {returnTo && <NavbarLink light {...returnTo} />}
+          <span className="h5 mx-4 my-auto pt-1 text-light">{title}</span>
           {options &&
             options.map((option) => (
-              <NavbarLink key={option.path} {...option} />
+              <NavbarLink key={option.path} light {...option} />
             ))}
         </Nav>
         <button
@@ -120,9 +127,17 @@ const Navigation = (props: NavigationProps) => {
             </Row>
           </div>
           <Nav className="ml-lg-auto" navbar>
-            {authenticated
-              ? map(routes.auth, (r) => <NavbarLink key={r.path} {...r} />)
-              : map(routes.noauth, (r) => <NavbarLink key={r.path} {...r} />)}
+            {authenticated ? (
+              <React.Fragment>
+                <NavbarLink label="Profil" path="/profil" />
+                <NavbarLink label="Déconnexion" path="/deconnexion" />
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <NavbarLink label="Connexion" path="/connexion" />
+                <NavbarLink label="Inscription" path="/inscription" />
+              </React.Fragment>
+            )}
           </Nav>
         </UncontrolledCollapse>
       </Container>

@@ -33,6 +33,7 @@ declare namespace Props {
   interface NavbarLinkProps {
     className?: string;
     label: string;
+    light?: boolean;
     path: string;
   }
 }
