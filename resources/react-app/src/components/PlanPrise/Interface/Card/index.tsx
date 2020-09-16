@@ -55,7 +55,7 @@ const ItemCard = (props: CardProps) => {
   const medicament = find(storedMedicaments, id) as Medicament;
   const uid = `${typeToInt(medicament.type)}-${medicament.id}`;
   const posologies = useConfig('default.posologies');
-  const [isOpened, setIsOpened] = useState(true); //useState(false);
+  const [isOpened, setIsOpened] = useState(false);
 
   const getValue = (customLocation: string, defaultLocation?: string) =>
     get(
