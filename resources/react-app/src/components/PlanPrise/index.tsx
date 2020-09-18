@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, Redirect, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 import { get, isNumber } from 'lodash';
-import { updateAppNav } from 'store/app';
+import { addNotification, updateAppNav } from 'store/app';
 import { loadContent, loadList, resetId, setId } from 'store/plan-prise';
 //import PPRepository from 'helpers/PPRepository.helper';
 //import generate from 'helpers/pdf.helper';
@@ -18,6 +18,7 @@ const mapState = (state: ReduxState) => ({
 });
 
 const mapDispatch = {
+  addNotification,
   loadContent,
   loadList,
   resetId,
@@ -30,6 +31,7 @@ const connector = connect(mapState, mapDispatch);
 type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrise = ({
+  addNotification,
   content,
   id,
   list,
@@ -46,6 +48,7 @@ const PlanPrise = ({
   const isRootRoute = routeIdParam === null;
   const routeId = Number(routeIdParam);
   const contentLoaded = get(content, 'id') === routeId;
+  const isError = isValidRoute && id === routeId && content === 'error';
 
   const getTitle = (id: number | null) => {
     if (id === -1) {
@@ -66,13 +69,39 @@ const PlanPrise = ({
   useEffect(() => {
     if (isNumber(id) && !routeId) resetId();
     if (isValidRoute && !isRootRoute && routeId) {
+      /**
+       * @condition if id !== routeId
+       * @action set ID
+       * @action reset content
+       */
       if (id !== routeId) setId(routeId);
-      if (!contentLoaded && content !== 'loading') loadContent(routeId);
+      /**
+       * @condition if no content & not loading & not errored
+       * @action load content
+       */
+      if (!contentLoaded && content !== 'loading' && content !== 'error')
+        loadContent(routeId);
+      /**
+       * @condition content is "error"
+       * @action error to console
+       * @action add notification
+       */
+      if (isError) {
+        console.error("Ce plan de prise n'existe pas. ");
+        addNotification({
+          header: 'Erreur',
+          content: "Ce plan de prise n'existe pas. ",
+          icon: 'danger',
+          timer: 5000,
+        });
+      }
     }
   }, [
+    addNotification,
     content,
     contentLoaded,
     id,
+    isError,
     isRootRoute,
     isValidRoute,
     loadContent,
@@ -90,61 +119,27 @@ const PlanPrise = ({
             label: 'arrow-left',
           }
         : undefined,
-      options: isNumber(id)
-        ? [
-            {
-              path: `/plan-prise/${id}/settings`,
-              label: 'cog',
-            },
-          ]
-        : undefined,
+      options:
+        isNumber(id) && contentLoaded
+          ? [
+              {
+                path: `/plan-prise/${id}/settings`,
+                label: 'cog',
+              },
+              {
+                path: `/plan-prise/${id}/delete`,
+                label: 'trash',
+              },
+              {
+                path: `/plan-prise/${id}/print`,
+                label: 'printer',
+              },
+            ]
+          : undefined,
     });
-  }, [id, updateAppNav]);
+  }, [contentLoaded, id, updateAppNav]);
 
-  /*const deletePP = async (event) => {
-    event.preventDefault();
-    const { history, id, reset, setLoading } = props;
-    setLoading({
-      state: true,
-      message: 'Suppression du plan de prise en cours... ',
-    });
-    return axios
-      .delete(`${window.php.routes.api.planprise.destroy}/${id}`, {
-        data: {
-          token: window.php.routes.token,
-        },
-      })
-      .then(() => {
-        reset(history);
-      })
-      .catch((error) => {
-        setLoading({
-          state: false,
-          message: '',
-        });
-        console.log('Error destroying pp', error);
-      });
-  };
-
-  const handleAddLine = async (value) => {
-    const { addLine, history } = props;
-    const medicament = {
-      id: value.value,
-      denomination: value.label,
-      type: value.type,
-    };
-    return addLine(medicament, history);
-  };
-
-  const generatePDF = () => {
-    const { id, repository } = props;
-    const { columns, values } = repository;
-
-    return generate(id, columns, values);
-  };*/
-
-  if (!isValidRoute) {
-    console.log(routeId);
+  if (!isValidRoute || isError) {
     return <Redirect to="/plan-prise" />;
   }
 
@@ -162,79 +157,6 @@ const PlanPrise = ({
     );
 
   return <div>Erreur</div>;
-
-  /*return (
-    <React.Fragment>
-      {ppId > 0 && !isLoading.state ? (
-        <div className="d-flex">
-          <a className="btn text-success py-0" href={`${ppId}/print`}>
-            <i className="fa fa-print" />
-          </a>
-          <Button
-            className="text-success py-0"
-            variant="link"
-            onClick={() => generatePDF()}
-          >
-            <i className="fa fa-file-pdf" />
-          </Button>
-          <Button
-            className="text-secondary py-0"
-            variant="link"
-            onClick={() => setShowSettings(true)}
-          >
-            <i className="fa fa-cog" />
-          </Button>
-          <Button
-            className="text-danger py-0"
-            variant="link"
-            onClick={deletePP}
-          >
-            <i className="fa fa-trash" />
-          </Button>
-        </div>
-      ) : null}
-
-      {(() => {
-        if (isLoading.state) {
-          return (
-            <div>
-              <Spinner />
-              <span className="ml-3">{isLoading.message}</span>
-            </div>
-          );
-        }
-
-        return (
-          <TransitionGroup className="plan-prise" enter={false}>
-            {content &&
-              map(content, (medicament) => {
-                return (
-                  <CSSTransition
-                    key={medicament.id}
-                    classNames="plan-prise-card"
-                    timeout={500}
-                  >
-                    <PPCard
-                      denomination={medicament.denomination}
-                      details={find(repository.valuesObject, [
-                        'line',
-                        medicament,
-                      ])}
-                      isLoaded={repository.isLoaded(medicament)}
-                      lineId={medicament.id}
-                      needChoice={get(repository.needChoice, medicament.id, [])}
-                      repository={repository}
-                    />
-                  </CSSTransition>
-                );
-              })}
-            <SearchMedicament multiple={false} onSelect={handleAddLine} />
-          </TransitionGroup>
-        );
-      })()}
-      <Settings setShowSettings={setShowSettings} showSettings={showSettings} />
-    </React.Fragment>
-  );*/
 };
 
 export default connector(PlanPrise);
