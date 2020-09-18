@@ -1,13 +1,19 @@
 import { debounce, get } from 'lodash';
 import axios from 'helpers/axios-clients';
 import { MiddlewareAPI, Dispatch, Action } from 'redux';
-import { setSettings, removeValue, setValue } from 'store/plan-prise';
+import {
+  setSettings,
+  removeValue,
+  setValue,
+  removeItem,
+  addItem,
+} from 'store/plan-prise';
 import { addNotification, removeNotification } from 'store/app';
 
 const update = debounce(
   (
     id: number,
-    data: { action: string; value: any },
+    data: { data: { type: string; value: any }[] },
     onStart?: () => void,
     callback?: () => void
   ) => {
@@ -29,16 +35,26 @@ const update = debounce(
   5000
 );
 
-const allowedActions = [removeValue.type, setValue.type, setSettings.type];
+const allowedActions = [
+  addItem.type,
+  removeItem.type,
+  removeValue.type,
+  setValue.type,
+  setSettings.type,
+];
 const SAVING_NOTIFICATION_TYPE = 'saving';
 
 const switchAction = (type: string) => {
   switch (type) {
     case removeValue.type:
     case setValue.type:
-      return { action: 'edit', path: 'planPrise.content.custom_data' };
+      return ['custom_data'];
     case setSettings.type:
-      return { action: 'settings', path: 'planPrise.content.custom_settings' };
+      return ['custom_settings'];
+    case addItem.type:
+      return ['medic_data'];
+    case removeItem.type:
+      return ['medic_data', 'custom_data'];
     default:
       throw new Error('No action type provided');
   }
@@ -58,8 +74,10 @@ const saveToAPI = ({
     update(
       get(state, 'planPrise.id'),
       {
-        action: parameters.action,
-        value: get(state, parameters.path),
+        data: parameters.map((p) => ({
+          type: p,
+          value: get(state.planPrise.content, p),
+        })),
       },
       () =>
         dispatch(

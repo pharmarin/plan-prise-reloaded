@@ -21,6 +21,7 @@ class PlanPriseController extends Controller
 
   public function update(Request $request, $id)
   {
-    return $this->pp_repository->update($id, $request['value']);
+    $data = $request->input('data');
+    return $this->pp_repository->update($id, $data);
   }
 }

@@ -76,52 +76,27 @@ class PlanPriseRepository
     }
   }
 
-  public function update($pp_id, $values)
+  public function update($pp_id, $data)
   {
     if ($this->_init($pp_id)) {
-      switch (request()->input('action')) {
-        case 'edit':
-          $this->plan_prise->custom_data = array_filter($values);
-          break;
-        case 'remove':
-          $this->plan_prise->medic_data = $this->plan_prise->medic_data->reject(
-            function ($item) use ($values) {
-              return $item['value'] == $values;
-            }
-          );
-          $this->plan_prise->custom_data = $this->plan_prise->custom_data->forget(
-            $values
-          );
-          break;
-        case 'settings':
-          $this->plan_prise->custom_settings = $values;
-          break;
-        case 'add':
-          break;
-        default:
-          throw new \Exception('Aucune action demandée. ');
-          break;
+      foreach ($data as $d) {
+        switch ($d['type']) {
+          case 'medic_data':
+            $this->plan_prise->medic_data = $d['value'];
+            break;
+          case 'custom_data':
+            $this->plan_prise->custom_data = $d['value'];
+            break;
+          case 'custom_settings':
+            $this->plan_prise->custom_settings = $d['value'];
+            break;
+          default:
+            throw new \Error(
+              'Cette action ne correpond pas aux actions autorisées pour une mise à jour du contenu'
+            );
+            break;
+        }
       }
-    } elseif (request()->input('action') !== 'add') {
-      return $this->_getReturnArray('error', ['data' => 'PP not exists']);
-    }
-    if (request()->input('action') === 'add') {
-      if ($this->plan_prise->medic_data->contains('value', $values['id'])) {
-        return $this->_getReturnArray('error', [
-          'data' => 'Ce médicament est déjà dans le plan de prise.',
-        ]);
-      }
-      if (!$values > 0) {
-        throw new \Exception('Pas de médicament à ajouter');
-      }
-      $new_line = [
-        [
-          'type' => $values['type'],
-          'id' => $values['id'],
-        ],
-      ];
-      $medic_data = $this->plan_prise->medic_data->merge($new_line);
-      $this->plan_prise->medic_data = $medic_data;
     }
     $this->plan_prise->save();
     return $this->_getReturnArray('success');

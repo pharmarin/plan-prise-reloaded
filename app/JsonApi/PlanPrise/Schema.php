@@ -62,11 +62,11 @@ class Schema extends SchemaProvider
         self::DATA => function () use ($resource) {
           return array_map(function ($r) {
             switch ($r['type']) {
-              case 0:
+              case 'old-medicament':
                 return OldMedicament::find($r['id']);
-              case 1:
+              case 'medicament':
                 return Medicament::find($r['id']);
-              case 2:
+              case 'api-medicament':
                 return ApiMedicament::find($r['id']);
               default:
                 throw new Error('Type de médicament inconnu');
