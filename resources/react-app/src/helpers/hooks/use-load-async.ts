@@ -42,5 +42,5 @@ const loadGeneric = async (query: string) => {
 };
 
 export default () => ({
-  loadGeneric: debounce(loadGeneric, 3000),
+  loadGeneric: debounce(loadGeneric, 1000),
 });
