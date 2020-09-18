@@ -23,7 +23,8 @@ const NavbarLink = ({
       <NavLink active={isActive} disabled={isActive} to={path} tag={Link}>
         <span
           className={
-            'nav-link-inner--text' + (isActive ? ' text-white-50' : '')
+            'nav-link-inner--text' +
+            (isActive ? ' text-white-50' : light ? ' text-light' : '')
           }
         >
           {switchLabel(label)}

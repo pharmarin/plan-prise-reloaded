@@ -60,18 +60,23 @@ class Schema extends SchemaProvider
         self::SHOW_RELATED => false,
         self::SHOW_DATA => true,
         self::DATA => function () use ($resource) {
-          return array_map(function ($r) {
-            switch ($r['type']) {
-              case 'old-medicament':
-                return OldMedicament::find($r['id']);
-              case 'medicament':
-                return Medicament::find($r['id']);
-              case 'api-medicament':
-                return ApiMedicament::find($r['id']);
-              default:
-                throw new Error('Type de médicament inconnu');
-            }
-          }, $resource->medic_data);
+          return array_filter(
+            array_map(function ($r) {
+              switch ($r['type']) {
+                case 'old-medicament':
+                  return OldMedicament::find($r['id']);
+                case 'medicament':
+                  return Medicament::find($r['id']);
+                case 'api-medicament':
+                  return ApiMedicament::find($r['id']);
+                default:
+                  Log::alert(
+                    "Type de médicament inconnu - type: {$r['type']} - id: {$r['id']}"
+                  );
+                  return null;
+              }
+            }, $resource->medic_data)
+          );
         },
       ],
     ];
