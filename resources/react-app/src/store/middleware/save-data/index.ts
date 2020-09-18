@@ -90,7 +90,11 @@ const saveToAPI = ({
       () => dispatch(removeNotification(SAVING_NOTIFICATION_TYPE))
     );
 
-    if (action.type === setSettings.type) {
+    if (
+      action.type === setSettings.type ||
+      action.type === addItem.type ||
+      action.type === removeItem.type
+    ) {
       update.flush();
     }
   }
