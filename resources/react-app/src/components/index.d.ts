@@ -40,4 +40,12 @@ declare namespace Props {
     light?: boolean;
     path: string;
   }
+  interface SplashScreen {
+    type: 'load' | 'info' | 'danger' | 'warning';
+    message: string;
+    button?: {
+      label: string;
+      path: string;
+    };
+  }
 }

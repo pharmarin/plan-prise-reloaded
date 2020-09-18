@@ -10,6 +10,7 @@ import { loadContent, loadList, resetId, setId } from 'store/plan-prise';
 import Selection from './Selection';
 import Interface from './Interface';
 import Settings from './Settings';
+import SplashScreen from 'components/App/SplashScreen';
 
 const mapState = (state: ReduxState) => ({
   content: state.planPrise.content,
@@ -42,6 +43,7 @@ const PlanPrise = ({
   updateAppNav,
 }: PlanPriseProps) => {
   const history = useHistory();
+  const settingsRoute = get(useParams(), 'action') === 'settings';
   const showSettings = get(useParams(), 'showSettings') === 'settings';
   const routeIdParam = get(useParams(), 'id', null);
   const isValidRoute = !isNaN(Number(routeIdParam));
@@ -81,27 +83,12 @@ const PlanPrise = ({
        */
       if (!contentLoaded && content !== 'loading' && content !== 'error')
         loadContent(routeId);
-      /**
-       * @condition content is "error"
-       * @action error to console
-       * @action add notification
-       */
-      if (isError) {
-        console.error("Ce plan de prise n'existe pas. ");
-        addNotification({
-          header: 'Erreur',
-          content: "Ce plan de prise n'existe pas. ",
-          icon: 'danger',
-          timer: 5000,
-        });
-      }
     }
   }, [
     addNotification,
     content,
     contentLoaded,
     id,
-    isError,
     isRootRoute,
     isValidRoute,
     loadContent,
@@ -120,7 +107,7 @@ const PlanPrise = ({
           }
         : undefined,
       options:
-        isNumber(id) && contentLoaded
+        isNumber(id) && contentLoaded && !deleteRoute
           ? [
               {
                 path: `/plan-prise/${id}/settings`,
@@ -137,9 +124,22 @@ const PlanPrise = ({
             ]
           : undefined,
     });
+  }, [contentLoaded, deleteRoute, id, updateAppNav]);
+
   }, [contentLoaded, id, updateAppNav]);
 
-  if (!isValidRoute || isError) {
+  if (isError) {
+    console.error("Ce plan de prise n'existe pas. ");
+    return (
+      <SplashScreen
+        button={{ label: 'Retour', path: '/plan-prise' }}
+        type="danger"
+        message="Ce plan de prise n'existe plus ou vous n'avez pas l'autorisation d'y accéder."
+      />
+    );
+  }
+
+  if (!isValidRoute) {
     return <Redirect to="/plan-prise" />;
   }
 
@@ -150,7 +150,7 @@ const PlanPrise = ({
       <React.Fragment>
         <Interface />
         <Settings
-          show={contentLoaded && showSettings}
+          show={contentLoaded && settingsRoute}
           toggle={() => history.replace(`/plan-prise/${routeId}`)}
         />
       </React.Fragment>

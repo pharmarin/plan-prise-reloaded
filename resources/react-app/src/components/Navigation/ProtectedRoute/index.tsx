@@ -38,7 +38,7 @@ const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
     return <RouterRoute {...props} />;
   }
 
-  return <SplashScreen type="loading" />;
+  return <SplashScreen message="Authentification en cours" type="load" />;
 };
 
 export default withSanctum(ProtectedRoute);

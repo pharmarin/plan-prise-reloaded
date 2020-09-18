@@ -50,13 +50,13 @@ export default () => {
       });
   }
 
-  if (isLoading) return <SplashScreen type="loading" />;
-  if (needUpdate) return <SplashScreen type="update" />;
+  if (isLoading) return <SplashScreen type="load" message="Chargement en cours..." />;
+  if (needUpdate) return <SplashScreen type="info" message="Une mise à jour est disponible" button={{label: "Recharger", path: "/"}} />;
 
   return (
     <Provider store={store}>
       <PersistGate
-        loading={<SplashScreen type="loading" />}
+        loading={<SplashScreen type="load" message="Chargement en cours..." />}
         persistor={persistor}
       >
         <NotificationStack />

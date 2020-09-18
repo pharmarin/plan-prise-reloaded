@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaArrowLeft, FaCog } from 'react-icons/fa';
+import { FaArrowLeft, FaCog, FaPrint, FaTrash } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
 import { NavItem, NavLink } from 'reactstrap';
 
@@ -15,11 +15,13 @@ const NavbarLink = ({
   const switchLabel = (string: string) => {
     if (string === 'arrow-left') return <FaArrowLeft />;
     if (string === 'cog') return <FaCog />;
+    if (string === 'printer') return <FaPrint />;
+    if (string === 'trash') return <FaTrash />;
     return string;
   };
 
   return (
-    <NavItem className={className}>
+    <NavItem className={(className || '') + ' mr-3'}>
       <NavLink active={isActive} disabled={isActive} to={path} tag={Link}>
         <span
           className={

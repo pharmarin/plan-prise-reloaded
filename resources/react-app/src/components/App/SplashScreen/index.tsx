@@ -1,14 +1,11 @@
 import React from 'react';
-import { Spinner, Button } from 'reactstrap';
-import { BsArrowRepeat } from 'react-icons/bs';
+import { Spinner } from 'reactstrap';
+import { BsFillExclamationOctagonFill } from 'react-icons/bs';
 
 import styles from './index.module.scss';
+import { Link } from 'react-router-dom';
 
-type SplashScreenProps = {
-  type: 'loading' | 'update';
-};
-
-export default (props: SplashScreenProps) => {
+export default ({ button, message, type }: Props.SplashScreen) => {
   return (
     <div
       className={`${styles.splashscreen} d-flex`}
@@ -17,34 +14,25 @@ export default (props: SplashScreenProps) => {
         width: '100vw',
       }}
     >
-      {(() => {
-        switch (props.type) {
-          case 'loading':
-            return (
-              <div className="m-auto d-flex align-items-center">
-                <Spinner />
-                <p className="display-1 m-0 ml-4">Chargement en cours</p>
-              </div>
-            );
-          case 'update':
-            return (
-              <div className="m-auto d-flex flex-column justify-content-center">
-                <p className="display-1 m-0 ml-4">
-                  Une mise à jour est disponible
-                </p>
-                <Button
-                  color="link"
-                  onClick={() => window.location.reload(true)}
-                >
-                  <BsArrowRepeat />
-                  Recharger
-                </Button>
-              </div>
-            );
-          default:
-            break;
-        }
-      })()}
+      <div className="m-auto d-flex flex-column justify-content-center align-items-center">
+        <div className="d-flex flex-row align-items-center m-0 ml-4">
+          {type === 'load' && <Spinner />}
+          {type === 'danger' && (
+            <BsFillExclamationOctagonFill
+              className="text-danger"
+              style={{ fontSize: '10em' }}
+            />
+          )}
+          <span className="display-1 ml-4">{message}</span>
+        </div>
+        {button && (
+          <div>
+            <Link className="btn btn-light" to={button.path}>
+              {button.label}
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
