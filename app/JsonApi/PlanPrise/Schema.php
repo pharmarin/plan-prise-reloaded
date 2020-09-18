@@ -70,7 +70,7 @@ class Schema extends SchemaProvider
                 case 'api-medicament':
                   return ApiMedicament::find($r['id']);
                 default:
-                  Log::alert(
+                  \Log::alert(
                     "Type de médicament inconnu - type: {$r['type']} - id: {$r['id']}"
                   );
                   return null;
