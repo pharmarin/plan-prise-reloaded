@@ -70,16 +70,13 @@ const PlanPrise = ({
     }
   }, [isRootRoute, list, loadList]);
 
-  /**
-   * @condition isNumber(id)
-   * @condition routeId === undefined [location === /plan-prise]
-   * @action setId(null) [reset id]
-   */
   useEffect(() => {
+    /**
+     * @condition isNumber(id)
+     * @condition routeId === undefined [location === /plan-prise]
+     * @action setId(null) [reset id]
+     */
     if (isNumber(id) && (!routeId || !isValidRoute)) setId(null);
-  }, [id, isValidRoute, routeId, setId]);
-
-  useEffect(() => {
     if (isValidRoute && !isRootRoute && routeId) {
       /**
        * @condition id !== routeId
