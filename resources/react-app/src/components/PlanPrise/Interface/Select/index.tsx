@@ -6,7 +6,7 @@ import { find, isArray } from 'lodash';
 import useLoadAsync from 'helpers/hooks/use-load-async';
 import { addNotification } from 'store/app';
 import { cache, inCache } from 'store/cache';
-import { addItem } from 'store/plan-prise';
+import { addItem, checkLoaded } from 'store/plan-prise';
 
 const mapState = (state: ReduxState) => ({
   cacheContent: state.cache,
@@ -46,9 +46,7 @@ const Select = ({
         throw new Error('Un seul médicament peut être ajouté à la fois');
       }
       if (
-        planPriseContent &&
-        planPriseContent !== 'error' &&
-        planPriseContent !== 'loading' &&
+        checkLoaded(planPriseContent) &&
         find(planPriseContent.medic_data, { id: value.value, type: value.type })
       ) {
         addNotification({

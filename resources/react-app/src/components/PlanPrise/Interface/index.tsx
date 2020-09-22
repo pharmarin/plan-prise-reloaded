@@ -18,10 +18,13 @@ const Interface = ({ content }: InterfaceProps) => {
   }
 
   if (content === 'loading')
-    return <React.Fragment>Chargement en cours...</React.Fragment>;
+    return <React.Fragment>Chargement en cours</React.Fragment>;
 
   if (content === 'error')
     return <React.Fragment>Erreur lors du chargement</React.Fragment>;
+
+  if (content === 'deleting')
+    return <React.Fragment>Suppression en cours</React.Fragment>;
 
   const { medic_data: medicaments } = content;
 

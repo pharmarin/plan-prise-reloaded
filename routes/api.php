@@ -30,6 +30,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
     /* plan-prise */
     Route::resource('plan-prise', 'Api\v1\PlanPriseController')->only([
       'update',
+      'destroy',
     ]);
     JsonApi::register('default')->routes(function ($api) {
       $api

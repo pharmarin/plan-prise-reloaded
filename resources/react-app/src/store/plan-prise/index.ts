@@ -20,7 +20,7 @@ const loadList = createAsyncThunk<number[]>('planPrise/loadList', async () => {
   return map(response.data.data, (pp: any) => pp.attributes['pp-id']);
 });
 
-const loadContent = createAsyncThunk<PlanPriseContent, number>(
+const loadContent = createAsyncThunk<PlanPriseContent, PlanPriseID>(
   'planPrise/loadContent',
   async (id, { dispatch, getState }) => {
     const response = await axios.get(`/plan-prise/${id}?include=medicaments`);
@@ -62,6 +62,17 @@ const loadItem = createAsyncThunk<boolean, MedicamentID>(
   }
 );
 
+const manage = createAsyncThunk<
+  boolean | PlanPriseID,
+  { id: PlanPriseID; action: 'delete' }
+>('planPrise/manage', async ({ id, action }) => {
+  switch (action) {
+    case 'delete':
+      await axios.delete(`/plan-prise/${id}`);
+  }
+  return false;
+});
+
 const initialState: ReduxState.PlanPrise = {
   id: null,
   list: null,
@@ -69,9 +80,14 @@ const initialState: ReduxState.PlanPrise = {
 };
 
 const checkLoaded = (
-  content: null | 'loading' | 'error' | PlanPriseContent
+  content: null | 'loading' | 'error' | 'deleting' | PlanPriseContent
 ): content is PlanPriseContent => {
-  if (content !== null && content !== 'error' && content !== 'loading')
+  if (
+    content !== null &&
+    content !== 'error' &&
+    content !== 'loading' &&
+    content !== 'deleting'
+  )
     return true;
   throw new CatchableError(
     'Impossible de mettre à jour un plan de prise inexistant'
@@ -123,9 +139,6 @@ const ppSlice = createSlice({
         list: state.list,
       };
     },
-    resetId: (state) => {
-      return { ...initialState, list: state.list };
-    },
     setSettings: (
       state,
       { payload }: PayloadAction<{ id: string; value: any }>
@@ -168,6 +181,14 @@ const ppSlice = createSlice({
     builder.addCase(loadContent.fulfilled, (state, { payload }) => {
       state.content = payload;
     });
+    /*builder.addCase(loadItem.pending, (state) => {});*/
+    /*builder.addCase(loadItem.rejected, (state) => {});*/
+    /*builder.addCase(loadItem.fulfilled, (state) => {});*/
+    builder.addCase(manage.pending, (state) => {
+      state.content = 'deleting';
+    });
+    /*builder.addCase(manage.rejected, (state) => {});*/
+    /*builder.addCase(manage.fulfilled, (state) => {});*/
   },
 });
 
@@ -175,11 +196,10 @@ export const {
   addItem,
   removeItem,
   removeValue,
-  resetId,
   setId,
   setLoading,
   setSettings,
   setValue,
 } = ppSlice.actions;
-export { loadContent, loadItem, loadList };
+export { checkLoaded, loadContent, loadItem, loadList, manage };
 export default ppSlice.reducer;

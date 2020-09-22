@@ -24,4 +24,15 @@ class PlanPriseController extends Controller
     $data = $request->input('data');
     return $this->pp_repository->update($id, $data);
   }
+
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  int  $id
+   * @return \Illuminate\Http\Response
+   */
+  public function destroy($id)
+  {
+    return $this->pp_repository->destroy($id);
+  }
 }

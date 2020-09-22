@@ -24,8 +24,10 @@ interface Medicament extends MedicamentID {
   };
 }
 
+type PlanPriseID = number;
+
 interface PlanPriseContent {
-  id: number;
+  id: PlanPriseID;
   custom_data: { [key: number]: { [key: string]: string } };
   custom_settings: { inputs: { [key: string]: { checked: boolean } } };
   medic_data: MedicamentID[];
@@ -62,7 +64,7 @@ declare namespace ReduxState {
   }
   interface PlanPrise {
     id: number | null;
-    content: null | 'loading' | 'error' | PlanPriseContent;
+    content: null | 'loading' | 'error' | 'deleting' | PlanPriseContent;
     list: null | 'loading' | 'error' | number[];
   }
 }

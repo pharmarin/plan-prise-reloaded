@@ -99,25 +99,25 @@ class PlanPriseRepository
       }
     }
     $this->plan_prise->save();
-    return $this->_getReturnArray('success');
+    return $this->respondWithCode('success');
   }
 
   public function destroy($pp_id)
   {
     if ($this->_init($pp_id)) {
       $this->plan_prise->delete();
-      return $this->_getReturnArray('success');
+      return $this->respondWithCode('success');
     } else {
-      return $this->_getReturnArray('error', ['data' => 'PP not exists']);
+      return $this->respondWithCode('not-found');
     }
   }
 
-  private function _getReturnArray($status, $array = null, $join = true)
+  private function respondWithCode($status, $array = null, $join = true)
   {
     switch ($status) {
       case 'success':
         return response()->json($array, 200);
-      case 'error':
+      case 'not-found':
         return response()->json($array, 404);
       default:
         return response()->json($array, 500);
