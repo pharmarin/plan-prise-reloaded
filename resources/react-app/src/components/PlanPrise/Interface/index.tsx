@@ -26,6 +26,9 @@ const Interface = ({ content }: InterfaceProps) => {
   if (content === 'deleting')
     return <React.Fragment>Suppression en cours</React.Fragment>;
 
+  if (content === 'deleted')
+    return <React.Fragment>Plan de prise supprimé</React.Fragment>;
+
   const { medic_data: medicaments } = content;
 
   return (

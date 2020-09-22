@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { useParams, Redirect, useHistory } from 'react-router-dom';
+import { useParams, Redirect } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 import { get, isNumber } from 'lodash';
-import { addNotification, updateAppNav } from 'store/app';
-import { loadContent, loadList, manage, setId } from 'store/plan-prise';
+import { setShowSettings, updateAppNav } from 'store/app';
+import { checkLoaded, loadContent, loadList, setId } from 'store/plan-prise';
 //import PPRepository from 'helpers/PPRepository.helper';
 //import generate from 'helpers/pdf.helper';
 
@@ -16,14 +16,14 @@ const mapState = (state: ReduxState) => ({
   content: state.planPrise.content,
   id: state.planPrise.id,
   list: state.planPrise.list,
+  showSettings: state.app.showSettings,
 });
 
 const mapDispatch = {
-  addNotification,
   loadContent,
   loadList,
-  manage,
   setId,
+  setShowSettings,
   updateAppNav,
 };
 
@@ -32,24 +32,21 @@ const connector = connect(mapState, mapDispatch);
 type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrise = ({
-  addNotification,
   content,
   id,
   list,
   loadContent,
   loadList,
-  manage,
   setId,
+  setShowSettings,
+  showSettings,
   updateAppNav,
 }: PlanPriseProps) => {
-  const history = useHistory();
-  const settingsRoute = get(useParams(), 'action') === 'settings';
-  const deleteRoute = get(useParams(), 'action') === 'delete';
+  const contentLoaded = checkLoaded(content);
   const routeIdParam = get(useParams(), 'id', null);
-  const isValidRoute = !isNaN(Number(routeIdParam));
-  const isRootRoute = routeIdParam === null;
   const routeId = Number(routeIdParam);
-  const contentLoaded = get(content, 'id') === routeId;
+  const isRootRoute = routeIdParam === null;
+  const isValidRoute = !isNaN(Number(routeIdParam));
   const isError = isValidRoute && id === routeId && content === 'error';
 
   const getTitle = (id: number | null) => {
@@ -94,45 +91,9 @@ const PlanPrise = ({
        * @condition if no content & not loading & not errored
        * @action load content
        */
-      if (
-        !contentLoaded &&
-        content !== 'loading' &&
-        content !== 'error' &&
-        content !== 'deleting'
-      )
-        loadContent(routeId);
-      /**
-       * @condition id === routeId
-       * @condition deleteRoute
-       * @action delete plan-prise
-       */
-      if (id === routeId && deleteRoute && content !== 'deleting')
-        manage({ id, action: 'delete' })
-          .then(() => {
-            history.replace('/plan-prise/');
-            setId(null);
-            loadList();
-          })
-          .catch((e) => {
-            console.error(e);
-            throw new Error("Le plan de prise n'a pas pu être supprimé");
-          });
+      if (content === null) loadContent(routeId);
     }
-  }, [
-    addNotification,
-    content,
-    contentLoaded,
-    deleteRoute,
-    history,
-    id,
-    isRootRoute,
-    isValidRoute,
-    loadList,
-    loadContent,
-    manage,
-    routeId,
-    setId,
-  ]);
+  }, [content, id, isRootRoute, isValidRoute, loadContent, routeId, setId]);
 
   useEffect(() => {
     updateAppNav({
@@ -144,15 +105,18 @@ const PlanPrise = ({
           }
         : undefined,
       options:
-        isNumber(id) && contentLoaded && !deleteRoute
+        isNumber(id) && contentLoaded
           ? [
               {
-                path: `/plan-prise/${id}/settings`,
+                path: 'settings',
                 label: 'cog',
               },
               {
-                path: `/plan-prise/${id}/delete`,
+                path: 'pp-delete',
                 label: 'trash',
+                args: {
+                  id,
+                },
               },
               {
                 path: `/plan-prise/${id}/print`,
@@ -161,9 +125,9 @@ const PlanPrise = ({
             ]
           : undefined,
     });
-  }, [contentLoaded, deleteRoute, id, updateAppNav]);
+  }, [contentLoaded, id, updateAppNav]);
 
-  if (deleteRoute) {
+  if (content === 'deleting') {
     return <SplashScreen type="load" message="Suppression en cours" />;
   }
 
@@ -178,19 +142,29 @@ const PlanPrise = ({
     );
   }
 
-  if (!isValidRoute) {
+  if (!isValidRoute || content === 'deleted') {
     return <Redirect to="/plan-prise" />;
   }
 
   if (isRootRoute) return <Selection />;
+
+  if (contentLoaded && get(content, 'id') !== routeId) {
+    return (
+      <SplashScreen
+        button={{ label: 'Retour', path: '/plan-prise' }}
+        type="danger"
+        message="Une erreur est inconnue est survenue. [Erreur 1]"
+      />
+    );
+  }
 
   if (isValidRoute && routeId)
     return (
       <React.Fragment>
         <Interface />
         <Settings
-          show={contentLoaded && settingsRoute}
-          toggle={() => history.replace(`/plan-prise/${routeId}`)}
+          show={contentLoaded && showSettings}
+          toggle={() => setShowSettings(!showSettings)}
         />
       </React.Fragment>
     );

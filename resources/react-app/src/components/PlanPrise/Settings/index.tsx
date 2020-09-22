@@ -26,7 +26,7 @@ const connector = connect(mapState, mapDispatch);
 
 type SettingsProps = ConnectedProps<typeof connector> & {
   show: boolean;
-  toggle: () => any;
+  toggle?: (e: any) => void;
 };
 
 const Settings = (props: SettingsProps) => {

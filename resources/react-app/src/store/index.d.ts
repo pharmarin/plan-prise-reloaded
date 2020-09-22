@@ -57,6 +57,7 @@ declare namespace ReduxState {
       label: string;
       path: string;
     };
+    showSettings: boolean;
     title: string;
   }
   interface Cache {
@@ -64,7 +65,13 @@ declare namespace ReduxState {
   }
   interface PlanPrise {
     id: number | null;
-    content: null | 'loading' | 'error' | 'deleting' | PlanPriseContent;
+    content:
+      | null
+      | 'loading'
+      | 'error'
+      | 'deleting'
+      | 'deleted'
+      | PlanPriseContent;
     list: null | 'loading' | 'error' | number[];
   }
 }

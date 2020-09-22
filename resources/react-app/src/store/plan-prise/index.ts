@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'helpers/axios-clients';
 import { cache, inCache } from 'store/cache';
-import CatchableError from 'helpers/catchable-error';
 import {
   find,
   findIndex,
@@ -80,18 +79,23 @@ const initialState: ReduxState.PlanPrise = {
 };
 
 const checkLoaded = (
-  content: null | 'loading' | 'error' | 'deleting' | PlanPriseContent
+  content:
+    | null
+    | 'loading'
+    | 'error'
+    | 'deleting'
+    | 'deleted'
+    | PlanPriseContent
 ): content is PlanPriseContent => {
   if (
     content !== null &&
     content !== 'error' &&
     content !== 'loading' &&
-    content !== 'deleting'
+    content !== 'deleting' &&
+    content !== 'deleted'
   )
     return true;
-  throw new CatchableError(
-    'Impossible de mettre à jour un plan de prise inexistant'
-  );
+  return false;
 };
 
 const ppSlice = createSlice({
@@ -188,7 +192,9 @@ const ppSlice = createSlice({
       state.content = 'deleting';
     });
     /*builder.addCase(manage.rejected, (state) => {});*/
-    /*builder.addCase(manage.fulfilled, (state) => {});*/
+    builder.addCase(manage.fulfilled, (state) => {
+      state.content = 'deleted';
+    });
   },
 });
 

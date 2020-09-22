@@ -9,6 +9,7 @@ const initialState: ReduxState.App = {
     path: '/',
     label: '',
   },
+  showSettings: false,
   title: '',
 };
 
@@ -16,17 +17,20 @@ const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
+    setShowSettings: (state, { payload }: PayloadAction<boolean>) => {
+      state.showSettings = payload;
+    },
     updateAppNav: (
       state,
-      action: PayloadAction<{
+      {
+        payload,
+      }: PayloadAction<{
         title: string;
         returnTo?: { path: string; label: string };
-        options?: { path: string; label: string }[];
+        options?: { path: string; label: string; args?: any }[];
       }>
     ) => {
-      const {
-        payload: { options, returnTo, title },
-      } = action;
+      const { options, returnTo, title } = payload;
       state.title = title;
       state.returnTo = returnTo;
       state.options = options;
@@ -72,6 +76,7 @@ const appSlice = createSlice({
 export const {
   addNotification,
   removeNotification,
+  setShowSettings,
   updateAppNav,
 } = appSlice.actions;
 export default appSlice.reducer;
