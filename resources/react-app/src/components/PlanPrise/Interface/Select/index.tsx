@@ -74,10 +74,11 @@ const Select = ({
 
   return (
     <AsyncSelect
+      cacheOptions={true}
       className="mb-4"
       loadOptions={loadGeneric}
       loadingMessage={() => 'Chargement des résultats en cours'}
-      menuPlacement="top"
+      menuPlacement="auto"
       noOptionsMessage={(p) =>
         p.inputValue.length > 0
           ? 'Aucun résultat'

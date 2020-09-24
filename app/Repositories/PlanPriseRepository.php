@@ -78,28 +78,34 @@ class PlanPriseRepository
 
   public function update($pp_id, $data)
   {
-    if ($this->_init($pp_id)) {
-      foreach ($data as $d) {
-        switch ($d['type']) {
-          case 'medic_data':
-            $this->plan_prise->medic_data = $d['value'];
-            break;
-          case 'custom_data':
-            $this->plan_prise->custom_data = $d['value'];
-            break;
-          case 'custom_settings':
-            $this->plan_prise->custom_settings = $d['value'];
-            break;
-          default:
-            throw new \Error(
-              'Cette action ne correpond pas aux actions autorisées pour une mise à jour du contenu'
-            );
-            break;
-        }
+    $isExisting = $this->_init($pp_id);
+
+    foreach ($data as $d) {
+      switch ($d['type']) {
+        case 'medic_data':
+          $this->plan_prise->medic_data = $d['value'];
+          break;
+        case 'custom_data':
+          $this->plan_prise->custom_data = $d['value'];
+          break;
+        case 'custom_settings':
+          $this->plan_prise->custom_settings = $d['value'];
+          break;
+        default:
+          throw new \Error(
+            'Cette action ne correpond pas aux actions autorisées pour une mise à jour du contenu'
+          );
+          break;
       }
     }
+
     $this->plan_prise->save();
-    return $this->respondWithCode('success');
+
+    return $isExisting
+      ? $this->respondWithCode('success')
+      : $this->respondWithCode('success', [
+        'id' => $this->plan_prise->pp_id,
+      ]);
   }
 
   public function destroy($pp_id)

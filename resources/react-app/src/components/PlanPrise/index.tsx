@@ -44,9 +44,10 @@ const PlanPrise = ({
 }: PlanPriseProps) => {
   const contentLoaded = checkLoaded(content);
   const routeIdParam = get(useParams(), 'id', null);
-  const routeId = Number(routeIdParam);
+  const isNewRoute = routeIdParam === 'nouveau';
+  const routeId = isNewRoute ? -1 : Number(routeIdParam);
   const isRootRoute = routeIdParam === null;
-  const isValidRoute = !isNaN(Number(routeIdParam));
+  const isValidRoute = !isNaN(Number(routeIdParam)) || isNewRoute;
   const isError = isValidRoute && id === routeId && content === 'error';
 
   const getTitle = (id: number | null) => {
@@ -71,13 +72,18 @@ const PlanPrise = ({
   }, [isRootRoute, list, loadList]);
 
   useEffect(() => {
-    /**
-     * @condition isNumber(id)
-     * @condition routeId === undefined [location === /plan-prise]
-     * @action setId(null) [reset id]
-     */
-    if (isNumber(id) && (!routeId || !isValidRoute)) setId(null);
-    if (isValidRoute && !isRootRoute && routeId) {
+    if (isNewRoute && id !== -1) {
+      setId(-1);
+    } else if (
+      (isNumber(id) && (!routeId || !isValidRoute)) ||
+      (id === -1 && !isNewRoute)
+    ) {
+      setId(null);
+    }
+  }, [id, isNewRoute, isValidRoute, routeId, setId]);
+
+  useEffect(() => {
+    if (isValidRoute && !isRootRoute && !isNewRoute && routeId) {
       /**
        * @condition id !== routeId
        * @action set ID
@@ -90,7 +96,16 @@ const PlanPrise = ({
        */
       if (content === null) loadContent(routeId);
     }
-  }, [content, id, isRootRoute, isValidRoute, loadContent, routeId, setId]);
+  }, [
+    content,
+    id,
+    isNewRoute,
+    isRootRoute,
+    isValidRoute,
+    loadContent,
+    routeId,
+    setId,
+  ]);
 
   useEffect(() => {
     updateAppNav({
@@ -117,7 +132,7 @@ const PlanPrise = ({
               },
               {
                 path: `/plan-prise/${id}/print`,
-                label: 'printer',
+                label: 'pdf',
               },
             ]
           : undefined,
@@ -139,13 +154,18 @@ const PlanPrise = ({
     );
   }
 
-  if (!isValidRoute || content === 'deleted') {
+  if ((!isValidRoute || content === 'deleted') && !isNewRoute) {
+    console.log('Redirect: ', isValidRoute, isNewRoute, routeIdParam);
     return <Redirect to="/plan-prise" />;
+  }
+
+  if (isNewRoute && id && id > 0) {
+    return <Redirect to={`/plan-prise/${id}`} />;
   }
 
   if (isRootRoute) return <Selection />;
 
-  if (contentLoaded && get(content, 'id') !== routeId) {
+  if (contentLoaded && get(content, 'id') !== routeId && !isNewRoute) {
     return (
       <SplashScreen
         button={{ label: 'Retour', path: '/plan-prise' }}
@@ -155,18 +175,15 @@ const PlanPrise = ({
     );
   }
 
-  if (isValidRoute && routeId)
-    return (
-      <React.Fragment>
-        <Interface />
-        <Settings
-          show={contentLoaded && showSettings}
-          toggle={() => setShowSettings(!showSettings)}
-        />
-      </React.Fragment>
-    );
-
-  return <div>Erreur</div>;
+  return (
+    <React.Fragment>
+      <Interface />
+      <Settings
+        show={contentLoaded && showSettings}
+        toggle={() => setShowSettings(!showSettings)}
+      />
+    </React.Fragment>
+  );
 };
 
 export default connector(PlanPrise);

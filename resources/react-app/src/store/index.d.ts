@@ -29,7 +29,7 @@ type PlanPriseID = number;
 interface PlanPriseContent {
   id: PlanPriseID;
   custom_data: { [key: number]: { [key: string]: string } };
-  custom_settings: { inputs: { [key: string]: { checked: boolean } } };
+  custom_settings: { inputs?: { [key: string]: { checked: boolean } } };
   medic_data: MedicamentID[];
 }
 

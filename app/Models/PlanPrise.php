@@ -27,7 +27,7 @@ class PlanPrise extends Model
 
   protected $casts = [
     'medic_data' => 'json',
-    'custom_data' => 'collection',
+    'custom_data' => 'object',
     'custom_settings' => 'object',
   ];
 

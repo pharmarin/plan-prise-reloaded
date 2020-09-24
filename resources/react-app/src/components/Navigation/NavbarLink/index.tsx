@@ -1,5 +1,11 @@
 import React from 'react';
-import { FaArrowLeft, FaCog, FaPrint, FaTrash } from 'react-icons/fa';
+import {
+  FaArrowLeft,
+  FaCog,
+  FaFilePdf,
+  FaPrint,
+  FaTrash,
+} from 'react-icons/fa';
 import { connect, ConnectedProps } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, NavItem, NavLink } from 'reactstrap';
@@ -29,6 +35,7 @@ const NavbarLink = ({
   const switchLabel = (string: string) => {
     if (string === 'arrow-left') return <FaArrowLeft />;
     if (string === 'cog') return <FaCog />;
+    if (string === 'pdf') return <FaFilePdf />;
     if (string === 'printer') return <FaPrint />;
     if (string === 'trash') return <FaTrash />;
     return string;

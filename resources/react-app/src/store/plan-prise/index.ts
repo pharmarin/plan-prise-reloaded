@@ -7,6 +7,7 @@ import {
   forEach,
   get,
   isArray,
+  isPlainObject,
   map,
   remove,
   set,
@@ -31,9 +32,15 @@ const loadContent = createAsyncThunk<PlanPriseContent, PlanPriseID>(
     const data = response.data.data;
     return {
       id: Number(data.attributes['pp-id']),
-      medic_data: data.relationships.medicaments.data,
-      custom_data: data.attributes['custom-data'],
-      custom_settings: data.attributes['custom-settings'],
+      medic_data: isArray(data.relationships.medicaments.data)
+        ? data.relationships.medicaments.data
+        : [],
+      custom_data: isPlainObject(data.attributes['custom-data'])
+        ? data.attributes['custom-data']
+        : {},
+      custom_settings: isPlainObject(data.attributes['custom-settings'])
+        ? data.attributes['custom-settings']
+        : {},
     };
   }
 );
@@ -137,9 +144,26 @@ const ppSlice = createSlice({
       }
     },
     setId: (state, { payload }: PayloadAction<number | null>) => {
+      if (payload && state.id === -1 && checkLoaded(state.content)) {
+        return {
+          ...initialState,
+          content: { ...state.content, id: payload },
+          id: payload || null,
+          list: state.list,
+        };
+      }
       return {
         ...initialState,
-        id: payload ? payload : null,
+        content:
+          payload === -1
+            ? {
+                id: -1,
+                custom_data: {},
+                custom_settings: {},
+                medic_data: [],
+              }
+            : initialState.content,
+        id: payload || null,
         list: state.list,
       };
     },

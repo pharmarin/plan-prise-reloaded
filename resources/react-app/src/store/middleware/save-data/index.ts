@@ -7,6 +7,7 @@ import {
   setValue,
   removeItem,
   addItem,
+  setId,
 } from 'store/plan-prise';
 import { addNotification, removeNotification } from 'store/app';
 
@@ -15,7 +16,7 @@ const update = debounce(
     id: number,
     data: { data: { type: string; value: any }[] },
     onStart?: () => void,
-    callback?: () => void
+    callback?: (response: any) => void
   ) => {
     const url = `/plan-prise/${id}`;
     onStart && onStart();
@@ -23,12 +24,12 @@ const update = debounce(
       .patch(url, data, { withCredentials: true })
       .then((response) => {
         if (!(response.status === 200)) throw new Error(response.statusText);
-        callback && callback();
+        callback && callback(response.data);
         return true;
       })
       .catch((error) => {
         console.log(error);
-        callback && callback();
+        callback && callback(error.data);
         return false;
       });
   },
@@ -87,7 +88,13 @@ const saveToAPI = ({
             icon: 'spinner',
           })
         ),
-      () => dispatch(removeNotification(SAVING_NOTIFICATION_TYPE))
+      (response) => {
+        console.log(response);
+        if (state.planPrise.id === -1 && response && response.id) {
+          dispatch(setId(response.id));
+        }
+        dispatch(removeNotification(SAVING_NOTIFICATION_TYPE));
+      }
     );
 
     if (

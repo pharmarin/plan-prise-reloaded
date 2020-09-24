@@ -28,6 +28,8 @@ class Adapter extends AbstractAdapter
 
   protected $relationships = ['medicaments'];
 
+  protected $primaryKey = 'pp_id';
+
   /**
    * Adapter constructor.
    *
