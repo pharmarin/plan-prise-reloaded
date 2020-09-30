@@ -76,10 +76,12 @@ const loadItem = createAsyncThunk<
 const manage = createAsyncThunk<
   boolean | IPlanPriseID,
   { id: IPlanPriseID; action: 'delete' }
->('planPrise/manage', async ({ id, action }) => {
+>('planPrise/manage', async ({ id, action }, { dispatch }) => {
   switch (action) {
     case 'delete':
       await axios.delete(`/plan-prise/${id}`);
+      dispatch(loadList());
+      return true;
   }
   return false;
 });
