@@ -14,7 +14,7 @@ import { ceil, chunk, keys, map, get } from 'lodash';
 import { setSettings } from 'store/plan-prise';
 import useConfig from 'helpers/hooks/use-config';
 
-const mapState = (state: ReduxState) => ({
+const mapState = (state: IReduxState) => ({
   settings: get(state, 'planPrise.content.custom_settings', {}),
 });
 
@@ -26,7 +26,7 @@ const connector = connect(mapState, mapDispatch);
 
 type SettingsProps = ConnectedProps<typeof connector> & {
   show: boolean;
-  toggle?: (e: any) => void;
+  toggle?: (e: React.MouseEvent) => void;
 };
 
 const Settings = (props: SettingsProps) => {

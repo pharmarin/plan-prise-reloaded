@@ -20,39 +20,44 @@ const loadList = createAsyncThunk<number[]>('planPrise/loadList', async () => {
   return map(response.data.data, (pp: any) => pp.attributes['pp-id']);
 });
 
-const loadContent = createAsyncThunk<PlanPriseContent, PlanPriseID>(
-  'planPrise/loadContent',
-  async (id, { dispatch, getState }) => {
-    const response = await axios.get(`/plan-prise/${id}?include=medicaments`);
-    const state = getState() as ReduxState;
-    forEach(get(response, 'data.included', []), (medicament) => {
-      if (!inCache({ id: medicament.id, type: medicament.type }, state.cache))
-        dispatch(cache(medicament));
-    });
-    const data = response.data.data;
-    return {
-      id: Number(data.attributes['pp-id']),
-      medic_data: isArray(data.relationships.medicaments.data)
-        ? data.relationships.medicaments.data
-        : [],
-      custom_data: isPlainObject(data.attributes['custom-data'])
-        ? data.attributes['custom-data']
-        : {},
-      custom_settings: isPlainObject(data.attributes['custom-settings'])
-        ? data.attributes['custom-settings']
-        : {},
-    };
-  }
-);
+const loadContent = createAsyncThunk<
+  IPlanPriseContent,
+  IPlanPriseID,
+  { state: IReduxState }
+>('planPrise/loadContent', async (id, { dispatch, getState }) => {
+  const response = await axios.get(`/plan-prise/${id}?include=medicaments`);
+  const state = getState();
+  forEach(get(response, 'data.included', []), (medicament) => {
+    if (!inCache({ id: medicament.id, type: medicament.type }, state.cache))
+      dispatch(cache(medicament));
+  });
+  const data = response.data.data;
+  return {
+    id: Number(data.attributes['pp-id']),
+    medic_data: isArray(data.relationships.medicaments.data)
+      ? data.relationships.medicaments.data
+      : [],
+    custom_data: isPlainObject(data.attributes['custom-data'])
+      ? data.attributes['custom-data']
+      : {},
+    custom_settings: isPlainObject(data.attributes['custom-settings'])
+      ? data.attributes['custom-settings']
+      : {},
+  };
+});
 
-const loadItem = createAsyncThunk<boolean, MedicamentID>(
+const loadItem = createAsyncThunk<
+  boolean,
+  IMedicamentID,
+  { state: IReduxState }
+>(
   'planPrise/loadItem',
   async ({ id, type }, { dispatch, getState, rejectWithValue }) => {
     return await axios
       .get(`/${type}/${id}`)
       .then((response) => {
         const data = response.data.data;
-        const state = getState() as ReduxState;
+        const state = getState();
         if (!inCache({ id, type }, state.cache)) {
           dispatch(
             cache({ id: data.id, type: data.type, attributes: data.attributes })
@@ -69,8 +74,8 @@ const loadItem = createAsyncThunk<boolean, MedicamentID>(
 );
 
 const manage = createAsyncThunk<
-  boolean | PlanPriseID,
-  { id: PlanPriseID; action: 'delete' }
+  boolean | IPlanPriseID,
+  { id: IPlanPriseID; action: 'delete' }
 >('planPrise/manage', async ({ id, action }) => {
   switch (action) {
     case 'delete':
@@ -79,7 +84,7 @@ const manage = createAsyncThunk<
   return false;
 });
 
-const initialState: ReduxState.PlanPrise = {
+const initialState: IReduxState.PlanPrise = {
   id: null,
   list: null,
   content: null,
@@ -92,8 +97,8 @@ const checkLoaded = (
     | 'error'
     | 'deleting'
     | 'deleted'
-    | PlanPriseContent
-): content is PlanPriseContent => {
+    | IPlanPriseContent
+): content is IPlanPriseContent => {
   if (
     content !== null &&
     content !== 'error' &&
@@ -109,7 +114,7 @@ const ppSlice = createSlice({
   name: 'planPrise',
   initialState,
   reducers: {
-    addItem: (state, { payload }: PayloadAction<MedicamentID>) => {
+    addItem: (state, { payload }: PayloadAction<IMedicamentID>) => {
       if (checkLoaded(state.content)) {
         if (!find(state.content.medic_data, payload))
           state.content.medic_data.push({
@@ -118,7 +123,7 @@ const ppSlice = createSlice({
           });
       }
     },
-    removeItem: (state, { payload }: PayloadAction<MedicamentID>) => {
+    removeItem: (state, { payload }: PayloadAction<IMedicamentID>) => {
       if (checkLoaded(state.content)) {
         remove(state.content.medic_data, {
           id: payload.id,
@@ -132,7 +137,7 @@ const ppSlice = createSlice({
     },
     setLoading: (
       state,
-      { payload }: PayloadAction<{ id: MedicamentID; status: boolean }>
+      { payload }: PayloadAction<{ id: IMedicamentID; status: boolean }>
     ) => {
       if (checkLoaded(state.content)) {
         const index = findIndex(state.content.medic_data, payload.id);

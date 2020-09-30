@@ -30,7 +30,7 @@ export enum Role {
   signout,
 }
 
-const mapState = (state: ReduxState) => ({});
+const mapState = (state: IReduxState) => ({});
 
 const mapDispatch = {
   updateAppNav,

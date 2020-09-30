@@ -14,7 +14,7 @@ import NavbarLink from './NavbarLink';
 
 const NAVBAR_TITLE = 'plandeprise.fr';
 
-const mapState = (state: ReduxState) => ({
+const mapState = (state: IReduxState) => ({
   app: state.app,
 });
 

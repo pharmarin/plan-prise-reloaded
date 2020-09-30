@@ -1,39 +1,17 @@
-declare interface Tokens {
+declare interface ITokens {
   token_type: string;
   access_token: string;
   refresh_token: string;
   expires_in: number;
 }
 
-interface Composition {
+interface IComposition {
   id: string | number;
   denomination: string;
   precautions: number[];
 }
 
-interface MedicamentID {
-  id: string;
-  type: string;
-  loading?: boolean;
-}
-
-interface Medicament extends MedicamentID {
-  attributes: {
-    compositions?: Composition[];
-    denomination?: string;
-  };
-}
-
-type PlanPriseID = number;
-
-interface PlanPriseContent {
-  id: PlanPriseID;
-  custom_data: { [key: number]: { [key: string]: string } };
-  custom_settings: { inputs?: { [key: string]: { checked: boolean } } };
-  medic_data: MedicamentID[];
-}
-
-interface CustomNotification {
+interface ICustomNotification {
   id: string;
   header?: string;
   content?: string;
@@ -41,14 +19,72 @@ interface CustomNotification {
   timer?: number;
 }
 
-declare namespace ReduxState {
+interface IMedicamentID {
+  id: string;
+  type: string;
+  loading?: boolean;
+}
+
+interface IMedicament extends IMedicamentID {
+  attributes: {
+    compositions?: IComposition[];
+    denomination?: string;
+    voies_administration?: number[];
+  };
+}
+
+interface IMedicamentRepository {
+  id: string;
+  type: string;
+  data: {
+    denomination: string;
+    compositions: string[];
+  };
+  attributes: {
+    conservation_frigo: boolean;
+    conservation_duree: {
+      custom: boolean;
+      data: string[] | string;
+    };
+    custom_precautions: Omit<IPrecaution, 'population'>[];
+    indications: string[];
+    posologies: Record<string, { id: string; label: string; value: string }>;
+    precautions: (IPrecaution & { checked: boolean })[];
+    voies_administration: string[];
+  };
+}
+
+type IPlanPriseID = number;
+
+interface IPlanPriseContent {
+  id: IPlanPriseID;
+  custom_data: { [key: number]: { [key: string]: string } };
+  custom_settings: { inputs?: { [key: string]: { checked: boolean } } };
+  medic_data: IMedicamentID[];
+}
+
+interface IPlanPriseRepository {
+  id: IPlanPriseID;
+  status: IPlanPriseStatus | 'loaded' | 'not-loaded';
+  data?: IMedicamentRepository[];
+}
+
+type IPlanPriseStatus = 'loading' | 'error' | 'deleting' | 'deleted';
+
+interface IPrecaution {
+  id: string;
+  commentaire: string;
+  population: string;
+}
+
+declare namespace IReduxState {
   interface App {
     auth: {
       isError: boolean | string;
       isLoading: boolean;
-      tokens: Tokens | null;
+      tokens: ITokens | null;
     };
-    notifications: CustomNotification[];
+    notifications: ICustomNotification[];
     options?: {
       label: string;
       path: string;
@@ -61,23 +97,17 @@ declare namespace ReduxState {
     title: string;
   }
   interface Cache {
-    medicaments: Medicament[];
+    medicaments: IMedicament[];
   }
   interface PlanPrise {
     id: number | null;
-    content:
-      | null
-      | 'loading'
-      | 'error'
-      | 'deleting'
-      | 'deleted'
-      | PlanPriseContent;
+    content: null | IPlanPriseStatus | IPlanPriseContent;
     list: null | 'loading' | 'error' | number[];
   }
 }
 
-declare interface ReduxState {
-  app: ReduxState.App;
-  cache: ReduxState.Cache;
-  planPrise: ReduxState.PlanPrise;
+declare interface IReduxState {
+  app: IReduxState.App;
+  cache: IReduxState.Cache;
+  planPrise: IReduxState.PlanPrise;
 }

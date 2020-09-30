@@ -12,7 +12,7 @@ const mapDispatch = { removeNotification };
 const connector = connect(null, mapDispatch);
 
 type NotificationProps = ConnectedProps<typeof connector> & {
-  notification: CustomNotification;
+  notification: ICustomNotification;
 };
 
 const Notification = ({

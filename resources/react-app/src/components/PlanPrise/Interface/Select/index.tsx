@@ -8,7 +8,7 @@ import { addNotification } from 'store/app';
 import { cache, inCache } from 'store/cache';
 import { addItem, checkLoaded } from 'store/plan-prise';
 
-const mapState = (state: ReduxState) => ({
+const mapState = (state: IReduxState) => ({
   cacheContent: state.cache,
   planPriseContent: state.planPrise.content,
 });

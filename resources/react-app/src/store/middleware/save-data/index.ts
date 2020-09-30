@@ -64,7 +64,7 @@ const switchAction = (type: string) => {
 const saveToAPI = ({
   dispatch,
   getState,
-}: MiddlewareAPI<Dispatch, ReduxState>) => (next: Dispatch) => (
+}: MiddlewareAPI<Dispatch, IReduxState>) => (next: Dispatch) => (
   action: Action
 ) => {
   next(action);

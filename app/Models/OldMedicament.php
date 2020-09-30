@@ -82,7 +82,7 @@ class OldMedicament extends Model
 
   public function getVoiesAdministrationAttribute()
   {
-    return $this->_switchVoieAdminitration($this->voieAdministration);
+    return [$this->_switchVoieAdminitration($this->voieAdministration)];
   }
 
   public function getPrecautionsAttribute()

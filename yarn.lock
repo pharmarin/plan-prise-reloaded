@@ -1775,6 +1775,21 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
+"@types/pdfkit@*":
+  version "0.10.6"
+  resolved "https://registry.yarnpkg.com/@types/pdfkit/-/pdfkit-0.10.6.tgz#9ddde7e642e6c3f1245134456a03fbc4b67dc4b5"
+  integrity sha512-o6R2fO/fhg392YNYahiaNGZ8CNdSKMmf5W0LvyjJ/63mLQEPTgl6M9vb4zKoHaGpsP43VimuBz+xgVevsPy8jA==
+  dependencies:
+    "@types/node" "*"
+
+"@types/pdfmake@^0.1.14":
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/@types/pdfmake/-/pdfmake-0.1.14.tgz#7aced5b2f89848c946e81a52ad3352a91f8198a7"
+  integrity sha512-PlBAUHVaPGwuNyeCvptsdsLKAYlm+5vFi/eL34PmfrNyykz7DMIU/lcx9wijMm5WJ2YkH9A1qFymM7xgC+O+7Q==
+  dependencies:
+    "@types/node" "*"
+    "@types/pdfkit" "*"
+
 "@types/prop-types@*", "@types/prop-types@^15.7.3":
   version "15.7.3"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"

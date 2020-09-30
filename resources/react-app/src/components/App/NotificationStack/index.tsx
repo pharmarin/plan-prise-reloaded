@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Col } from 'reactstrap';
 import Notification from './Notification';
 
-const mapState = (state: ReduxState) => ({
+const mapState = (state: IReduxState) => ({
   notifications: state.app.notifications,
 });
 

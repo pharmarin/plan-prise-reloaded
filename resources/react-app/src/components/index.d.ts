@@ -9,11 +9,11 @@ declare namespace Models {
 
 declare namespace Props {
   interface Card {
-    id: MedicamentID;
+    id: IMedicamentID;
   }
   interface Content {
     isOpened: boolean;
-    medicament: Medicament;
+    id: IMedicamentID;
   }
   interface CustomInput {
     onChange: (value: string) => function;
@@ -31,11 +31,11 @@ declare namespace Props {
       multiple?: boolean;
       readOnly?: boolean;
     };
-    medicament: MedicamentID;
+    medicament: IMedicamentID;
   }
   interface Interface {}
   interface NavbarLinkProps {
-    args?: any;
+    args?: { id: number };
     className?: string;
     label: string;
     light?: boolean;

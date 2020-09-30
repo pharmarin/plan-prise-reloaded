@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { useParams, Redirect } from 'react-router-dom';
+import { useParams, Redirect, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 import { get, isNumber } from 'lodash';
 import { setShowSettings, updateAppNav } from 'store/app';
 import { checkLoaded, loadContent, loadList, setId } from 'store/plan-prise';
+import usePdf from 'helpers/hooks/use-pdf';
 //import PPRepository from 'helpers/PPRepository.helper';
 //import generate from 'helpers/pdf.helper';
 
@@ -11,8 +12,11 @@ import Selection from './Selection';
 import Interface from './Interface';
 import Settings from './Settings';
 import SplashScreen from 'components/App/SplashScreen';
+import { withSanctum, WithSanctumProps } from 'react-sanctum';
+import useRepository from 'store/plan-prise/hooks/use-repository';
 
-const mapState = (state: ReduxState) => ({
+const mapState = (state: IReduxState) => ({
+  /* Il faut être plus spécifique, calculer isError, isDeleting */
   content: state.planPrise.content,
   id: state.planPrise.id,
   list: state.planPrise.list,
@@ -29,7 +33,8 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch);
 
-type PlanPriseProps = ConnectedProps<typeof connector>;
+type PlanPriseProps = ConnectedProps<typeof connector> &
+  WithSanctumProps<Models.User>;
 
 const PlanPrise = ({
   content,
@@ -37,17 +42,23 @@ const PlanPrise = ({
   list,
   loadContent,
   loadList,
+  user,
   setId,
   setShowSettings,
   showSettings,
   updateAppNav,
 }: PlanPriseProps) => {
+  const repository = useRepository();
+  const routerParams = useParams();
+  const history = useHistory();
+  const { fromPlanPrise, generate } = usePdf({ user });
   const contentLoaded = checkLoaded(content);
-  const routeIdParam = get(useParams(), 'id', null);
+  const routeIdParam = get(routerParams, 'id');
   const isNewRoute = routeIdParam === 'nouveau';
   const routeId = isNewRoute ? -1 : Number(routeIdParam);
-  const isRootRoute = routeIdParam === null;
+  const isRootRoute = !routeIdParam;
   const isValidRoute = !isNaN(Number(routeIdParam)) || isNewRoute;
+  const isPdfRoute = get(routerParams, 'action') === 'export';
   const isError = isValidRoute && id === routeId && content === 'error';
 
   const getTitle = (id: number | null) => {
@@ -131,7 +142,7 @@ const PlanPrise = ({
                 },
               },
               {
-                path: `/plan-prise/${id}/print`,
+                path: `/plan-prise/${id}/export`,
                 label: 'pdf',
               },
             ]
@@ -154,8 +165,7 @@ const PlanPrise = ({
     );
   }
 
-  if ((!isValidRoute || content === 'deleted') && !isNewRoute) {
-    console.log('Redirect: ', isValidRoute, isNewRoute, routeIdParam);
+  if ((!isValidRoute || content === 'deleted') && !isNewRoute && !isRootRoute) {
     return <Redirect to="/plan-prise" />;
   }
 
@@ -175,6 +185,11 @@ const PlanPrise = ({
     );
   }
 
+  if (isPdfRoute && checkLoaded(content)) {
+    generate(fromPlanPrise(repository));
+    history.goBack();
+  }
+
   return (
     <React.Fragment>
       <Interface />
@@ -186,4 +201,4 @@ const PlanPrise = ({
   );
 };
 
-export default connector(PlanPrise);
+export default connector(withSanctum(PlanPrise));

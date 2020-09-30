@@ -7,7 +7,7 @@ import { loadItem, removeItem, setLoading } from 'store/plan-prise';
 import Content from './Content';
 import { addNotification } from 'store/app';
 
-const mapState = (state: ReduxState) => ({
+const mapState = (state: IReduxState) => ({
   storedMedicaments: state.cache.medicaments,
 });
 
@@ -31,10 +31,10 @@ const ItemCard = ({
   storedMedicaments,
 }: CardProps) => {
   const [isOpened, setIsOpened] = useState(false);
-  const medicament = find(storedMedicaments, {
+  const medicament = find<IMedicament>(storedMedicaments, {
     id: id.id,
     type: id.type,
-  }) as Medicament;
+  });
 
   useEffect(() => {
     if (!medicament && !id.loading) {
@@ -70,7 +70,7 @@ const ItemCard = ({
               <div className="text-muted text-truncate">
                 <small>
                   {get(medicament, 'attributes.compositions', [])
-                    .map((composant: any) => composant.denomination)
+                    .map((composant: IComposition) => composant.denomination)
                     .join(' + ')}
                 </small>
               </div>
@@ -126,7 +126,7 @@ const ItemCard = ({
       </CardHeader>
       {medicament && (
         <CardBody className="row">
-          <Content isOpened={isOpened} medicament={medicament} />
+          <Content isOpened={isOpened} id={id} />
         </CardBody>
       )}
     </Card>
