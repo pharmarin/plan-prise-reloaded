@@ -2,7 +2,7 @@ import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
 import { filter, find, get, keyBy, keys, map } from 'lodash';
 import { useSelector } from 'react-redux';
-import { checkLoaded } from '..';
+import { isLoaded } from '..';
 
 const usePosologies = () => {
   const posologies = useConfig('default.posologies');
@@ -21,7 +21,7 @@ const switchStatus = (content: IReduxState.PlanPrise['content']) => {
   if (content === null) {
     return 'not-loaded';
   }
-  if (checkLoaded(content)) {
+  if (isLoaded(content)) {
     return 'loaded';
   }
   return content;
@@ -58,7 +58,7 @@ const switchVoiesAdministration = (voie: number) => {
   }
 };
 
-export default (): IPlanPriseRepository => {
+export default () => {
   const cache = useSelector<IReduxState, any>(
     (state) => state.cache.medicaments
   );
@@ -73,10 +73,11 @@ export default (): IPlanPriseRepository => {
   );
   const posologies = usePosologies();
   const status = switchStatus(content);
-  return {
+
+  const getContent = (): IPlanPriseRepository => ({
     id: id || 0,
     status,
-    data: checkLoaded(content)
+    data: isLoaded(content)
       ? map<IMedicamentID, IMedicamentRepository>(content.medic_data, (m) => {
           const id = { id: m?.id, type: m?.type };
           const uid = `${typeToInt(id.type)}-${id.id}`;
@@ -169,5 +170,7 @@ export default (): IPlanPriseRepository => {
           };
         })
       : undefined,
-  };
+  });
+
+  return { getContent };
 };

@@ -90,23 +90,45 @@ const initialState: IReduxState.PlanPrise = {
   content: null,
 };
 
-const checkLoaded = (
-  content:
-    | null
-    | 'loading'
-    | 'error'
-    | 'deleting'
-    | 'deleted'
-    | IPlanPriseContent
+const isDeleted = (
+  content: IReduxState.PlanPrise['content']
+): content is 'deleted' => {
+  if (content === 'deleted') return true;
+  return false;
+};
+
+const isDeleting = (
+  content: IReduxState.PlanPrise['content']
+): content is 'deleting' => {
+  if (content === 'deleting') return true;
+  return false;
+};
+
+const isError = (
+  content: IReduxState.PlanPrise['content']
+): content is 'error' => {
+  if (content === 'error') return true;
+  return false;
+};
+
+const isLoaded = (
+  content: IReduxState.PlanPrise['content']
 ): content is IPlanPriseContent => {
-  if (
-    content !== null &&
-    content !== 'error' &&
-    content !== 'loading' &&
-    content !== 'deleting' &&
-    content !== 'deleted'
-  )
-    return true;
+  if (isPlainObject(content)) return true;
+  return false;
+};
+
+const isLoading = (
+  content: IReduxState.PlanPrise['content']
+): content is 'loading' => {
+  if (content === 'loading') return true;
+  return false;
+};
+
+const isNotLoaded = (
+  content: IReduxState.PlanPrise['content']
+): content is null => {
+  if (content === null) return true;
   return false;
 };
 
@@ -115,7 +137,7 @@ const ppSlice = createSlice({
   initialState,
   reducers: {
     addItem: (state, { payload }: PayloadAction<IMedicamentID>) => {
-      if (checkLoaded(state.content)) {
+      if (isLoaded(state.content)) {
         if (!find(state.content.medic_data, payload))
           state.content.medic_data.push({
             id: payload.id,
@@ -124,7 +146,7 @@ const ppSlice = createSlice({
       }
     },
     removeItem: (state, { payload }: PayloadAction<IMedicamentID>) => {
-      if (checkLoaded(state.content)) {
+      if (isLoaded(state.content)) {
         remove(state.content.medic_data, {
           id: payload.id,
           type: payload.type,
@@ -139,7 +161,7 @@ const ppSlice = createSlice({
       state,
       { payload }: PayloadAction<{ id: IMedicamentID; status: boolean }>
     ) => {
-      if (checkLoaded(state.content)) {
+      if (isLoaded(state.content)) {
         const index = findIndex(state.content.medic_data, payload.id);
         if (payload.status === true) {
           state.content.medic_data[index].loading = payload.status;
@@ -149,7 +171,7 @@ const ppSlice = createSlice({
       }
     },
     setId: (state, { payload }: PayloadAction<number | null>) => {
-      if (payload && state.id === -1 && checkLoaded(state.content)) {
+      if (payload && state.id === -1 && isLoaded(state.content)) {
         return {
           ...initialState,
           content: { ...state.content, id: payload },
@@ -176,18 +198,18 @@ const ppSlice = createSlice({
       state,
       { payload }: PayloadAction<{ id: string; value: any }>
     ) => {
-      if (checkLoaded(state.content))
+      if (isLoaded(state.content))
         set(state.content, `custom_settings.${payload.id}`, payload.value);
     },
     setValue: (
       state,
       { payload }: PayloadAction<{ id: string; value: any }>
     ) => {
-      if (checkLoaded(state.content))
+      if (isLoaded(state.content))
         set(state.content, `custom_data.${payload.id}`, payload.value);
     },
     removeValue: (state, { payload }: PayloadAction<{ id: string }>) => {
-      if (checkLoaded(state.content))
+      if (isLoaded(state.content))
         unset(state.content, `custom_data.${payload.id}`);
     },
   },
@@ -236,5 +258,16 @@ export const {
   setSettings,
   setValue,
 } = ppSlice.actions;
-export { checkLoaded, loadContent, loadItem, loadList, manage };
+export {
+  isDeleted,
+  isDeleting,
+  isError,
+  isLoaded,
+  isLoading,
+  isNotLoaded,
+  loadContent,
+  loadItem,
+  loadList,
+  manage,
+};
 export default ppSlice.reducer;

@@ -1,9 +1,16 @@
 import React, { useEffect } from 'react';
 import { useParams, Redirect, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-import { get, isNumber } from 'lodash';
+import { get, isError, isNumber } from 'lodash';
 import { setShowSettings, updateAppNav } from 'store/app';
-import { checkLoaded, loadContent, loadList, setId } from 'store/plan-prise';
+import {
+  isDeleted,
+  isDeleting,
+  isLoaded,
+  loadContent,
+  loadList,
+  setId,
+} from 'store/plan-prise';
 import usePdf from 'helpers/hooks/use-pdf';
 //import PPRepository from 'helpers/PPRepository.helper';
 //import generate from 'helpers/pdf.helper';
@@ -52,14 +59,13 @@ const PlanPrise = ({
   const routerParams = useParams();
   const history = useHistory();
   const { fromPlanPrise, generate } = usePdf({ user });
-  const contentLoaded = checkLoaded(content);
+  const contentLoaded = isLoaded(content);
   const routeIdParam = get(routerParams, 'id');
   const isNewRoute = routeIdParam === 'nouveau';
   const routeId = isNewRoute ? -1 : Number(routeIdParam);
   const isRootRoute = !routeIdParam;
   const isValidRoute = !isNaN(Number(routeIdParam)) || isNewRoute;
   const isPdfRoute = get(routerParams, 'action') === 'export';
-  const isError = isValidRoute && id === routeId && content === 'error';
 
   const getTitle = (id: number | null) => {
     if (id === -1) {
@@ -150,11 +156,13 @@ const PlanPrise = ({
     });
   }, [contentLoaded, id, updateAppNav]);
 
-  if (content === 'deleting') {
+  if (isRootRoute) return <Selection />;
+
+  if (isDeleting(content)) {
     return <SplashScreen type="load" message="Suppression en cours" />;
   }
 
-  if (isError) {
+  if (isError(content) && isValidRoute && id === routeId) {
     console.error("Ce plan de prise n'existe pas. ");
     return (
       <SplashScreen
@@ -165,7 +173,7 @@ const PlanPrise = ({
     );
   }
 
-  if ((!isValidRoute || content === 'deleted') && !isNewRoute && !isRootRoute) {
+  if ((!isValidRoute || isDeleted(content)) && !isNewRoute && !isRootRoute) {
     return <Redirect to="/plan-prise" />;
   }
 
@@ -173,9 +181,7 @@ const PlanPrise = ({
     return <Redirect to={`/plan-prise/${id}`} />;
   }
 
-  if (isRootRoute) return <Selection />;
-
-  if (contentLoaded && get(content, 'id') !== routeId && !isNewRoute) {
+  if (isLoaded(content) && content.id !== routeId && !isNewRoute) {
     return (
       <SplashScreen
         button={{ label: 'Retour', path: '/plan-prise' }}
@@ -185,8 +191,8 @@ const PlanPrise = ({
     );
   }
 
-  if (isPdfRoute && checkLoaded(content)) {
-    generate(fromPlanPrise(repository));
+  if (isPdfRoute && isLoaded(content)) {
+    generate(fromPlanPrise(repository.getContent()));
     history.goBack();
   }
 
@@ -194,7 +200,7 @@ const PlanPrise = ({
     <React.Fragment>
       <Interface />
       <Settings
-        show={contentLoaded && showSettings}
+        show={isLoaded(content) && showSettings}
         toggle={() => setShowSettings(!showSettings)}
       />
     </React.Fragment>
