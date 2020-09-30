@@ -1,24 +1,22 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const mix = require('laravel-mix');
-//const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+require('laravel-mix-artisan-serve');
+require('laravel-mix-polyfill');
+const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
 
-mix.options({
-  hmrOptions: {
-    host: '192.168.1.15',
-    https: true,
-    port: 8090,
-    disableHostCheck: true,
-    useLocalIp: true
-  }
-})
-
-/*mix.browserSync({
-  open: false,
-  proxy: 'https://pharmarin.dynamic-dns.net',
-  https: {
-    key: "/etc/letsencrypt/live/pharmarin.dynamic-dns.net/privkey.pem",
-    cert: "/etc/letsencrypt/live/pharmarin.dynamic-dns.net/cert.pem"
-  }
-})*/
+mix.webpackConfig({
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader', 'eslint-loader'],
+      },
+    ],
+  },
+  plugins: [new ErrorOverlayPlugin()],
+  devtool: 'cheap-module-source-map',
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -31,13 +29,12 @@ mix.options({
 |
 */
 
-mix.js('resources/js/app.js', 'public/js')
-  .react('resources/js/medicament.js', 'public/js')
-  .react('resources/js/medicament-update.js', 'public/js')
-  .react('resources/js/plan-prise.js', 'public/js')
+mix
+  .js('resources/js/app.jsx', 'public/js')
+  .polyfill()
   .sass('resources/sass/app.scss', 'public/css')
   .extract([
-   'react',
+    'react',
     'react-dom',
     'react-overlays',
     'jquery',
@@ -47,20 +44,11 @@ mix.js('resources/js/app.js', 'public/js')
     'pdfmake',
     'react-bootstrap',
     'redux',
-    'react-redux'
+    'react-redux',
   ])
   .autoload({
     jquery: ['$', 'window.jQuery', 'jQuery', 'jquery'],
-  })
-  .version()
-  //.sourceMaps() //To high RAM usage
-  /*
-  .webpackConfig({
-    plugins: [
-      new BundleAnalyzerPlugin({
-        analyzerHost: '192.168.1.15',
-        analyzerPort: 8383
-      })
-    ],
-  })
-  */;
+  });
+
+if (mix.inProduction()) mix.version();
+if (!mix.inProduction()) mix.serve();

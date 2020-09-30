@@ -10,11 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', 'HomeController@index')->name('home');
 
-Auth::routes();
-
-Route::middleware(['auth'])->group(function () {
+/* Route::middleware(['auth'])->group(function () {
     Route::get('/approval', 'HomeController@approval')->name('approval');
 
     Route::middleware(['approved'])->group(function () {
@@ -39,4 +36,10 @@ Route::middleware(['auth'])->group(function () {
           Route::resource('composition', 'CompositionController')->only(['index', 'edit']);
         });
     });
-});
+});*/
+
+Auth::routes();
+
+/*Route::get('/{any?}', function () {
+  return view('app');
+})->name('home');*/

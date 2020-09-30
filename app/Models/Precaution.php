@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Precaution extends Model
 {
-    protected $table = 'custom_precautions';
-    protected $guarded = ['id', 'created_at', 'updated_at'];
+  protected $table = 'custom_precautions';
+  protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    public function cible ()
-    {
-      return $this->morphTo();
-    }
+  public function cible()
+  {
+    return $this->morphTo();
+  }
 }

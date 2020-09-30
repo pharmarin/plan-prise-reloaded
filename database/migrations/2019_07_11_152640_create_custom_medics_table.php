@@ -15,7 +15,7 @@ class CreateCustomMedicsTable extends Migration
     {
         Schema::create('custom_medics', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('custom_denomination');
+            $table->string('denomination');
             $table->text('custom_indications');
             $table->boolean('conservation_frigo');
             $table->text('conservation_duree');

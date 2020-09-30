@@ -12,107 +12,112 @@ use Illuminate\Support\Facades\Config;
 
 class MedicamentApiController extends Controller
 {
-    protected $medicament_repository;
-    protected $DEBUG = false;
+  protected $medicament_repository;
+  protected $DEBUG = false;
 
-    public function __construct (MedicamentRepository $medicament_repository) {
-      $this->medicament_repository = $medicament_repository;
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-      $medicaments = $this->medicament_repository->all();
-      $columns = ['custom_denomination'];
-      return response()->json($medicaments);
-    }
+  public function __construct(MedicamentRepository $medicament_repository)
+  {
+    $this->medicament_repository = $medicament_repository;
+  }
+  /**
+   * Display a listing of the resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function index()
+  {
+    $medicaments = $this->medicament_repository->all();
+    $columns = ['denomination'];
+    return response()->json($medicaments);
+  }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {
-      $javascript = [
-        'route' => route('medicament.store'),
-        'default_inputs' => Config::get('inputs.medicament')
-      ];
-      return view('medicament.form')->withAction('CREATE')->with(compact('javascript'));
-    }
+  /**
+   * Show the form for creating a new resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function create(Request $request)
+  {
+    $javascript = [
+      'route' => route('medicament.store'),
+      'default_inputs' => Config::get('inputs.medicament'),
+    ];
+    return view('medicament.form')
+      ->withAction('CREATE')
+      ->with(compact('javascript'));
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-      $this->medicament_repository->saveFromForm($request);
-      if (!empty($request->input('old_medicament'))) {
-        $old_medicament = OldMedicament::find($request->input('old_medicament'));
-        $old_medicament->import = \Carbon\Carbon::now()->toDateTimeString();
-        $old_medicament->save();
-        return redirect()->route('medicament.import.search', $request->query());
-      }
-      return redirect()->route('medicament.create');
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function store(Request $request)
+  {
+    $this->medicament_repository->saveFromForm($request);
+    if (!empty($request->input('old_medicament'))) {
+      $old_medicament = OldMedicament::find($request->input('old_medicament'));
+      $old_medicament->import = \Carbon\Carbon::now()->toDateTimeString();
+      $old_medicament->save();
+      return redirect()->route('medicament.import.search', $request->query());
     }
+    return redirect()->route('medicament.create');
+  }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Medicament  $medicament
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Medicament $medicament)
-    {
-      $medicament->load('compositions');
-      return response()->json($medicament, 200);
-    }
+  /**
+   * Display the specified resource.
+   *
+   * @param  \App\Medicament  $medicament
+   * @return \Illuminate\Http\Response
+   */
+  public function show(Medicament $medicament)
+  {
+    $medicament->load('compositions');
+    return response()->json($medicament, 200);
+  }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Medicament  $medicament
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Request $request, Medicament $medicament)
-    {
-      $medicament->load('bdpm');
-      $javascript = [
-        'route' => route('medicament.update', $medicament->id),
-        'default_inputs' => Config::get('inputs.medicament'),
-        'medicament' => $medicament
-      ];
-      return view('medicament.form')->withAction('EDIT')->with(compact('medicament', 'javascript'));
-    }
+  /**
+   * Show the form for editing the specified resource.
+   *
+   * @param  \App\Medicament  $medicament
+   * @return \Illuminate\Http\Response
+   */
+  public function edit(Request $request, Medicament $medicament)
+  {
+    $medicament->load('bdpm');
+    $javascript = [
+      'route' => route('medicament.update', $medicament->id),
+      'default_inputs' => Config::get('inputs.medicament'),
+      'medicament' => $medicament,
+    ];
+    return view('medicament.form')
+      ->withAction('EDIT')
+      ->with(compact('medicament', 'javascript'));
+  }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Medicament  $medicament
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Medicament $medicament)
-    {
-      $this->medicament_repository->updateFromForm($request, $medicament);
-      return redirect()->route('medicament.show', $medicament->id);
-    }
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  \App\Medicament  $medicament
+   * @return \Illuminate\Http\Response
+   */
+  public function update(Request $request, Medicament $medicament)
+  {
+    $this->medicament_repository->updateFromForm($request, $medicament);
+    return redirect()->route('medicament.show', $medicament->id);
+  }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Medicament  $medicament
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Medicament $medicament)
-    {
-      $this->medicament_repository->delete($medicament);
-      return redirect()->route('medicament.index');
-    }
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  \App\Medicament  $medicament
+   * @return \Illuminate\Http\Response
+   */
+  public function destroy(Medicament $medicament)
+  {
+    $this->medicament_repository->delete($medicament);
+    return redirect()->route('medicament.index');
+  }
 }

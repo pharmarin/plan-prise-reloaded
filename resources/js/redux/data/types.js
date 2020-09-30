@@ -1,3 +1,0 @@
-export const CACHE_DETAILS = 'CACHE_DETAILS'
-export const LOAD_DETAILS = 'LOAD_DETAILS'
-export const SET_STATUS = 'SET_STATUS'

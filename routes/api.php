@@ -13,22 +13,42 @@ use Illuminate\Http\Request;
 |
 */
 
-/*Route::middleware('auth:api')->group(function () {
-  Route::get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
+  Auth::routes();
+  Route::get('preload', 'Api\v1\FrontendController@config');
+  Route::group(['middleware' => 'auth:sanctum'], function () {
+    /* app */
+    Route::get('user', 'Api\v1\UserController@info');
+    Route::delete('oauth/token', 'Api\v1\UserController@logout');
+    /* generic */
+    Route::resource('generic', 'Api\v1\GenericController')->only(['index']);
+    JsonApi::register('default')->routes(function ($api) {
+      $api->resource('old-medicament')->only('read');
+      $api->resource('medicament')->only('read');
+      $api->resource('api-medicament')->only('read');
+    });
+    /* plan-prise */
+    Route::resource('plan-prise', 'Api\v1\PlanPriseController')->only([
+      'update',
+      'destroy',
+    ]);
+    JsonApi::register('default')->routes(function ($api) {
+      $api
+        ->resource('plan-prise', ['has-many' => 'plan-prise-content'])
+        ->only('index', 'read');
+    });
   });
-  Route::middleware(['approved'])->group(function () {
-    Route::resource('medicament', 'Api\MedicamentApiController');
-  });
-});*/ // Reste à implémenter https://laravel.com/docs/5.8/api-authentication
-Route::middleware(['auth:api'])->group(function () {
+});
 
-  Route::get('all/search', 'Api\CommonApiController@search')->name('api.all.search');
+Route::middleware(['web', 'auth:api'])->group(function () {
+  // Plan de prise
+  Route::get('all/search', 'Api\CommonApiController@search')->name(
+    'api.all.search'
+  );
   Route::post('all/show', 'Api\CommonApiController@show')->name('api.all.show');
-  Route::resource('composition', 'Api\CompositionApiController', ['as' => 'api']);
+  Route::resource('composition', 'Api\CompositionApiController', [
+    'as' => 'api',
+  ]);
   Route::resource('medicament', 'Api\MedicamentApiController', ['as' => 'api']);
-  Route::resource('bdpm', 'Api\BdpmApiController', ['as' => 'api']);
-  Route::get('plan-prise/{pp_id?}', 'Api\PlanPriseApiController@index')->name('api.plan-prise.index');
   Route::resource('plan-prise', 'Api\PlanPriseApiController', ['as' => 'api']);
-
 });
