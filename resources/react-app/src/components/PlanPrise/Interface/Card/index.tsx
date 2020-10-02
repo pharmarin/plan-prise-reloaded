@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { Card, CardHeader, Button, CardBody, Spinner } from 'reactstrap';
+import { Card, CardHeader, Button, CardBody, Spinner, Input } from 'reactstrap';
 import { BsTrash, BsCaretDown, BsCaretUpFill } from 'react-icons/bs';
 import { find, get } from 'lodash';
 import { loadItem, removeItem, setLoading } from 'store/plan-prise';
 import Content from './Content';
 import { addNotification } from 'store/app';
+import useRepository from 'store/plan-prise/hooks/use-repository';
 
 const mapState = (state: IReduxState) => ({
   storedMedicaments: state.cache.medicaments,
@@ -31,6 +32,7 @@ const ItemCard = ({
   storedMedicaments,
 }: CardProps) => {
   const [isOpened, setIsOpened] = useState(false);
+  const repository = useRepository();
   const medicament = find<IMedicament>(storedMedicaments, {
     id: id.id,
     type: id.type,
@@ -73,6 +75,35 @@ const ItemCard = ({
                     .map((composant: IComposition) => composant.denomination)
                     .join(' + ')}
                 </small>
+              </div>
+              <div className="text-muted text-truncate">
+                {(() => {
+                  const voies_administration = get(
+                    medicament,
+                    'attributes.voies_administration',
+                    []
+                  );
+                  if (voies_administration.length === 1) {
+                    return (
+                      <small>
+                        Voie{' '}
+                        {repository.switchVoiesAdministration(
+                          voies_administration[0]
+                        )}
+                      </small>
+                    );
+                  } else if (voies_administration.length > 1) {
+                    return (
+                      <Input type="select">
+                        {voies_administration.map((voie: string) => (
+                          <option>{voie}</option>
+                        ))}
+                      </Input>
+                    );
+                  } else {
+                    return null;
+                  }
+                })()}
               </div>
             </div>
             <div className="d-flex flex-shrink-0 flex-column">

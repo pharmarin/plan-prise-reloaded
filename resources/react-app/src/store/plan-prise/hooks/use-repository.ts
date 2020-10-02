@@ -172,5 +172,5 @@ export default () => {
       : undefined,
   });
 
-  return { getContent };
+  return { getContent, switchVoiesAdministration };
 };
