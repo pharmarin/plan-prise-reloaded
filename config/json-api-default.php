@@ -67,9 +67,8 @@ return [
   'resources' => [
     'user' => App\App\Models\User::class,
     'plan-prise' => App\Models\PlanPrise::class,
-    'old-medicament' => App\Models\OldMedicament::class,
-    'api-medicament' => App\Models\ApiMedicament::class,
     'medicament' => App\Models\Medicament::class,
+    'api-medicament' => App\Models\ApiMedicament::class,
   ],
 
   /*

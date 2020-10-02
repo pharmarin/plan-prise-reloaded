@@ -17,26 +17,31 @@ class MigrateDataFromMedicsSimple extends Migration
 
     $old = DB::table('medics_simple')->get();
 
-    $i = 0;
-
-    $old->each(function ($o) use ($i) {
-      $medic = DB::table('medicaments')->insertGetId([
+    $old->each(function ($o) {
+      $medic = \App\Models\Medicament::create([
         'denomination' => $o->nomMedicament,
-        'principes_actifs' => json_encode(
-          $this->encodePrincipesActifs($o->nomGenerique)
-        ),
-        'indications' => json_encode(explode(' OU ', $o->indication)),
+        'principes_actifs' => $this->encodePrincipesActifs($o->nomGenerique),
+        'indications' => explode(' OU ', $o->indication),
         'conservation_frigo' => $o->frigo === 1 ? true : false,
-        'conservation_duree' => json_encode(
-          $this->encodeConservationDuree($o->dureeConservation)
-        ),
-        'voies_administration' => json_encode([
-          _switchVoieAdminitration($o->voieAdministration),
-        ]),
-        'created_at' => $o->modifie ? date($o->modifie) : now(),
-        'updated_at' => $o->modifie ? date($o->modifie) : now(),
+        'conservation_duree' => [
+          $this->encodeConservationDuree($o->dureeConservation),
+        ],
+        'voies_administration' => [
+          switchVoieAdministration($o->voieAdministration),
+        ],
       ]);
-      collect(json_decode(strip_tags($o->commentaire)))->each(function (
+      $medic->precautions()->saveMany(
+        collect(json_decode(strip_tags($o->commentaire)))->map(function (
+          $com
+        ) use ($medic) {
+          return new \App\Models\Utility\Precaution([
+            'voie_administration' => 0,
+            'population' => $com->span,
+            'commentaire' => str_replace('<br>', "\n", $com->text),
+          ]);
+        })
+      );
+      /*collect(json_decode(strip_tags($o->commentaire)))->each(function (
         $com
       ) use ($medic) {
         DB::table('precautions')->insert([
@@ -46,11 +51,7 @@ class MigrateDataFromMedicsSimple extends Migration
           'cible_type' => 'medicament',
           'cible_id' => $medic,
         ]);
-      });
-      $i = $i++;
-      if ($i > 5) {
-        die();
-      }
+      });*/
     });
   }
 
@@ -101,7 +102,7 @@ class MigrateDataFromMedicsSimple extends Migration
   +"commentaire": "[{"text":"A prendre au cours ou à la fin des repas.","span":"","status":"checked"},{"text":"Penser à boire 1 à 1,5 L d'eau par jour.","span":"","status":"checked"}]"
   */
 
-function _switchVoieAdminitration($voie_administration)
+function switchVoieAdministration($voie_administration)
 {
   switch ($voie_administration) {
     case 'Orale':

@@ -24,10 +24,7 @@ const loadGeneric = async (query: string) => {
       return [
         {
           label: 'Médicaments de plandeprise.fr',
-          options: [
-            ...(grouped['medicament'] || []),
-            ...(grouped['old-medicament'] || []),
-          ],
+          options: [...(grouped['medicament'] || [])],
         },
         {
           label: 'Médicaments issus de la base de données publique',

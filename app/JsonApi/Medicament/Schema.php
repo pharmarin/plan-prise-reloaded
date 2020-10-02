@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\OldMedicament;
+namespace App\JsonApi\Medicament;
 
 use Neomerx\JsonApi\Schema\SchemaProvider;
 
@@ -9,10 +9,10 @@ class Schema extends SchemaProvider
   /**
    * @var string
    */
-  protected $resourceType = 'old-medicament';
+  protected $resourceType = 'medicament';
 
   /**
-   * @param \\App\Models\OldMedicament $resource
+   * @param \\App\Models\Medicament $resource
    *      the domain record being serialized.
    * @return string
    */
@@ -22,7 +22,7 @@ class Schema extends SchemaProvider
   }
 
   /**
-   * @param \\App\Models\OldMedicament $resource
+   * @param \\App\Models\Medicament $resource
    *      the domain record being serialized.
    * @return array
    */
@@ -30,14 +30,12 @@ class Schema extends SchemaProvider
   {
     return [
       'denomination' => $resource->denomination,
-      'compositions' => $resource->compositions,
-      'custom_indications' => $resource->custom_indications,
-      'conservation_frigo' => $resource->frigo,
+      'indications' => $resource->indications,
+      'conservation_frigo' => $resource->conservation_frigo,
       'conservation_duree' => $resource->conservation_duree,
       'voies_administration' => $resource->voies_administration,
-      'precautions' => $resource->precautions,
-      'created-at' => $resource->modifie,
-      'updated-at' => $resource->modifie,
+      'created-at' => $resource->created_at->toAtomString(),
+      'updated-at' => $resource->updated_at->toAtomString(),
     ];
   }
 }

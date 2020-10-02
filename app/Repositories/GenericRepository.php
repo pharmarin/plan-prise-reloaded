@@ -13,57 +13,6 @@ use Illuminate\Support\Facades\Config;
 
 class GenericRepository
 {
-  static function getTypeByID($type_id)
-  {
-    switch ($type_id) {
-      case 0:
-        return OldMedicament::class;
-      case 1:
-        return Medicament::class;
-      case 2:
-        return ApiMedicament::class;
-      default:
-        return null;
-    }
-  }
-
-  static function typeCodeToJSON($type_id)
-  {
-    switch ($type_id) {
-      case 0:
-        return 'old-medicaments';
-      case 1:
-        return 'medicaments';
-      case 2:
-        return 'api-medicaments';
-      default:
-        return null;
-    }
-  }
-
-  static function find($id, $type)
-  {
-    $type = is_numeric($type) ? GenericRepository::getTypeByID($type) : $type;
-    $api_repository = new ApiMedicamentRepository();
-    switch ($type) {
-      case Medicament::class:
-        $model = Medicament::find($id);
-        break;
-      case OldMedicament::class:
-        $model = OldMedicament::find($id);
-        $model = $model ? $model->to_medicament : null;
-        break;
-      case BdpmCis::class:
-        $model = $api_repository->find($id);
-        $model = $model ? $model->to_medicament() : null;
-        break;
-      default:
-        throw new \Exception('Type de modèle non envoyé. ');
-        break;
-    }
-    return GenericRepository::_getObject($id, $type, $model);
-  }
-
   static function search($request)
   {
     $query = $request . '%';
@@ -71,14 +20,10 @@ class GenericRepository
     $medicaments = Medicament::where('denomination', 'LIKE', $query)
       ->take($limit)
       ->get(['id', 'denomination']);
-    $old_medicaments = OldMedicament::where('nomMedicament', 'LIKE', $query)
-      ->whereNull('import')
-      ->take($limit)
-      ->get(['id', 'nomMedicament']);
     $api_medicaments = ApiMedicament::where('denomination', $query)->take(
       $limit
     );
-    return [...$medicaments, ...$old_medicaments, ...$api_medicaments];
+    return [...$medicaments, ...$api_medicaments];
   }
 
   static function _getObject($id, $type, $model)

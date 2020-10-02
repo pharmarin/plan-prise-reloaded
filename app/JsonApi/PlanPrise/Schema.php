@@ -63,8 +63,6 @@ class Schema extends SchemaProvider
           return array_filter(
             array_map(function ($r) {
               switch ($r['type']) {
-                case 'old-medicament':
-                  return OldMedicament::find($r['id']);
                 case 'medicament':
                   return Medicament::find($r['id']);
                 case 'api-medicament':

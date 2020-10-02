@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Models\BdpmCis;
 use App\Models\Composition;
 
 use App\Models\Medicament;
@@ -14,19 +13,13 @@ use Illuminate\Support\Facades\DB;
 
 class MedicamentRepository
 {
-  protected $bdpmCis;
-
   protected $medicamentCustom;
 
   protected $pivot_table;
 
-  public function __construct(BdpmCis $bdpmCis, Medicament $medicamentCustom)
+  public function __construct(Medicament $medicamentCustom)
   {
-    $this->bdpmCis = $bdpmCis;
-
     $this->medicamentCustom = $medicamentCustom;
-
-    $this->pivot_table = 'custom_precautions_pivot';
   }
 
   public function all($options = [])
@@ -43,13 +36,6 @@ class MedicamentRepository
     return $this->medicamentCustom
       ::where('denomination', 'LIKE', '%' . $string . '%')
       ->paginate(20);
-  }
-
-  public function getMedicamentByCIS($cis)
-  {
-    return optional(
-      $this->bdpmCis::where('code_cis', $cis)->first()
-    )->custom_values;
   }
 
   /**
@@ -75,11 +61,6 @@ class MedicamentRepository
     );
 
     $this->medicamentCustom->save();
-
-    $fromAPI = $this->bdpmCis
-      ::whereIn('code_cis', $request->input('bdpm'))
-      ->get();
-    $this->medicamentCustom->bdpm()->saveMany($fromAPI);
 
     $composition_array = $this->_saveOrUpdateComposition(
       $request->input('composition')
@@ -110,11 +91,6 @@ class MedicamentRepository
       $this->_populateModelFromForm($request, $this->medicamentCustom);
 
       $this->medicamentCustom->save();
-
-      $fromAPI = $this->bdpmCis
-        ::whereIn('code_cis', $request->input('bdpm'))
-        ->get();
-      $medicament->bdpm()->sync($fromAPI);
 
       $composition_array = $this->_saveOrUpdateComposition(
         $request->input('composition')

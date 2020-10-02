@@ -23,7 +23,6 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
     /* generic */
     Route::resource('generic', 'Api\v1\GenericController')->only(['index']);
     JsonApi::register('default')->routes(function ($api) {
-      $api->resource('old-medicament')->only('read');
       $api->resource('medicament')->only('read');
       $api->resource('api-medicament')->only('read');
     });
@@ -38,17 +37,4 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
         ->only('index', 'read');
     });
   });
-});
-
-Route::middleware(['web', 'auth:api'])->group(function () {
-  // Plan de prise
-  Route::get('all/search', 'Api\CommonApiController@search')->name(
-    'api.all.search'
-  );
-  Route::post('all/show', 'Api\CommonApiController@show')->name('api.all.show');
-  Route::resource('composition', 'Api\CompositionApiController', [
-    'as' => 'api',
-  ]);
-  Route::resource('medicament', 'Api\MedicamentApiController', ['as' => 'api']);
-  Route::resource('plan-prise', 'Api\PlanPriseApiController', ['as' => 'api']);
 });

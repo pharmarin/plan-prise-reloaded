@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePrecautionsTable extends Migration
+class CreatePrecautionCiblesTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,11 +13,10 @@ class CreatePrecautionsTable extends Migration
    */
   public function up()
   {
-    Schema::create('precautions', function (Blueprint $table) {
-      $table->id();
-      $table->integer('voie_administration');
-      $table->string('population');
-      $table->text('commentaire');
+    Schema::create('precaution_cibles', function (Blueprint $table) {
+      $table->bigInteger('precaution_id');
+      $table->string('precaution_cible_type');
+      $table->bigInteger('precaution_cible_id');
     });
   }
 
@@ -28,6 +27,6 @@ class CreatePrecautionsTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('precautions');
+    Schema::dropIfExists('precaution_cibles');
   }
 }

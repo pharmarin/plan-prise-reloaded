@@ -1,8 +1,7 @@
 <?php
 
-namespace App\JsonApi\OldMedicament;
+namespace App\JsonApi\Medicament;
 
-use App\Models\OldMedicament;
 use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
 use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,8 +23,6 @@ class Adapter extends AbstractAdapter
    */
   protected $filterScopes = [];
 
-  protected $dates = ['modifie'];
-
   /**
    * Adapter constructor.
    *
@@ -33,7 +30,7 @@ class Adapter extends AbstractAdapter
    */
   public function __construct(StandardStrategy $paging)
   {
-    parent::__construct(new OldMedicament(), $paging);
+    parent::__construct(new \App\Models\Medicament(), $paging);
   }
 
   /**
