@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { Button, Col, FormGroup, Label, Input, FormText } from 'reactstrap';
+import {
+  Button,
+  Col,
+  FormGroup,
+  Label,
+  Input,
+  FormText,
+  Form,
+} from 'reactstrap';
 import { BsCheck, BsX } from 'react-icons/bs';
 import { updateAppNav } from 'store/app';
 import { withSanctum, WithSanctumProps } from 'react-sanctum';
@@ -40,6 +48,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
     {
       id: 'name',
       label: 'Nom et Prénom',
+      autocomplete: 'name',
       type: 'text' as 'text',
     },
     {
@@ -50,6 +59,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
     {
       id: 'display_name',
       label: 'Nom affiché',
+      autocomplete: 'organization',
       fallback: 'name',
       text: 'Sera imprimé sur les documents',
       type: 'text' as 'text',
@@ -57,6 +67,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
     {
       id: 'email',
       label: 'Email',
+      autocomplete: 'email',
       type: 'email' as 'email',
     },
     {
@@ -81,7 +92,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
   ];
 
   return (
-    <React.Fragment>
+    <Form>
       {map(fields, (field) => {
         if (field.extends && isEditing.field !== field.extends) return null;
         const isReadOnly =
@@ -165,7 +176,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
           </FormGroup>
         );
       })}
-    </React.Fragment>
+    </Form>
   );
 };
 
