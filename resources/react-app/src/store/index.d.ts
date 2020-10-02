@@ -6,9 +6,8 @@ declare interface ITokens {
 }
 
 interface IComposition {
-  id: string | number;
+  id: number;
   denomination: string;
-  precautions: number[];
 }
 
 interface ICustomNotification {
@@ -27,7 +26,7 @@ interface IMedicamentID {
 
 interface IMedicament extends IMedicamentID {
   attributes: {
-    compositions?: IComposition[];
+    composition?: IComposition[];
     denomination?: string;
     voies_administration?: number[];
   };
@@ -38,7 +37,7 @@ interface IMedicamentRepository {
   type: string;
   data: {
     denomination: string;
-    compositions: string[];
+    composition: string[];
   };
   attributes: {
     conservation_frigo: boolean;

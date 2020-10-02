@@ -110,8 +110,8 @@ export default () => {
             type: medicament.type,
             data: {
               denomination: get(medicament.attributes, 'denomination', ''),
-              compositions: map(
-                get(medicament.attributes, 'compositions', []),
+              composition: map(
+                get(medicament.attributes, 'composition', []),
                 'denomination'
               ),
             },

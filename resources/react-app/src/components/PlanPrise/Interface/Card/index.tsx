@@ -69,7 +69,7 @@ const ItemCard = ({
               </div>
               <div className="text-muted text-truncate">
                 <small>
-                  {get(medicament, 'attributes.compositions', [])
+                  {get(medicament, 'attributes.composition', [])
                     .map((composant: IComposition) => composant.denomination)
                     .join(' + ')}
                 </small>

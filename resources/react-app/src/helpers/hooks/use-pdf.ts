@@ -99,7 +99,7 @@ const usePdf = ({ user }: { user: Models.User | null }) => {
                   stack: [
                     { text: m.data.denomination, style: 'denomination' },
                     {
-                      text: m.data.compositions.join(' + '),
+                      text: m.data.composition.join(' + '),
                       style: 'composition',
                     },
                     {
@@ -166,7 +166,7 @@ const usePdf = ({ user }: { user: Models.User | null }) => {
         denomination: {
           bold: true,
         },
-        compositions: {
+        composition: {
           italics: true,
           color: 'gray',
         },

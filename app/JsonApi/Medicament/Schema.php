@@ -30,6 +30,7 @@ class Schema extends SchemaProvider
   {
     return [
       'denomination' => $resource->denomination,
+      'composition' => $resource->composition,
       'indications' => $resource->indications,
       'conservation_frigo' => $resource->conservation_frigo,
       'conservation_duree' => $resource->conservation_duree,
