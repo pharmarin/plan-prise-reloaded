@@ -35,6 +35,7 @@ class Schema extends SchemaProvider
       'conservation_frigo' => $resource->conservation_frigo,
       'conservation_duree' => $resource->conservation_duree,
       'voies_administration' => $resource->voies_administration,
+      'precautions' => $resource->precautions,
       'created-at' => $resource->created_at->toAtomString(),
       'updated-at' => $resource->updated_at->toAtomString(),
     ];

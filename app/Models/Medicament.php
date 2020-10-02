@@ -13,6 +13,7 @@ class Medicament extends Model
 {
   use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
+  protected $appends = ['type'];
   protected $casts = [
     'conservation_duree' => 'array',
     'indications' => 'array',
