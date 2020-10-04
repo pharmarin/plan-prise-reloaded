@@ -1,13 +1,14 @@
 declare namespace Models {
   interface User {
     [key: string]: string | undefined;
-    name?: string;
+    admin: boolean;
+    name: string;
     display_name?: string;
-    email?: string;
+    email: string;
   }
 }
 
-declare namespace Props {
+declare namespace IProps {
   interface Card {
     id: IMedicamentID;
   }
@@ -39,6 +40,11 @@ declare namespace Props {
     className?: string;
     label: string;
     light?: boolean;
+    path: string;
+  }
+  interface ProtectedRoute {
+    admin?: boolean;
+    children: React.ReactNode;
     path: string;
   }
   interface SplashScreen {

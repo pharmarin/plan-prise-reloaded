@@ -1,9 +1,7 @@
 import React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-const CustomInput = (props: Props.CustomInput) => {
-  const { onChange, readOnly, value } = props;
-
+const CustomInput = ({ onChange, readOnly, value }: IProps.CustomInput) => {
   return (
     <TextareaAutosize
       disabled={readOnly}

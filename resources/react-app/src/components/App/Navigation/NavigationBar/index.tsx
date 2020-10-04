@@ -10,7 +10,7 @@ import {
   Row,
   Col,
 } from 'reactstrap';
-import NavbarLink from './NavbarLink';
+import NavbarLink from '../NavbarLink';
 
 const NAVBAR_TITLE = 'plandeprise.fr';
 
@@ -20,15 +20,14 @@ const mapState = (state: IReduxState) => ({
 
 const connector = connect(mapState);
 
-type NavigationProps = WithSanctumProps<Models.User> &
+type NavigationBarProps = WithSanctumProps<Models.User> &
   ConnectedProps<typeof connector>;
 
-const Navigation = (props: NavigationProps) => {
-  const {
-    app: { options, returnTo, title },
-    authenticated,
-  } = props;
-
+const NavigationBar = ({
+  app: { options, returnTo, title },
+  authenticated,
+  user,
+}: NavigationBarProps) => {
   return (
     <Navbar
       className="navbar-horizontal navbar-dark bg-default mb-4"
@@ -92,6 +91,9 @@ const Navigation = (props: NavigationProps) => {
           <Nav className="ml-lg-auto" navbar>
             {authenticated ? (
               <React.Fragment>
+                {user?.admin === true && (
+                  <NavbarLink label="Administration" path="/admin" />
+                )}
                 <NavbarLink label="Profil" path="/profil" />
                 <NavbarLink label="Déconnexion" path="/deconnexion" />
               </React.Fragment>
@@ -108,4 +110,4 @@ const Navigation = (props: NavigationProps) => {
   );
 };
 
-export default connector(withSanctum(Navigation));
+export default connector(withSanctum(NavigationBar));

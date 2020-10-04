@@ -87,17 +87,6 @@ const Authentification = (props: AuthentificationProps) => {
     }
   };
 
-  const getMessage = (status: string | null) => {
-    switch (status) {
-      case 'unauthorized':
-        return "Vous devez vous connecter avant d'accéder à cette page. ";
-      case 'expired':
-        return 'Vous avez été deconnecté. ';
-      default:
-        return null;
-    }
-  };
-
   if (authenticated) {
     let redirectTo = get(location, 'state.redirectTo', '/');
     if (includes(cancelRedirect, redirectTo)) redirectTo = '/';
@@ -106,7 +95,7 @@ const Authentification = (props: AuthentificationProps) => {
 
   return (
     <Col className="mx-auto" sm={6}>
-      {message && <Alert variant="danger">{getMessage(message)}</Alert>}
+      {message && <Alert variant="danger">{message}</Alert>}
       {role === Role.signin && (
         <Formik
           initialValues={{ email: '', password: '' }}

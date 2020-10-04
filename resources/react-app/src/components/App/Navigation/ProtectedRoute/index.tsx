@@ -3,16 +3,15 @@ import { Redirect, Route as RouterRoute, useLocation } from 'react-router-dom';
 import { withSanctum, WithSanctumProps } from 'react-sanctum';
 import SplashScreen from 'components/App/SplashScreen';
 
-type ProtectedRouteProps = WithSanctumProps<Models.User> & {
-  children: React.ReactNode;
-  path: string;
-};
+type ProtectedRouteProps = WithSanctumProps<Models.User> &
+  IProps.ProtectedRoute;
 
 const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
   props
 ) => {
-  const { checkAuthentication } = props;
+  const { checkAuthentication, user } = props;
   const location = useLocation();
+  const redirectTo = location.pathname;
   const [authenticated, setAuthenticated] = useState<null | boolean>(null);
 
   useEffect(() => {
@@ -20,13 +19,12 @@ const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
   }, [checkAuthentication]);
 
   if (authenticated === false) {
-    const redirectTo = location.pathname;
     return (
       <Redirect
         to={{
           pathname: '/connexion',
           state: {
-            message: 'unauthorized',
+            message: "Vous devez vous connecter avant d'accéder à cette page. ",
             redirectTo,
           },
         }}
@@ -35,6 +33,20 @@ const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
   }
 
   if (authenticated === true) {
+    if (user?.admin !== true) {
+      return (
+        <Redirect
+          to={{
+            pathname: '/connexion',
+            state: {
+              message:
+                'Vous devez être administrateur pour accéder à cette page. ',
+              redirectTo,
+            },
+          }}
+        />
+      );
+    }
     return <RouterRoute {...props} />;
   }
 

@@ -13,7 +13,7 @@ const mapState = (state: IReduxState) => ({
 
 const connector = connect(mapState);
 
-type InterfaceProps = ConnectedProps<typeof connector> & Props.Interface;
+type InterfaceProps = ConnectedProps<typeof connector> & IProps.Interface;
 
 const Interface = ({ medicaments, status }: InterfaceProps) => {
   if (status.isLoading)

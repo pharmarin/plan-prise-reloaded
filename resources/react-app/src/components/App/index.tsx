@@ -5,7 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { CardBody, Card, Container } from 'reactstrap';
 import { Sanctum } from 'react-sanctum';
 import { store, persistor } from 'store/store';
-import Navigation from 'components/App/Navigation';
+import NavigationBar from 'components/App/Navigation/NavigationBar';
 import Switch from 'components/App/Navigation/Switch';
 import SplashScreen from './SplashScreen';
 import axios from 'helpers/axios-clients';
@@ -68,7 +68,7 @@ export default () => {
         <NotificationStack />
         <Sanctum config={sanctumConfig}>
           <Router basename="/">
-            <Navigation />
+            <NavigationBar />
             <Container>
               <Card className="mb-4">
                 <CardBody>

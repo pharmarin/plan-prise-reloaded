@@ -16,7 +16,8 @@ const mapDispatch = { loadList, manage, setId, setShowSettings };
 
 const connector = connect(null, mapDispatch);
 
-type NavbarLinkProps = ConnectedProps<typeof connector> & Props.NavbarLinkProps;
+type NavbarLinkProps = ConnectedProps<typeof connector> &
+  IProps.NavbarLinkProps;
 
 const NavbarLink = ({
   args,

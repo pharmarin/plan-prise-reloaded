@@ -3,9 +3,10 @@ import { Route, Switch } from 'react-router-dom';
 import Accueil from 'components/Accueil';
 import Authentification, { Role } from 'components/App/Authentification';
 import ProtectedRoute from '../ProtectedRoute';
+import ErrorBoundary from 'components/App/ErrorBoundary';
 import Profil from 'components/Profil';
 import PlanPrise from 'components/PlanPrise';
-import ErrorBoundary from 'components/App/ErrorBoundary';
+import Backend from 'components/Backend';
 
 export default () => (
   <Switch>
@@ -21,15 +22,22 @@ export default () => (
     <ProtectedRoute path="/deconnexion">
       <Authentification role={Role.signout} />
     </ProtectedRoute>
-    <ProtectedRoute path="/profil">
-      <ErrorBoundary returnTo="/">
-        <Profil />
-      </ErrorBoundary>
-    </ProtectedRoute>
-    <ProtectedRoute path="/plan-prise/:id?/:action?">
-      <ErrorBoundary returnTo="/">
-        <PlanPrise />
-      </ErrorBoundary>
-    </ProtectedRoute>
+    <ErrorBoundary returnTo="/connexion">
+      <ProtectedRoute path="/profil">
+        <ErrorBoundary returnTo="/">
+          <Profil />
+        </ErrorBoundary>
+      </ProtectedRoute>
+      <ProtectedRoute path="/plan-prise/:id?/:action?">
+        <ErrorBoundary returnTo="/">
+          <PlanPrise />
+        </ErrorBoundary>
+      </ProtectedRoute>
+      <ProtectedRoute admin path="/admin">
+        <ErrorBoundary returnTo="/">
+          <Backend />
+        </ErrorBoundary>
+      </ProtectedRoute>
+    </ErrorBoundary>
   </Switch>
 );
