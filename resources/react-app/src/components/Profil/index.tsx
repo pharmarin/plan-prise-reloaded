@@ -12,7 +12,6 @@ import {
 import { BsCheck, BsX } from 'react-icons/bs';
 import { updateAppNav } from 'store/app';
 import { withSanctum, WithSanctumProps } from 'react-sanctum';
-import CatchableError from 'helpers/catchable-error';
 import map from 'lodash/map';
 import find from 'lodash/find';
 import cloneDeep from 'lodash/cloneDeep';
@@ -40,7 +39,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
     });
   }, [updateAppNav]);
 
-  if (!user) throw new CatchableError("L'utilisateur n'a pas pu être chargé");
+  if (!user) throw new Error("L'utilisateur n'a pas pu être chargé");
 
   const [formData, setFormData] = useState<Models.User>(cloneDeep(user));
 

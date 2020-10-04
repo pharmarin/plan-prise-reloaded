@@ -1,24 +1,36 @@
 import React from 'react';
+import SplashScreen from '../SplashScreen';
 
 export default class ErrorBoundary extends React.Component<
-  any,
-  { hasError: boolean }
+  { returnTo: string },
+  { hasError: boolean; message: string }
 > {
   constructor(props: any) {
     super(props);
-    this.state = { hasError: false };
+    this.state = {
+      hasError: false,
+      message: '',
+    };
   }
 
-  componentDidCatch(error: Error, info: any) {
+  componentDidCatch(error: Error) {
     // Display fallback UI
-    this.setState({ hasError: true });
+    this.setState({ hasError: true, message: error.message });
   }
 
   render() {
-    if (this.state.hasError) {
+    const { hasError, message } = this.state;
+    const { children, returnTo } = this.props;
+    if (hasError) {
       // You can render any custom fallback UI
-      return <h1>Something went wrong.</h1>;
+      return (
+        <SplashScreen
+          type="danger"
+          message={message}
+          button={{ label: 'Retour', path: returnTo || '/' }}
+        />
+      );
     }
-    return this.props.children;
+    return children;
   }
 }

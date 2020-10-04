@@ -26,7 +26,7 @@ export default ({ button, message, type }: Props.SplashScreen) => {
           <span className="display-1 ml-4">{message}</span>
         </div>
         {button && (
-          <div>
+          <div className="mt-5">
             <Link className="btn btn-light" to={button.path}>
               {button.label}
             </Link>

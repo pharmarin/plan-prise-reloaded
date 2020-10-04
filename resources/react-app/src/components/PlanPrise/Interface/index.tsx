@@ -3,12 +3,11 @@ import { connect, ConnectedProps } from 'react-redux';
 import { get, keys, map, toNumber } from 'lodash';
 import Card from './Card';
 import Select from './Select';
+import SplashScreen from 'components/App/SplashScreen';
+import { selectStatus } from 'store/plan-prise/selectors';
 
 const mapState = (state: IReduxState) => ({
-  isLoading: state.planPrise.content === 'loading',
-  isError: state.planPrise.content === 'error',
-  isDeleting: state.planPrise.content === 'deleting',
-  isDeleted: state.planPrise.content === 'deleted',
+  status: selectStatus(state),
   medicaments: get(state.planPrise.content, 'medic_data'),
 });
 
@@ -16,21 +15,22 @@ const connector = connect(mapState);
 
 type InterfaceProps = ConnectedProps<typeof connector> & Props.Interface;
 
-const Interface = ({
-  isDeleted,
-  isDeleting,
-  isError,
-  isLoading,
-  medicaments,
-}: InterfaceProps) => {
-  if (isLoading) return <React.Fragment>Chargement en cours</React.Fragment>;
+const Interface = ({ medicaments, status }: InterfaceProps) => {
+  if (status.isLoading)
+    return (
+      <SplashScreen
+        type="load"
+        message="Chargement du plan de prise en cours"
+      />
+    );
 
-  if (isError)
-    return <React.Fragment>Erreur lors du chargement</React.Fragment>;
+  if (status.isDeleting)
+    return <SplashScreen type="warning" message="Suppression en cours" />;
 
-  if (isDeleting) return <React.Fragment>Suppression en cours</React.Fragment>;
-
-  if (isDeleted) return <React.Fragment>Plan de prise supprimé</React.Fragment>;
+  if (!status.isLoaded)
+    throw new Error(
+      "Une erreur est survenue lors de l'affichage de ce plan de prise. "
+    );
 
   return (
     <React.Fragment>

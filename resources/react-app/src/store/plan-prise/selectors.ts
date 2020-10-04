@@ -1,14 +1,29 @@
 import { createSelector } from '@reduxjs/toolkit';
 import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
-import { filter, find, get, isNil, keyBy, keys, map } from 'lodash';
+import {
+  filter,
+  find,
+  get,
+  isNil,
+  isPlainObject,
+  keyBy,
+  keys,
+  map,
+} from 'lodash';
 
+export const selectPlanPriseContent = (state: IReduxState) =>
+  state.planPrise.content;
 export const selectMedicament = (state: IReduxState, props: any) =>
   find(state.cache.medicaments, props.id);
-const selectSettings = (state: IReduxState) =>
-  get(state.planPrise, 'content.custom_settings', {});
-const selectCustomData = (state: IReduxState) =>
-  get(state.planPrise, 'content.custom_data', {});
+const selectSettings = createSelector(
+  [selectPlanPriseContent],
+  (planPriseContent) => get(planPriseContent, 'custom_settings', {})
+);
+const selectCustomData = createSelector(
+  [selectPlanPriseContent],
+  (planPriseContent) => get(planPriseContent, 'custom_data', {})
+);
 
 const selectInputSettings = createSelector(
   selectSettings,
@@ -94,6 +109,65 @@ const selectContent = createSelector(
           commentaire: get(customData, `${uid}.custom_precautions.${c}`, ''),
         })
       ),
+    };
+  }
+);
+
+const isDeleted = (
+  content: IReduxState.PlanPrise['content']
+): content is 'deleted' => {
+  if (content === 'deleted') return true;
+  return false;
+};
+
+const isDeleting = (
+  content: IReduxState.PlanPrise['content']
+): content is 'deleting' => {
+  if (content === 'deleting') return true;
+  return false;
+};
+
+const isError = (
+  content: IReduxState.PlanPrise['content']
+): content is 'error' => {
+  if (content === 'error') return true;
+  return false;
+};
+
+export const isLoaded = (
+  content: IReduxState.PlanPrise['content']
+): content is IPlanPriseContent => {
+  if (isPlainObject(content)) {
+    return true;
+  }
+  return false;
+};
+
+const isLoading = (
+  content: IReduxState.PlanPrise['content']
+): content is 'loading' => {
+  if (content === 'loading') return true;
+  return false;
+};
+
+const isNotLoaded = (
+  content: IReduxState.PlanPrise['content']
+): content is null => {
+  if (content === null) return true;
+  return false;
+};
+
+export const selectStatus = createSelector(
+  [selectPlanPriseContent],
+  (planPriseContent) => {
+    return {
+      isLoaded: isLoaded(planPriseContent),
+      isLoading: isLoading(planPriseContent),
+      isEmpty: get(planPriseContent, 'medic_data', []).length === 0,
+      isError: isError(planPriseContent),
+      isDeleting: isDeleting(planPriseContent),
+      isDeleted: isDeleted(planPriseContent),
+      isNotLoaded: isNotLoaded(planPriseContent),
     };
   }
 );

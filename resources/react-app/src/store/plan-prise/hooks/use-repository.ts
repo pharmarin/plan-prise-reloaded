@@ -2,7 +2,7 @@ import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
 import { filter, find, get, keyBy, keys, map } from 'lodash';
 import { useSelector } from 'react-redux';
-import { isLoaded } from '..';
+import { isLoaded } from '../selectors';
 
 const usePosologies = () => {
   const posologies = useConfig('default.posologies');

@@ -14,6 +14,7 @@ import {
   unset,
 } from 'lodash';
 import { typeToInt } from 'helpers/type-switcher';
+import { isLoaded } from './selectors';
 
 const loadList = createAsyncThunk<number[]>('planPrise/loadList', async () => {
   const response = await axios.get('/plan-prise');
@@ -90,48 +91,6 @@ const initialState: IReduxState.PlanPrise = {
   id: null,
   list: null,
   content: null,
-};
-
-const isDeleted = (
-  content: IReduxState.PlanPrise['content']
-): content is 'deleted' => {
-  if (content === 'deleted') return true;
-  return false;
-};
-
-const isDeleting = (
-  content: IReduxState.PlanPrise['content']
-): content is 'deleting' => {
-  if (content === 'deleting') return true;
-  return false;
-};
-
-const isError = (
-  content: IReduxState.PlanPrise['content']
-): content is 'error' => {
-  if (content === 'error') return true;
-  return false;
-};
-
-const isLoaded = (
-  content: IReduxState.PlanPrise['content']
-): content is IPlanPriseContent => {
-  if (isPlainObject(content)) return true;
-  return false;
-};
-
-const isLoading = (
-  content: IReduxState.PlanPrise['content']
-): content is 'loading' => {
-  if (content === 'loading') return true;
-  return false;
-};
-
-const isNotLoaded = (
-  content: IReduxState.PlanPrise['content']
-): content is null => {
-  if (content === null) return true;
-  return false;
 };
 
 const ppSlice = createSlice({
@@ -260,16 +219,5 @@ export const {
   setSettings,
   setValue,
 } = ppSlice.actions;
-export {
-  isDeleted,
-  isDeleting,
-  isError,
-  isLoaded,
-  isLoading,
-  isNotLoaded,
-  loadContent,
-  loadItem,
-  loadList,
-  manage,
-};
+export { loadContent, loadItem, loadList, manage };
 export default ppSlice.reducer;
