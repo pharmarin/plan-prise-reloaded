@@ -18,7 +18,6 @@ import {
 } from 'store/plan-prise/selectors';
 
 const mapState = (state: IReduxState) => ({
-  /* Il faut être plus spécifique, calculer isError, isDeleting */
   content: selectPlanPriseContent(state),
   id: state.planPrise.id,
   list: state.planPrise.list,
