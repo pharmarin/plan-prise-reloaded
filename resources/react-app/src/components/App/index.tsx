@@ -10,7 +10,6 @@ import Switch from 'components/Navigation/Switch';
 import SplashScreen from './SplashScreen';
 import axios from 'helpers/axios-clients';
 import useConfig, { storeConfig } from 'helpers/hooks/use-config';
-import CatchableError from 'helpers/catchable-error';
 import NotificationStack from './NotificationStack';
 
 const sanctumConfig = {
@@ -43,15 +42,22 @@ export default () => {
       })
       .catch((error) => {
         console.log(error.data);
-        throw new CatchableError(
-          "Une erreur est survenue lors du chargement de l'application. ",
-          error.data
+        throw new Error(
+          "Une erreur est survenue lors du chargement de l'application. "
         );
       });
   }
 
-  if (isLoading) return <SplashScreen type="load" message="Chargement en cours..." />;
-  if (needUpdate) return <SplashScreen type="info" message="Une mise à jour est disponible" button={{label: "Recharger", path: "/"}} />;
+  if (isLoading)
+    return <SplashScreen type="load" message="Chargement en cours..." />;
+  if (needUpdate)
+    return (
+      <SplashScreen
+        type="info"
+        message="Une mise à jour est disponible"
+        button={{ label: 'Recharger', path: '/' }}
+      />
+    );
 
   return (
     <Provider store={store}>

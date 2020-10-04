@@ -3,6 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { get, keys, map, toNumber } from 'lodash';
 import Card from './Card';
 import Select from './Select';
+import SplashScreen from 'components/App/SplashScreen';
 
 const mapState = (state: IReduxState) => ({
   isLoading: state.planPrise.content === 'loading',
@@ -23,12 +24,18 @@ const Interface = ({
   isLoading,
   medicaments,
 }: InterfaceProps) => {
-  if (isLoading) return <React.Fragment>Chargement en cours</React.Fragment>;
+  if (isLoading)
+    return (
+      <SplashScreen
+        type="load"
+        message="Chargement du plan de prise en cours"
+      />
+    );
 
-  if (isError)
-    return <React.Fragment>Erreur lors du chargement</React.Fragment>;
+  if (isError) throw new Error('Erreur lors du chargement du plan de prise');
 
-  if (isDeleting) return <React.Fragment>Suppression en cours</React.Fragment>;
+  if (isDeleting)
+    return <SplashScreen type="warning" message="Suppression en cours" />;
 
   if (isDeleted) return <React.Fragment>Plan de prise supprimé</React.Fragment>;
 

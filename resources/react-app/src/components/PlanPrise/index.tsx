@@ -12,15 +12,14 @@ import {
   loadList,
   setId,
 } from 'store/plan-prise';
+import { withSanctum, WithSanctumProps } from 'react-sanctum';
 import usePdf from 'helpers/hooks/use-pdf';
-//import PPRepository from 'helpers/PPRepository.helper';
-//import generate from 'helpers/pdf.helper';
 
 import Selection from './Selection';
 import Interface from './Interface';
 import Settings from './Settings';
 import SplashScreen from 'components/App/SplashScreen';
-import { withSanctum, WithSanctumProps } from 'react-sanctum';
+import ErrorBoundary from 'components/App/ErrorBoundary';
 import useRepository from 'store/plan-prise/hooks/use-repository';
 
 const mapState = (state: IReduxState) => ({
@@ -204,13 +203,13 @@ const PlanPrise = ({
   }
 
   return (
-    <React.Fragment>
+    <ErrorBoundary returnTo="/plan-prise">
       <Interface />
       <Settings
         show={isLoaded(content) && showSettings}
         toggle={() => setShowSettings(!showSettings)}
       />
-    </React.Fragment>
+    </ErrorBoundary>
   );
 };
 

@@ -5,6 +5,7 @@ import Authentification, { Role } from 'components/Authentification';
 import ProtectedRoute from 'components/Navigation/ProtectedRoute';
 import Profil from 'components/Profil';
 import PlanPrise from 'components/PlanPrise';
+import ErrorBoundary from 'components/App/ErrorBoundary';
 
 export default () => (
   <Switch>
@@ -21,10 +22,14 @@ export default () => (
       <Authentification role={Role.signout} />
     </ProtectedRoute>
     <ProtectedRoute path="/profil">
-      <Profil />
+      <ErrorBoundary returnTo="/">
+        <Profil />
+      </ErrorBoundary>
     </ProtectedRoute>
     <ProtectedRoute path="/plan-prise/:id?/:action?">
-      <PlanPrise />
+      <ErrorBoundary returnTo="/">
+        <PlanPrise />
+      </ErrorBoundary>
     </ProtectedRoute>
   </Switch>
 );
