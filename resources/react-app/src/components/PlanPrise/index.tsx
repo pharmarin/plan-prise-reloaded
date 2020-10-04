@@ -7,6 +7,7 @@ import {
   isDeleted,
   isDeleting,
   isLoaded,
+  isNotLoaded,
   loadContent,
   loadList,
   setId,
@@ -60,6 +61,8 @@ const PlanPrise = ({
   const history = useHistory();
   const { fromPlanPrise, generate } = usePdf({ user });
   const contentLoaded = isLoaded(content);
+  const medicData = get(content, 'medic_data');
+  const contentNotLoaded = isNotLoaded(content);
   const routeIdParam = get(routerParams, 'id');
   const isNewRoute = routeIdParam === 'nouveau';
   const routeId = isNewRoute ? -1 : Number(routeIdParam);
@@ -111,10 +114,10 @@ const PlanPrise = ({
        * @condition if no content & not loading & not errored
        * @action load content
        */
-      if (content === null) loadContent(routeId);
+      if (contentNotLoaded) loadContent(routeId);
     }
   }, [
-    content,
+    contentNotLoaded,
     id,
     isNewRoute,
     isRootRoute,
@@ -147,14 +150,18 @@ const PlanPrise = ({
                   id,
                 },
               },
-              {
-                path: `/plan-prise/${id}/export`,
-                label: 'pdf',
-              },
+              ...(medicData && medicData.length > 0
+                ? [
+                    {
+                      path: `/plan-prise/${id}/export`,
+                      label: 'pdf',
+                    },
+                  ]
+                : []),
             ]
           : undefined,
     });
-  }, [contentLoaded, id, updateAppNav]);
+  }, [contentLoaded, id, medicData, updateAppNav]);
 
   if (isRootRoute) return <Selection />;
 
