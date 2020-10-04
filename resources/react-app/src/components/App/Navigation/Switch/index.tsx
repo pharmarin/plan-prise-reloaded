@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Accueil from 'components/Accueil';
-import Authentification, { Role } from 'components/Authentification';
-import ProtectedRoute from 'components/Navigation/ProtectedRoute';
+import Authentification, { Role } from 'components/App/Authentification';
+import ProtectedRoute from '../ProtectedRoute';
 import Profil from 'components/Profil';
 import PlanPrise from 'components/PlanPrise';
 import ErrorBoundary from 'components/App/ErrorBoundary';
