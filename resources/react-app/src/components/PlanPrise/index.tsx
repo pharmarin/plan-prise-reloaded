@@ -1,33 +1,29 @@
 import React, { useEffect } from 'react';
-import { useParams, Redirect, useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-import { get, isError, isNumber } from 'lodash';
+import { get, isNumber } from 'lodash';
 import { setShowSettings, updateAppNav } from 'store/app';
-import {
-  isDeleted,
-  isDeleting,
-  isLoaded,
-  isNotLoaded,
-  loadContent,
-  loadList,
-  setId,
-} from 'store/plan-prise';
+import { loadContent, loadList, setId } from 'store/plan-prise';
 import { withSanctum, WithSanctumProps } from 'react-sanctum';
 import usePdf from 'helpers/hooks/use-pdf';
 
 import Selection from './Selection';
 import Interface from './Interface';
 import Settings from './Settings';
-import SplashScreen from 'components/App/SplashScreen';
 import ErrorBoundary from 'components/App/ErrorBoundary';
 import useRepository from 'store/plan-prise/hooks/use-repository';
+import {
+  selectPlanPriseContent,
+  selectStatus,
+} from 'store/plan-prise/selectors';
 
 const mapState = (state: IReduxState) => ({
   /* Il faut être plus spécifique, calculer isError, isDeleting */
-  content: state.planPrise.content,
+  content: selectPlanPriseContent(state),
   id: state.planPrise.id,
   list: state.planPrise.list,
   showSettings: state.app.showSettings,
+  status: selectStatus(state),
 });
 
 const mapDispatch = {
@@ -53,20 +49,14 @@ const PlanPrise = ({
   setId,
   setShowSettings,
   showSettings,
+  status,
   updateAppNav,
 }: PlanPriseProps) => {
   const repository = useRepository();
   const routerParams = useParams();
   const history = useHistory();
   const { fromPlanPrise, generate } = usePdf({ user });
-  const contentLoaded = isLoaded(content);
-  const medicData = get(content, 'medic_data');
-  const contentNotLoaded = isNotLoaded(content);
   const routeIdParam = get(routerParams, 'id');
-  const isNewRoute = routeIdParam === 'nouveau';
-  const routeId = isNewRoute ? -1 : Number(routeIdParam);
-  const isRootRoute = !routeIdParam;
-  const isValidRoute = !isNaN(Number(routeIdParam)) || isNewRoute;
   const isPdfRoute = get(routerParams, 'action') === 'export';
 
   const getTitle = (id: number | null) => {
@@ -79,54 +69,8 @@ const PlanPrise = ({
     return 'Que voulez-vous faire ? ';
   };
 
-  /**
-   * @condition location === /plan-prise
-   * @condition list === null
-   * @action loadList()
-   */
   useEffect(() => {
-    if (isRootRoute && list === null) {
-      loadList();
-    }
-  }, [isRootRoute, list, loadList]);
-
-  useEffect(() => {
-    if (isNewRoute && id !== -1) {
-      setId(-1);
-    } else if (
-      (isNumber(id) && (!routeId || !isValidRoute)) ||
-      (id === -1 && !isNewRoute)
-    ) {
-      setId(null);
-    }
-  }, [id, isNewRoute, isValidRoute, routeId, setId]);
-
-  useEffect(() => {
-    if (isValidRoute && !isRootRoute && !isNewRoute && routeId) {
-      /**
-       * @condition id !== routeId
-       * @action set ID
-       * @action reset content
-       */
-      if (id !== routeId) setId(routeId);
-      /**
-       * @condition if no content & not loading & not errored
-       * @action load content
-       */
-      if (contentNotLoaded) loadContent(routeId);
-    }
-  }, [
-    contentNotLoaded,
-    id,
-    isNewRoute,
-    isRootRoute,
-    isValidRoute,
-    loadContent,
-    routeId,
-    setId,
-  ]);
-
-  useEffect(() => {
+    console.log('status: ', status);
     updateAppNav({
       title: getTitle(id),
       returnTo: isNumber(id)
@@ -136,7 +80,7 @@ const PlanPrise = ({
           }
         : undefined,
       options:
-        isNumber(id) && contentLoaded
+        isNumber(id) && status.isLoaded
           ? [
               {
                 path: 'settings',
@@ -149,7 +93,7 @@ const PlanPrise = ({
                   id,
                 },
               },
-              ...(medicData && medicData.length > 0
+              ...(!status.isEmpty
                 ? [
                     {
                       path: `/plan-prise/${id}/export`,
@@ -160,57 +104,59 @@ const PlanPrise = ({
             ]
           : undefined,
     });
-  }, [contentLoaded, id, medicData, updateAppNav]);
+  }, [id, status, updateAppNav]);
 
-  if (isRootRoute) return <Selection />;
+  useEffect(() => {
+    console.log('routeIdParam: ', routeIdParam);
+    if (!routeIdParam) {
+      if (id !== null) setId(null);
+      if (list === null) loadList();
+    } else if (routeIdParam === 'nouveau') {
+      if (!id) setId(-1);
+      if (id && id > 0) history.push(`/plan-prise/${id}`);
+    } else if (routeIdParam > 0) {
+      if (id !== Number(routeIdParam)) setId(Number(routeIdParam));
+      if (status.isNotLoaded) loadContent(routeIdParam);
+      if (status.isDeleted) {
+        setId(null);
+        history.push('/plan-prise');
+      }
+      if (status.isError && id === Number(routeIdParam)) {
+        setId(null);
+        throw new Error(
+          "Ce plan de prise n'existe plus ou vous n'avez pas l'autorisation d'y accéder."
+        );
+      }
+      if (status.isLoaded && isPdfRoute) {
+        generate(fromPlanPrise(repository.getContent()));
+        history.goBack();
+      }
+      if (status.isLoaded && get(content, 'id') !== Number(routeIdParam)) {
+        throw new Error('Une erreur est inconnue est survenue. [Erreur 1]');
+      }
+    } else {
+      setId(null);
+      throw new Error("La page à laquelle vous tentez d'accéder n'existe pas.");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, isPdfRoute, list, routeIdParam, setId, status]);
 
-  if (isDeleting(content)) {
-    return <SplashScreen type="load" message="Suppression en cours" />;
+  if (!routeIdParam) {
+    return <Selection />;
   }
 
-  if (isError(content) && isValidRoute && id === routeId) {
-    console.error("Ce plan de prise n'existe pas. ");
+  if (status.isDeleting || status.isLoaded || status.isLoading)
     return (
-      <SplashScreen
-        button={{ label: 'Retour', path: '/plan-prise' }}
-        type="danger"
-        message="Ce plan de prise n'existe plus ou vous n'avez pas l'autorisation d'y accéder."
-      />
+      <ErrorBoundary returnTo="/plan-prise">
+        <Interface />
+        <Settings
+          show={status.isLoaded && showSettings}
+          toggle={() => setShowSettings(!showSettings)}
+        />
+      </ErrorBoundary>
     );
-  }
 
-  if ((!isValidRoute || isDeleted(content)) && !isNewRoute && !isRootRoute) {
-    return <Redirect to="/plan-prise" />;
-  }
-
-  if (isNewRoute && id && id > 0) {
-    return <Redirect to={`/plan-prise/${id}`} />;
-  }
-
-  if (isLoaded(content) && content.id !== routeId && !isNewRoute) {
-    return (
-      <SplashScreen
-        button={{ label: 'Retour', path: '/plan-prise' }}
-        type="danger"
-        message="Une erreur est inconnue est survenue. [Erreur 1]"
-      />
-    );
-  }
-
-  if (isPdfRoute && isLoaded(content)) {
-    generate(fromPlanPrise(repository.getContent()));
-    history.goBack();
-  }
-
-  return (
-    <ErrorBoundary returnTo="/plan-prise">
-      <Interface />
-      <Settings
-        show={isLoaded(content) && showSettings}
-        toggle={() => setShowSettings(!showSettings)}
-      />
-    </ErrorBoundary>
-  );
+  return null;
 };
 
 export default connector(withSanctum(PlanPrise));

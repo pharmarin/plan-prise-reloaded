@@ -2,15 +2,21 @@ import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { ActionMeta, ValueType } from 'react-select';
 import AsyncSelect from 'react-select/async';
-import { find, isArray } from 'lodash';
+import { find, get, isArray } from 'lodash';
 import useLoadAsync from 'helpers/hooks/use-load-async';
 import { addNotification } from 'store/app';
 import { cache, inCache } from 'store/cache';
-import { addItem, isLoaded } from 'store/plan-prise';
+import { addItem } from 'store/plan-prise';
+import {
+  selectPlanPriseContent,
+  selectStatus,
+} from 'store/plan-prise/selectors';
 
 const mapState = (state: IReduxState) => ({
   cacheContent: state.cache,
-  planPriseContent: state.planPrise.content,
+  medicData: get(selectPlanPriseContent(state), 'medic_data', {}),
+  planPriseContent: selectPlanPriseContent(state),
+  status: selectStatus(state),
 });
 
 const mapDispatch = {
@@ -28,7 +34,8 @@ const Select = ({
   addNotification,
   cache,
   cacheContent,
-  planPriseContent,
+  medicData,
+  status,
 }: SelectProps) => {
   const { loadGeneric } = useLoadAsync();
 
@@ -46,8 +53,8 @@ const Select = ({
         throw new Error('Un seul médicament peut être ajouté à la fois');
       }
       if (
-        isLoaded(planPriseContent) &&
-        find(planPriseContent.medic_data, { id: value.value, type: value.type })
+        status.isLoaded &&
+        find(medicData, { id: value.value, type: value.type })
       ) {
         addNotification({
           header: 'Action impossible',
