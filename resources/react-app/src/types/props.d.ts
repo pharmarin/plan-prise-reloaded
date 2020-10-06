@@ -2,9 +2,13 @@ declare namespace IProps {
   declare namespace Backend {
     interface MedicamentTable {
       data?: IModels.Medicament[];
+    }
+    interface MedicamentPagination {
+      last: number | null;
       loading: boolean;
       page: number;
-      setPage: (id: number) => void;
+      prevPage: number | null;
+      setPages: (page: number, previous: number) => void;
     }
   }
   interface Card {

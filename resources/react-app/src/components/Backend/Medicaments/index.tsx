@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import useAxios from 'axios-hooks';
-import {
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Spinner,
-} from 'reactstrap';
 import MedicamentTable from './MedicamentTable';
-import { get } from 'lodash';
-import SplashScreen from 'components/App/SplashScreen';
+import MedicamentPagination from './MedicamentTable/MedicamentPagination';
 
 export default () => {
   const [page, setPage] = useState(1);
@@ -55,81 +48,20 @@ export default () => {
     );
   }
 
-  if (!last)
-    return <SplashScreen type="load" message="Chargement des médicaments" />;
-
   return (
     <div>
-      <MedicamentTable
-        loading={loading}
-        page={page}
-        setPage={setPage}
-        data={dataPerPage.pages[prevPage ? prevPage : page]}
-      />
+      <MedicamentTable data={dataPerPage.pages[prevPage ? prevPage : page]} />
       {last && (
-        <Pagination className="mx-auto">
-          <PaginationItem disabled={page === 1}>
-            <PaginationLink
-              first
-              onClick={() => {
-                setPage(1);
-                setPrevPage(page);
-              }}
-            />
-          </PaginationItem>
-          <PaginationItem disabled={page === 1}>
-            <PaginationLink
-              previous
-              onClick={() => {
-                setPage(page - 1);
-                setPrevPage(page);
-              }}
-            />
-          </PaginationItem>
-          {[
-            ...[1, 2, 3, 4]
-              .map((_, i) => page - (i + 1))
-              .filter((n) => n > 0)
-              .sort(),
-            page,
-            ...[1, 2, 3, 4]
-              .map((_, i) => page + (i + 1))
-              .filter((n) => n < last + 1)
-              .sort(),
-          ].map((p) => (
-            <PaginationItem
-              key={p}
-              active={prevPage ? p === prevPage : p === page}
-            >
-              <PaginationLink
-                onClick={() => {
-                  setPage(p);
-                  setPrevPage(page);
-                }}
-              >
-                {p === page && loading ? <Spinner size="sm" /> : p}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationItem>
-            <PaginationLink
-              next
-              onClick={() => {
-                setPage(page + 1);
-                setPrevPage(page);
-              }}
-            />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink
-              last
-              onClick={() => {
-                setPage(last);
-                setPrevPage(page);
-              }}
-            />
-          </PaginationItem>
-        </Pagination>
+        <MedicamentPagination
+          last={last}
+          loading={loading}
+          page={page}
+          prevPage={prevPage}
+          setPages={(page, prev) => {
+            setPage(page);
+            setPrevPage(prev);
+          }}
+        />
       )}
     </div>
   );

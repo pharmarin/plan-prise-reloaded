@@ -4,7 +4,8 @@ import { FaPen, FaRecycle } from 'react-icons/fa';
 import { Button, Table } from 'reactstrap';
 
 export default ({ data }: IProps.Backend.MedicamentTable) => {
-  console.log('data: ', data);
+  if (!data)
+    return <SplashScreen type="load" message="Chargement des médicaments" />;
 
   return (
     <Table bordered responsive>
@@ -16,7 +17,7 @@ export default ({ data }: IProps.Backend.MedicamentTable) => {
         </tr>
       </thead>
       <tbody>
-        {data?.map((d) => (
+        {data.map((d) => (
           <tr key={d.id}>
             <td>{d.attributes.denomination}</td>
             <td>
