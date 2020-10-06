@@ -23,6 +23,8 @@ class Adapter extends AbstractAdapter
    */
   protected $filterScopes = [];
 
+  protected $defaultPagination = ['number' => 20];
+
   /**
    * Adapter constructor.
    *

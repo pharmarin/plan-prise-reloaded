@@ -16,6 +16,7 @@ class Medicament extends Model
   protected $appends = ['type'];
   protected $casts = [
     'conservation_duree' => 'array',
+    'conservation_frigo' => 'boolean',
     'indications' => 'array',
     'principes_actifs' => 'array',
     'voies_administration' => 'array',

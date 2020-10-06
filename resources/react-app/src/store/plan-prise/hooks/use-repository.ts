@@ -6,7 +6,7 @@ import { isLoaded } from '../selectors';
 
 const usePosologies = () => {
   const posologies = useConfig('default.posologies');
-  const settings = useSelector((state: IReduxState) =>
+  const settings = useSelector((state: IRedux.State) =>
     get(state.planPrise.content, 'custom_settings.inputs', {})
   );
 
@@ -17,7 +17,7 @@ const usePosologies = () => {
   );
 };
 
-const switchStatus = (content: IReduxState.PlanPrise['content']) => {
+const switchStatus = (content: IRedux.PlanPrise['content']) => {
   if (content === null) {
     return 'not-loaded';
   }
@@ -59,16 +59,16 @@ const switchVoiesAdministration = (voie: number) => {
 };
 
 export default () => {
-  const cache = useSelector<IReduxState, any>(
+  const cache = useSelector<IRedux.State, any>(
     (state) => state.cache.medicaments
   );
-  const content = useSelector<IReduxState, IReduxState.PlanPrise['content']>(
+  const content = useSelector<IRedux.State, IRedux.PlanPrise['content']>(
     (state) => state.planPrise.content
   );
-  const id = useSelector<IReduxState, number | null>(
+  const id = useSelector<IRedux.State, number | null>(
     (state) => state.planPrise.id
   );
-  const customData = useSelector<IReduxState>((state) =>
+  const customData = useSelector<IRedux.State>((state) =>
     get(state.planPrise, 'content.custom_data', {})
   );
   const posologies = usePosologies();

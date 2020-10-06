@@ -12,7 +12,7 @@ import {
   selectStatus,
 } from 'store/plan-prise/selectors';
 
-const mapState = (state: IReduxState) => ({
+const mapState = (state: IRedux.State) => ({
   cacheContent: state.cache,
   medicData: get(selectPlanPriseContent(state), 'medic_data', {}),
   planPriseContent: selectPlanPriseContent(state),

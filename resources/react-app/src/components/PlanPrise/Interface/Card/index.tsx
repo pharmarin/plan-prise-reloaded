@@ -8,7 +8,7 @@ import Content from './Content';
 import { addNotification } from 'store/app';
 import useRepository from 'store/plan-prise/hooks/use-repository';
 
-const mapState = (state: IReduxState) => ({
+const mapState = (state: IRedux.State) => ({
   storedMedicaments: state.cache.medicaments,
 });
 

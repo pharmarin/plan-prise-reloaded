@@ -23,7 +23,7 @@ const mapDispatch = {
 
 const connector = connect(null, mapDispatch);
 
-type PropsFromRedux = WithSanctumProps<Models.User> &
+type PropsFromRedux = WithSanctumProps<IModels.User> &
   ConnectedProps<typeof connector>;
 
 const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
@@ -41,7 +41,7 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
 
   if (!user) throw new Error("L'utilisateur n'a pas pu être chargé");
 
-  const [formData, setFormData] = useState<Models.User>(cloneDeep(user));
+  const [formData, setFormData] = useState<IModels.User>(cloneDeep(user));
 
   const fields = [
     {

@@ -3,7 +3,7 @@ import { Redirect, Route as RouterRoute, useLocation } from 'react-router-dom';
 import { withSanctum, WithSanctumProps } from 'react-sanctum';
 import SplashScreen from 'components/App/SplashScreen';
 
-type ProtectedRouteProps = WithSanctumProps<Models.User> &
+type ProtectedRouteProps = WithSanctumProps<IModels.User> &
   IProps.ProtectedRoute;
 
 const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (

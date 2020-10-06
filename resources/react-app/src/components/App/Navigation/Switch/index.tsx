@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Accueil from 'components/Accueil';
 import Authentification, { Role } from 'components/App/Authentification';
@@ -6,7 +6,9 @@ import ProtectedRoute from '../ProtectedRoute';
 import ErrorBoundary from 'components/App/ErrorBoundary';
 import Profil from 'components/Profil';
 import PlanPrise from 'components/PlanPrise';
-import Backend from 'components/Backend';
+import SplashScreen from 'components/App/SplashScreen';
+
+const Backend = lazy(() => import('components/Backend'));
 
 export default () => (
   <Switch>
@@ -35,7 +37,13 @@ export default () => (
       </ProtectedRoute>
       <ProtectedRoute admin path="/admin">
         <ErrorBoundary returnTo="/">
-          <Backend />
+          <Suspense
+            fallback={
+              <SplashScreen type="load" message="Chargement du module" />
+            }
+          >
+            <Backend />
+          </Suspense>
         </ErrorBoundary>
       </ProtectedRoute>
     </ErrorBoundary>

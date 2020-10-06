@@ -7,9 +7,9 @@ import CustomInput from '../CustomInput';
 import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
 import { makeUniqueSelectorInstance } from 'store/plan-prise/selectors';
 
-const mapState = (state: IReduxState, props: IProps.Content) => {
+const mapState = (state: IRedux.State, props: IProps.Content) => {
   const selectMedicamentForContent = makeUniqueSelectorInstance();
-  return (state: IReduxState, props: IProps.Content) => {
+  return (state: IRedux.State, props: IProps.Content) => {
     const data = selectMedicamentForContent(state, props);
     return {
       data,

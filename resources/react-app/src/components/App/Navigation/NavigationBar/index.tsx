@@ -14,13 +14,13 @@ import NavbarLink from '../NavbarLink';
 
 const NAVBAR_TITLE = 'plandeprise.fr';
 
-const mapState = (state: IReduxState) => ({
+const mapState = (state: IRedux.State) => ({
   app: state.app,
 });
 
 const connector = connect(mapState);
 
-type NavigationBarProps = WithSanctumProps<Models.User> &
+type NavigationBarProps = WithSanctumProps<IModels.User> &
   ConnectedProps<typeof connector>;
 
 const NavigationBar = ({

@@ -1,14 +1,12 @@
-declare namespace Models {
-  interface User {
-    [key: string]: string | undefined;
-    admin: boolean;
-    name: string;
-    display_name?: string;
-    email: string;
-  }
-}
-
 declare namespace IProps {
+  declare namespace Backend {
+    interface MedicamentTable {
+      data?: IModels.Medicament[];
+      loading: boolean;
+      page: number;
+      setPage: (id: number) => void;
+    }
+  }
   interface Card {
     id: IMedicamentID;
   }

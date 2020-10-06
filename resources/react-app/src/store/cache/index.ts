@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { find } from 'lodash';
 
-const initialState: IReduxState.Cache = {
+const initialState: IRedux.Cache = {
   medicaments: [],
 };
 
-const inCache = ({ id, type }: IMedicamentID, cache: IReduxState.Cache) => {
+const inCache = ({ id, type }: IMedicamentID, cache: IRedux.Cache) => {
   return find(cache.medicaments, {
     id,
     type,

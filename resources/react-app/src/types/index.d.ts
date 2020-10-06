@@ -75,38 +75,3 @@ interface IPrecaution {
   commentaire: string;
   population: string;
 }
-
-declare namespace IReduxState {
-  interface App {
-    auth: {
-      isError: boolean | string;
-      isLoading: boolean;
-      tokens: ITokens | null;
-    };
-    notifications: ICustomNotification[];
-    options?: {
-      label: string;
-      path: string;
-    }[];
-    returnTo?: {
-      label: string;
-      path: string;
-    };
-    showSettings: boolean;
-    title: string;
-  }
-  interface Cache {
-    medicaments: IMedicament[];
-  }
-  interface PlanPrise {
-    id: number | null;
-    content: null | IPlanPriseStatus | IPlanPriseContent;
-    list: null | 'loading' | 'error' | number[];
-  }
-}
-
-declare interface IReduxState {
-  app: IReduxState.App;
-  cache: IReduxState.Cache;
-  planPrise: IReduxState.PlanPrise;
-}

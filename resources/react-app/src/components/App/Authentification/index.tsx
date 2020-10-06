@@ -30,15 +30,13 @@ export enum Role {
   signout,
 }
 
-const mapState = (state: IReduxState) => ({});
-
 const mapDispatch = {
   updateAppNav,
 };
 
-const connector = connect(mapState, mapDispatch);
+const connector = connect(null, mapDispatch);
 
-type AuthentificationProps = WithSanctumProps<Models.User> &
+type AuthentificationProps = WithSanctumProps<IModels.User> &
   ConnectedProps<typeof connector> & {
     role: Role;
   };

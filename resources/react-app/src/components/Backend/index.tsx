@@ -1,3 +1,6 @@
 import React from 'react';
+import Medicaments from './Medicaments';
 
-export default () => <div>Hello world !!</div>;
+export default () => {
+  return <Medicaments />;
+};

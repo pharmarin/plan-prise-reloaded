@@ -1,21 +1,16 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 const BASE_URL = `${process.env.REACT_APP_API_PATH}`;
 
-const token = document.head.querySelector('meta[name="csrf-token"]');
-if (!token) {
-  throw new Error(
-    'CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token'
-  );
-}
-
-const client = axios.create({
+const config: AxiosRequestConfig = {
   baseURL: BASE_URL,
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
   },
   responseType: 'json',
   withCredentials: true,
-});
+};
+
+const client = axios.create(config);
 
 export default client;

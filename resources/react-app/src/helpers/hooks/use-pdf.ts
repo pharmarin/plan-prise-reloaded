@@ -11,7 +11,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const pageMargins = 20;
 
-const usePdf = ({ user }: { user: Models.User | null }) => {
+const usePdf = ({ user }: { user: IModels.User | null }) => {
   const fromPlanPrise = (
     content: IPlanPriseRepository
   ): TDocumentDefinitions => {

@@ -4,6 +4,7 @@ import { PersistGate } from 'redux-persist/es/integration/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { CardBody, Card, Container } from 'reactstrap';
 import { Sanctum } from 'react-sanctum';
+import LRU from 'lru-cache';
 import { store, persistor } from 'store/store';
 import NavigationBar from 'components/App/Navigation/NavigationBar';
 import Switch from 'components/App/Navigation/Switch';
@@ -11,6 +12,7 @@ import SplashScreen from './SplashScreen';
 import axios from 'helpers/axios-clients';
 import useConfig, { storeConfig } from 'helpers/hooks/use-config';
 import NotificationStack from './NotificationStack';
+import { configure } from 'axios-hooks';
 
 const sanctumConfig = {
   api_url: '',
@@ -20,6 +22,10 @@ const sanctumConfig = {
   signout_route: 'logout',
   user_object_route: 'user',
 };
+
+const cache = new LRU();
+
+configure({ axios, cache });
 
 export default () => {
   const [isLoading, setIsLoading] = useState(false);
