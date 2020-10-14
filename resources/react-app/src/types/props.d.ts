@@ -1,7 +1,7 @@
 declare namespace IProps {
   declare namespace Backend {
-    interface MedicamentTable {
-      data?: IModels.Medicament[];
+    interface MedicamentEdit {
+      medicament: IExtractModel<IModels.Medicament>;
     }
     interface MedicamentPagination {
       last: number | null;
@@ -9,6 +9,9 @@ declare namespace IProps {
       page: number;
       prevPage: number | null;
       setPages: (page: number, previous: number) => void;
+    }
+    interface MedicamentTable {
+      data: IExtractModel<IModels.Medicament>[];
     }
   }
   interface Card {

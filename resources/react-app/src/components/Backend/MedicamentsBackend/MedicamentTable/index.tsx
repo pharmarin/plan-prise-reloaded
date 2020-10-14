@@ -1,12 +1,9 @@
-import SplashScreen from 'components/App/SplashScreen';
 import React from 'react';
 import { FaPen, FaRecycle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
 
 export default ({ data }: IProps.Backend.MedicamentTable) => {
-  if (!data)
-    return <SplashScreen type="load" message="Chargement des médicaments" />;
-
   return (
     <Table bordered responsive>
       <thead>
@@ -19,16 +16,19 @@ export default ({ data }: IProps.Backend.MedicamentTable) => {
       <tbody>
         {data.map((d) => (
           <tr key={d.id}>
-            <td>{d.attributes.denomination}</td>
+            <td>{d.denomination}</td>
             <td>
-              {d.attributes.composition.map((c) => (
+              {(d.composition || []).map((c) => (
                 <div key={c.id}>{c.denomination}</div>
               ))}
             </td>
             <td>
-              <Button color="success" size="sm">
+              <Link
+                to={`/admin/${d.id}/edit`}
+                className="btn btn-sm btn-success"
+              >
                 <FaPen />
-              </Button>
+              </Link>
               <Button color="danger" size="sm">
                 <FaRecycle />
               </Button>

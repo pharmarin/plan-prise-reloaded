@@ -30,12 +30,35 @@ class Schema extends SchemaProvider
   {
     return [
       'denomination' => $resource->denomination,
-      'composition' => $resource->composition,
       'indications' => $resource->indications,
       'conservation_frigo' => $resource->conservation_frigo,
       'conservation_duree' => $resource->conservation_duree,
       'voies_administration' => $resource->voies_administration,
-      'precautions' => $resource->precautions,
+    ];
+  }
+
+  public function getRelationships(
+    $medicament,
+    $isPrimary,
+    array $includeRelationships
+  ) {
+    return [
+      'composition' => [
+        self::SHOW_SELF => true,
+        self::SHOW_RELATED => true,
+        self::SHOW_DATA => isset($includeRelationships['composition']),
+        self::DATA => function () use ($medicament) {
+          return $medicament->composition;
+        },
+      ],
+      'precautions' => [
+        self::SHOW_SELF => true,
+        self::SHOW_RELATED => true,
+        self::SHOW_DATA => isset($includeRelationships['precautions']),
+        self::DATA => function () use ($medicament) {
+          return $medicament->precautions;
+        },
+      ],
     ];
   }
 }

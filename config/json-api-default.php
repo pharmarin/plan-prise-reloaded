@@ -68,6 +68,8 @@ return [
     'user' => App\App\Models\User::class,
     'plan-prise' => App\Models\PlanPrise::class,
     'medicament' => App\Models\Medicament::class,
+    'principe-actif' => App\Models\Utility\PrincipeActif::class,
+    'precaution' => App\Models\Utility\Precaution::class,
     'api-medicament' => App\Models\ApiMedicament::class,
   ],
 
