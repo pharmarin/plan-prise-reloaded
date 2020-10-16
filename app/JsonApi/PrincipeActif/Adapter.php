@@ -30,7 +30,7 @@ class Adapter extends AbstractAdapter
    */
   public function __construct(StandardStrategy $paging)
   {
-    parent::__construct(new \App\Models\PrincipeActif(), $paging);
+    parent::__construct(new \App\Models\Utility\PrincipeActif(), $paging);
   }
 
   /**
@@ -40,6 +40,12 @@ class Adapter extends AbstractAdapter
    */
   protected function filter($query, Collection $filters)
   {
-    $this->filterWithScopes($query, $filters);
+    if ($denomination = $filters->get('denomination')) {
+      $query->where(
+        'principes_actifs.denomination',
+        'like',
+        "{$denomination}%"
+      );
+    }
   }
 }

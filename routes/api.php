@@ -23,8 +23,9 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
     /* generic */
     Route::resource('generic', 'Api\v1\GenericController')->only(['index']);
     JsonApi::register('default')->routes(function ($api) {
-      $api->resource('medicament')->only('index', 'read');
+      $api->resource('medicament')->only('index', 'read', 'update');
       $api->resource('api-medicament')->only('read');
+      $api->resource('principe-actif')->only('index', 'create');
     });
     /* plan-prise */
     Route::resource('plan-prise', 'Api\v1\PlanPriseController')->only([

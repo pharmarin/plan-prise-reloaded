@@ -7,6 +7,8 @@ use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
+use App\Models\Utility\PrincipeActif;
+
 class Adapter extends AbstractAdapter
 {
   /**
@@ -43,5 +45,26 @@ class Adapter extends AbstractAdapter
   protected function filter($query, Collection $filters)
   {
     $this->filterWithScopes($query, $filters);
+  }
+
+  protected function updating($resource, $query)
+  {
+    if ($query->composition) {
+      $resource
+        ->composition()
+        ->sync(
+          array_map(function ($compo) {
+            if (is_numeric($compo['id'])) {
+              return intval($compo['id']);
+            } else {
+              $new_compo = PrincipeActif::create([
+                'denomination' => $compo['id'],
+              ]);
+              return $new_compo->id;
+            }
+          }, $query->composition)
+        )
+        ->save();
+    }
   }
 }
