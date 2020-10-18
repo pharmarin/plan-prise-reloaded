@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   CardBody,
+  CardColumns,
   CardImgOverlay,
   Col,
   Form,
@@ -46,7 +47,7 @@ const MultipleInputs = ({
   return (
     <React.Fragment>
       {lines.map((line, index) => (
-        <Row key={index}>
+        <Row key={index} className="mb-1">
           <Col sm={1}>
             <Button
               className="px-1"
@@ -78,10 +79,9 @@ const MedicamentEdit = ({
   const voiesAdministration = useConfig('default.voies_administration');
   const [medicament, setMedicament] = useState({
     ...inheritedMed,
-    indications: keyBy(inheritedMed.indications, () => uniqueId('indication_')),
-    conservation_duree: keyBy(inheritedMed.conservation_duree, () =>
-      uniqueId('composition_')
-    ),
+    indications: keyBy(inheritedMed.indications, 'id'),
+    conservation_duree: keyBy(inheritedMed.conservation_duree, 'id'),
+    precautions: keyBy(inheritedMed.precautions, 'id'),
   });
   const [isSubmitting, setSubmitting] = useState(false);
   const [isCreatingOption, setCreatingOption] = useState(false);
@@ -123,9 +123,24 @@ const MedicamentEdit = ({
       });
   };
 
-  const onCreate = (value: string) => {
+  const loadPrincipeActifs = debounce(async (query) => {
+    const url = requestUrl('principe-actif', {
+      page: 1,
+      filter: { field: 'denomination', value: query },
+      sort: 'denomination',
+    });
+    const res = await axios.get<IServerResponse<IModels.PrincipeActif[]>>(
+      url.url
+    );
+    const data = res.data;
+    return data.data.map((composition) => ({
+      value: composition.id,
+      label: composition.attributes.denomination,
+    }));
+  }, 500);
+
+  const createPrincipeActif = (value: string) => {
     setCreatingOption(true);
-    console.log(value);
     const url = requestUrl('principe-actif');
     axios
       .post(url.url, {
@@ -136,8 +151,15 @@ const MedicamentEdit = ({
           },
         },
       })
+      .then((res) => res.data)
       .then((res) => {
-        console.log(res);
+        const id = res.data.id;
+        const denomination = res.data.attributes.denomination;
+        setValue(`composition[${(medicament.composition || []).length}]`, {
+          id,
+          type: 'principe-actif',
+          denomination,
+        } as IExtractModel<IModels.PrincipeActif>);
         setCreatingOption(false);
       })
       .catch((e) => {
@@ -158,195 +180,192 @@ const MedicamentEdit = ({
   }, [medicament.denomination]);
 
   return (
-    <Card>
-      <CardBody>
-        <Form onSubmit={onSubmit}>
-          <FormGroup>
-            <Label>Dénomination</Label>
-            <Input
-              name="denomination"
-              value={medicament.denomination || ''}
-              onChange={(e) => setValue('denomination', e.currentTarget.value)}
-              required={true}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Composition</Label>
-            <AsyncCreatableSelect
-              name="composition"
-              cacheOptions
-              isDisabled={isCreatingOption}
-              isMulti
-              isLoading={isCreatingOption}
-              loadOptions={debounce(async (query) => {
-                const url = requestUrl('principe-actif', {
-                  page: 1,
-                  filter: { field: 'denomination', value: query },
-                  sort: 'denomination',
-                });
-                const res = await axios.get<
-                  IServerResponse<IModels.PrincipeActif[]>
-                >(url.url);
-                const data = res.data;
-                return data.data.map((composition) => ({
-                  value: composition.id,
-                  label: composition.attributes.denomination,
-                }));
-              }, 500)}
-              onChange={(value) => {
-                setValue(
-                  'composition',
-                  (isArray(value) ? value : [value]).map((v) => ({
-                    id: v.value,
-                    denomination: v.label,
-                  }))
-                );
-              }}
-              onCreateOption={onCreate}
-              value={medicament.composition.map((c) => ({
-                value: c.id,
-                label: c.denomination,
-              }))}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Voies d'administration</Label>
-            <Select
-              name="voies_administration"
-              isMulti
-              options={keys(voiesAdministration).map((i) => ({
-                value: String(i),
-                label: voiesAdministration[i],
-              }))}
-              value={medicament.voies_administration.map((i) => ({
-                value: String(i),
-                label: voiesAdministration[i],
-              }))}
-              onChange={(value) => {
-                setValue(
-                  'voies_administration',
-                  (isArray(value) ? value : [value]).map((v) => v.value)
-                );
-              }}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Indications</Label>
-            <MultipleInputs
-              addValue={() => {
-                medicament.indications[uniqueId('indication_')] = '';
-                setMedicament({
-                  ...medicament,
-                });
-              }}
-              removeValue={(id) => {
-                unset(medicament, `indications.${id}`);
-                setMedicament({
-                  ...medicament,
-                });
-              }}
-              lines={keys(medicament.indications).map((id) => ({
-                id,
-                value: medicament.indications[id],
-              }))}
-              render={(indication, id) => (
+    <React.Fragment>
+      <Card>
+        <CardBody>
+          <Form onSubmit={onSubmit}>
+            <FormGroup>
+              <Label>Dénomination</Label>
+              <Input
+                name="denomination"
+                value={medicament.denomination || ''}
+                onChange={(e) =>
+                  setValue('denomination', e.currentTarget.value)
+                }
+                required={true}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>Composition</Label>
+              <AsyncCreatableSelect
+                name="composition"
+                isDisabled={isCreatingOption}
+                isMulti
+                isLoading={isCreatingOption}
+                loadOptions={loadPrincipeActifs}
+                onChange={(value) => {
+                  setValue(
+                    'composition',
+                    (isArray(value) ? value : [value]).map((v) => ({
+                      id: v.value,
+                      denomination: v.label,
+                    }))
+                  );
+                }}
+                onCreateOption={createPrincipeActif}
+                value={medicament.composition.map((c) => ({
+                  value: c.id,
+                  label: c.denomination,
+                }))}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>Voies d'administration</Label>
+              <Select
+                name="voies_administration"
+                isMulti
+                options={keys(voiesAdministration).map((i) => ({
+                  value: String(i),
+                  label: voiesAdministration[i],
+                }))}
+                value={medicament.voies_administration.map((i) => ({
+                  value: String(i),
+                  label: voiesAdministration[i],
+                }))}
+                onChange={(value) => {
+                  setValue(
+                    'voies_administration',
+                    (isArray(value) ? value : [value]).map((v) => v.value)
+                  );
+                }}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>Indications</Label>
+              <MultipleInputs
+                addValue={() => {
+                  setValue(`indications.${uniqueId('indication_')}`, '');
+                }}
+                removeValue={(id) => {
+                  unset(medicament, `indications.${id}`);
+                  setMedicament({
+                    ...medicament,
+                  });
+                }}
+                lines={keys(medicament.indications).map((id) => ({
+                  id,
+                  value: medicament.indications[id],
+                }))}
+                render={(indication, id) => (
+                  <Input
+                    name="indications[]"
+                    value={indication || ''}
+                    type="text"
+                    onChange={(e) =>
+                      setValue(`indications.${id}`, e.currentTarget.value)
+                    }
+                  />
+                )}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>Conservation</Label>
+              <FormGroup check className="ml-1">
                 <Input
-                  name="indications[]"
-                  value={indication || ''}
-                  type="text"
+                  name="conservation_frigo"
+                  checked={medicament.conservation_frigo || false}
+                  type="checkbox"
                   onChange={(e) =>
-                    setValue(`indications.${id}`, e.currentTarget.value)
+                    setValue('conservation_frigo', e.currentTarget.checked)
                   }
                 />
-              )}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Conservation</Label>
-            <FormGroup check className="ml-1">
-              <Input
-                name="conservation_frigo"
-                checked={medicament.conservation_frigo || false}
-                type="checkbox"
-                onChange={(e) =>
-                  setValue('conservation_frigo', e.currentTarget.checked)
-                }
+                <Label check className="text-muted">
+                  Se conserve au frigo avant ouverture
+                </Label>
+              </FormGroup>
+              <MultipleInputs
+                addValue={() => {
+                  setValue(`conservation_duree.${uniqueId('conservation_')}`, {
+                    laboratoire: '',
+                    duree: '',
+                  });
+                }}
+                removeValue={(id) => {
+                  unset(medicament, `conservation_duree.${id}`);
+                  setMedicament({
+                    ...medicament,
+                  });
+                }}
+                lines={keys(medicament.conservation_duree).map((id) => ({
+                  id,
+                  value: medicament.conservation_duree[id],
+                }))}
+                render={(conservation, id) => (
+                  <Row>
+                    <Col sm={5}>
+                      <Input
+                        name={`conservation_duree[][laboratoire]`}
+                        value={conservation.laboratoire || ''}
+                        placeholder="Laboratoire"
+                        type="text"
+                        onChange={(e) =>
+                          setValue(
+                            `conservation_duree.${id}.laboratoire`,
+                            e.currentTarget.value
+                          )
+                        }
+                      />
+                    </Col>
+                    <Col sm={7}>
+                      <Input
+                        name={`conservation_duree[][duree]`}
+                        value={conservation.duree || ''}
+                        placeholder="Durée"
+                        type="text"
+                        onChange={(e) =>
+                          setValue(
+                            `conservation_duree.${id}.duree`,
+                            e.currentTarget.value
+                          )
+                        }
+                      />
+                    </Col>
+                  </Row>
+                )}
               />
-              <Label check className="text-muted">
-                Se conserve au frigo avant ouverture
-              </Label>
             </FormGroup>
-            <MultipleInputs
-              addValue={() => {
-                medicament.conservation_duree[uniqueId('conservation_')] = {
-                  laboratoire: '',
-                  duree: '',
-                };
-                setMedicament({
-                  ...medicament,
-                });
-              }}
-              removeValue={(id) => {
-                unset(medicament, `conservation_duree.${id}`);
-                setMedicament({
-                  ...medicament,
-                });
-              }}
-              lines={keys(medicament.conservation_duree).map((id) => ({
-                id,
-                value: medicament.conservation_duree[id],
-              }))}
-              render={(conservation, id) => (
-                <Row>
-                  <Col sm={4}>
-                    <Input
-                      name={`conservation_duree[][laboratoire]`}
-                      value={conservation.laboratoire || ''}
-                      placeholder="Laboratoire"
-                      type="text"
-                      onChange={(e) =>
-                        setValue(
-                          `conservation_duree.${id}.laboratoire`,
-                          e.currentTarget.value
-                        )
-                      }
-                    />
-                  </Col>
-                  <Col sm={6}>
-                    <Input
-                      name={`conservation_duree[][duree]`}
-                      value={conservation.duree || ''}
-                      placeholder="Durée"
-                      type="text"
-                      onChange={(e) =>
-                        setValue(
-                          `conservation_duree.${id}.duree`,
-                          e.currentTarget.value
-                        )
-                      }
-                    />
-                  </Col>
-                </Row>
-              )}
-            />
-          </FormGroup>
-          <Button type="submit" disabled={isSubmitting || isCreatingOption}>
-            {isSubmitting
-              ? [<Spinner size="sm" />, 'Enregistrement en cours...']
-              : 'Enregistrer'}
-          </Button>
-          {isSubmitting && (
-            <CardImgOverlay
-              className="d-flex justify-content-center align-items-center"
-              style={{ backgroundColor: 'rgba(255, 255, 255, .7)' }}
-            >
-              <Spinner size="sm" className="mr-3" />
-              Enregistrement en cours...
-            </CardImgOverlay>
-          )}
-        </Form>
-      </CardBody>
-    </Card>
+            <Button type="submit" disabled={isSubmitting || isCreatingOption}>
+              {isSubmitting
+                ? [<Spinner size="sm" />, 'Enregistrement en cours...']
+                : 'Enregistrer'}
+            </Button>
+            {isSubmitting && (
+              <CardImgOverlay className="d-flex justify-content-center align-items-center bg-light">
+                <Spinner size="sm" className="mr-3" />
+                Enregistrement en cours...
+              </CardImgOverlay>
+            )}
+          </Form>
+        </CardBody>
+      </Card>
+      {medicament.precautions && keys(medicament.precautions).length > 0 && (
+        <CardColumns className="mt-2">
+          {keys(medicament.precautions).map((id) => (
+            <Card key={id}>
+              <CardBody>
+                <Input
+                  type="textarea"
+                  value={medicament.precautions[id].commentaire}
+                  onChange={(e) =>
+                    setValue(`precautions.${id}`, e.currentTarget.value)
+                  }
+                />
+              </CardBody>
+            </Card>
+          ))}
+        </CardColumns>
+      )}
+    </React.Fragment>
   );
 };
 
