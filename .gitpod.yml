@@ -1,0 +1,4 @@
+tasks:
+  - before: export DANGEROUSLY_DISABLE_HOST_CHECK
+    init: yarn && composer install
+    command: yarn serve
