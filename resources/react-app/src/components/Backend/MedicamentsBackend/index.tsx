@@ -3,7 +3,7 @@ import useAxios from 'axios-hooks';
 import MedicamentTable from './MedicamentTable';
 import MedicamentPagination from './MedicamentTable/MedicamentPagination';
 import MedicamentEdit from './MedicamentEdit';
-import { get, merge, values } from 'lodash';
+import { get, merge } from 'lodash';
 import useJsonApi from 'helpers/hooks/use-json-api';
 import SplashScreen from 'components/App/SplashScreen';
 import { connect, ConnectedProps } from 'react-redux';
@@ -20,7 +20,7 @@ type MedicamentsBackendProps = ConnectedProps<typeof connector>;
 
 const MedicamentsBackend = ({ updateAppNav }: MedicamentsBackendProps) => {
   const { id, edit } = useParams<{ id?: string; edit?: 'edit' }>();
-  const { extractOne, extractMany, normalize, sync } = useJsonApi();
+  const { extractOne, extractMany, normalize, requestUrl, sync } = useJsonApi();
   const [page, setPage] = useState(1);
   const [prevPage, setPrevPage] = useState<number | null>(null);
   const [last, setLast] = useState<number | null>(null);
@@ -54,21 +54,11 @@ const MedicamentsBackend = ({ updateAppNav }: MedicamentsBackendProps) => {
     // if editing, updateAppNav append in MedicamentEdit component
   });
 
-  const requestUrl = (p: number) => {
-    const base = '/medicament';
-    const query = {
-      page: `page[number]=${p}`,
-      sort: 'sort=denomination',
-      include: 'include=composition,precautions',
-    };
-    return {
-      url: `${base}?${values(query).join('&')}`,
-      base,
-      ...query,
-    };
-  };
-
-  const currentUrl = requestUrl(page);
+  const currentUrl = requestUrl('medicament', {
+    page,
+    sort: 'denomination',
+    include: ['composition', 'precautions'],
+  });
 
   const [{ data, loading, error }, execute] = useAxios<
     IServerResponse<IModels.Medicament>

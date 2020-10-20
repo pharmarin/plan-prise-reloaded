@@ -18,7 +18,7 @@ declare interface IServerResponse<T> {
 }
 
 type IExtractModel<T> = Exclude<T, 'attributes' | 'relationships'> &
-  { [A in keyof T['attributes']]: A } &
+  { [A in keyof T['attributes']]: T['attributes'][A] } &
   {
     [R in keyof T['relationships']]: IExtractModel<T['relationships'][R][0]>[];
   } & {
@@ -34,7 +34,7 @@ declare namespace IModels {
       conservation_frigo: boolean;
       denomination: string;
       indications: string[];
-      voie_administration: number[];
+      voies_administration: number[];
     };
     relationships: {
       composition: PrincipeActif[];

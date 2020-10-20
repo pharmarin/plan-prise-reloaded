@@ -23,6 +23,7 @@ class Medicament extends Model
   ];
   protected $fillable = [
     'denomination',
+    'composition',
     'principes_actifs',
     'indications',
     'conservation_frigo',
