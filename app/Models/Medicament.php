@@ -2,12 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-
-use App\Repositories\BdpmRepository;
-use App\Repositories\CompositionRepository;
-use App\Repositories\PrecautionRepository;
 
 class Medicament extends Model
 {
@@ -50,5 +45,15 @@ class Medicament extends Model
       \App\Models\Utility\Precaution::class,
       'precaution_cible'
     );
+  }
+
+  public function getConservationDureeAttribute($conservations)
+  {
+    return array_map(function ($conservation) {
+      return [
+        "laboratoire" => strval($conservation->laboratoire),
+        "duree" => strval($conservation->duree)
+      ];
+    }, json_decode($conservations));
   }
 }

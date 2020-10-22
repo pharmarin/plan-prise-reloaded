@@ -14,15 +14,21 @@ import {
   Label,
   Row,
   Spinner,
+  InputGroup,
+  InputGroupAddon,
 } from 'reactstrap';
 import { updateAppNav } from 'store/app';
 import axios from 'helpers/axios-clients';
 import useJsonApi from 'helpers/hooks/use-json-api';
 import debounce from 'debounce-promise';
-import { FaMinusCircle, FaPlusCircle } from 'react-icons/fa';
 import useConfig from 'helpers/hooks/use-config';
-import { isArray, keyBy, keys, set, uniqueId, unset, values } from 'lodash';
+import { keyBy, keys, set } from 'lodash';
 import Select from 'react-select';
+import ConditionalWrapper from 'components/Utility/ConditionalWrapper';
+import { Formik, Field, FieldArray } from 'formik';
+import { FaMinusCircle, FaPlusCircle } from 'react-icons/fa';
+import { Option } from 'react-select/src/filters';
+import TextareaAutosize from 'react-textarea-autosize';
 
 const mapDispatch = {
   updateAppNav,
@@ -33,44 +39,6 @@ const connector = connect(null, mapDispatch);
 type MedicamentEditProps = ConnectedProps<typeof connector> &
   IProps.Backend.MedicamentEdit;
 
-const MultipleInputs = ({
-  addValue,
-  removeValue,
-  lines,
-  render,
-}: {
-  addValue: () => void;
-  lines: { id: any; value: any }[];
-  removeValue: (index: number) => void;
-  render: (line: any, index: number) => any;
-}) => {
-  return (
-    <React.Fragment>
-      {lines.map((line, index) => (
-        <Row key={index} className="mb-1">
-          <Col sm={1}>
-            <Button
-              className="px-1"
-              color="link"
-              onClick={() => removeValue(line.id)}
-            >
-              <FaMinusCircle />
-            </Button>
-          </Col>
-          <Col sm={11}>{render(line.value, line.id)}</Col>
-        </Row>
-      ))}
-      <Row>
-        <Col sm={12}>
-          <Button className="px-1" color="link" onClick={addValue}>
-            <FaPlusCircle />
-          </Button>
-        </Col>
-      </Row>
-    </React.Fragment>
-  );
-};
-
 const MedicamentEdit = ({
   medicament: inheritedMed,
   updateAppNav,
@@ -79,48 +47,12 @@ const MedicamentEdit = ({
   const voiesAdministration = useConfig('default.voies_administration');
   const [medicament, setMedicament] = useState({
     ...inheritedMed,
-    indications: keyBy(inheritedMed.indications, 'id'),
-    conservation_duree: keyBy(inheritedMed.conservation_duree, 'id'),
     precautions: keyBy(inheritedMed.precautions, 'id'),
   });
-  const [isSubmitting, setSubmitting] = useState(false);
   const [isCreatingOption, setCreatingOption] = useState(false);
 
   const setValue = (path: string, value: any) => {
     setMedicament({ ...set(medicament, path, value) });
-  };
-
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(medicament);
-    setSubmitting(true);
-    axios
-      .patch(`/medicament/${medicament.id}`, {
-        data: {
-          id: String(medicament.id),
-          type: 'medicament',
-          attributes: {
-            conservation_duree: values(medicament.conservation_duree),
-            conservation_frigo: medicament.conservation_frigo,
-            denomination: medicament.denomination,
-            indications: values(medicament.indications),
-            voies_administration: medicament.voies_administration,
-          },
-          relationships: {
-            composition: {
-              data: medicament.composition.map((compo) => ({
-                type: 'principe-actif',
-                id: compo.id,
-              })),
-            },
-          },
-        },
-      })
-      .then(() => setSubmitting(false))
-      .catch((error) => {
-        alert(error);
-        setSubmitting(false);
-      });
   };
 
   const loadPrincipeActifs = debounce(async (query) => {
@@ -181,190 +113,270 @@ const MedicamentEdit = ({
 
   return (
     <React.Fragment>
-      <Card>
+      <Card className="mb-2">
         <CardBody>
-          <Form onSubmit={onSubmit}>
-            <FormGroup>
-              <Label>Dénomination</Label>
-              <Input
-                name="denomination"
-                value={medicament.denomination || ''}
-                onChange={(e) =>
-                  setValue('denomination', e.currentTarget.value)
-                }
-                required={true}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label>Composition</Label>
-              <AsyncCreatableSelect
-                name="composition"
-                isDisabled={isCreatingOption}
-                isMulti
-                isLoading={isCreatingOption}
-                loadOptions={loadPrincipeActifs}
-                onChange={(value) => {
-                  setValue(
-                    'composition',
-                    (isArray(value) ? value : [value]).map((v) => ({
-                      id: v.value,
-                      denomination: v.label,
-                    }))
-                  );
-                }}
-                onCreateOption={createPrincipeActif}
-                value={medicament.composition.map((c) => ({
-                  value: c.id,
-                  label: c.denomination,
-                }))}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label>Voies d'administration</Label>
-              <Select
-                name="voies_administration"
-                isMulti
-                options={keys(voiesAdministration).map((i) => ({
+          <Formik
+            initialValues={{
+              denomination: medicament.denomination,
+              composition: medicament.composition.map((c) => ({
+                label: c.denomination,
+                value: c.id,
+              })),
+              voies_administration: medicament.voies_administration.map(
+                (i) => ({
                   value: String(i),
                   label: voiesAdministration[i],
-                }))}
-                value={medicament.voies_administration.map((i) => ({
-                  value: String(i),
-                  label: voiesAdministration[i],
-                }))}
-                onChange={(value) => {
-                  setValue(
-                    'voies_administration',
-                    (isArray(value) ? value : [value]).map((v) => v.value)
-                  );
-                }}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label>Indications</Label>
-              <MultipleInputs
-                addValue={() => {
-                  setValue(`indications.${uniqueId('indication_')}`, '');
-                }}
-                removeValue={(id) => {
-                  unset(medicament, `indications.${id}`);
-                  setMedicament({
-                    ...medicament,
-                  });
-                }}
-                lines={keys(medicament.indications).map((id) => ({
-                  id,
-                  value: medicament.indications[id],
-                }))}
-                render={(indication, id) => (
-                  <Input
-                    name="indications[]"
-                    value={indication || ''}
-                    type="text"
-                    onChange={(e) =>
-                      setValue(`indications.${id}`, e.currentTarget.value)
-                    }
+                })
+              ),
+              indications: medicament.indications,
+              conservation_frigo: medicament.conservation_frigo,
+              conservation_duree: medicament.conservation_duree.filter(
+                (c) => c.laboratoire.length > 0 || c.duree.length > 0
+              ),
+            }}
+            onSubmit={(values, { setSubmitting }) => {
+              setSubmitting(true);
+              console.log('values: ', values);
+              return axios
+                .patch(`/medicament/${medicament.id}`, {
+                  data: {
+                    id: String(medicament.id),
+                    type: 'medicament',
+                    attributes: {
+                      conservation_duree: values.conservation_duree,
+                      conservation_frigo: values.conservation_frigo,
+                      denomination: values.denomination,
+                      indications: values.indications,
+                      voies_administration: values.voies_administration.map(
+                        (v) => Number(v.value)
+                      ),
+                    },
+                    relationships: {
+                      composition: {
+                        data: values.composition.map((compo) => ({
+                          type: 'principe-actif',
+                          id: compo.value,
+                        })),
+                      },
+                    },
+                  },
+                })
+                .then(() => setSubmitting(false))
+                .catch((error) => {
+                  alert(error);
+                  setSubmitting(false);
+                });
+            }}
+          >
+            {({ handleSubmit, isSubmitting, setFieldValue, values }) => (
+              <Form onSubmit={handleSubmit}>
+                <FormGroup>
+                  <Label>Dénomination</Label>
+                  <Field
+                    as={Input}
+                    disabled={isSubmitting}
+                    name="denomination"
+                    placeholder="Dénomination"
                   />
-                )}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label>Conservation</Label>
-              <FormGroup check className="ml-1">
-                <Input
-                  name="conservation_frigo"
-                  checked={medicament.conservation_frigo || false}
-                  type="checkbox"
-                  onChange={(e) =>
-                    setValue('conservation_frigo', e.currentTarget.checked)
-                  }
-                />
-                <Label check className="text-muted">
-                  Se conserve au frigo avant ouverture
-                </Label>
-              </FormGroup>
-              <MultipleInputs
-                addValue={() => {
-                  setValue(`conservation_duree.${uniqueId('conservation_')}`, {
-                    laboratoire: '',
-                    duree: '',
-                  });
-                }}
-                removeValue={(id) => {
-                  unset(medicament, `conservation_duree.${id}`);
-                  setMedicament({
-                    ...medicament,
-                  });
-                }}
-                lines={keys(medicament.conservation_duree).map((id) => ({
-                  id,
-                  value: medicament.conservation_duree[id],
-                }))}
-                render={(conservation, id) => (
-                  <Row>
-                    <Col sm={5}>
-                      <Input
-                        name={`conservation_duree[][laboratoire]`}
-                        value={conservation.laboratoire || ''}
-                        placeholder="Laboratoire"
-                        type="text"
-                        onChange={(e) =>
-                          setValue(
-                            `conservation_duree.${id}.laboratoire`,
-                            e.currentTarget.value
-                          )
-                        }
+                </FormGroup>
+                <FormGroup>
+                  <Label>Composition</Label>
+                  <Field
+                    as={AsyncCreatableSelect}
+                    name="composition"
+                    isDisabled={isCreatingOption || isSubmitting}
+                    isMulti
+                    isLoading={isCreatingOption}
+                    loadOptions={loadPrincipeActifs}
+                    onChange={(options: Option[]) =>
+                      setFieldValue('composition', options)
+                    }
+                    onCreateOption={createPrincipeActif}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label>Voies d'administration</Label>
+                  <Field
+                    as={Select}
+                    name="voies_administration"
+                    isDisabled={isSubmitting}
+                    isMulti
+                    onChange={(options: Option[]) =>
+                      setFieldValue('voies_administration', options)
+                    }
+                    options={keys(voiesAdministration).map((i) => ({
+                      value: String(i),
+                      label: voiesAdministration[i],
+                    }))}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label>Indications</Label>
+                  <FieldArray
+                    name="indications"
+                    render={(helpers) => (
+                      <div>
+                        {(values.indications || []).map((indication, index) => (
+                          <Row key={index} className="mb-2">
+                            <Col>
+                              <InputGroup>
+                                <Field
+                                  as={Input}
+                                  disabled={isSubmitting}
+                                  name={`indications.${index}`}
+                                  placeholder="Indication"
+                                />
+                                <InputGroupAddon addonType="append">
+                                  <Button
+                                    color="light"
+                                    disabled={isSubmitting}
+                                    size="sm"
+                                    onClick={() => helpers.remove(index)}
+                                    outline
+                                    type="button"
+                                  >
+                                    <FaMinusCircle />
+                                  </Button>
+                                </InputGroupAddon>
+                              </InputGroup>
+                            </Col>
+                          </Row>
+                        ))}
+                        <Row>
+                          <Col>
+                            <Button
+                              className="text-left"
+                              color="link"
+                              disabled={isSubmitting}
+                              onClick={() => helpers.push('')}
+                              size="sm"
+                              type="button"
+                            >
+                              <FaPlusCircle /> Ajouter une indication
+                            </Button>
+                          </Col>
+                        </Row>
+                      </div>
+                    )}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label>Conservation</Label>
+                  <FormGroup check className="mb-2">
+                    <Label check className="text-muted">
+                      <Field
+                        as={Input}
+                        disabled={isSubmitting}
+                        name="conservation_frigo"
+                        type="checkbox"
                       />
-                    </Col>
-                    <Col sm={7}>
-                      <Input
-                        name={`conservation_duree[][duree]`}
-                        value={conservation.duree || ''}
-                        placeholder="Durée"
-                        type="text"
-                        onChange={(e) =>
-                          setValue(
-                            `conservation_duree.${id}.duree`,
-                            e.currentTarget.value
+                      Se conserve au frigo avant ouverture
+                    </Label>
+                  </FormGroup>
+                  <FieldArray name="conservation_duree">
+                    {(helpers) => (
+                      <div>
+                        {(values.conservation_duree || []).map(
+                          (conservation, index) => (
+                            <Row key={index} className="mb-2">
+                              <Col>
+                                <InputGroup>
+                                  <Field
+                                    as={Input}
+                                    disabled={isSubmitting}
+                                    name={`conservation_duree.${index}.laboratoire`}
+                                    placeholder="Laboratoire"
+                                  />
+                                  <Field
+                                    as={Input}
+                                    className="border-left pl-2"
+                                    disabled={isSubmitting}
+                                    name={`conservation_duree.${index}.duree`}
+                                    placeholder="Durée de conservation après ouverture"
+                                    style={{ width: '45%' }}
+                                  />
+                                  <InputGroupAddon addonType="append">
+                                    <Button
+                                      color="light"
+                                      disabled={isSubmitting}
+                                      size="sm"
+                                      onClick={() => helpers.remove(index)}
+                                      outline
+                                      type="button"
+                                    >
+                                      <FaMinusCircle />
+                                    </Button>
+                                  </InputGroupAddon>
+                                </InputGroup>
+                              </Col>
+                            </Row>
                           )
-                        }
-                      />
-                    </Col>
-                  </Row>
+                        )}
+                        <Row>
+                          <Col>
+                            <Button
+                              className="text-left"
+                              color="link"
+                              disabled={isSubmitting}
+                              onClick={() => helpers.push('')}
+                              size="sm"
+                              type="button"
+                            >
+                              <FaPlusCircle /> Ajouter une durée de conservation
+                              après ouverture
+                            </Button>
+                          </Col>
+                        </Row>
+                      </div>
+                    )}
+                  </FieldArray>
+                </FormGroup>
+                <div className="text-center">
+                  <Button
+                    type="submit"
+                    disabled={isCreatingOption || isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <React.Fragment>
+                        <Spinner size="sm" />
+                        Enregistrement en cours...
+                      </React.Fragment>
+                    ) : (
+                      'Enregistrer'
+                    )}
+                  </Button>
+                </div>
+                {isSubmitting && (
+                  <CardImgOverlay className="d-flex justify-content-center align-items-center bg-light">
+                    <Spinner size="sm" className="mr-3" />
+                    Enregistrement en cours...
+                  </CardImgOverlay>
                 )}
-              />
-            </FormGroup>
-            <Button type="submit" disabled={isSubmitting || isCreatingOption}>
-              {isSubmitting
-                ? [<Spinner size="sm" />, 'Enregistrement en cours...']
-                : 'Enregistrer'}
-            </Button>
-            {isSubmitting && (
-              <CardImgOverlay className="d-flex justify-content-center align-items-center bg-light">
-                <Spinner size="sm" className="mr-3" />
-                Enregistrement en cours...
-              </CardImgOverlay>
+              </Form>
             )}
-          </Form>
+          </Formik>
         </CardBody>
       </Card>
-      {medicament.precautions && keys(medicament.precautions).length > 0 && (
-        <CardColumns className="mt-2">
-          {keys(medicament.precautions).map((id) => (
-            <Card key={id}>
-              <CardBody>
-                <Input
-                  type="textarea"
-                  value={medicament.precautions[id].commentaire}
-                  onChange={(e) =>
-                    setValue(`precautions.${id}`, e.currentTarget.value)
-                  }
-                />
-              </CardBody>
-            </Card>
-          ))}
-        </CardColumns>
-      )}
+      <ConditionalWrapper
+        condition={
+          medicament.precautions && keys(medicament.precautions).length > 0
+        }
+        wrapper={CardColumns}
+      >
+        {keys(medicament.precautions).map((id) => (
+          <Card key={id}>
+            <CardBody>
+              <TextareaAutosize
+                className="form-control"
+                value={medicament.precautions[id].commentaire}
+                onChange={(e) =>
+                  setValue(`precautions.${id}`, e.currentTarget.value)
+                }
+              />
+            </CardBody>
+          </Card>
+        ))}
+      </ConditionalWrapper>
     </React.Fragment>
   );
 };
