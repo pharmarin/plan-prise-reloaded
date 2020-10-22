@@ -71,35 +71,6 @@ const MedicamentEdit = ({
     }));
   }, 500);
 
-  const createPrincipeActif = (value: string) => {
-    setCreatingOption(true);
-    const url = requestUrl('principe-actif');
-    axios
-      .post(url.url, {
-        data: {
-          type: 'principe-actif',
-          attributes: {
-            denomination: value,
-          },
-        },
-      })
-      .then((res) => res.data)
-      .then((res) => {
-        const id = res.data.id;
-        const denomination = res.data.attributes.denomination;
-        setValue(`composition[${(medicament.composition || []).length}]`, {
-          id,
-          type: 'principe-actif',
-          denomination,
-        } as IExtractModel<IModels.PrincipeActif>);
-        setCreatingOption(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        setCreatingOption(false);
-      });
-  };
-
   useEffect(() => {
     updateAppNav({
       title: `Modification de ${medicament.denomination}`,
@@ -191,7 +162,36 @@ const MedicamentEdit = ({
                     onChange={(options: Option[]) =>
                       setFieldValue('composition', options)
                     }
-                    onCreateOption={createPrincipeActif}
+                    onCreateOption={(value: string) => {
+                      setCreatingOption(true);
+                      const url = requestUrl('principe-actif');
+                      axios
+                        .post(url.url, {
+                          data: {
+                            type: 'principe-actif',
+                            attributes: {
+                              denomination: value,
+                            },
+                          },
+                        })
+                        .then((res) => res.data)
+                        .then((res) => {
+                          const id = res.data.id;
+                          const denomination = res.data.attributes.denomination;
+                          setFieldValue('composition', [
+                            ...values.composition,
+                            {
+                              value: id,
+                              label: denomination,
+                            },
+                          ]);
+                          setCreatingOption(false);
+                        })
+                        .catch((e) => {
+                          console.error(e);
+                          setCreatingOption(false);
+                        });
+                    }}
                   />
                 </FormGroup>
                 <FormGroup>
