@@ -13,6 +13,10 @@ declare namespace IProps {
     interface MedicamentTable {
       data: IExtractModel<IModels.Medicament>[];
     }
+    interface PrecautionEdit {
+      cibles: { id: string; type: string; label: string }[];
+      precaution: IExtractModel<IModels.Precaution>;
+    }
   }
   interface Card {
     id: IMedicamentID;
