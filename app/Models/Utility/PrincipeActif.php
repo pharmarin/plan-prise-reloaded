@@ -12,6 +12,11 @@ class PrincipeActif extends Model
   public $timestamps = false;
   protected $fillable = ['denomination'];
 
+  public function getTypeAttribute()
+  {
+    return 'principe-actif';
+  }
+
   public function medicaments()
   {
     return $this->hasManyJson(

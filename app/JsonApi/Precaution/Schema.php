@@ -31,11 +31,28 @@ class Schema extends SchemaProvider
     return [
       'cible' =>
         (new $resource->precaution_cible_type())->type .
-        '-' .
+        '_' .
         $resource->precaution_cible_id,
       'commentaire' => $resource->commentaire,
       'population' => $resource->population,
       'voie_administration' => $resource->voie_administration,
+    ];
+  }
+
+  public function getRelationships(
+    $precaution,
+    $isPrimary,
+    array $includeRelationships
+  ) {
+    return [
+      'precaution_cible' => [
+        self::SHOW_SELF => true,
+        self::SHOW_RELATED => true,
+        self::SHOW_DATA => isset($includeRelationships['precaution_cible']),
+        self::DATA => function () use ($precaution) {
+          return $precaution->precaution_cible;
+        },
+      ],
     ];
   }
 }

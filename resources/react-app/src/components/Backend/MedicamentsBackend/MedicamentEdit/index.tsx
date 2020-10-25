@@ -168,11 +168,10 @@ const MedicamentEdit = ({
                     },
                   },
                 })
-                .then(() => setSubmitting(false))
                 .catch((error) => {
                   alert(error);
-                  setSubmitting(false);
-                });
+                })
+                .finally(() => setSubmitting(false));
             }}
             validateOnBlur
             validationSchema={yup.object().shape({
@@ -413,11 +412,11 @@ const MedicamentEdit = ({
             key={precaution.id}
             cibles={[
               {
-                id: `medicament-${medicament.id}`,
+                id: `medicament_${medicament.id}`,
                 label: medicament.denomination,
               },
               ...medicament.composition.map((compo) => ({
-                id: `principe-actif-${compo.id}`,
+                id: `principe-actif_${compo.id}`,
                 label: compo.denomination,
               })),
             ]}

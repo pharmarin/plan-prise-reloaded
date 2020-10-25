@@ -13,6 +13,6 @@ class Precaution extends Model
 
   public function precaution_cible()
   {
-    return $this->morphedTo();
+    return $this->morphTo();
   }
 }

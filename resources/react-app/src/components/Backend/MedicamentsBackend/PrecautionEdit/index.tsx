@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardBody, Button } from 'reactstrap';
+import { Card, CardBody, Button, CardImgOverlay, Spinner } from 'reactstrap';
 import { Formik, Form, Field } from 'formik';
 import { Input, Submit } from 'formstrap';
 import { keys, startsWith } from 'lodash';
@@ -24,6 +24,30 @@ export default ({
     }).url,
   });
 
+  const [{ loading: saving, error: savingError }, save] = useAxios(
+    {
+      url: requestUrl('precaution', {
+        id: precautionID.id,
+      }).url,
+      method: 'PATCH',
+    },
+    {
+      manual: true,
+    }
+  );
+
+  const [{ loading: deleting, error: deleteError }, deletePrec] = useAxios(
+    {
+      url: requestUrl('precaution', {
+        id: precautionID.id,
+      }).url,
+      method: 'PATCH',
+    },
+    {
+      manual: true,
+    }
+  );
+
   if (loading) {
     return <div>Loading</div>;
   }
@@ -45,6 +69,32 @@ export default ({
           onSubmit={(values, { setSubmitting }) => {
             setSubmitting(true);
             console.log(values);
+            save({
+              data: {
+                data: {
+                  id: precaution.id,
+                  type: precaution.type,
+                  attributes: {
+                    commentaire: values.commentaire,
+                    population: values.population,
+                    voie_administration: startsWith(
+                      values.cible,
+                      'principe-actif'
+                    )
+                      ? values.voie_administration
+                      : 0,
+                  },
+                  relationships: {
+                    precaution_cible: {
+                      data: {
+                        type: (values.cible as string).split('_')[0],
+                        id: (values.cible as string).split('_')[1],
+                      },
+                    },
+                  },
+                },
+              },
+            }).finally(() => setSubmitting(false));
           }}
         >
           {({ handleSubmit, isSubmitting, isValid, values }) => (
@@ -94,13 +144,13 @@ export default ({
                   disabled={!isValid || isSubmitting}
                   size="sm"
                   withLoading
-                  withSpinner
                 >
                   Enregistrer
                 </Submit>
                 <Button
                   color="danger"
                   disabled={!isValid || isSubmitting}
+                  onClick={() => deletePrec()}
                   size="sm"
                   type="button"
                 >
@@ -110,6 +160,41 @@ export default ({
             </Form>
           )}
         </Formik>
+        {(deleting || deleteError || saving || savingError) && (
+          <CardImgOverlay className="d-flex justify-content-center align-items-center bg-light">
+            {saving && (
+              <React.Fragment>
+                <Spinner size="sm" className="mr-3" />
+                Enregistrement en cours...
+              </React.Fragment>
+            )}
+            {savingError && (
+              <React.Fragment>
+                <div>Erreur lors de l'enregistrement</div>
+                <Button color="success" size="sm">
+                  Retour
+                </Button>
+              </React.Fragment>
+            )}
+            {deleting && (
+              <React.Fragment>
+                <Spinner size="sm" className="mr-3" />
+                Suppression en cours...
+              </React.Fragment>
+            )}
+            {deleteError && (
+              <React.Fragment>
+                <div>Erreur lors de la suppression</div>
+                <Button color="danger" onClick={() => deletePrec()} size="sm">
+                  Réessayer
+                </Button>
+                <Button color="success" size="sm">
+                  Retour
+                </Button>
+              </React.Fragment>
+            )}
+          </CardImgOverlay>
+        )}
       </CardBody>
     </Card>
   );
