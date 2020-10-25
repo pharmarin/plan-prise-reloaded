@@ -25,6 +25,8 @@ type IExtractModel<T> = Exclude<T, 'attributes' | 'relationships'> &
     relationshipNames: string[];
   };
 
+type IExtractID<T> = Pick<T, 'id' | 'type'>;
+
 declare namespace IModels {
   interface Medicament {
     id: string;

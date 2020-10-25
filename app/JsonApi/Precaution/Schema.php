@@ -29,6 +29,10 @@ class Schema extends SchemaProvider
   public function getAttributes($resource)
   {
     return [
+      'cible' =>
+        (new $resource->precaution_cible_type())->type .
+        '-' .
+        $resource->precaution_cible_id,
       'commentaire' => $resource->commentaire,
       'population' => $resource->population,
       'voie_administration' => $resource->voie_administration,

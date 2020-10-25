@@ -57,7 +57,7 @@ class Schema extends SchemaProvider
         self::SHOW_DATA => isset($includeRelationships['precautions']),
         self::DATA => function () use ($medicament) {
           return $medicament->precautions;
-        },
+        }
       ],
     ];
   }

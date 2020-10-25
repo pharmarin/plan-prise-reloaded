@@ -22,9 +22,11 @@ export default () => {
   const requestUrl = (
     type: string,
     query?: {
+      id?: string;
       page?: number;
       sort?: string;
       include?: string[];
+      fields?: { [type: string]: string[] };
       filter?: { field: string; value: string };
     }
   ) => {
@@ -35,12 +37,22 @@ export default () => {
       ...(query && query.include
         ? { include: `include=${(query.include || []).join(',')}` }
         : {}),
+      ...(query && query.fields
+        ? {
+            fields: keys(query.fields)
+              .map(
+                (type) =>
+                  `fields[${type}]=${(query.fields![type] || []).join(',')}`
+              )
+              .join('&'),
+          }
+        : {}),
       ...(query && query.filter
         ? { filter: `filter[${query.filter.field}]=${query.filter.value}` }
         : {}),
     };
     return {
-      url: `${base}${
+      url: `${base}${query && query.id ? `/${query.id}` : ''}${
         keys(params).length > 0 ? '?' + values(params).join('&') : ''
       }`,
       base,
@@ -50,10 +62,17 @@ export default () => {
 
   const sync = (c: any) => setCache(c);
 
-  const extractOne = (identifier: { id: string; type: string }) => {
+  const extractOne = (
+    identifier: { id: string; type: string },
+    cacheOverride?: any
+  ) => {
     if (!identifier) return null;
 
-    const entity = cloneDeep(get(cache, `${identifier.type}.${identifier.id}`));
+    const usedCache = cacheOverride ? cacheOverride : cache;
+
+    const entity = cloneDeep(
+      get(usedCache, `${identifier.type}.${identifier.id}`)
+    );
 
     if (!entity) return null;
 
@@ -65,7 +84,7 @@ export default () => {
           (relationships[k] = (
             relationships[k].data || []
           ).map((relatedIdentifier: { id: string; type: string }) =>
-            extractOne(relatedIdentifier)
+            extractOne(relatedIdentifier, cacheOverride)
           ))
       );
     }
@@ -83,10 +102,23 @@ export default () => {
     return identifiers.map((i) => extractOne(i));
   };
 
+  const normalizeOne = (
+    identifier: { id: string; type: string },
+    response: any
+  ) => {
+    const normalized = normalize(response, {
+      camelizeKeys: false,
+      camelizeTypeValues: false,
+    });
+
+    return extractOne(identifier, normalized);
+  };
+
   return {
     extractOne,
     extractMany,
     normalize,
+    normalizeOne,
     requestUrl,
     sync,
   };

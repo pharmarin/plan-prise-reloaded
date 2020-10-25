@@ -31,6 +31,8 @@ import { FaMinusCircle, FaPlusCircle } from 'react-icons/fa';
 import { Option } from 'react-select/src/filters';
 import * as yup from 'yup';
 import PrecautionEdit from '../PrecautionEdit';
+import useAxios from 'axios-hooks';
+import SplashScreen from 'components/App/SplashScreen';
 
 yup.setLocale({
   mixed: {
@@ -47,10 +49,25 @@ const connector = connect(null, mapDispatch);
 type MedicamentEditProps = ConnectedProps<typeof connector> &
   IProps.Backend.MedicamentEdit;
 
-const MedicamentEdit = ({ medicament, updateAppNav }: MedicamentEditProps) => {
-  const { requestUrl } = useJsonApi();
+const MedicamentEdit = ({
+  medicament: medicamentID,
+  updateAppNav,
+}: MedicamentEditProps) => {
+  const { normalizeOne, requestUrl } = useJsonApi();
+
   const voiesAdministration = useConfig('default.voies_administration');
+
   const [isCreatingOption, setCreatingOption] = useState(false);
+
+  const [{ data, loading, error }] = useAxios<
+    IServerResponse<IModels.Medicament>
+  >({
+    url: requestUrl('medicament', {
+      id: medicamentID.id,
+      include: ['composition', 'precautions'],
+      fields: { precaution: ['id'] },
+    }).url,
+  });
 
   const loadPrincipeActifs = debounce(async (query) => {
     const url = requestUrl('principe-actif', {
@@ -70,14 +87,36 @@ const MedicamentEdit = ({ medicament, updateAppNav }: MedicamentEditProps) => {
 
   useEffect(() => {
     updateAppNav({
-      title: `Modification de ${medicament.denomination}`,
+      title: `Modification de ${medicamentID.denomination}`,
       returnTo: {
         path: '/admin',
         label: 'arrow-left',
       },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [medicament.denomination]);
+  });
+
+  if (loading) {
+    return (
+      <SplashScreen
+        type="load"
+        message={`Chargement des données pour ${medicamentID.denomination}`}
+      />
+    );
+  }
+
+  if (error || !data) {
+    throw new Error(
+      `Impossible de charger les données pour ${medicamentID.denomination}`
+    );
+  }
+
+  const medicament = normalizeOne(
+    {
+      id: medicamentID.id,
+      type: medicamentID.type,
+    },
+    data
+  ) as IExtractModel<IModels.Medicament>;
 
   return (
     <React.Fragment>
@@ -374,13 +413,11 @@ const MedicamentEdit = ({ medicament, updateAppNav }: MedicamentEditProps) => {
             key={precaution.id}
             cibles={[
               {
-                type: 'medicament',
-                id: medicament.id,
+                id: `medicament-${medicament.id}`,
                 label: medicament.denomination,
               },
               ...medicament.composition.map((compo) => ({
-                type: 'principe-actif',
-                id: compo.id,
+                id: `principe-actif-${compo.id}`,
                 label: compo.denomination,
               })),
             ]}

@@ -1,7 +1,8 @@
 declare namespace IProps {
   declare namespace Backend {
     interface MedicamentEdit {
-      medicament: IExtractModel<IModels.Medicament>;
+      medicament: IExtractID<IModels.Medicament> &
+        Pick<IExtractModel<IModels.Medicament>, 'denomination' | 'precautions'>;
     }
     interface MedicamentPagination {
       last: number | null;
@@ -14,8 +15,8 @@ declare namespace IProps {
       data: IExtractModel<IModels.Medicament>[];
     }
     interface PrecautionEdit {
-      cibles: { id: string; type: string; label: string }[];
-      precaution: IExtractModel<IModels.Precaution>;
+      cibles: { id: string; label: string }[];
+      precaution: IExtractID<IModels.Precaution>;
     }
   }
   interface Card {

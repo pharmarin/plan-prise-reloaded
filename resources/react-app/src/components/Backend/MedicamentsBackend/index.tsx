@@ -58,10 +58,18 @@ const MedicamentsBackend = ({ updateAppNav }: MedicamentsBackendProps) => {
     page,
     sort: 'denomination',
     include: ['composition', 'precautions'],
+    fields: {
+      medicament: ['denomination', 'composition', 'precautions'],
+    },
   });
 
   const [{ data, loading, error }, execute] = useAxios<
-    IServerResponse<IModels.Medicament>
+    IServerResponse<
+      Pick<
+        IExtractModel<IModels.Medicament>,
+        'id' | 'denomination' | 'precautions' | 'type'
+      >
+    >
   >(
     {
       url: currentUrl.url,

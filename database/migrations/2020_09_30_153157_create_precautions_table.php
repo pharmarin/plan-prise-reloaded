@@ -18,6 +18,8 @@ class CreatePrecautionsTable extends Migration
       $table->integer('voie_administration');
       $table->string('population');
       $table->text('commentaire');
+      $table->string('precaution_cible_type');
+      $table->bigInteger('precaution_cible_id');
     });
   }
 

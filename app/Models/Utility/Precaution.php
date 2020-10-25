@@ -11,19 +11,8 @@ class Precaution extends Model
   protected $fillable = ['commentaire', 'population', 'voie_administration'];
   public $timestamps = false;
 
-  public function medicaments()
+  public function precaution_cible()
   {
-    return $this->morphedByMany(
-      \App\Models\Medicament::class,
-      'precaution_cible'
-    );
-  }
-
-  public function principes_actifs()
-  {
-    return $this->morphedByMany(
-      \App\Models\Utility\PrincipeActif::class,
-      'precaution_cible'
-    );
+    return $this->morphedTo();
   }
 }

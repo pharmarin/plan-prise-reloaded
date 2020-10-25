@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Log\Logger;
+use Illuminate\Support\Facades\Log;
 
 class Medicament extends Model
 {
@@ -41,19 +43,9 @@ class Medicament extends Model
 
   public function precautions()
   {
-    return $this->morphToMany(
+    return $this->morphMany(
       \App\Models\Utility\Precaution::class,
       'precaution_cible'
     );
-  }
-
-  public function getConservationDureeAttribute($conservations)
-  {
-    return array_map(function ($conservation) {
-      return [
-        "laboratoire" => strval($conservation->laboratoire),
-        "duree" => strval($conservation->duree)
-      ];
-    }, json_decode($conservations));
   }
 }

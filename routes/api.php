@@ -26,6 +26,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
       $api->resource('medicament')->only('index', 'read', 'update');
       $api->resource('api-medicament')->only('read');
       $api->resource('principe-actif')->only('index', 'create');
+      $api->resource('precaution')->only('read');
     });
     /* plan-prise */
     Route::resource('plan-prise', 'Api\v1\PlanPriseController')->only([
