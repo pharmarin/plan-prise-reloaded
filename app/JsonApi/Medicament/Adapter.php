@@ -2,6 +2,7 @@
 
 namespace App\JsonApi\Medicament;
 
+use App\JsonApi\CustomRelations\BelongsToJson;
 use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
 use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;
 use Illuminate\Database\Eloquent\Builder;
@@ -47,7 +48,12 @@ class Adapter extends AbstractAdapter
     $this->filterWithScopes($query, $filters);
   }
 
-  protected function updating($resource, $query)
+  protected function composition()
+  {
+    return new BelongsToJson('composition');
+  }
+
+  /*protected function updating($resource, $query)
   {
     if ($query->composition) {
       $resource
@@ -66,5 +72,5 @@ class Adapter extends AbstractAdapter
         )
         ->save();
     }
-  }
+  }*/
 }

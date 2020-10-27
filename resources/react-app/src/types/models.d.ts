@@ -17,7 +17,7 @@ declare interface IServerResponse<T> {
   };
 }
 
-type IExtractModel<T> = Exclude<T, 'attributes' | 'relationships'> &
+type IExtractModel<T> = Omit<T, 'attributes' | 'relationships'> &
   { [A in keyof T['attributes']]: T['attributes'][A] } &
   {
     [R in keyof T['relationships']]: IExtractModel<T['relationships'][R][0]>[];

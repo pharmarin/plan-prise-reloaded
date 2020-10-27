@@ -11,6 +11,7 @@ import useJsonApi from 'helpers/hooks/use-json-api';
 export default ({
   cibles,
   precaution: precautionID,
+  remove,
 }: IProps.Backend.PrecautionEdit) => {
   const voiesAdministration = useConfig('default.voies_administration');
 
@@ -60,6 +61,10 @@ export default ({
     { id: precautionID.id, type: precautionID.type },
     data
   );
+
+  const handleDelete = () => {
+    deletePrec().then(() => remove(precautionID.id));
+  };
 
   return (
     <Card>
@@ -150,7 +155,7 @@ export default ({
                 <Button
                   color="danger"
                   disabled={!isValid || isSubmitting}
-                  onClick={() => deletePrec()}
+                  onClick={handleDelete}
                   size="sm"
                   type="button"
                 >
@@ -185,7 +190,7 @@ export default ({
             {deleteError && (
               <React.Fragment>
                 <div>Erreur lors de la suppression</div>
-                <Button color="danger" onClick={() => deletePrec()} size="sm">
+                <Button color="danger" onClick={handleDelete} size="sm">
                   Réessayer
                 </Button>
                 <Button color="success" size="sm">

@@ -47,42 +47,8 @@ class Adapter extends AbstractAdapter
     $this->filterWithScopes($query, $filters);
   }
 
-  protected function updating($resource, $query)
+  protected function precautionCible()
   {
-    if ($query->precaution_cible) {
-      if ($query->precaution_cible['type'] === 'medicament') {
-        $medicament = Medicament::find($query->precaution_cible['id']);
-        if (!$medicament) {
-          throw new JsonApiException(
-            Error::fromArray([
-              'title' => 'Aucun médicament à rattacher à la précaution',
-              'detail' => '',
-              'status' => '500',
-            ])
-          );
-        }
-        $resource->precaution_cible()->associate($medicament);
-      } elseif ($query->precaution_cible['type'] === 'principe-actif') {
-        $pa = PrincipeActif::find($query->precaution_cible['id']);
-        if (!$pa) {
-          throw new JsonApiException(
-            Error::fromArray([
-              'title' => 'Aucun principe actif à rattacher à la précaution',
-              'detail' => '',
-              'status' => '500',
-            ])
-          );
-        }
-        $resource->precaution_cible()->associate($pa);
-      } else {
-        throw new JsonApiException(
-          Error::fromArray([
-            'title' => 'Aucun type à rattacher à la précaution',
-            'detail' => '',
-            'status' => '500',
-          ])
-        );
-      }
-    }
+    return $this->belongsTo();
   }
 }
