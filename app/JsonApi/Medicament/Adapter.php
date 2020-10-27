@@ -52,25 +52,4 @@ class Adapter extends AbstractAdapter
   {
     return new BelongsToJson('composition');
   }
-
-  /*protected function updating($resource, $query)
-  {
-    if ($query->composition) {
-      $resource
-        ->composition()
-        ->sync(
-          array_map(function ($compo) {
-            if (is_numeric($compo['id'])) {
-              return intval($compo['id']);
-            } else {
-              $new_compo = PrincipeActif::create([
-                'denomination' => $compo['id'],
-              ]);
-              return $new_compo->id;
-            }
-          }, $query->composition)
-        )
-        ->save();
-    }
-  }*/
 }
