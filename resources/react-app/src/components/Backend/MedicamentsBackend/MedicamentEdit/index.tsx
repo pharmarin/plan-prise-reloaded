@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Button, CardColumns } from 'reactstrap';
 import { updateAppNav } from 'store/app';
@@ -25,12 +25,18 @@ const MedicamentEdit = ({
 }: MedicamentEditProps) => {
   const { normalizeOne, requestUrl } = useJsonApi();
 
+  const [precautions, setPrecautions] = useState<
+    undefined | IExtractModel<IModels.Precaution>[]
+  >();
+
+  let medicament: IExtractModel<IModels.Medicament> | undefined = undefined;
+
   const [{ data, loading, error }] = useAxios<
     IServerResponse<IModels.Medicament>
   >({
     url: requestUrl('medicament', {
       id: medicamentID.id,
-      include: ['composition', 'precautions'],
+      include: ['bdpm', 'composition', 'precautions'],
       fields: { precaution: ['id'] },
     }).url,
   });
@@ -44,6 +50,12 @@ const MedicamentEdit = ({
       },
     });
   });
+
+  useEffect(() => {
+    if (medicament) {
+      setPrecautions(medicament.precautions);
+    }
+  }, [medicament]);
 
   if (loading) {
     return (
@@ -60,7 +72,7 @@ const MedicamentEdit = ({
     );
   }
 
-  const medicament = normalizeOne(
+  medicament = normalizeOne(
     {
       id: medicamentID.id,
       type: medicamentID.type,
@@ -72,7 +84,7 @@ const MedicamentEdit = ({
     <React.Fragment>
       <AttributesEdit medicament={medicament} />
       <ConditionalWrapper
-        condition={medicament.precautions && medicament.precautions.length > 0}
+        condition={(precautions || []).length > 0}
         wrapper={CardColumns}
       >
         <React.Fragment>
@@ -81,31 +93,36 @@ const MedicamentEdit = ({
               key={precaution.id}
               cibles={[
                 {
-                  id: `medicament_${medicament.id}`,
-                  label: medicament.denomination,
+                  id: `medicament_${medicament?.id}`,
+                  label: medicament?.denomination || '',
                 },
-                ...medicament.composition.map((compo) => ({
+                ...(medicament?.composition || []).map((compo) => ({
                   id: `principe-actif_${compo.id}`,
                   label: compo.denomination,
                 })),
               ]}
               precaution={precaution}
-              remove={(id: string) => remove(medicament.precautions, { id })}
+              remove={(id: string) =>
+                remove(medicament?.precautions || [], { id })
+              }
             />
           ))}
           <Button
             color="light"
             size="sm"
-            onClick={() =>
-              medicament.precautions.push({
-                id: uniqueId('new_'),
-                type: 'precaution',
-                commentaire: '',
-                population: '',
-                relationshipNames: [],
-                voie_administration: 0,
-              })
-            }
+            onClick={() => {
+              setPrecautions([
+                ...(precautions || []),
+                {
+                  id: uniqueId('new_'),
+                  type: 'precaution',
+                  commentaire: '',
+                  population: '',
+                  relationshipNames: [],
+                  voie_administration: 0,
+                },
+              ]);
+            }}
           >
             Ajouter une précaution
           </Button>

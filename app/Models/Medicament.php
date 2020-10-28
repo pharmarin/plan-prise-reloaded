@@ -2,25 +2,27 @@
 
 namespace App\Models;
 
+use App\Models\Utility\PrincipeActif;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Log\Logger;
-use Illuminate\Support\Facades\Log;
+use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 class Medicament extends Model
 {
-  use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
+  use HasJsonRelationships;
 
   protected $appends = ['type'];
+
   protected $casts = [
+    'cis' => 'array',
     'conservation_duree' => 'array',
     'conservation_frigo' => 'boolean',
     'indications' => 'array',
     'principes_actifs' => 'array',
     'voies_administration' => 'array',
   ];
+
   protected $fillable = [
     'denomination',
-    'composition',
     'principes_actifs',
     'indications',
     'conservation_frigo',
@@ -36,7 +38,7 @@ class Medicament extends Model
   public function composition()
   {
     return $this->belongsToJson(
-      \App\Models\Utility\PrincipeActif::class,
+      PrincipeActif::class,
       'principes_actifs'
     );
   }

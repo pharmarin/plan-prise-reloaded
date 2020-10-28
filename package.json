@@ -29,6 +29,8 @@
     "react-sanctum": "^0.0.9",
     "react-scripts-laravel": "3.3.0-rc.3",
     "react-select": "^3.1.0",
+    "react-select-async-paginate": "^0.4.1",
+    "react-select-fetch": "^0.2.1",
     "react-spring": "^8.0.27",
     "react-textarea-autosize": "^8.2.0",
     "react-transition-group": "^4.4.1",

@@ -39,8 +39,16 @@ declare namespace IModels {
       voies_administration: number[];
     };
     relationships: {
+      bdpm: BDPM[];
       composition: PrincipeActif[];
       precautions: Precaution[];
+    };
+  }
+  interface BDPM {
+    id: string;
+    type: 'api-medicaments';
+    attributes: {
+      denomination: string;
     };
   }
   interface Precaution {

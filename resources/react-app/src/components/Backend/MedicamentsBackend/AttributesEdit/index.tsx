@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import AsyncCreatableSelect from 'react-select/async-creatable';
 import {
   Button,
   Card,
@@ -21,7 +20,9 @@ import debounce from 'debounce-promise';
 import { Input, Submit } from 'formstrap';
 import useConfig from 'helpers/hooks/use-config';
 import { keys } from 'lodash';
-import Select from 'react-select';
+import Select, { InputActionTypes } from 'react-select';
+import AsyncCreatableSelect from 'react-select/async-creatable';
+import { AsyncPaginate } from 'react-select-async-paginate';
 import { Formik, Field, FieldArray } from 'formik';
 import { FaMinusCircle, FaPlusCircle } from 'react-icons/fa';
 import { Option } from 'react-select/src/filters';
@@ -36,7 +37,9 @@ yup.setLocale({
 type AttributesEditProps = IProps.Backend.AttributesEdit;
 
 export default ({ medicament }: AttributesEditProps) => {
-  const { normalizeOne, requestUrl } = useJsonApi();
+  const { requestUrl } = useJsonApi();
+
+  const [CISInputValue, setCISInputValue] = useState(medicament.denomination);
 
   const voiesAdministration = useConfig('default.voies_administration');
 
@@ -63,18 +66,24 @@ export default ({ medicament }: AttributesEditProps) => {
       <CardBody>
         <Formik
           initialValues={{
+            bdpm: (medicament.bdpm || []).map((bdpm) => ({
+              value: bdpm.id,
+              label: bdpm.denomination,
+            })),
             denomination: medicament.denomination,
-            composition: medicament.composition.map((c) => ({
+            composition: (medicament.composition || []).map((c) => ({
               label: c.denomination,
               value: c.id,
             })),
-            voies_administration: medicament.voies_administration.map((i) => ({
-              value: String(i),
-              label: voiesAdministration[i],
-            })),
-            indications: medicament.indications,
+            voies_administration: (medicament.voies_administration || []).map(
+              (i) => ({
+                value: String(i),
+                label: voiesAdministration[i],
+              })
+            ),
+            indications: medicament.indications || [],
             conservation_frigo: medicament.conservation_frigo,
-            conservation_duree: medicament.conservation_duree.filter(
+            conservation_duree: (medicament.conservation_duree || []).filter(
               (c) => c.laboratoire.length > 0 || c.duree.length > 0
             ),
           }}
@@ -87,15 +96,21 @@ export default ({ medicament }: AttributesEditProps) => {
                   id: String(medicament.id),
                   type: 'medicament',
                   attributes: {
-                    conservation_duree: values.conservation_duree,
-                    conservation_frigo: values.conservation_frigo,
+                    conservation_duree: values.conservation_duree || [],
+                    conservation_frigo: values.conservation_frigo || false,
                     denomination: values.denomination,
-                    indications: values.indications,
-                    voies_administration: values.voies_administration.map((v) =>
-                      Number(v.value)
-                    ),
+                    indications: values.indications || [],
+                    voies_administration: (
+                      values.voies_administration || []
+                    ).map((v) => Number(v.value)),
                   },
                   relationships: {
+                    bdpm: {
+                      data: (values.bdpm || []).map((bdpm) => ({
+                        type: 'api-medicaments',
+                        id: bdpm.value,
+                      })),
+                    },
                     composition: {
                       data: (values.composition || []).map((compo) => ({
                         type: 'principe-actif',
@@ -112,8 +127,39 @@ export default ({ medicament }: AttributesEditProps) => {
           }}
           validateOnBlur
           validationSchema={yup.object().shape({
-            denomination: yup.string().required(),
-            indications: yup.array().of(yup.string().required()),
+            denomination: yup
+              .string()
+              .required('La dénomination doit être remplie'),
+            composition: yup.array().of(
+              yup.object().shape({
+                value: yup.string(),
+                label: yup.string(),
+              })
+            ),
+            bdpm: yup.array().of(
+              yup.object().shape({
+                value: yup.string(),
+                label: yup.string(),
+              })
+            ),
+            voies_administration: yup.array().of(
+              yup.object().shape({
+                value: yup.string(),
+                label: yup.string(),
+              })
+            ),
+            indications: yup
+              .array()
+              .of(yup.string().required("L'indication doit être remplie")),
+            conservation_frigo: yup.boolean(),
+            conservation_duree: yup.array().of(
+              yup.object().shape({
+                laboratoire: yup.string().notRequired(),
+                duree: yup
+                  .string()
+                  .required('La durée de conservation doit être remplie'),
+              })
+            ),
           })}
         >
           {({
@@ -175,6 +221,56 @@ export default ({ medicament }: AttributesEditProps) => {
                         console.error(e);
                         setCreatingOption(false);
                       });
+                  }}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label>Associer à la base de données du médicament</Label>
+                <Field
+                  as={AsyncPaginate}
+                  name="bdpm"
+                  closeMenuOnSelect={false}
+                  debounceTimeout={500}
+                  get={async (url: string, params: any) => {
+                    const response = await axios.get(url, {
+                      params,
+                    });
+                    return response.data;
+                  }}
+                  hideSelectedOptions={false}
+                  inputValue={CISInputValue}
+                  isDisabled={isSubmitting}
+                  isMulti
+                  loadOptions={async (query: string) => {
+                    const response = await axios.get<
+                      IServerResponse<IModels.BDPM[]>
+                    >(
+                      requestUrl('api-medicaments', {
+                        fields: {
+                          denomination: [query],
+                        },
+                      }).url
+                    );
+                    return {
+                      options: response.data.data.map((bdpm) => ({
+                        value: bdpm.id,
+                        label: bdpm.attributes.denomination,
+                      })),
+                      hasMore: false,
+                    };
+                  }}
+                  onChange={(options: Option[]) =>
+                    setFieldValue('bdpm', options)
+                  }
+                  onInputChange={(
+                    query: string,
+                    { action }: { action: InputActionTypes }
+                  ) => {
+                    if (action === 'input-change') {
+                      setCISInputValue(query);
+                      return query;
+                    }
+                    return query;
                   }}
                 />
               </FormGroup>
@@ -320,9 +416,10 @@ export default ({ medicament }: AttributesEditProps) => {
               </FormGroup>
               <div className="text-center">
                 <Submit
-                  color="light"
+                  color="success"
                   type="submit"
                   disabled={isCreatingOption || isSubmitting || !isValid}
+                  size="sm"
                   withLoading
                   withSpinner
                 >

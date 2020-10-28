@@ -29,8 +29,7 @@ class Schema extends SchemaProvider
   public function getAttributes($resource)
   {
     return [
-      'cible' =>
-        (new $resource->precaution_cible_type())->type .
+      'cible' => (new $resource->precaution_cible_type())->type .
         '_' .
         $resource->precaution_cible_id,
       'commentaire' => $resource->commentaire,
@@ -46,8 +45,8 @@ class Schema extends SchemaProvider
   ) {
     return [
       'precaution_cible' => [
-        self::SHOW_SELF => true,
-        self::SHOW_RELATED => true,
+        self::SHOW_SELF => false,
+        self::SHOW_RELATED => false,
         self::SHOW_DATA => isset($includeRelationships['precaution_cible']),
         self::DATA => function () use ($precaution) {
           return $precaution->precaution_cible;

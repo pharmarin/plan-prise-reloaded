@@ -2,6 +2,7 @@
 
 namespace App\JsonApi\Medicament;
 
+use App\Models\ApiMedicament;
 use Neomerx\JsonApi\Schema\SchemaProvider;
 
 class Schema extends SchemaProvider
@@ -43,17 +44,27 @@ class Schema extends SchemaProvider
     array $includeRelationships
   ) {
     return [
+      'bdpm' => [
+        self::SHOW_SELF => false,
+        self::SHOW_RELATED => false,
+        self::SHOW_DATA => isset($includeRelationships['bdpm']),
+        self::DATA => function () use ($medicament) {
+          return collect($medicament->cis)->map(function ($cis) {
+            return ApiMedicament::find($cis);
+          });
+        },
+      ],
       'composition' => [
-        self::SHOW_SELF => true,
-        self::SHOW_RELATED => true,
+        self::SHOW_SELF => false,
+        self::SHOW_RELATED => false,
         self::SHOW_DATA => isset($includeRelationships['composition']),
         self::DATA => function () use ($medicament) {
           return $medicament->composition;
         },
       ],
       'precautions' => [
-        self::SHOW_SELF => true,
-        self::SHOW_RELATED => true,
+        self::SHOW_SELF => false,
+        self::SHOW_RELATED => false,
         self::SHOW_DATA => isset($includeRelationships['precautions']),
         self::DATA => function () use ($medicament) {
           return $medicament->precautions;

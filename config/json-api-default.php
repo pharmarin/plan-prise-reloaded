@@ -1,5 +1,12 @@
 <?php
 
+use App\Models\User;
+use App\Models\PlanPrise;
+use App\Models\Medicament;
+use App\Models\ApiMedicament;
+use App\Models\Utility\Precaution;
+use App\Models\Utility\PrincipeActif;
+
 return [
   /*
     |--------------------------------------------------------------------------
@@ -65,12 +72,12 @@ return [
     | `'posts' => App\Post::class`
     */
   'resources' => [
-    'user' => App\App\Models\User::class,
-    'plan-prise' => App\Models\PlanPrise::class,
-    'medicament' => App\Models\Medicament::class,
-    'principe-actif' => App\Models\Utility\PrincipeActif::class,
-    'precaution' => App\Models\Utility\Precaution::class,
-    'api-medicament' => App\Models\ApiMedicament::class,
+    'user' => User::class,
+    'plan-prise' => PlanPrise::class,
+    'medicament' => Medicament::class,
+    'principe-actif' => PrincipeActif::class,
+    'precaution' => Precaution::class,
+    'api-medicaments' => ApiMedicament::class,
   ],
 
   /*

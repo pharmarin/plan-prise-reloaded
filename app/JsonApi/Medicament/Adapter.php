@@ -3,6 +3,7 @@
 namespace App\JsonApi\Medicament;
 
 use App\JsonApi\CustomRelations\BelongsToJson;
+use App\JsonApi\CustomRelations\ExternalAPI;
 use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
 use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,7 +27,18 @@ class Adapter extends AbstractAdapter
    */
   protected $filterScopes = [];
 
+  protected $includePaths = [
+    'bdpm' => null
+  ];
+
   protected $defaultPagination = ['number' => 20];
+
+  /**
+   * Resource relationship fields that can be filled.
+   *
+   * @var array
+   */
+  protected $relationships = ['composition'];
 
   /**
    * Adapter constructor.
@@ -46,6 +58,11 @@ class Adapter extends AbstractAdapter
   protected function filter($query, Collection $filters)
   {
     $this->filterWithScopes($query, $filters);
+  }
+
+  public function bdpm()
+  {
+    return new ExternalAPI('bdpm');
   }
 
   protected function composition()

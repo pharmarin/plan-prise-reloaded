@@ -67,7 +67,7 @@ const Select = ({
       }
       addItem({ id: value.value, type: value.type });
       if (
-        value.type === 'api-medicament' &&
+        value.type === 'api-medicaments' &&
         !inCache({ id: value.value, type: value.type }, cacheContent)
       ) {
         cache({

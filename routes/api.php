@@ -26,7 +26,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
     Route::resource('generic', 'Api\v1\GenericController')->only(['index']);
     JsonApi::register('default')->routes(function ($api) {
       $api->resource('medicament')->only('index', 'read', 'update');
-      $api->resource('api-medicament')->only('read');
+      $api->resource('api-medicaments')->only('index', 'read');
       $api->resource('principe-actif')->only('index', 'create');
       $api->resource('precaution')->only('read', 'update');
     });

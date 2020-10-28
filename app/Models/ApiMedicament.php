@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
-use Jenssegers\Model\Model;
+use CloudCreativity\LaravelJsonApi\Exceptions\JsonApiException;
+use CloudCreativity\LaravelJsonApi\Document\Error\Error;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class ApiMedicament extends Model
 {
@@ -16,23 +19,31 @@ class ApiMedicament extends Model
     ]);
   }
 
+  static function getCacheID(int $cis)
+  {
+    return 'cis_' . $cis;
+  }
+
   static function find(int $cis)
   {
-    $response = static::init()->get("/medicaments/${cis}");
-    if ($response->getStatusCode() === 200) {
-      $json = $response->getBody()->getContents();
-      $object = json_decode($json);
-      return new ApiMedicament([
-        'id' => $cis,
-        'denomination' => $object->denomination,
-        'loaded' => true,
-      ]);
-    } else {
-      return new ApiMedicament([
-        'id' => $cis,
-        'loaded' => false,
-      ]);
-    }
+    return new ApiMedicament(Cache::remember(static::getCacheID($cis), 6000, function () use ($cis) {
+      $response = static::init()->get("/medicaments/${cis}");
+
+      if ($response->getStatusCode() === 200) {
+        $json = $response->getBody()->getContents();
+        $object = json_decode($json);
+        return [
+          'id' => $cis,
+          'denomination' => $object->denomination,
+          'loaded' => true,
+        ];
+      } else {
+        throw new JsonApiException(Error::fromArray([
+          'title' => 'Impossible d\'accéder au serveur',
+          'status' => '500',
+        ]));
+      }
+    }));
   }
 
   static function where($field, $query)
@@ -48,9 +59,11 @@ class ApiMedicament extends Model
           'loaded' => true,
         ]);
       });
-    } else {
-      return collect([]);
     }
+    throw new JsonApiException(Error::fromArray([
+      'title' => 'Impossible d\'accéder au serveur',
+      'status' => '500',
+    ]));
   }
 
   public function to_medicament()
@@ -60,6 +73,6 @@ class ApiMedicament extends Model
 
   public function getTypeAttribute()
   {
-    return 'api-medicament';
+    return 'api-medicaments';
   }
 }

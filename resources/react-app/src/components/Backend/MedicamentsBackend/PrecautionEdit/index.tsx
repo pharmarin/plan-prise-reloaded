@@ -1,11 +1,21 @@
 import React from 'react';
-import { Card, CardBody, Button, CardImgOverlay, Spinner } from 'reactstrap';
+import useAxios from 'axios-hooks';
+import classNames from 'classnames';
 import { Formik, Form, Field } from 'formik';
+import * as yup from 'yup';
 import { Input, Submit } from 'formstrap';
 import { keys, startsWith } from 'lodash';
 import TextareaAutosize from 'react-textarea-autosize';
+import {
+  Card,
+  CardBody,
+  Button,
+  CardImgOverlay,
+  Spinner,
+  FormFeedback,
+  FormGroup,
+} from 'reactstrap';
 import useConfig from 'helpers/hooks/use-config';
-import useAxios from 'axios-hooks';
 import useJsonApi from 'helpers/hooks/use-json-api';
 
 export default ({
@@ -101,48 +111,72 @@ export default ({
               },
             }).finally(() => setSubmitting(false));
           }}
+          validationSchema={yup.object().shape({
+            cible: yup.string().required(),
+            voie_administration: yup.number().when('cible', {
+              is: (cible) => startsWith(cible, 'principe-actif'),
+              then: yup.number().min(0).max(12),
+              otherwise: yup.number().min(0).max(0),
+            }),
+            population: yup.string().notRequired(),
+            commentaire: yup
+              .string()
+              .required('Un commentaire est obligatoire'),
+          })}
         >
-          {({ handleSubmit, isSubmitting, isValid, values }) => (
+          {({ errors, handleSubmit, isSubmitting, isValid, values }) => (
             <Form onSubmit={handleSubmit}>
-              <Input name="cible" type="select" withFeedback withLoading>
-                {cibles.map((cible) => (
-                  <option key={cible.id} value={cible.id}>
-                    {cible.label}
-                  </option>
-                ))}
-              </Input>
-              {startsWith(values.cible, 'principe-actif') && (
-                <Input
-                  className="mt-1"
-                  name="voie_administration"
-                  type="select"
-                  withFeedback
-                  withLoading
-                >
-                  <option key={0} value={0}>
-                    Voie d'administration
-                  </option>
-                  {keys(voiesAdministration).map((id) => (
-                    <option key={id} value={id}>
-                      {voiesAdministration[id]}
+              <FormGroup>
+                <Input name="cible" type="select" withFeedback withLoading>
+                  {cibles.map((cible) => (
+                    <option key={cible.id} value={cible.id}>
+                      {cible.label}
                     </option>
                   ))}
                 </Input>
+              </FormGroup>
+              {startsWith(values.cible, 'principe-actif') && (
+                <FormGroup>
+                  <Input
+                    className="mt-1"
+                    name="voie_administration"
+                    type="select"
+                    withFeedback
+                    withLoading
+                  >
+                    <option key={0} value={0}>
+                      Toutes les voies d'administration
+                    </option>
+                    {keys(voiesAdministration).map((id) => (
+                      <option key={id} value={id}>
+                        {voiesAdministration[id]}
+                      </option>
+                    ))}
+                  </Input>
+                </FormGroup>
               )}
-              <Input
-                className="mt-1"
-                name="population"
-                placeholder="Population visée (optionnel)"
-                withFeedback
-                withLoading
-              />
-              <Field
-                as={TextareaAutosize}
-                className="form-control mt-1"
-                disabled={isSubmitting}
-                name="commentaire"
-                placeholder="Commentaire"
-              />
+              <FormGroup>
+                <Input
+                  className="mt-1"
+                  name="population"
+                  placeholder="Population visée (optionnel)"
+                  withFeedback
+                  withLoading
+                />
+              </FormGroup>
+              <FormGroup>
+                <Field
+                  as={TextareaAutosize}
+                  className={classNames({
+                    'form-control mt-1': true,
+                    'is-invalid': errors.commentaire !== undefined,
+                  })}
+                  disabled={isSubmitting}
+                  name="commentaire"
+                  placeholder="Commentaire"
+                />
+                <FormFeedback>{errors.commentaire}</FormFeedback>
+              </FormGroup>
               <div className="text-center mt-2">
                 <Submit
                   color="success"

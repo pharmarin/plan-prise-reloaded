@@ -1,18 +1,19 @@
 <?php
 
-namespace App\JsonApi\Medicament;
+namespace App\JsonApi\ApiMedicaments;
 
 use CloudCreativity\LaravelJsonApi\Validation\AbstractValidators;
 
 class Validators extends AbstractValidators
 {
+
   /**
    * The include paths a client is allowed to request.
    *
    * @var string[]|null
    *      the allowed paths, an empty array for none allowed, or null to allow all paths.
    */
-  protected $allowedIncludePaths = ['bdpm', 'composition', 'precautions'];
+  protected $allowedIncludePaths = [];
 
   /**
    * The sort field names a client is allowed send.
@@ -20,7 +21,7 @@ class Validators extends AbstractValidators
    * @var string[]|null
    *      the allowed fields, an empty array for none allowed, or null to allow all fields.
    */
-  protected $allowedSortParameters = ['denomination'];
+  protected $allowedSortParameters = [];
 
   /**
    * The filters a client is allowed send.
@@ -28,16 +29,18 @@ class Validators extends AbstractValidators
    * @var string[]|null
    *      the allowed filters, an empty array for none allowed, or null to allow all.
    */
-  protected $allowedFilteringParameters = [];
+  protected $allowedFilteringParameters = ['denomination'];
 
   /**
    * Get resource validation rules.
    *
    * @param mixed|null $record
    *      the record being updated, or null if creating a resource.
-   * @return mixed
+   * @param array $data
+   *      the data being validated
+   * @return array
    */
-  protected function rules($record = null, array $data): array
+  protected function rules($record, array $data): array
   {
     return [
       //
