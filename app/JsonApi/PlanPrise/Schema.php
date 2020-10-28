@@ -56,9 +56,9 @@ class Schema extends SchemaProvider
   ) {
     return [
       'medicaments' => [
-        self::SHOW_SELF => true,
+        self::SHOW_SELF => false,
         self::SHOW_RELATED => false,
-        self::SHOW_DATA => true,
+        self::SHOW_DATA => isset($includedRelationships['precautions']),
         self::DATA => function () use ($resource) {
           return array_filter(
             array_map(function ($r) {
