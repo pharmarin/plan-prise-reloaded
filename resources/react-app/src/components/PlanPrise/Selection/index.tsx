@@ -83,7 +83,7 @@ const TextFit: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
-const mapState = (state: IReduxState) => ({
+const mapState = (state: IRedux.State) => ({
   list: state.planPrise.list,
 });
 

@@ -8,22 +8,11 @@ class Precaution extends Model
 {
   use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
-  protected $fillable = ['commentaire', 'population', 'voie_administration'];
+  protected $fillable = ['commentaire', 'population', 'voie_administration', 'precaution_cible'];
   public $timestamps = false;
 
-  public function medicaments()
+  public function precautionCible()
   {
-    return $this->morphedByMany(
-      \App\Models\Medicament::class,
-      'precaution_cible'
-    );
-  }
-
-  public function principes_actifs()
-  {
-    return $this->morphedByMany(
-      \App\Models\Utility\PrincipeActif::class,
-      'precaution_cible'
-    );
+    return $this->morphTo();
   }
 }

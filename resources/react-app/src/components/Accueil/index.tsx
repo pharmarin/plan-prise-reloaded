@@ -6,6 +6,7 @@ import { updateAppNav } from 'store/app';
 const mapDispatch = {
   updateAppNav,
 };
+
 const connector = connect(null, mapDispatch);
 type AccueilProps = ConnectedProps<typeof connector>;
 
@@ -22,6 +23,7 @@ const Accueil = (props: AccueilProps) => {
     <div>
       <p>Welcome !!</p>
       <Link to="/plan-prise">Plan de prise</Link>
+      <Link to="/admin">Administration</Link>
     </div>
   );
 };

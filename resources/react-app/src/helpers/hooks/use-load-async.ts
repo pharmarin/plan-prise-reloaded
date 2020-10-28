@@ -28,7 +28,7 @@ const loadGeneric = async (query: string) => {
         },
         {
           label: 'Médicaments issus de la base de données publique',
-          options: grouped['api-medicament'],
+          options: grouped['api-medicaments'],
         },
       ];
     }

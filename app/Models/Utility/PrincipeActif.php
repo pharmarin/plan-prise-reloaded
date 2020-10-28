@@ -9,6 +9,13 @@ class PrincipeActif extends Model
   use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
   protected $table = 'principes_actifs';
+  public $timestamps = false;
+  protected $fillable = ['denomination'];
+
+  public function getTypeAttribute()
+  {
+    return 'principe-actifs';
+  }
 
   public function medicaments()
   {

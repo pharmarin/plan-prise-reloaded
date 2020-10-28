@@ -7,9 +7,9 @@ import CustomInput from '../CustomInput';
 import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
 import { makeUniqueSelectorInstance } from 'store/plan-prise/selectors';
 
-const mapState = (state: IReduxState, props: Props.Content) => {
+const mapState = (state: IRedux.State, props: IProps.Content) => {
   const selectMedicamentForContent = makeUniqueSelectorInstance();
-  return (state: IReduxState, props: Props.Content) => {
+  return (state: IRedux.State, props: IProps.Content) => {
     const data = selectMedicamentForContent(state, props);
     return {
       data,
@@ -24,7 +24,7 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch);
 
-type ContentProps = Props.Content & ConnectedProps<typeof connector>;
+type ContentProps = IProps.Content & ConnectedProps<typeof connector>;
 
 const Content = ({ isOpened, removeValue, setValue, data }: ContentProps) => {
   const uid = data?.uid;

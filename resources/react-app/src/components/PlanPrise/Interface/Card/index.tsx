@@ -8,7 +8,7 @@ import Content from './Content';
 import { addNotification } from 'store/app';
 import useRepository from 'store/plan-prise/hooks/use-repository';
 
-const mapState = (state: IReduxState) => ({
+const mapState = (state: IRedux.State) => ({
   storedMedicaments: state.cache.medicaments,
 });
 
@@ -21,7 +21,7 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch);
 
-type CardProps = Props.Card & ConnectedProps<typeof connector>;
+type CardProps = IProps.Card & ConnectedProps<typeof connector>;
 
 const ItemCard = ({
   addNotification,

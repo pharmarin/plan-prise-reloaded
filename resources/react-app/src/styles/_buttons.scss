@@ -2,3 +2,8 @@
 .btn:hover {
   transform: none;
 }
+
+.input-group-prepend .btn,
+.input-group-append .btn {
+  z-index: auto;
+}

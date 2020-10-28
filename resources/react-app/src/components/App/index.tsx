@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { CardBody, Card, Container } from 'reactstrap';
 import { Sanctum } from 'react-sanctum';
+import LRU from 'lru-cache';
 import { store, persistor } from 'store/store';
-import Navigation from 'components/Navigation';
-import Switch from 'components/Navigation/Switch';
+import NavigationBar from 'components/App/Navigation/NavigationBar';
 import SplashScreen from './SplashScreen';
 import axios from 'helpers/axios-clients';
 import useConfig, { storeConfig } from 'helpers/hooks/use-config';
 import NotificationStack from './NotificationStack';
+import { configure } from 'axios-hooks';
+import Accueil from 'components/Accueil';
+import Authentification, { Role } from './Authentification';
+import ProtectedRoute from './Navigation/ProtectedRoute';
+import ErrorBoundary from './ErrorBoundary';
+import Profil from 'components/Profil';
+import PlanPrise from 'components/PlanPrise';
+import Backend from 'components/Backend';
 
 const sanctumConfig = {
   api_url: '',
@@ -20,6 +28,10 @@ const sanctumConfig = {
   signout_route: 'logout',
   user_object_route: 'user',
 };
+
+const cache = new LRU();
+
+configure({ axios, cache });
 
 export default () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -68,11 +80,50 @@ export default () => {
         <NotificationStack />
         <Sanctum config={sanctumConfig}>
           <Router basename="/">
-            <Navigation />
+            <NavigationBar />
             <Container>
               <Card className="mb-4">
                 <CardBody>
-                  <Switch />
+                  <Switch>
+                    <Route exact path="/">
+                      <Accueil />
+                    </Route>
+                    <Route path="/inscription">
+                      <Authentification role={Role.register} />
+                    </Route>
+                    <Route path="/connexion">
+                      <Authentification role={Role.signin} />
+                    </Route>
+                    <ProtectedRoute path="/deconnexion">
+                      <Authentification role={Role.signout} />
+                    </ProtectedRoute>
+                    <ErrorBoundary returnTo="/connexion">
+                      <ProtectedRoute path="/profil">
+                        <ErrorBoundary returnTo="/">
+                          <Profil />
+                        </ErrorBoundary>
+                      </ProtectedRoute>
+                      <ProtectedRoute path="/plan-prise/:id?/:action?">
+                        <ErrorBoundary returnTo="/">
+                          <PlanPrise />
+                        </ErrorBoundary>
+                      </ProtectedRoute>
+                      <ProtectedRoute admin path="/admin">
+                        <ErrorBoundary returnTo="/">
+                          <Suspense
+                            fallback={
+                              <SplashScreen
+                                type="load"
+                                message="Chargement du module"
+                              />
+                            }
+                          >
+                            <Backend />
+                          </Suspense>
+                        </ErrorBoundary>
+                      </ProtectedRoute>
+                    </ErrorBoundary>
+                  </Switch>
                 </CardBody>
               </Card>
             </Container>

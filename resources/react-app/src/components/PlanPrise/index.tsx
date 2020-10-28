@@ -17,8 +17,7 @@ import {
   selectStatus,
 } from 'store/plan-prise/selectors';
 
-const mapState = (state: IReduxState) => ({
-  /* Il faut être plus spécifique, calculer isError, isDeleting */
+const mapState = (state: IRedux.State) => ({
   content: selectPlanPriseContent(state),
   id: state.planPrise.id,
   list: state.planPrise.list,
@@ -37,7 +36,7 @@ const mapDispatch = {
 const connector = connect(mapState, mapDispatch);
 
 type PlanPriseProps = ConnectedProps<typeof connector> &
-  WithSanctumProps<Models.User>;
+  WithSanctumProps<IModels.User>;
 
 const PlanPrise = ({
   content,

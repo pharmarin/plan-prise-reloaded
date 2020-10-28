@@ -1,6 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use CloudCreativity\LaravelJsonApi\Facades\JsonApi;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +25,10 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
     /* generic */
     Route::resource('generic', 'Api\v1\GenericController')->only(['index']);
     JsonApi::register('default')->routes(function ($api) {
-      $api->resource('medicament')->only('read');
-      $api->resource('api-medicament')->only('read');
+      $api->resource('medicaments')->only('index', 'read', 'update');
+      $api->resource('api-medicaments')->only('index', 'read');
+      $api->resource('principe-actifs')->only('index', 'create');
+      $api->resource('precautions')->only('read', 'update');
     });
     /* plan-prise */
     Route::resource('plan-prise', 'Api\v1\PlanPriseController')->only([

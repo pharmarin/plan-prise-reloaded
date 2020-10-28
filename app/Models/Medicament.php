@@ -2,24 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\Utility\PrincipeActif;
 use Illuminate\Database\Eloquent\Model;
-
-use App\Repositories\BdpmRepository;
-use App\Repositories\CompositionRepository;
-use App\Repositories\PrecautionRepository;
+use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 class Medicament extends Model
 {
-  use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
+  use HasJsonRelationships;
 
   protected $appends = ['type'];
+
   protected $casts = [
+    'cis' => 'array',
     'conservation_duree' => 'array',
+    'conservation_frigo' => 'boolean',
     'indications' => 'array',
     'principes_actifs' => 'array',
     'voies_administration' => 'array',
   ];
+
   protected $fillable = [
     'denomination',
     'principes_actifs',
@@ -31,20 +32,20 @@ class Medicament extends Model
 
   public function getTypeAttribute()
   {
-    return 'medicament';
+    return 'medicaments';
   }
 
   public function composition()
   {
     return $this->belongsToJson(
-      \App\Models\Utility\PrincipeActif::class,
+      PrincipeActif::class,
       'principes_actifs'
     );
   }
 
   public function precautions()
   {
-    return $this->morphToMany(
+    return $this->morphMany(
       \App\Models\Utility\Precaution::class,
       'precaution_cible'
     );

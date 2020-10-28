@@ -24,7 +24,7 @@ const loadList = createAsyncThunk<number[]>('planPrise/loadList', async () => {
 const loadContent = createAsyncThunk<
   IPlanPriseContent,
   IPlanPriseID,
-  { state: IReduxState }
+  { state: IRedux.State }
 >('planPrise/loadContent', async (id, { dispatch, getState }) => {
   const response = await axios.get(`/plan-prise/${id}?include=medicaments`);
   const state = getState();
@@ -50,7 +50,7 @@ const loadContent = createAsyncThunk<
 const loadItem = createAsyncThunk<
   boolean,
   IMedicamentID,
-  { state: IReduxState }
+  { state: IRedux.State }
 >(
   'planPrise/loadItem',
   async ({ id, type }, { dispatch, getState, rejectWithValue }) => {
@@ -87,7 +87,7 @@ const manage = createAsyncThunk<
   return false;
 });
 
-const initialState: IReduxState.PlanPrise = {
+const initialState: IRedux.PlanPrise = {
   id: null,
   list: null,
   content: null,

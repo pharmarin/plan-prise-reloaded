@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class MigrateDataFromMedicsSimple extends Migration
 {
@@ -19,13 +18,14 @@ class MigrateDataFromMedicsSimple extends Migration
 
     $old->each(function ($o) {
       $medic = \App\Models\Medicament::create([
-        'denomination' => $o->nomMedicament,
+        'denomination' => trim($o->nomMedicament),
         'principes_actifs' => $this->encodePrincipesActifs($o->nomGenerique),
-        'indications' => explode(' OU ', $o->indication),
+        'indications' => array_map(function ($i) {
+          return trim($i);
+        }, explode(' OU ', $o->indication)),
         'conservation_frigo' => $o->frigo === 1 ? true : false,
-        'conservation_duree' => [
-          $this->encodeConservationDuree($o->dureeConservation),
-        ],
+        'conservation_duree' =>
+        $this->encodeConservationDuree($o->dureeConservation),
         'voies_administration' => [
           switchVoieAdministration($o->voieAdministration),
         ],
@@ -33,25 +33,14 @@ class MigrateDataFromMedicsSimple extends Migration
       $medic->precautions()->saveMany(
         collect(json_decode(strip_tags($o->commentaire)))->map(function (
           $com
-        ) use ($medic) {
+        ) {
           return new \App\Models\Utility\Precaution([
             'voie_administration' => 0,
-            'population' => $com->span,
-            'commentaire' => str_replace('<br>', "\n", $com->text),
+            'population' => trim($com->span),
+            'commentaire' => trim(str_replace('<br>', "\n", $com->text)),
           ]);
         })
       );
-      /*collect(json_decode(strip_tags($o->commentaire)))->each(function (
-        $com
-      ) use ($medic) {
-        DB::table('precautions')->insert([
-          'voie_administration' => 0,
-          'population' => $com->span,
-          'commentaire' => str_replace('<br>', "\n", $com->text),
-          'cible_type' => 'medicament',
-          'cible_id' => $medic,
-        ]);
-      });*/
     });
   }
 
@@ -59,14 +48,15 @@ class MigrateDataFromMedicsSimple extends Migration
   {
     $composants = collect(explode(' + ', $nomGenerique));
     return $composants->map(function ($c) {
+      $c_trim = trim($c);
       $compo = DB::table('principes_actifs')
-        ->where('denomination', $c)
+        ->where('denomination', $c_trim)
         ->first();
       if ($compo) {
         return $compo->id;
       } else {
         return DB::table('principes_actifs')->insertGetId([
-          'denomination' => $c,
+          'denomination' => $c_trim,
         ]);
       }
     });
@@ -74,18 +64,19 @@ class MigrateDataFromMedicsSimple extends Migration
 
   private function encodeConservationDuree($dureeConservation)
   {
-    return json_decode($dureeConservation)
+    if ($dureeConservation == "") return [];
+    return [json_decode($dureeConservation)
       ? array_map(
         function ($duree, $laboratoire) {
           return [
-            'laboratoire' => $laboratoire,
-            'duree' => $duree,
+            'laboratoire' => trim($laboratoire),
+            'duree' => trim($duree),
           ];
         },
         array_keys(json_decode($dureeConservation, true)),
         json_decode($dureeConservation, true)
       )
-      : ['laboratoire' => null, 'duree' => $dureeConservation];
+      : ['laboratoire' => "", 'duree' => trim($dureeConservation)]];
   }
 
   /**

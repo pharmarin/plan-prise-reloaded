@@ -12,7 +12,7 @@ import {
   selectStatus,
 } from 'store/plan-prise/selectors';
 
-const mapState = (state: IReduxState) => ({
+const mapState = (state: IRedux.State) => ({
   cacheContent: state.cache,
   medicData: get(selectPlanPriseContent(state), 'medic_data', {}),
   planPriseContent: selectPlanPriseContent(state),
@@ -67,7 +67,7 @@ const Select = ({
       }
       addItem({ id: value.value, type: value.type });
       if (
-        value.type === 'api-medicament' &&
+        value.type === 'api-medicaments' &&
         !inCache({ id: value.value, type: value.type }, cacheContent)
       ) {
         cache({

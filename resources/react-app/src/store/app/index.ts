@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { filter, findIndex, uniqueId } from 'lodash';
 
-const initialState: IReduxState.App = {
+const initialState: IRedux.App = {
   auth: { isLoading: false, isError: false, tokens: null },
   notifications: [],
   options: undefined,

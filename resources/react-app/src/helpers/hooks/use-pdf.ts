@@ -11,7 +11,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const pageMargins = 20;
 
-const usePdf = ({ user }: { user: Models.User | null }) => {
+const usePdf = ({ user }: { user: IModels.User | null }) => {
   const fromPlanPrise = (
     content: IPlanPriseRepository
   ): TDocumentDefinitions => {
@@ -35,7 +35,7 @@ const usePdf = ({ user }: { user: Models.User | null }) => {
       id,
       username,
     }: {
-      id: number;
+      id: string;
       username: string;
     }): DynamicContent => (currentPage, pageCount) => ({
       columns: [
@@ -75,7 +75,7 @@ const usePdf = ({ user }: { user: Models.User | null }) => {
       pageMargins: [pageMargins, pageMargins * 2.5],
       header: planPriseHeader,
       footer: planPriseFooter({
-        id: content.id,
+        id: String(content.id),
         username: user?.display_name || user?.name || '',
       }),
       content: [
