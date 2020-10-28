@@ -34,10 +34,10 @@ const MedicamentEdit = ({
   const [{ data, loading, error }] = useAxios<
     IServerResponse<IModels.Medicament>
   >({
-    url: requestUrl('medicament', {
+    url: requestUrl('medicaments', {
       id: medicamentID.id,
       include: ['bdpm', 'composition', 'precautions'],
-      fields: { precaution: ['id'] },
+      fields: { precautions: ['id'] },
     }).url,
   });
 
@@ -93,11 +93,11 @@ const MedicamentEdit = ({
               key={precaution.id}
               cibles={[
                 {
-                  id: `medicament_${medicament?.id}`,
+                  id: `medicaments_${medicament?.id}`,
                   label: medicament?.denomination || '',
                 },
                 ...(medicament?.composition || []).map((compo) => ({
-                  id: `principe-actif_${compo.id}`,
+                  id: `principe-actifs_${compo.id}`,
                   label: compo.denomination,
                 })),
               ]}
@@ -115,7 +115,7 @@ const MedicamentEdit = ({
                 ...(precautions || []),
                 {
                   id: uniqueId('new_'),
-                  type: 'precaution',
+                  type: 'precautions',
                   commentaire: '',
                   population: '',
                   relationshipNames: [],

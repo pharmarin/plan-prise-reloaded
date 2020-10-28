@@ -14,7 +14,7 @@ class PrincipeActif extends Model
 
   public function getTypeAttribute()
   {
-    return 'principe-actif';
+    return 'principe-actifs';
   }
 
   public function medicaments()

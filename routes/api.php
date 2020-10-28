@@ -25,10 +25,10 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
     /* generic */
     Route::resource('generic', 'Api\v1\GenericController')->only(['index']);
     JsonApi::register('default')->routes(function ($api) {
-      $api->resource('medicament')->only('index', 'read', 'update');
+      $api->resource('medicaments')->only('index', 'read', 'update');
       $api->resource('api-medicaments')->only('index', 'read');
-      $api->resource('principe-actif')->only('index', 'create');
-      $api->resource('precaution')->only('read', 'update');
+      $api->resource('principe-actifs')->only('index', 'create');
+      $api->resource('precautions')->only('read', 'update');
     });
     /* plan-prise */
     Route::resource('plan-prise', 'Api\v1\PlanPriseController')->only([

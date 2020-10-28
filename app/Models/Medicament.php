@@ -32,7 +32,7 @@ class Medicament extends Model
 
   public function getTypeAttribute()
   {
-    return 'medicament';
+    return 'medicaments';
   }
 
   public function composition()

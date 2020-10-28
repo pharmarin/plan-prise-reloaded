@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\Precaution;
+namespace App\JsonApi\Precautions;
 
 use Neomerx\JsonApi\Schema\SchemaProvider;
 
@@ -9,7 +9,7 @@ class Schema extends SchemaProvider
   /**
    * @var string
    */
-  protected $resourceType = 'precaution';
+  protected $resourceType = 'precautions';
 
   /**
    * @param \\App\Models\Precaution $resource

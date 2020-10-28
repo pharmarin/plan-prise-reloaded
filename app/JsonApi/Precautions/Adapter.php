@@ -1,15 +1,11 @@
 <?php
 
-namespace App\JsonApi\Medicament;
+namespace App\JsonApi\Precautions;
 
-use App\JsonApi\CustomRelations\BelongsToJson;
-use App\JsonApi\CustomRelations\ExternalAPI;
 use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
 use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-
-use App\Models\Utility\PrincipeActif;
 
 class Adapter extends AbstractAdapter
 {
@@ -27,19 +23,6 @@ class Adapter extends AbstractAdapter
    */
   protected $filterScopes = [];
 
-  protected $includePaths = [
-    'bdpm' => null
-  ];
-
-  protected $defaultPagination = ['number' => 20];
-
-  /**
-   * Resource relationship fields that can be filled.
-   *
-   * @var array
-   */
-  protected $relationships = ['composition'];
-
   /**
    * Adapter constructor.
    *
@@ -47,7 +30,7 @@ class Adapter extends AbstractAdapter
    */
   public function __construct(StandardStrategy $paging)
   {
-    parent::__construct(new \App\Models\Medicament(), $paging);
+    parent::__construct(new \App\Models\Utility\Precaution(), $paging);
   }
 
   /**
@@ -60,13 +43,8 @@ class Adapter extends AbstractAdapter
     $this->filterWithScopes($query, $filters);
   }
 
-  public function bdpm()
+  protected function precautionCible()
   {
-    return new ExternalAPI('bdpm');
-  }
-
-  protected function composition()
-  {
-    return new BelongsToJson('composition');
+    return $this->belongsTo();
   }
 }

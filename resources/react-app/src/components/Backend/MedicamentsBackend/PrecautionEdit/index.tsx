@@ -30,14 +30,14 @@ export default ({
   const [{ data, loading, error }] = useAxios<
     IServerResponse<IModels.Medicament>
   >({
-    url: requestUrl('precaution', {
+    url: requestUrl('precautions', {
       id: precautionID.id,
     }).url,
   });
 
   const [{ loading: saving, error: savingError }, save] = useAxios(
     {
-      url: requestUrl('precaution', {
+      url: requestUrl('precautions', {
         id: precautionID.id,
       }).url,
       method: 'PATCH',
@@ -49,10 +49,10 @@ export default ({
 
   const [{ loading: deleting, error: deleteError }, deletePrec] = useAxios(
     {
-      url: requestUrl('precaution', {
+      url: requestUrl('precautions', {
         id: precautionID.id,
       }).url,
-      method: 'PATCH',
+      method: 'DELETE',
     },
     {
       manual: true,
@@ -94,7 +94,7 @@ export default ({
                     population: values.population,
                     voie_administration: startsWith(
                       values.cible,
-                      'principe-actif'
+                      'principe-actifs'
                     )
                       ? values.voie_administration
                       : 0,
@@ -114,7 +114,7 @@ export default ({
           validationSchema={yup.object().shape({
             cible: yup.string().required(),
             voie_administration: yup.number().when('cible', {
-              is: (cible) => startsWith(cible, 'principe-actif'),
+              is: (cible) => startsWith(cible, 'principe-actifs'),
               then: yup.number().min(0).max(12),
               otherwise: yup.number().min(0).max(0),
             }),
@@ -135,7 +135,7 @@ export default ({
                   ))}
                 </Input>
               </FormGroup>
-              {startsWith(values.cible, 'principe-actif') && (
+              {startsWith(values.cible, 'principe-actifs') && (
                 <FormGroup>
                   <Input
                     className="mt-1"

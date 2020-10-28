@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\Precaution;
+namespace App\JsonApi\Medicaments;
 
 use CloudCreativity\LaravelJsonApi\Validation\AbstractValidators;
 
@@ -12,7 +12,7 @@ class Validators extends AbstractValidators
    * @var string[]|null
    *      the allowed paths, an empty array for none allowed, or null to allow all paths.
    */
-  protected $allowedIncludePaths = [];
+  protected $allowedIncludePaths = ['bdpm', 'composition', 'precautions'];
 
   /**
    * The sort field names a client is allowed send.
@@ -20,7 +20,7 @@ class Validators extends AbstractValidators
    * @var string[]|null
    *      the allowed fields, an empty array for none allowed, or null to allow all fields.
    */
-  protected $allowedSortParameters = [];
+  protected $allowedSortParameters = ['denomination'];
 
   /**
    * The filters a client is allowed send.

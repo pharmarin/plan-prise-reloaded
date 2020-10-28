@@ -72,11 +72,10 @@ return [
     | `'posts' => App\Post::class`
     */
   'resources' => [
-    'user' => User::class,
     'plan-prise' => PlanPrise::class,
-    'medicament' => Medicament::class,
-    'principe-actif' => PrincipeActif::class,
-    'precaution' => Precaution::class,
+    'medicaments' => Medicament::class,
+    'principe-actifs' => PrincipeActif::class,
+    'precautions' => Precaution::class,
     'api-medicaments' => ApiMedicament::class,
   ],
 

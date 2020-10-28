@@ -30,7 +30,7 @@ type IExtractID<T> = Pick<T, 'id' | 'type'>;
 declare namespace IModels {
   interface Medicament {
     id: string;
-    type: 'medicament';
+    type: 'medicaments';
     attributes: {
       conservation_duree: { laboratoire: string; duree: string }[];
       conservation_frigo: boolean;
@@ -53,7 +53,7 @@ declare namespace IModels {
   }
   interface Precaution {
     id: string;
-    type: 'precaution';
+    type: 'precautions';
     attributes: {
       commentaire: string;
       population: string;
@@ -62,7 +62,7 @@ declare namespace IModels {
   }
   interface PrincipeActif {
     id: string;
-    type: 'principe-actif';
+    type: 'principe-actifs';
     attributes: {
       denomination: string;
     };

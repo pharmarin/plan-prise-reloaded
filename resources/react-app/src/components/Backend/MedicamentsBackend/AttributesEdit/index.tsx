@@ -30,6 +30,7 @@ import * as yup from 'yup';
 
 yup.setLocale({
   mixed: {
+    // eslint-disable-next-line no-template-curly-in-string
     required: 'Le champ ${path} est obligatoire',
   },
 });
@@ -46,7 +47,7 @@ export default ({ medicament }: AttributesEditProps) => {
   const [isCreatingOption, setCreatingOption] = useState(false);
 
   const loadPrincipeActifs = debounce(async (query) => {
-    const url = requestUrl('principe-actif', {
+    const url = requestUrl('principe-actifs', {
       page: 1,
       filter: { field: 'denomination', value: query },
       sort: 'denomination',
@@ -84,17 +85,18 @@ export default ({ medicament }: AttributesEditProps) => {
             indications: medicament.indications || [],
             conservation_frigo: medicament.conservation_frigo,
             conservation_duree: (medicament.conservation_duree || []).filter(
-              (c) => c.laboratoire.length > 0 || c.duree.length > 0
+              (c) =>
+                (c.laboratoire || '').length > 0 || (c.duree || '').length > 0
             ),
           }}
           onSubmit={(values, { setSubmitting }) => {
             setSubmitting(true);
             console.log('values: ', values);
             return axios
-              .patch(`/medicament/${medicament.id}`, {
+              .patch(`/medicaments/${medicament.id}`, {
                 data: {
                   id: String(medicament.id),
-                  type: 'medicament',
+                  type: 'medicaments',
                   attributes: {
                     conservation_duree: values.conservation_duree || [],
                     conservation_frigo: values.conservation_frigo || false,
@@ -113,7 +115,7 @@ export default ({ medicament }: AttributesEditProps) => {
                     },
                     composition: {
                       data: (values.composition || []).map((compo) => ({
-                        type: 'principe-actif',
+                        type: 'principe-actifs',
                         id: compo.value,
                       })),
                     },
@@ -194,11 +196,11 @@ export default ({ medicament }: AttributesEditProps) => {
                   }
                   onCreateOption={(value: string) => {
                     setCreatingOption(true);
-                    const url = requestUrl('principe-actif');
+                    const url = requestUrl('principe-actifs');
                     axios
                       .post(url.url, {
                         data: {
-                          type: 'principe-actif',
+                          type: 'principe-actifs',
                           attributes: {
                             denomination: value,
                           },

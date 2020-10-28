@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\PrincipeActif;
+namespace App\JsonApi\PrincipeActifs;
 
 use Neomerx\JsonApi\Schema\SchemaProvider;
 
@@ -9,7 +9,7 @@ class Schema extends SchemaProvider
   /**
    * @var string
    */
-  protected $resourceType = 'principe-actif';
+  protected $resourceType = 'principe-actifs';
 
   /**
    * @param \\App\Models\PrincipeActif $resource

@@ -7,3 +7,7 @@ vscode:
   extensions:
     - mohamedbenhida.laravel-intellisense@0.1.9:AMiQsKd2+jC1TRtDYlVA3A==
     - ikappas.composer@0.7.1:BR1vLGzI+4Z+CXzwcWtKIw==
+    - whtouche.vscode-js-console-utils@0.7.0:FwfWZaC2ByNy02hVz6zm+g==
+    - aleclarson.auto-typings@0.1.5:4ATK2XgthTS0TU1LSG5Kkw==
+    - formulahendry.auto-rename-tag@0.1.5:ti+phartuLASrABZnZButw==
+    - bradgashler.htmltagwrap@0.0.7:stlb2tdbx7Ci1djVwsT2rQ==

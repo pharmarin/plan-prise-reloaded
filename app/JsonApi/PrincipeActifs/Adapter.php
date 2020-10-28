@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\PrincipeActif;
+namespace App\JsonApi\PrincipeActifs;
 
 use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
 use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;

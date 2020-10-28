@@ -25,7 +25,7 @@ const MedicamentsBackend = ({ updateAppNav }: MedicamentsBackendProps) => {
   const [prevPage, setPrevPage] = useState<number | null>(null);
   const [last, setLast] = useState<number | null>(null);
   const [cache, setCache] = useState<{
-    medicament?: {};
+    medicaments?: {};
     meta?: {
       [type: string]: {
         [pagination: string]: {
@@ -36,8 +36,8 @@ const MedicamentsBackend = ({ updateAppNav }: MedicamentsBackendProps) => {
         };
       };
     };
-    precaution?: {};
-    principeActif?: {};
+    precautions?: {};
+    principeActifs?: {};
   }>({});
   const editing = edit === 'edit' ? id : undefined;
 
@@ -54,12 +54,12 @@ const MedicamentsBackend = ({ updateAppNav }: MedicamentsBackendProps) => {
     // if editing, updateAppNav append in MedicamentEdit component
   });
 
-  const currentUrl = requestUrl('medicament', {
+  const currentUrl = requestUrl('medicaments', {
     page,
     sort: 'denomination',
     include: ['composition', 'precautions'],
     fields: {
-      medicament: ['denomination', 'composition', 'precautions'],
+      medicaments: ['denomination', 'composition', 'precautions'],
     },
   });
 
@@ -125,7 +125,7 @@ const MedicamentsBackend = ({ updateAppNav }: MedicamentsBackendProps) => {
   ]);
 
   if (editing) {
-    const medicament = extractOne({ id: String(editing), type: 'medicament' });
+    const medicament = extractOne({ id: String(editing), type: 'medicaments' });
     if (!medicament) throw new Error('Aucun médicament à modifier');
     // error quand modifie charge page puis modifie médicament
     return <MedicamentEdit medicament={medicament} />;
