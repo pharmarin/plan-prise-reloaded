@@ -41,13 +41,13 @@ class Schema extends SchemaProvider
   public function getRelationships(
     $medicament,
     $isPrimary,
-    array $includeRelationships
+    array $includedRelationships
   ) {
     return [
       'bdpm' => [
         self::SHOW_SELF => false,
         self::SHOW_RELATED => false,
-        self::SHOW_DATA => isset($includeRelationships['bdpm']),
+        self::SHOW_DATA => isset($includedRelationships['bdpm']),
         self::DATA => function () use ($medicament) {
           return collect($medicament->cis)->map(function ($cis) {
             return ApiMedicament::find($cis);
@@ -57,7 +57,7 @@ class Schema extends SchemaProvider
       'composition' => [
         self::SHOW_SELF => false,
         self::SHOW_RELATED => false,
-        self::SHOW_DATA => isset($includeRelationships['composition']),
+        self::SHOW_DATA => isset($includedRelationships['composition']),
         self::DATA => function () use ($medicament) {
           return $medicament->composition;
         },
@@ -65,10 +65,10 @@ class Schema extends SchemaProvider
       'precautions' => [
         self::SHOW_SELF => false,
         self::SHOW_RELATED => false,
-        self::SHOW_DATA => isset($includeRelationships['precautions']),
+        self::SHOW_DATA => isset($includedRelationships['precautions']),
         self::DATA => function () use ($medicament) {
           return $medicament->precautions;
-        }
+        },
       ],
     ];
   }
