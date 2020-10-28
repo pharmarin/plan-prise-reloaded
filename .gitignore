@@ -39,3 +39,4 @@ public/static/*
 public/*manifest*
 public/service-worker.js
 resources/views/app.blade.php
+_ide_helper.php
