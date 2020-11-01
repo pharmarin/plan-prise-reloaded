@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 import { get, isNumber } from 'lodash';
 import { setShowSettings, updateAppNav } from 'store/app';
 import { loadContent, loadList, setId } from 'store/plan-prise';
-import { withSanctum, WithSanctumProps } from 'react-sanctum';
 import usePdf from 'helpers/hooks/use-pdf';
 
 import Selection from './Selection';
@@ -16,6 +15,7 @@ import {
   selectPlanPriseContent,
   selectStatus,
 } from 'store/plan-prise/selectors';
+import { SanctumContext } from 'react-sanctum';
 
 const mapState = (state: IRedux.State) => ({
   content: selectPlanPriseContent(state),
@@ -35,8 +35,7 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch);
 
-type PlanPriseProps = ConnectedProps<typeof connector> &
-  WithSanctumProps<IModels.User>;
+type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrise = ({
   content,
@@ -44,18 +43,24 @@ const PlanPrise = ({
   list,
   loadContent,
   loadList,
-  user,
   setId,
   setShowSettings,
   showSettings,
   status,
   updateAppNav,
 }: PlanPriseProps) => {
+  const { user } = useContext(SanctumContext);
+
   const repository = useRepository();
+
   const routerParams = useParams();
+
   const history = useHistory();
+
   const { fromPlanPrise, generate } = usePdf({ user });
+
   const routeIdParam = get(routerParams, 'id');
+
   const isPdfRoute = get(routerParams, 'action') === 'export';
 
   const getTitle = (id: number | null) => {
@@ -158,4 +163,4 @@ const PlanPrise = ({
   return null;
 };
 
-export default connector(withSanctum(PlanPrise));
+export default connector(PlanPrise);
