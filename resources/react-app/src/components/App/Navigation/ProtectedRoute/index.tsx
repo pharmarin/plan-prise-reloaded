@@ -1,38 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Redirect, Route as RouterRoute, useLocation } from 'react-router-dom';
-import { withSanctum, WithSanctumProps } from 'react-sanctum';
+import { SanctumContext } from 'react-sanctum';
 import SplashScreen from 'components/App/SplashScreen';
 
-type ProtectedRouteProps = WithSanctumProps<IModels.User> &
-  IProps.ProtectedRoute;
+type ProtectedRouteProps = IProps.ProtectedRoute;
 
-const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
-  props
-) => {
-  const { checkAuthentication, user } = props;
-  const location = useLocation();
-  const redirectTo = location.pathname;
-  const [authenticated, setAuthenticated] = useState<null | boolean>(null);
+export default (props: ProtectedRouteProps) => {
+  const { authenticated, checkAuthentication, user } = useContext(
+    SanctumContext
+  );
+
+  const { pathname } = useLocation();
+
+  const [checkDone, setCheckDone] = useState<null | boolean>(null);
+
+  if (!checkAuthentication) throw new Error('Sanctum props are missing');
 
   useEffect(() => {
-    checkAuthentication().then(setAuthenticated);
+    checkAuthentication().then(setCheckDone);
   }, [checkAuthentication]);
 
-  if (authenticated === false) {
+  if (checkDone && authenticated === false) {
     return (
       <Redirect
         to={{
           pathname: '/connexion',
           state: {
             message: "Vous devez vous connecter avant d'accéder à cette page. ",
-            redirectTo,
+            redirectTo: pathname,
           },
         }}
       />
     );
   }
 
-  if (authenticated === true) {
+  if (checkDone && authenticated === true) {
     if (user?.admin !== true) {
       return (
         <Redirect
@@ -41,7 +43,7 @@ const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
             state: {
               message:
                 'Vous devez être administrateur pour accéder à cette page. ',
-              redirectTo,
+              redirectTo: pathname,
             },
           }}
         />
@@ -52,5 +54,3 @@ const ProtectedRoute: React.FunctionComponent<ProtectedRouteProps> = (
 
   return <SplashScreen message="Authentification en cours" type="load" />;
 };
-
-export default withSanctum(ProtectedRoute);

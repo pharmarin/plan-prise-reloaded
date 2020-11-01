@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
-import { withSanctum, WithSanctumProps } from 'react-sanctum';
+import { SanctumContext } from 'react-sanctum';
 import {
   UncontrolledCollapse,
   Navbar,
@@ -9,25 +9,25 @@ import {
   Container,
   Row,
   Col,
+  Spinner,
 } from 'reactstrap';
 import NavbarLink from '../NavbarLink';
 
 const NAVBAR_TITLE = 'plandeprise.fr';
 
 const mapState = (state: IRedux.State) => ({
-  app: state.app,
+  options: state.app.options,
+  returnTo: state.app.returnTo,
+  title: state.app.title,
 });
 
 const connector = connect(mapState);
 
-type NavigationBarProps = WithSanctumProps<IModels.User> &
-  ConnectedProps<typeof connector>;
+type NavigationBarProps = ConnectedProps<typeof connector>;
 
-const NavigationBar = ({
-  app: { options, returnTo, title },
-  authenticated,
-  user,
-}: NavigationBarProps) => {
+const NavigationBar = ({ options, returnTo, title }: NavigationBarProps) => {
+  const { authenticated, user } = useContext(SanctumContext);
+
   return (
     <Navbar
       className="navbar-horizontal navbar-dark bg-default mb-4"
@@ -97,11 +97,13 @@ const NavigationBar = ({
                 <NavbarLink label="Profil" path="/profil" />
                 <NavbarLink label="Déconnexion" path="/deconnexion" />
               </React.Fragment>
-            ) : (
+            ) : authenticated === false ? (
               <React.Fragment>
                 <NavbarLink label="Connexion" path="/connexion" />
                 <NavbarLink label="Inscription" path="/inscription" />
               </React.Fragment>
+            ) : (
+              <Spinner size="sm" />
             )}
           </Nav>
         </UncontrolledCollapse>
@@ -110,4 +112,4 @@ const NavigationBar = ({
   );
 };
 
-export default connector(withSanctum(NavigationBar));
+export default connector(NavigationBar);

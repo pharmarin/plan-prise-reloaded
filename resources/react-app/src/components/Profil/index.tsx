@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {
   Button,
@@ -11,11 +11,11 @@ import {
 } from 'reactstrap';
 import { BsCheck, BsX } from 'react-icons/bs';
 import { updateAppNav } from 'store/app';
-import { withSanctum, WithSanctumProps } from 'react-sanctum';
 import map from 'lodash/map';
 import find from 'lodash/find';
 import cloneDeep from 'lodash/cloneDeep';
 import includes from 'lodash/includes';
+import { SanctumContext } from 'react-sanctum';
 
 const mapDispatch = {
   updateAppNav,
@@ -23,11 +23,11 @@ const mapDispatch = {
 
 const connector = connect(null, mapDispatch);
 
-type PropsFromRedux = WithSanctumProps<IModels.User> &
-  ConnectedProps<typeof connector>;
+type ProfilProps = ConnectedProps<typeof connector>;
 
-const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
-  const { user, updateAppNav } = props;
+const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
+  const { user } = useContext(SanctumContext);
+
   const [isEditing, setIsEditing] = useState<{
     field: string | false;
     initial?: string;
@@ -179,4 +179,4 @@ const Profil: React.FunctionComponent<PropsFromRedux> = (props) => {
   );
 };
 
-export default connector(withSanctum(Profil));
+export default connector(Profil);

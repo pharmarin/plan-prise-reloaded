@@ -37,6 +37,7 @@ let store = configureStore({
     saveToAPI
   ),
 });
+
 let persistor = persistStore(store);
 
 export { store, persistor };
