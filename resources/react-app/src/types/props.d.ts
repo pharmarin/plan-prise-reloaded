@@ -24,11 +24,11 @@ declare namespace IProps {
     }
   }
   interface Card {
-    id: IMedicamentID;
+    identifier: IModels.MedicamentIdentityWithLoading;
   }
   interface Content {
     isOpened: boolean;
-    id: IMedicamentID;
+    identifier: IModels.MedicamentIdentityWithLoading;
   }
   interface CustomInput {
     onChange: (value: string) => function;
@@ -46,7 +46,7 @@ declare namespace IProps {
       multiple?: boolean;
       readOnly?: boolean;
     };
-    medicament: IMedicamentID;
+    medicament: IModels.MedicamentIdentity;
   }
   interface Interface {}
   interface NavbarLinkProps {

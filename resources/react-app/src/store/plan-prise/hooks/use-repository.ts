@@ -2,7 +2,7 @@ import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
 import { filter, find, get, keyBy, keys, map } from 'lodash';
 import { useSelector } from 'react-redux';
-import { isLoaded } from '../selectors';
+import { isLoaded } from '../selectors/plan-prise';
 
 const usePosologies = () => {
   const posologies = useConfig('default.posologies');
@@ -15,16 +15,6 @@ const usePosologies = () => {
       get(settings, `${p.id}.checked`, p.default) ? p : null
     )
   );
-};
-
-const switchStatus = (content: IRedux.PlanPrise['content']) => {
-  if (content === null) {
-    return 'not-loaded';
-  }
-  if (isLoaded(content)) {
-    return 'loaded';
-  }
-  return content;
 };
 
 const switchVoiesAdministration = (voie: number) => {
@@ -62,113 +52,116 @@ export default () => {
   const cache = useSelector<IRedux.State, any>(
     (state) => state.cache.medicaments
   );
+
   const content = useSelector<IRedux.State, IRedux.PlanPrise['content']>(
     (state) => state.planPrise.content
   );
+
   const id = useSelector<IRedux.State, number | null>(
     (state) => state.planPrise.id
   );
+
   const customData = useSelector<IRedux.State>((state) =>
     get(state.planPrise, 'content.custom_data', {})
   );
+
   const posologies = usePosologies();
-  const status = switchStatus(content);
 
   const getContent = (): IPlanPriseRepository => ({
     id: id || 0,
-    status,
+    status: content.status,
     data: isLoaded(content)
-      ? map<IMedicamentID, IMedicamentRepository>(content.medic_data, (m) => {
-          const id = { id: m?.id, type: m?.type };
-          const uid = `${typeToInt(id.type)}-${id.id}`;
+      ? map<IModels.MedicamentIdentity, IMedicamentRepository>(
+          content.data.medicaments,
+          (m) => {
+            const id = { id: m?.id, type: m?.type };
+            const uid = `${typeToInt(id.type)}-${id.id}`;
 
-          const medicament = find<IMedicament>(cache, id);
-
-          if (!medicament)
-            throw new Error(
-              "Impossible de construire le tableau alors qu'un médicament n'est pas chargé. "
+            const medicament = find<IModels.ApiMedicament | IModels.Medicament>(
+              cache,
+              id
             );
 
-          const getValue = (customLocation: string, defaultLocation?: string) =>
-            get(
-              customData,
-              `${uid}.${customLocation}`,
-              defaultLocation ? get(medicament, defaultLocation, '') : ''
-            );
+            if (!medicament)
+              // TODO: Utiliser la valeur loading ?
+              throw new Error(
+                "Impossible de construire le tableau alors qu'un médicament n'est pas chargé. "
+              );
 
-          const conservationDuree = get(
-            medicament,
-            'attributes.conservation_duree',
-            []
-          );
-          const customConservationDuree = find(conservationDuree, {
-            laboratoire: get(customData, `${uid}.conservation_duree`),
-          });
+            const getValue = (
+              customLocation: string,
+              defaultLocation?: string
+            ) =>
+              get(
+                customData,
+                `${uid}.${customLocation}`,
+                defaultLocation ? get(medicament, defaultLocation, '') : ''
+              );
 
-          return {
-            id: medicament.id,
-            type: medicament.type,
-            data: {
-              denomination: get(medicament.attributes, 'denomination', ''),
-              composition: map(
-                get(medicament.attributes, 'composition', []),
-                'denomination'
-              ),
-            },
-            attributes: {
-              indications: getValue(
-                'custom_indications',
-                'attributes.custom_indications'
-              ),
-              conservation_frigo: get(
-                medicament.attributes,
-                'conservation_frigo',
-                false
-              ),
-              conservation_duree: {
-                custom: customConservationDuree !== undefined,
-                data:
-                  customConservationDuree || conservationDuree.length === 1
-                    ? (customConservationDuree || conservationDuree[0]).duree
-                    : map(conservationDuree, 'laboratoire'),
+            const conservationDuree = get(medicament, 'conservation_duree', []);
+            const customConservationDuree = find(conservationDuree, {
+              laboratoire: get(customData, `${uid}.conservation_duree`),
+            });
+
+            return {
+              id: medicament.id,
+              type: medicament.type,
+              data: {
+                denomination: get(medicament, 'denomination', ''),
+                composition: map(
+                  get(medicament, 'composition', []),
+                  'denomination'
+                ),
               },
-              posologies: keyBy(
-                map(posologies, (p) => ({
-                  id: p.id,
-                  label: p.label,
-                  value: getValue(p.id),
-                })),
-                'id'
-              ),
-              precautions: map(
-                get(medicament, 'attributes.precautions', []),
-                (p) => ({
+              attributes: {
+                indications: getValue('indications', 'indications'),
+                conservation_frigo: get(
+                  medicament,
+                  'conservation_frigo',
+                  false
+                ),
+                conservation_duree: {
+                  custom: customConservationDuree !== undefined,
+                  data:
+                    customConservationDuree || conservationDuree.length === 1
+                      ? (customConservationDuree || conservationDuree[0]).duree
+                      : map(conservationDuree, 'laboratoire'),
+                },
+                posologies: keyBy(
+                  map(posologies, (p) => ({
+                    id: p.id,
+                    label: p.label,
+                    value: getValue(p.id),
+                  })),
+                  'id'
+                ),
+                precautions: map(get(medicament, 'precautions', []), (p) => ({
                   ...p,
                   checked: get(
                     customData,
                     `${uid}.precautions.${p.id}.checked`,
                     p.population !== undefined
                   ),
-                })
-              ),
-              custom_precautions: map(
-                keys(get(customData, `${uid}.custom_precautions`, {})),
-                (c) => ({
-                  id: c,
-                  commentaire: get(
-                    customData,
-                    `${uid}.custom_precautions.${c}`,
-                    ''
-                  ),
-                })
-              ),
-              voies_administration: map(
-                medicament.attributes.voies_administration || [],
-                (va) => switchVoiesAdministration(va)
-              ),
-            },
-          };
-        })
+                })),
+                custom_precautions: map(
+                  keys(get(customData, `${uid}.custom_precautions`, {})),
+                  (c) => ({
+                    id: c,
+                    commentaire: get(
+                      customData,
+                      `${uid}.custom_precautions.${c}`,
+                      ''
+                    ),
+                  })
+                ),
+                voies_administration: map(
+                  get(medicament, 'voies_administration', []),
+                  (va) => switchVoiesAdministration(va)
+                ),
+              },
+            };
+          }
+        )
       : undefined,
   });
 

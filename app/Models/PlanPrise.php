@@ -31,6 +31,8 @@ class PlanPrise extends Model
     'custom_settings' => 'object',
   ];
 
+  protected $fillable = ['custom_data', 'custom_settings'];
+
   public function user_id()
   {
     return $this->belongsTo('App\Models\User');

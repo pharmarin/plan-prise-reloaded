@@ -12,23 +12,35 @@ import {
   map,
 } from 'lodash';
 
-export const selectPlanPriseContent = (state: IRedux.State) =>
-  state.planPrise.content;
-export const selectMedicament = (state: IRedux.State, props: any) =>
-  find(state.cache.medicaments, props.id);
+const selectPlanPrise = (state: IRedux.State) => state.planPrise.content;
+
+export const selectPlanPriseContent = createSelector(
+  [selectPlanPrise],
+  (planPrise) => planPrise.data
+);
+
+export const selectMedicament = (
+  state: IRedux.State,
+  identifier: IModels.MedicamentIdentity
+) =>
+  find(state.cache.medicaments, identifier) as
+    | IRedux.State['cache']['medicaments'][0]
+    | undefined;
+
 const selectSettings = createSelector(
   [selectPlanPriseContent],
   (planPriseContent) => get(planPriseContent, 'custom_settings', {})
 );
+
 const selectCustomData = createSelector(
   [selectPlanPriseContent],
   (planPriseContent) => get(planPriseContent, 'custom_data', {})
 );
 
-const selectInputSettings = createSelector(
-  selectSettings,
-  (settings) => settings.inputs
+const selectInputSettings = createSelector(selectSettings, (settings) =>
+  get(settings, 'inputs', {})
 );
+
 const selectCheckedPosologies = createSelector(
   [selectInputSettings],
   (inputs) => {
@@ -42,10 +54,20 @@ const selectCheckedPosologies = createSelector(
   }
 );
 
+const isMedicament = (
+  medicament:
+    | IExtractModel<IModels.Medicament>
+    | IExtractModel<IModels.ApiMedicament>
+): medicament is IExtractModel<IModels.Medicament> => {
+  if (medicament.type === 'medicaments') return true;
+  return false;
+};
+
 const selectContent = createSelector(
   [selectMedicament, selectCustomData, selectCheckedPosologies],
   (medicament, customData, posologies) => {
     if (!medicament) return null;
+
     const uid = `${typeToInt(medicament.type)}-${medicament.id}`;
 
     const getValue = (customLocation: string, defaultLocation?: string) =>
@@ -54,11 +76,9 @@ const selectContent = createSelector(
         `${uid}.${customLocation}`,
         defaultLocation ? get(medicament, defaultLocation, '') : ''
       );
-    const conservationDuree = get(
-      medicament,
-      'attributes.conservation_duree',
-      []
-    );
+
+    const conservationDuree = get(medicament, 'conservation_duree', []);
+
     const customConservationDuree = get(
       customData,
       `${uid}.conservation_duree`
@@ -66,15 +86,10 @@ const selectContent = createSelector(
 
     return {
       uid,
-      indications: getValue(
-        'custom_indications',
-        'attributes.custom_indications'
-      ),
-      conservation_frigo: get(
-        medicament.attributes,
-        'conservation_frigo',
-        false
-      ),
+      indications: isMedicament(medicament)
+        ? getValue('indications', 'indications')
+        : [],
+      conservation_frigo: get(medicament, 'conservation_frigo', false),
       conservation_duree: {
         custom: !isNil(customConservationDuree),
         data:
@@ -94,11 +109,16 @@ const selectContent = createSelector(
         })),
         'id'
       ),
-      precautions: map(get(medicament, 'attributes.precautions', []), (p) => ({
+      precautions: (get(medicament, 'precautions', []) as IExtractModel<
+        IModels.Precaution
+      >[]).map((p) => ({
         ...p,
+        commentaire:
+          get(customData, `${uid}.precautions[${p.id}]commentaire`) ||
+          p.commentaire,
         checked: get(
           customData,
-          `${uid}.precautions.${p.id}.checked`,
+          `${uid}.precautions[${p.id}]checked`,
           p.population !== undefined
         ),
       })),
@@ -106,7 +126,7 @@ const selectContent = createSelector(
         keys(get(customData, `${uid}.custom_precautions`, {})),
         (c) => ({
           id: c,
-          commentaire: get(customData, `${uid}.custom_precautions.${c}`, ''),
+          commentaire: get(customData, `${uid}.custom_precautions[${c}]`, ''),
         })
       ),
     };
@@ -115,27 +135,25 @@ const selectContent = createSelector(
 
 const isDeleted = (
   content: IRedux.PlanPrise['content']
-): content is 'deleted' => {
-  if (content === 'deleted') return true;
+): content is { status: 'deleted'; data: undefined } => {
+  if (content.status === 'deleted' && content.data === undefined) return true;
   return false;
 };
 
 const isDeleting = (
   content: IRedux.PlanPrise['content']
-): content is 'deleting' => {
-  if (content === 'deleting') return true;
-  return false;
-};
-
-const isError = (content: IRedux.PlanPrise['content']): content is 'error' => {
-  if (content === 'error') return true;
+): content is {
+  status: 'deleting';
+  data: IExtractModel<IModels.PlanPrise>;
+} => {
+  if (content.status === 'deleting' && isPlainObject(content.data)) return true;
   return false;
 };
 
 export const isLoaded = (
   content: IRedux.PlanPrise['content']
-): content is IPlanPriseContent => {
-  if (isPlainObject(content)) {
+): content is { status: 'loaded'; data: IExtractModel<IModels.PlanPrise> } => {
+  if (content.status === 'loaded' && isPlainObject(content.data)) {
     return true;
   }
   return false;
@@ -143,27 +161,29 @@ export const isLoaded = (
 
 const isLoading = (
   content: IRedux.PlanPrise['content']
-): content is 'loading' => {
-  if (content === 'loading') return true;
+): content is { status: 'loading'; data: undefined } => {
+  if (content.status === 'loading' && content.data === undefined) return true;
   return false;
 };
 
-const isNotLoaded = (content: IRedux.PlanPrise['content']): content is null => {
-  if (content === null) return true;
+const isNotLoaded = (
+  content: IRedux.PlanPrise['content']
+): content is { status: 'not-loaded'; data: undefined } => {
+  if (content.status === 'not-loaded' && content.data === undefined)
+    return true;
   return false;
 };
 
-export const selectStatus = createSelector(
-  [selectPlanPriseContent],
-  (planPriseContent) => {
+export const selectPlanPriseStatus = createSelector(
+  [selectPlanPrise, selectPlanPriseContent],
+  (planPrise, planPriseContent) => {
     return {
-      isLoaded: isLoaded(planPriseContent),
-      isLoading: isLoading(planPriseContent),
+      isLoaded: isLoaded(planPrise),
+      isLoading: isLoading(planPrise),
       isEmpty: get(planPriseContent, 'medic_data', []).length === 0,
-      isError: isError(planPriseContent),
-      isDeleting: isDeleting(planPriseContent),
-      isDeleted: isDeleted(planPriseContent),
-      isNotLoaded: isNotLoaded(planPriseContent),
+      isDeleting: isDeleting(planPrise),
+      isDeleted: isDeleted(planPrise),
+      isNotLoaded: isNotLoaded(planPrise),
     };
   }
 );

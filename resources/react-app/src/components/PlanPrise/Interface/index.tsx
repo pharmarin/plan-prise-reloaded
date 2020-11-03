@@ -1,22 +1,31 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { get, keys, map, toNumber } from 'lodash';
+import { keys, map, toNumber } from 'lodash';
 import Card from './Card';
 import Select from './Select';
 import SplashScreen from 'components/App/SplashScreen';
-import { selectStatus } from 'store/plan-prise/selectors';
+import { selectPlanPriseStatus } from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = (state: IRedux.State) => ({
-  status: selectStatus(state),
-  medicaments: get(state.planPrise.content, 'medic_data'),
+  ...selectPlanPriseStatus(state),
+  medicaments: (state.planPrise.content.data?.medicaments || []).map((m) => ({
+    id: m.id,
+    type: m.type,
+    loading: m.loading,
+  })),
 });
 
 const connector = connect(mapState);
 
 type InterfaceProps = ConnectedProps<typeof connector> & IProps.Interface;
 
-const Interface = ({ medicaments, status }: InterfaceProps) => {
-  if (status.isLoading)
+const Interface = ({
+  isLoaded,
+  isLoading,
+  isDeleting,
+  medicaments,
+}: InterfaceProps) => {
+  if (isLoading)
     return (
       <SplashScreen
         type="load"
@@ -24,10 +33,10 @@ const Interface = ({ medicaments, status }: InterfaceProps) => {
       />
     );
 
-  if (status.isDeleting)
+  if (isDeleting)
     return <SplashScreen type="warning" message="Suppression en cours" />;
 
-  if (!status.isLoaded)
+  if (!isLoaded)
     throw new Error(
       "Une erreur est survenue lors de l'affichage de ce plan de prise. "
     );
@@ -37,7 +46,7 @@ const Interface = ({ medicaments, status }: InterfaceProps) => {
       {map(keys(medicaments), toNumber)
         .sort()
         .map((key: number) => (
-          <Card key={medicaments[key].id} id={medicaments[key]} />
+          <Card key={medicaments[key].id} identifier={medicaments[key]} />
         ))}
       <Select />
     </React.Fragment>

@@ -11,18 +11,14 @@ import Interface from './Interface';
 import Settings from './Settings';
 import ErrorBoundary from 'components/App/ErrorBoundary';
 import useRepository from 'store/plan-prise/hooks/use-repository';
-import {
-  selectPlanPriseContent,
-  selectStatus,
-} from 'store/plan-prise/selectors';
+import { selectPlanPriseStatus } from 'store/plan-prise/selectors/plan-prise';
 import { SanctumContext } from 'react-sanctum';
 
 const mapState = (state: IRedux.State) => ({
-  content: selectPlanPriseContent(state),
   id: state.planPrise.id,
   list: state.planPrise.list,
   showSettings: state.app.showSettings,
-  status: selectStatus(state),
+  status: selectPlanPriseStatus(state),
 });
 
 const mapDispatch = {
@@ -38,7 +34,6 @@ const connector = connect(mapState, mapDispatch);
 type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrise = ({
-  content,
   id,
   list,
   loadContent,
@@ -74,7 +69,6 @@ const PlanPrise = ({
   };
 
   useEffect(() => {
-    console.log('status: ', status);
     updateAppNav({
       title: getTitle(id),
       returnTo: isNumber(id)
@@ -111,10 +105,9 @@ const PlanPrise = ({
   }, [id, status, updateAppNav]);
 
   useEffect(() => {
-    console.log('routeIdParam: ', routeIdParam);
     if (!routeIdParam) {
       if (id !== null) setId(null);
-      if (list === null) loadList();
+      if (list.status === 'not-loaded') loadList();
     } else if (routeIdParam === 'nouveau') {
       if (!id) setId(-1);
       if (id && id > 0) history.push(`/plan-prise/${id}`);
@@ -125,18 +118,9 @@ const PlanPrise = ({
         setId(null);
         history.push('/plan-prise');
       }
-      if (status.isError && id === Number(routeIdParam)) {
-        setId(null);
-        throw new Error(
-          "Ce plan de prise n'existe plus ou vous n'avez pas l'autorisation d'y accéder."
-        );
-      }
       if (status.isLoaded && isPdfRoute) {
         generate(fromPlanPrise(repository.getContent()));
         history.goBack();
-      }
-      if (status.isLoaded && get(content, 'id') !== Number(routeIdParam)) {
-        throw new Error('Une erreur est inconnue est survenue. [Erreur 1]');
       }
     } else {
       setId(null);

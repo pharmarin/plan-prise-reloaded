@@ -1,4 +1,4 @@
-import { debounce, get } from 'lodash';
+import { debounce, fromPairs, get } from 'lodash';
 import axios from 'helpers/axios-clients';
 import { MiddlewareAPI, Dispatch, Action } from 'redux';
 import {
@@ -10,16 +10,19 @@ import {
   setId,
 } from 'store/plan-prise';
 import { addNotification, removeNotification } from 'store/app';
+import { requestUrl } from 'helpers/hooks/use-json-api';
 
 const update = debounce(
   (
-    id: number,
-    data: { data: { type: string; value: any }[] },
+    id: string,
+    data: { data: { id: string; type: string; attributes: any } },
     onStart?: () => void,
     callback?: (response: any) => void
   ) => {
-    const url = `/plan-prise/${id}`;
+    const url = requestUrl('plan-prises', { id }).url;
+
     onStart && onStart();
+
     return axios
       .patch(url, data, { withCredentials: true })
       .then((response) => {
@@ -53,9 +56,9 @@ const switchAction = (type: string) => {
     case setSettings.type:
       return ['custom_settings'];
     case addItem.type:
-      return ['medic_data'];
+      return ['medicaments'];
     case removeItem.type:
-      return ['medic_data', 'custom_data'];
+      return ['medicaments', 'custom_data'];
     default:
       throw new Error('No action type provided');
   }
@@ -68,17 +71,29 @@ const saveToAPI = ({
   action: Action
 ) => {
   next(action);
+
   if (allowedActions.includes(action.type)) {
     const state = getState();
+
     const parameters = switchAction(action.type);
 
+    const content = state.planPrise.content.data;
+
+    if (!content?.id)
+      throw new Error(
+        'Impossible de mettre à jour un plan de prise inexistant'
+      );
+
     update(
-      get(state, 'planPrise.id'),
+      content.id,
       {
-        data: parameters.map((p) => ({
-          type: p,
-          value: get(state.planPrise.content, p),
-        })),
+        data: {
+          id: content.id,
+          type: content.type,
+          attributes: fromPairs(
+            parameters.map((p) => [p, get(state.planPrise.content.data, p)])
+          ),
+        },
       },
       () =>
         dispatch(
@@ -89,7 +104,6 @@ const saveToAPI = ({
           })
         ),
       (response) => {
-        console.log(response);
         if (state.planPrise.id === -1 && response && response.id) {
           dispatch(setId(response.id));
         }

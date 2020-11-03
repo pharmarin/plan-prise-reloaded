@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import { BsSearch } from 'react-icons/bs';
 import ReactPlaceholder from 'react-placeholder';
 import { isArray, map, uniqueId } from 'lodash';
+import { selectListStatus } from 'store/plan-prise/selectors/list';
 
 const Square: React.FC = ({ children }) => {
   return (
@@ -80,24 +81,24 @@ const TextFit: React.FC<{ text: string }> = ({ text }) => {
 };
 
 const mapState = (state: IRedux.State) => ({
-  list: state.planPrise.list,
+  status: selectListStatus(state),
+  list: state.planPrise.list.data,
 });
 
 const connector = connect(mapState);
 
 type SelectionProps = ConnectedProps<typeof connector>;
 
-const Selection = (props: SelectionProps) => {
-  let { list } = props;
+const Selection = ({ list, status }: SelectionProps) => {
   const [search, setSearch] = useState<string | undefined>(undefined);
+
   const [redirect, setRedirect] = useState<boolean>(false);
-  const isLoading = list === 'loading';
-  const hasLoaded = isArray(list);
-  const isReady = hasLoaded && !isLoading;
+
   const cardSize = {
     sm: 3,
     md: 2,
   };
+
   let searchSuccess;
 
   const handleSearch = (event: React.FormEvent<HTMLInputElement>) => {
@@ -109,11 +110,11 @@ const Selection = (props: SelectionProps) => {
 
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!hasLoaded || !search) return;
+    if (!status.isLoaded || !search) return;
     if (isArray(list) && list.includes(search)) setRedirect(true);
   };
 
-  if (isReady && search) {
+  if (status.isLoaded && search) {
     searchSuccess = isArray(list) && list.includes(search);
 
     if (redirect && searchSuccess)
@@ -127,7 +128,7 @@ const Selection = (props: SelectionProps) => {
           <ReactPlaceholder
             type="textRow"
             showLoadingAnimation={true}
-            ready={isReady}
+            ready={status.isLoaded}
           >
             <Form onSubmit={handleSearchSubmit}>
               <FormGroup
@@ -183,7 +184,7 @@ const Selection = (props: SelectionProps) => {
                 <ReactPlaceholder
                   type="rect"
                   showLoadingAnimation={true}
-                  ready={hasLoaded && !isLoading}
+                  ready={status.isLoaded}
                   className="m-0"
                 >
                   <Link key={item} to={`/plan-prise/${item}`}>

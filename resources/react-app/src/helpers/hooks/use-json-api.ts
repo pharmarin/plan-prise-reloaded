@@ -43,6 +43,62 @@ export const requestUrl = (
   };
 };
 
+export const normalizeOne = (
+  identifier: { id: string; type: string },
+  response: any
+) => {
+  const normalized = normalize(response, {
+    camelizeKeys: false,
+    camelizeTypeValues: false,
+  });
+
+  return extractOne(identifier, normalized);
+};
+
+export const extractOne = (
+  identifier: { id: string; type: string },
+  cacheOverride: any
+) => {
+  if (!identifier) return null;
+
+  const entity = cloneDeep(
+    get(cacheOverride, `${identifier.type}.${identifier.id}`)
+  );
+
+  if (!entity) return null;
+
+  let { attributes, relationships, ...meta } = entity;
+
+  if (relationships) {
+    (keys(relationships) || []).forEach(
+      (k: string) =>
+        (relationships[k] = (
+          relationships[k].data || []
+        ).map((relatedIdentifier: IModels.MedicamentIdentity) =>
+          extractOne(
+            { id: relatedIdentifier.id, type: relatedIdentifier.type },
+            cacheOverride
+          )
+        ))
+    );
+  }
+
+  return {
+    ...meta,
+    ...attributes,
+    ...relationships,
+  };
+};
+
+const extractMany = (
+  identifiers: { id: string; type: string }[],
+  cacheOverride: any
+) => {
+  if (!identifiers) return [];
+
+  return identifiers.map((i) => extractOne(i, cacheOverride));
+};
+
 export default () => {
   const [cache, setCache] = useState<{
     medicament?: {};
@@ -62,61 +118,11 @@ export default () => {
 
   const sync = (c: any) => setCache(c);
 
-  const extractOne = (
-    identifier: { id: string; type: string },
-    cacheOverride?: any
-  ) => {
-    if (!identifier) return null;
-
-    const usedCache = cacheOverride ? cacheOverride : cache;
-
-    const entity = cloneDeep(
-      get(usedCache, `${identifier.type}.${identifier.id}`)
-    );
-
-    if (!entity) return null;
-
-    let { attributes, relationships, ...meta } = entity;
-
-    if (relationships) {
-      (keys(relationships) || []).map(
-        (k: string) =>
-          (relationships[k] = (
-            relationships[k].data || []
-          ).map((relatedIdentifier: { id: string; type: string }) =>
-            extractOne(relatedIdentifier, cacheOverride)
-          ))
-      );
-    }
-
-    return {
-      ...meta,
-      ...attributes,
-      ...relationships,
-    };
-  };
-
-  const extractMany = (identifiers: { id: string; type: string }[]) => {
-    if (!identifiers) return [];
-
-    return identifiers.map((i) => extractOne(i));
-  };
-
-  const normalizeOne = (
-    identifier: { id: string; type: string },
-    response: any
-  ) => {
-    const normalized = normalize(response, {
-      camelizeKeys: false,
-      camelizeTypeValues: false,
-    });
-
-    return extractOne(identifier, normalized);
-  };
-
   return {
-    extractOne,
-    extractMany,
+    extractOne: (identifier: { id: string; type: string }) =>
+      extractOne(identifier, cache),
+    extractMany: (identifiers: { id: string; type: string }[]) =>
+      extractMany(identifiers, cache),
     normalize,
     normalizeOne,
     requestUrl,

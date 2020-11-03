@@ -18,20 +18,6 @@ interface ICustomNotification {
   timer?: number;
 }
 
-interface IMedicamentID {
-  id: string;
-  type: string;
-  loading?: boolean;
-}
-
-interface IMedicament extends IMedicamentID {
-  attributes: {
-    composition?: IComposition[];
-    denomination?: string;
-    voies_administration?: number[];
-  };
-}
-
 interface IMedicamentRepository {
   id: string;
   type: string;
@@ -68,7 +54,7 @@ interface IPlanPriseRepository {
   data?: IMedicamentRepository[];
 }
 
-type IPlanPriseStatus = 'loading' | 'error' | 'deleting' | 'deleted';
+type IPlanPriseStatus = 'loading' | 'deleting' | 'deleted';
 
 interface IPrecaution {
   id: string;

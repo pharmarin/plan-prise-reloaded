@@ -3,13 +3,12 @@
 namespace App\JsonApi\PlanPrises;
 
 use Neomerx\JsonApi\Schema\SchemaProvider;
-use App\Repositories\GenericRepository;
-use App\Models\OldMedicament;
 use App\Models\Medicament;
 use App\Models\ApiMedicament;
 use CloudCreativity\LaravelJsonApi\Document\Error\Error;
 use CloudCreativity\LaravelJsonApi\Exceptions\JsonApiException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Schema extends SchemaProvider
 {
@@ -28,10 +27,13 @@ class Schema extends SchemaProvider
   public function getId($resource)
   {
     if (Auth::id() !== $resource->user_id) {
-      throw new JsonApiException(Error::fromArray([
-        "status" => 401,
-        "message" => "Vous n'avez pas l'autorisation d'accéder à ce plan de prise. "
-      ]));
+      throw new JsonApiException(
+        Error::fromArray([
+          'status' => 401,
+          'message' =>
+            "Vous n'avez pas l'autorisation d'accéder à ce plan de prise. ",
+        ])
+      );
     }
     return $resource->pp_id;
   }
@@ -44,8 +46,8 @@ class Schema extends SchemaProvider
   public function getAttributes($resource)
   {
     return [
-      'custom-data' => $resource->custom_data,
-      'custom-settings' => $resource->custom_settings,
+      'custom_data' => $resource->custom_data,
+      'custom_settings' => $resource->custom_settings,
     ];
   }
 
@@ -64,17 +66,17 @@ class Schema extends SchemaProvider
       'medicaments' => [
         self::SHOW_SELF => false,
         self::SHOW_RELATED => false,
-        self::SHOW_DATA => isset($includedRelationships['precautions']),
+        self::SHOW_DATA => isset($includedRelationships['medicaments']),
         self::DATA => function () use ($resource) {
           return array_filter(
             array_map(function ($r) {
               switch ($r['type']) {
                 case 'medicament':
                   return Medicament::find($r['id']);
-                case 'api-medicaments':
+                case 'api-medicament':
                   return ApiMedicament::find($r['id']);
                 default:
-                  \Log::alert(
+                  Log::alert(
                     "Type de médicament inconnu - type: {$r['type']} - id: {$r['id']}"
                   );
                   return null;

@@ -9,14 +9,14 @@ import { cache, inCache } from 'store/cache';
 import { addItem } from 'store/plan-prise';
 import {
   selectPlanPriseContent,
-  selectStatus,
-} from 'store/plan-prise/selectors';
+  selectPlanPriseStatus,
+} from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = (state: IRedux.State) => ({
   cacheContent: state.cache,
-  medicData: get(selectPlanPriseContent(state), 'medic_data', {}),
+  medicData: get(selectPlanPriseContent(state), 'medic_data', []),
   planPriseContent: selectPlanPriseContent(state),
-  status: selectStatus(state),
+  status: selectPlanPriseStatus(state),
 });
 
 const mapDispatch = {
@@ -40,7 +40,11 @@ const Select = ({
   const { loadGeneric } = useLoadAsync();
 
   const handleChange = (
-    value: ValueType<{ label: string; value: string; type: string }>,
+    value: ValueType<{
+      label: string;
+      value: string;
+      type: IModels.MedicamentIdentity['type'];
+    }>,
     { action }: ActionMeta<{ label: string; value: string; type: string }>
   ) => {
     if (
@@ -73,7 +77,8 @@ const Select = ({
         cache({
           id: value.value,
           type: value.type,
-          attributes: { denomination: value.label },
+          denomination: value.label,
+          relationshipNames: [],
         });
       }
     }
