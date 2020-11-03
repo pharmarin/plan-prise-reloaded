@@ -71,9 +71,9 @@ class Schema extends SchemaProvider
           return array_filter(
             array_map(function ($r) {
               switch ($r['type']) {
-                case 'medicament':
+                case 'medicaments':
                   return Medicament::find($r['id']);
-                case 'api-medicament':
+                case 'api-medicaments':
                   return ApiMedicament::find($r['id']);
                 default:
                   Log::alert(

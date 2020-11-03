@@ -2,6 +2,7 @@
 
 namespace App\JsonApi\PlanPrises;
 
+use App\JsonApi\CustomRelations\GenericRelation;
 use App\Models\PlanPrise;
 use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
 use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;
@@ -48,5 +49,10 @@ class Adapter extends AbstractAdapter
   protected function filter($query, Collection $filters)
   {
     $this->filterWithScopes($query, $filters);
+  }
+
+  public function medicaments()
+  {
+    return new GenericRelation('medic_data');
   }
 }

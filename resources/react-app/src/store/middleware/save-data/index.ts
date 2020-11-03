@@ -15,7 +15,9 @@ import { requestUrl } from 'helpers/hooks/use-json-api';
 const update = debounce(
   (
     id: string,
-    data: { data: { id: string; type: string; attributes: any } },
+    data: {
+      data: { id: string; type: string; attributes: any; relationships: any };
+    },
     onStart?: () => void,
     callback?: (response: any) => void
   ) => {
@@ -52,13 +54,13 @@ const switchAction = (type: string) => {
   switch (type) {
     case removeValue.type:
     case setValue.type:
-      return ['custom_data'];
+      return { attributes: ['custom_data'] };
     case setSettings.type:
-      return ['custom_settings'];
+      return { attributes: ['custom_settings'] };
     case addItem.type:
-      return ['medicaments'];
+      return { relationships: ['medicaments'] };
     case removeItem.type:
-      return ['medicaments', 'custom_data'];
+      return { relationships: ['medicaments'], attributes: ['custom_data'] };
     default:
       throw new Error('No action type provided');
   }
@@ -91,7 +93,22 @@ const saveToAPI = ({
           id: content.id,
           type: content.type,
           attributes: fromPairs(
-            parameters.map((p) => [p, get(state.planPrise.content.data, p)])
+            (parameters.attributes || []).map((attribute) => [
+              attribute,
+              get(state.planPrise.content.data, attribute),
+            ])
+          ),
+          relationships: fromPairs(
+            (parameters.relationships || []).map((relation) => [
+              relation,
+              {
+                data: get(
+                  state.planPrise.content.data,
+                  relation,
+                  []
+                ).map((item: any) => ({ id: item.id, type: item.type })),
+              },
+            ])
           ),
         },
       },
