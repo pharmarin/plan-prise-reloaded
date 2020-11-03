@@ -2,6 +2,47 @@ import normalize from 'json-api-normalizer';
 import { cloneDeep, get, keys, values } from 'lodash';
 import { useState } from 'react';
 
+export const requestUrl = (
+  type: string,
+  query?: {
+    id?: string;
+    page?: number;
+    sort?: string;
+    include?: string[];
+    fields?: { [type: string]: string[] };
+    filter?: { field: string; value: string };
+  }
+) => {
+  const base = `/${type}`;
+  let params = {
+    ...(query && query.page ? { page: `page[number]=${query.page}` } : {}),
+    ...(query && query.sort ? { sort: `sort=${query.sort}` } : {}),
+    ...(query && query.include
+      ? { include: `include=${(query.include || []).join(',')}` }
+      : {}),
+    ...(query && query.fields
+      ? {
+          fields: keys(query.fields)
+            .map(
+              (type) =>
+                `fields[${type}]=${(query.fields![type] || []).join(',')}`
+            )
+            .join('&'),
+        }
+      : {}),
+    ...(query && query.filter
+      ? { filter: `filter[${query.filter.field}]=${query.filter.value}` }
+      : {}),
+  };
+  return {
+    url: `${base}${query && query.id ? `/${query.id}` : ''}${
+      keys(params).length > 0 ? '?' + values(params).join('&') : ''
+    }`,
+    base,
+    ...params,
+  };
+};
+
 export default () => {
   const [cache, setCache] = useState<{
     medicament?: {};
@@ -18,47 +59,6 @@ export default () => {
     precautions?: {};
     principeActif?: {};
   }>();
-
-  const requestUrl = (
-    type: string,
-    query?: {
-      id?: string;
-      page?: number;
-      sort?: string;
-      include?: string[];
-      fields?: { [type: string]: string[] };
-      filter?: { field: string; value: string };
-    }
-  ) => {
-    const base = `/${type}`;
-    let params = {
-      ...(query && query.page ? { page: `page[number]=${query.page}` } : {}),
-      ...(query && query.sort ? { sort: `sort=${query.sort}` } : {}),
-      ...(query && query.include
-        ? { include: `include=${(query.include || []).join(',')}` }
-        : {}),
-      ...(query && query.fields
-        ? {
-            fields: keys(query.fields)
-              .map(
-                (type) =>
-                  `fields[${type}]=${(query.fields![type] || []).join(',')}`
-              )
-              .join('&'),
-          }
-        : {}),
-      ...(query && query.filter
-        ? { filter: `filter[${query.filter.field}]=${query.filter.value}` }
-        : {}),
-    };
-    return {
-      url: `${base}${query && query.id ? `/${query.id}` : ''}${
-        keys(params).length > 0 ? '?' + values(params).join('&') : ''
-      }`,
-      base,
-      ...params,
-    };
-  };
 
   const sync = (c: any) => setCache(c);
 

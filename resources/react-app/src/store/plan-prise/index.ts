@@ -15,11 +15,22 @@ import {
 } from 'lodash';
 import { typeToInt } from 'helpers/type-switcher';
 import { isLoaded } from './selectors';
+import { requestUrl } from 'helpers/hooks/use-json-api';
 
-const loadList = createAsyncThunk<number[]>('planPrise/loadList', async () => {
-  const response = await axios.get('/plan-prise');
-  return map(response.data.data, (pp: any) => pp.attributes['pp-id']);
-});
+const loadList = createAsyncThunk<IModels.PlanPrise['id'][]>(
+  'planPrise/loadList',
+  async () => {
+    const response = await axios.get<IServerResponse<IModels.PlanPrise[]>>(
+      requestUrl('plan-prises', {
+        fields: {
+          'plan-prises': ['id', 'type'],
+        },
+        sort: '-id'
+      }).url
+    );
+    return map(response.data.data, (p) => p.id);
+  }
+);
 
 const loadContent = createAsyncThunk<
   IPlanPriseContent,
@@ -181,13 +192,16 @@ const ppSlice = createSlice({
     builder.addCase(loadList.rejected, (state) => {
       state.list = 'error';
     });
-    builder.addCase(loadList.fulfilled, (state, { payload }) => {
-      if (isArray(payload)) {
-        state.list = payload;
-      } else {
-        state.list = 'error';
+    builder.addCase(
+      loadList.fulfilled,
+      (state, { payload }: PayloadAction<IModels.PlanPrise['id'][]>) => {
+        if (isArray(payload)) {
+          state.list = payload;
+        } else {
+          state.list = 'error';
+        }
       }
-    });
+    );
     builder.addCase(loadContent.pending, (state) => {
       state.content = 'loading';
     });

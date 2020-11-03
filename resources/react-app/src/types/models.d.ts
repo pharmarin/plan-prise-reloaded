@@ -51,6 +51,10 @@ declare namespace IModels {
       denomination: string;
     };
   }
+  interface PlanPrise {
+    id: string;
+    type: 'plan-prises';
+  }
   interface Precaution {
     id: string;
     type: 'precautions';

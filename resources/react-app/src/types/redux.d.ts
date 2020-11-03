@@ -23,7 +23,7 @@ declare namespace IRedux {
   interface PlanPrise {
     id: number | null;
     content: null | IPlanPriseStatus | IPlanPriseContent;
-    list: null | 'loading' | 'error' | number[];
+    list: null | 'loading' | 'error' | IModels.PlanPrise['id'][];
   }
   export interface State {
     app: IRedux.App;

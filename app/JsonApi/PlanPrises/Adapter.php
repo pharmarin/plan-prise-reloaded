@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\PlanPrise;
+namespace App\JsonApi\PlanPrises;
 
 use App\Models\PlanPrise;
 use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
@@ -27,8 +27,6 @@ class Adapter extends AbstractAdapter
   protected $filterScopes = [];
 
   protected $relationships = ['medicaments'];
-
-  protected $primaryKey = 'pp_id';
 
   /**
    * Adapter constructor.
