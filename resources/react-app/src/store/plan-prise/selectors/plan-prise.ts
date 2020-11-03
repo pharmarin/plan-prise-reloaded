@@ -136,7 +136,13 @@ const selectContent = createSelector(
 const isDeleted = (
   content: IRedux.PlanPrise['content']
 ): content is { status: 'deleted'; data: undefined } => {
-  if (content.status === 'deleted' && content.data === undefined) return true;
+  if (content.status === 'deleted') {
+    if (content.data !== undefined)
+      throw new Error(
+        'Le contenu devrait être vide lorsque le plan de prise est supprimé'
+      );
+    return true;
+  }
   return false;
 };
 
@@ -146,14 +152,24 @@ const isDeleting = (
   status: 'deleting';
   data: IExtractModel<IModels.PlanPrise>;
 } => {
-  if (content.status === 'deleting' && isPlainObject(content.data)) return true;
+  if (content.status === 'deleting') {
+    if (!isPlainObject(content.data))
+      throw new Error(
+        'Le contenu devrait être un objet lorsque le plan de prise est en cours de suppression'
+      );
+    return true;
+  }
   return false;
 };
 
 export const isLoaded = (
   content: IRedux.PlanPrise['content']
 ): content is { status: 'loaded'; data: IExtractModel<IModels.PlanPrise> } => {
-  if (content.status === 'loaded' && isPlainObject(content.data)) {
+  if (content.status === 'loaded') {
+    if (!isPlainObject(content.data))
+      throw new Error(
+        'Le contenu devrait être un objet lorsque le plan de prise est chargé'
+      );
     return true;
   }
   return false;
@@ -162,15 +178,26 @@ export const isLoaded = (
 const isLoading = (
   content: IRedux.PlanPrise['content']
 ): content is { status: 'loading'; data: undefined } => {
-  if (content.status === 'loading' && content.data === undefined) return true;
+  if (content.status === 'loading') {
+    if (content.data !== undefined)
+      throw new Error(
+        'Le contenu devrait être vide lorsque le plan de prise est en cours de chargement'
+      );
+    return true;
+  }
   return false;
 };
 
 const isNotLoaded = (
   content: IRedux.PlanPrise['content']
 ): content is { status: 'not-loaded'; data: undefined } => {
-  if (content.status === 'not-loaded' && content.data === undefined)
+  if (content.status === 'not-loaded') {
+    if (content.data !== undefined)
+      throw new Error(
+        "Le plan de prise devrait être vide lorsqu'il n'est pas encore chargé"
+      );
     return true;
+  }
   return false;
 };
 

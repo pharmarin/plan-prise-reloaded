@@ -100,12 +100,12 @@ const loadItem = createAsyncThunk<
 );
 
 const manage = createAsyncThunk<
-  boolean | IPlanPriseID,
-  { id: IPlanPriseID; action: 'delete' }
+  boolean,
+  { id: IModels.PlanPrise['id']; action: 'delete' }
 >('planPrise/manage', async ({ id, action }, { dispatch }) => {
   switch (action) {
     case 'delete':
-      await axios.delete(`/plan-prise/${id}`);
+      await axios.delete(requestUrl('plan-prises', { id }).url);
       dispatch(loadList());
       return true;
   }
@@ -255,10 +255,11 @@ const ppSlice = createSlice({
     /*builder.addCase(loadItem.rejected, (state) => {});*/
     /*builder.addCase(loadItem.fulfilled, (state) => {});*/
     builder.addCase(manage.pending, (state) => {
-      state.content.data = undefined;
       state.content.status = 'deleting';
     });
-    /*builder.addCase(manage.rejected, (state) => {});*/
+    builder.addCase(manage.rejected, (state) => {
+      throw new Error("Le plan de prise n'a pas pu être supprimé");
+    });
     builder.addCase(manage.fulfilled, (state) => {
       state.content.data = undefined;
       state.content.status = 'deleted';

@@ -13,6 +13,7 @@ import ErrorBoundary from 'components/App/ErrorBoundary';
 import useRepository from 'store/plan-prise/hooks/use-repository';
 import { selectPlanPriseStatus } from 'store/plan-prise/selectors/plan-prise';
 import { SanctumContext } from 'react-sanctum';
+import SplashScreen from 'components/App/SplashScreen';
 
 const mapState = (state: IRedux.State) => ({
   id: state.planPrise.id,
@@ -133,7 +134,10 @@ const PlanPrise = ({
     return <Selection />;
   }
 
-  if (status.isDeleting || status.isLoaded || status.isLoading)
+  if (status.isDeleting)
+    return <SplashScreen type="warning" message="Suppression en cours" />;
+
+  if (status.isLoaded || status.isLoading)
     return (
       <ErrorBoundary returnTo="/plan-prise">
         <Interface />

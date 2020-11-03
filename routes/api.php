@@ -27,15 +27,10 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
     JsonApi::register('default')->routes(function ($api) {
       $api->resource('medicaments')->only('index', 'read', 'update');
       $api->resource('api-medicaments')->only('index', 'read');
-      $api->resource('plan-prises')->only('index', 'read', 'update');
+      $api->resource('plan-prises')->only('index', 'read', 'update', 'delete');
       $api->resource('principe-actifs')->only('index', 'create');
       $api->resource('precautions')->only('read', 'update');
     });
-    /* plan-prise */
-    Route::resource('plan-prise', 'Api\v1\PlanPriseController')->only([
-      'update',
-      'destroy',
-    ]);
     JsonApi::register('default')->routes(function ($api) {
       $api
         ->resource('plan-prise', ['has-many' => 'plan-prise-content'])

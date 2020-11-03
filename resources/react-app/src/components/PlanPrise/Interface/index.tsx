@@ -19,12 +19,7 @@ const connector = connect(mapState);
 
 type InterfaceProps = ConnectedProps<typeof connector> & IProps.Interface;
 
-const Interface = ({
-  isLoaded,
-  isLoading,
-  isDeleting,
-  medicaments,
-}: InterfaceProps) => {
+const Interface = ({ isLoaded, isLoading, medicaments }: InterfaceProps) => {
   if (isLoading)
     return (
       <SplashScreen
@@ -32,9 +27,6 @@ const Interface = ({
         message="Chargement du plan de prise en cours"
       />
     );
-
-  if (isDeleting)
-    return <SplashScreen type="warning" message="Suppression en cours" />;
 
   if (!isLoaded)
     throw new Error(
