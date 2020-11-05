@@ -188,6 +188,11 @@ const isLoading = (
   return false;
 };
 
+const isNew = (content: IRedux.PlanPrise['content']) => {
+  if (content.data?.id === 'new') return true;
+  return false;
+};
+
 const isNotLoaded = (
   content: IRedux.PlanPrise['content']
 ): content is { status: 'not-loaded'; data: undefined } => {
@@ -210,6 +215,7 @@ export const selectPlanPriseStatus = createSelector(
       isEmpty: get(planPriseContent, 'medic_data', []).length === 0,
       isDeleting: isDeleting(planPrise),
       isDeleted: isDeleted(planPrise),
+      isNew: isNew(planPrise),
       isNotLoaded: isNotLoaded(planPrise),
     };
   }

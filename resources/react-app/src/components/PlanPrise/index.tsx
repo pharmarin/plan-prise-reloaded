@@ -17,6 +17,7 @@ import SplashScreen from 'components/App/SplashScreen';
 
 const mapState = (state: IRedux.State) => ({
   id: state.planPrise.id,
+  pid: state.planPrise.content.data?.id,
   list: state.planPrise.list,
   showSettings: state.app.showSettings,
   status: selectPlanPriseStatus(state),
@@ -39,6 +40,7 @@ const PlanPrise = ({
   list,
   loadContent,
   loadList,
+  pid,
   setId,
   setShowSettings,
   showSettings,
@@ -55,7 +57,7 @@ const PlanPrise = ({
 
   const { fromPlanPrise, generate } = usePdf({ user });
 
-  const routeIdParam = get(routerParams, 'id');
+  const routeIdParam = get(routerParams, 'id') as string | undefined;
 
   const isPdfRoute = get(routerParams, 'action') === 'export';
 
@@ -110,9 +112,16 @@ const PlanPrise = ({
       if (id !== null) setId(null);
       if (list.status === 'not-loaded') loadList();
     } else if (routeIdParam === 'nouveau') {
+      if (!status.isLoaded) {
+        loadContent('new');
+      } else {
+        if (pid !== 'new') {
+          history.push(`/plan-prise/${pid}`);
+        }
+      }
       if (!id) setId(-1);
       if (id && id > 0) history.push(`/plan-prise/${id}`);
-    } else if (routeIdParam > 0) {
+    } else if (Number(routeIdParam) > 0) {
       if (id !== Number(routeIdParam)) setId(Number(routeIdParam));
       if (status.isNotLoaded) loadContent(routeIdParam);
       if (status.isDeleted) {
@@ -137,7 +146,7 @@ const PlanPrise = ({
   if (status.isDeleting)
     return <SplashScreen type="warning" message="Suppression en cours" />;
 
-  if (status.isLoaded || status.isLoading)
+  if (status.isLoaded || status.isLoading || status.isNew)
     return (
       <ErrorBoundary returnTo="/plan-prise">
         <Interface />

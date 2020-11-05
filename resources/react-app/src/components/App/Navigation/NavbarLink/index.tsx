@@ -10,9 +10,9 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, NavItem, NavLink } from 'reactstrap';
 import { setShowSettings } from 'store/app';
-import { loadList, manage, setId } from 'store/plan-prise';
+import { deletePP } from 'store/plan-prise';
 
-const mapDispatch = { loadList, manage, setId, setShowSettings };
+const mapDispatch = { deletePP, setShowSettings };
 
 const connector = connect(null, mapDispatch);
 
@@ -22,12 +22,10 @@ type NavbarLinkProps = ConnectedProps<typeof connector> &
 const NavbarLink = ({
   args,
   className,
+  deletePP,
   label,
   light,
-  loadList,
-  manage,
   path,
-  setId,
   setShowSettings,
 }: NavbarLinkProps) => {
   const location = useLocation().pathname;
@@ -50,10 +48,7 @@ const NavbarLink = ({
       };
     if (path === 'pp-delete')
       return {
-        action:
-          args && args.id
-            ? () => manage({ id: args.id, action: 'delete' })
-            : undefined,
+        action: args && args.id ? () => deletePP(args.id) : undefined,
         tag: Button,
       };
     return { tag: Link };

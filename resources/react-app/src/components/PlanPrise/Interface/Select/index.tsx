@@ -6,7 +6,7 @@ import { find, get, isArray } from 'lodash';
 import useLoadAsync from 'helpers/hooks/use-load-async';
 import { addNotification } from 'store/app';
 import { cache, inCache } from 'store/cache';
-import { addItem } from 'store/plan-prise';
+import { addItem, create } from 'store/plan-prise';
 import {
   selectPlanPriseContent,
   selectPlanPriseStatus,
@@ -20,9 +20,10 @@ const mapState = (state: IRedux.State) => ({
 });
 
 const mapDispatch = {
+  addItem,
   addNotification,
   cache,
-  addItem,
+  create,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -34,6 +35,7 @@ const Select = ({
   addNotification,
   cache,
   cacheContent,
+  create,
   medicData,
   status,
 }: SelectProps) => {
@@ -70,6 +72,9 @@ const Select = ({
         console.warn('Ce médicament est déjà dans le plan de prise');
       }
       addItem({ id: value.value, type: value.type });
+      if (status.isNew) {
+        create();
+      }
       if (
         value.type === 'api-medicaments' &&
         !inCache({ id: value.value, type: value.type }, cacheContent)

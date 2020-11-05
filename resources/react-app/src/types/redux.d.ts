@@ -30,7 +30,7 @@ declare namespace IRedux {
       data?: IModels.PlanPrise['id'][];
     };
     content: {
-      status: TLoadingState | 'deleted' | 'deleting';
+      status: TLoadingState | 'deleted' | 'deleting' | 'creating';
       data?: IExtractModel<IModels.PlanPrise>;
     };
   }

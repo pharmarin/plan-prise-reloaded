@@ -86,6 +86,8 @@ const saveToAPI = ({
         'Impossible de mettre à jour un plan de prise inexistant'
       );
 
+    if (content.id === 'new') return;
+
     update(
       content.id,
       {

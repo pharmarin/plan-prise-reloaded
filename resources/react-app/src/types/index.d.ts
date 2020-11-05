@@ -50,7 +50,7 @@ interface IPlanPriseContent {
 
 interface IPlanPriseRepository {
   id: IPlanPriseID;
-  status: IPlanPriseStatus | 'loaded' | 'not-loaded';
+  status: IRedux.State['planPrise']['content']['status'];
   data?: IMedicamentRepository[];
 }
 

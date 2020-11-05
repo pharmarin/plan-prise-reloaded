@@ -7,6 +7,7 @@ import {
   forEach,
   get,
   isArray,
+  isPlainObject,
   map,
   remove,
   set,
@@ -36,37 +37,52 @@ const loadContent = createAsyncThunk<
   IModels.PlanPrise['id'],
   { state: IRedux.State }
 >('planPrise/loadContent', async (id, { dispatch, getState }) => {
-  const response = await axios.get<IServerResponse<IModels.PlanPrise>>(
-    requestUrl('plan-prises', {
-      id: id,
-      include: [
-        'medicaments',
-        'medicaments.bdpm',
-        'medicaments.composition',
-        'medicaments.precautions',
-      ],
-    }).url
-  );
+  if (id === 'new') {
+    return {
+      id: 'new',
+      type: 'plan-prises',
+      medicaments: [],
+      relationshipNames: [],
+    };
+  } else {
+    const response = await axios.get<IServerResponse<IModels.PlanPrise>>(
+      requestUrl('plan-prises', {
+        id: id,
+        include: [
+          'medicaments',
+          'medicaments.bdpm',
+          'medicaments.composition',
+          'medicaments.precautions',
+        ],
+      }).url
+    );
 
-  const state = getState();
+    const state = getState();
 
-  forEach(get(response, 'data.included', []), (included) => {
-    if (included.type !== 'medicaments' && included.type !== 'api-medicaments')
-      return;
+    forEach(get(response, 'data.included', []), (included) => {
+      if (
+        included.type !== 'medicaments' &&
+        included.type !== 'api-medicaments'
+      )
+        return;
 
-    if (!inCache({ id: included.id, type: included.type }, state.cache))
-      dispatch(
-        cache(
-          normalizeOne({ id: included.id, type: included.type }, response.data)
-        )
-      );
-  });
+      if (!inCache({ id: included.id, type: included.type }, state.cache))
+        dispatch(
+          cache(
+            normalizeOne(
+              { id: included.id, type: included.type },
+              response.data
+            )
+          )
+        );
+    });
 
-  const data = normalizeOne({ id, type: 'plan-prises' }, response.data);
+    const data = normalizeOne({ id, type: 'plan-prises' }, response.data);
 
-  if (!data) throw new Error('Impossible de charger le plan de prise ' + id);
+    if (!data) throw new Error('Impossible de charger le plan de prise ' + id);
 
-  return data;
+    return data;
+  }
 });
 
 const loadItem = createAsyncThunk<
@@ -99,18 +115,44 @@ const loadItem = createAsyncThunk<
   }
 );
 
-const manage = createAsyncThunk<
-  boolean,
-  { id: IModels.PlanPrise['id']; action: 'delete' }
->('planPrise/manage', async ({ id, action }, { dispatch }) => {
-  switch (action) {
-    case 'delete':
-      await axios.delete(requestUrl('plan-prises', { id }).url);
-      dispatch(loadList());
-      return true;
+const create = createAsyncThunk<IExtractModel<IModels.PlanPrise>, undefined>(
+  'planPrise/create',
+  async (_, { dispatch, getState }) => {
+    const state = getState() as IRedux.State;
+
+    const response = await axios.post<IServerResponse<IModels.PlanPrise>>(
+      requestUrl('plan-prises').url,
+      {
+        data: {
+          type: 'plan-prises',
+          relationships: {
+            medicaments: {
+              data: state.planPrise.content.data?.medicaments.map(
+                (medicament) => ({ id: medicament.id, type: medicament.type })
+              ),
+            },
+          },
+        },
+      }
+    );
+
+    dispatch(loadList());
+
+    return normalizeOne(
+      { id: response.data.data.id, type: 'plan-prises' },
+      response.data
+    );
   }
-  return false;
-});
+);
+
+const deletePP = createAsyncThunk<void, IModels.PlanPrise['id']>(
+  'planPrise/delete',
+  async (id, { dispatch, getState }) => {
+    await axios.delete(requestUrl('plan-prises', { id }).url);
+
+    dispatch(loadList());
+  }
+);
 
 const initialState: IRedux.PlanPrise = {
   id: null,
@@ -254,13 +296,28 @@ const ppSlice = createSlice({
     /*builder.addCase(loadItem.pending, (state) => {});*/
     /*builder.addCase(loadItem.rejected, (state) => {});*/
     /*builder.addCase(loadItem.fulfilled, (state) => {});*/
-    builder.addCase(manage.pending, (state) => {
+    builder.addCase(create.pending, (state) => {
+      state.content.status = 'creating';
+    });
+    builder.addCase(create.rejected, () => {
+      throw new Error("Le plan de prise n'a pas pu être créé");
+    });
+    builder.addCase(
+      create.fulfilled,
+      (state, { payload }: PayloadAction<IExtractModel<IModels.PlanPrise>>) => {
+        if (isPlainObject(payload)) {
+          state.content.data = payload;
+          state.content.status = 'loaded';
+        }
+      }
+    );
+    builder.addCase(deletePP.pending, (state) => {
       state.content.status = 'deleting';
     });
-    builder.addCase(manage.rejected, (state) => {
+    builder.addCase(deletePP.rejected, () => {
       throw new Error("Le plan de prise n'a pas pu être supprimé");
     });
-    builder.addCase(manage.fulfilled, (state) => {
+    builder.addCase(deletePP.fulfilled, (state) => {
       state.content.data = undefined;
       state.content.status = 'deleted';
     });
@@ -276,5 +333,5 @@ export const {
   setSettings,
   setValue,
 } = ppSlice.actions;
-export { loadContent, loadItem, loadList, manage };
+export { loadContent, loadItem, loadList, create, deletePP };
 export default ppSlice.reducer;

@@ -19,7 +19,12 @@ const connector = connect(mapState);
 
 type InterfaceProps = ConnectedProps<typeof connector> & IProps.Interface;
 
-const Interface = ({ isLoaded, isLoading, medicaments }: InterfaceProps) => {
+const Interface = ({
+  isLoaded,
+  isLoading,
+  medicaments,
+  isNew,
+}: InterfaceProps) => {
   if (isLoading)
     return (
       <SplashScreen
@@ -28,7 +33,7 @@ const Interface = ({ isLoaded, isLoading, medicaments }: InterfaceProps) => {
       />
     );
 
-  if (!isLoaded)
+  if (!isLoaded && !isNew)
     throw new Error(
       "Une erreur est survenue lors de l'affichage de ce plan de prise. "
     );
