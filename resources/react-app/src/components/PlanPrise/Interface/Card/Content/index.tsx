@@ -5,12 +5,15 @@ import { has, isArray, isString, map, uniqueId } from 'lodash';
 import { removeValue, setValue } from 'store/plan-prise';
 import CustomInput from '../CustomInput';
 import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
-import { makeUniqueSelectorInstance } from 'store/plan-prise/selectors';
+import { makeUniqueSelectorInstance } from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = (state: IRedux.State, props: IProps.Content) => {
   const selectMedicamentForContent = makeUniqueSelectorInstance();
-  return (state: IRedux.State, props: IProps.Content) => {
-    const data = selectMedicamentForContent(state, props);
+  return (state: IRedux.State, { identifier }: IProps.Content) => {
+    const data = selectMedicamentForContent(state, {
+      id: identifier.id,
+      type: identifier.type,
+    });
     return {
       data,
     };
@@ -35,12 +38,30 @@ const Content = ({ isOpened, removeValue, setValue, data }: ContentProps) => {
           <div>
             <Label>Indication</Label>
             <FormGroup>
-              <CustomInput
-                onChange={(value) =>
-                  setValue({ id: `${uid}.custom_indications`, value })
-                }
-                value={data?.indications}
-              />
+              {isArray(data?.indications) ? (
+                <ButtonGroup vertical style={{ width: '100%' }}>
+                  {data?.indications.map((indication: string) => (
+                    <Button
+                      key={indication}
+                      onClick={(e) =>
+                        setValue({
+                          id: `${uid}.indications`,
+                          value: indication,
+                        })
+                      }
+                    >
+                      {indication}
+                    </Button>
+                  ))}
+                </ButtonGroup>
+              ) : (
+                <CustomInput
+                  onChange={(value) =>
+                    setValue({ id: `${uid}.indications`, value })
+                  }
+                  value={data?.indications}
+                />
+              )}
             </FormGroup>
           </div>
           {(data?.conservation_duree.data).length > 0 && (
@@ -120,7 +141,11 @@ const Content = ({ isOpened, removeValue, setValue, data }: ContentProps) => {
           <Label>Commentaires</Label>
           <FormGroup check>
             {data?.precautions.map(
-              (precaution: IPrecaution & { checked: boolean }) => (
+              (
+                precaution: IExtractModel<IModels.Precaution> & {
+                  checked: boolean;
+                }
+              ) => (
                 <React.Fragment key={precaution.id}>
                   {precaution.population && (
                     <Label className="mb-0 font-italic">
@@ -133,7 +158,7 @@ const Content = ({ isOpened, removeValue, setValue, data }: ContentProps) => {
                       checked={precaution.checked}
                       onChange={(e) =>
                         setValue({
-                          id: `${uid}.precautions.${precaution.id}.checked`,
+                          id: `${uid}.precautions[${precaution.id}]checked`,
                           value: e.currentTarget.checked,
                         })
                       }
@@ -141,7 +166,7 @@ const Content = ({ isOpened, removeValue, setValue, data }: ContentProps) => {
                     <CustomInput
                       onChange={(value) =>
                         setValue({
-                          id: `${uid}.precautions.${precaution.id}.commentaire`,
+                          id: `${uid}.precautions[${precaution.id}]commentaire`,
                           value,
                         })
                       }
@@ -158,7 +183,7 @@ const Content = ({ isOpened, removeValue, setValue, data }: ContentProps) => {
                   color="link"
                   onClick={(e) =>
                     removeValue({
-                      id: `${uid}.custom_precautions.${custom.id}`,
+                      id: `${uid}.custom_precautions[${custom.id}]`,
                     })
                   }
                   size="sm"
@@ -169,7 +194,7 @@ const Content = ({ isOpened, removeValue, setValue, data }: ContentProps) => {
                 <CustomInput
                   onChange={(value) =>
                     setValue({
-                      id: `${uid}.custom_precautions.${custom.id}`,
+                      id: `${uid}.custom_precautions[${custom.id}]`,
                       value,
                     })
                   }

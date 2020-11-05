@@ -15,7 +15,7 @@ import { setSettings } from 'store/plan-prise';
 import useConfig from 'helpers/hooks/use-config';
 
 const mapState = (state: IRedux.State) => ({
-  settings: get(state, 'planPrise.content.custom_settings', {}),
+  settings: state.planPrise.content.data?.custom_settings || {},
 });
 
 const mapDispatch = {
@@ -29,9 +29,9 @@ type SettingsProps = ConnectedProps<typeof connector> & {
   toggle?: (e: React.MouseEvent) => void;
 };
 
-const Settings = (props: SettingsProps) => {
-  const { setSettings, show, toggle } = props;
+const Settings = ({ settings, setSettings, show, toggle }: SettingsProps) => {
   const posologies = useConfig('default.posologies');
+
   return (
     <Modal centered={true} isOpen={show} toggle={toggle}>
       <ModalHeader toggle={toggle}>Options</ModalHeader>
@@ -49,8 +49,8 @@ const Settings = (props: SettingsProps) => {
                       <CustomInput
                         id={input.id}
                         checked={get(
-                          props,
-                          `settings.inputs.${input.id}.checked`,
+                          settings,
+                          `inputs.${input.id}.checked`,
                           input.default || false
                         )}
                         label={input.label}

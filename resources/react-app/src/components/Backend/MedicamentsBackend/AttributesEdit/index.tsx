@@ -245,7 +245,7 @@ export default ({ medicament }: AttributesEditProps) => {
                   isMulti
                   loadOptions={async (query: string) => {
                     const response = await axios.get<
-                      IServerResponse<IModels.BDPM[]>
+                      IServerResponse<IModels.ApiMedicament[]>
                     >(
                       requestUrl('api-medicaments', {
                         fields: {

@@ -7,7 +7,7 @@ use CloudCreativity\LaravelJsonApi\Contracts\Adapter\HasManyAdapterInterface;
 use CloudCreativity\LaravelJsonApi\Eloquent\Concerns\QueriesRelations;
 use Neomerx\JsonApi\Contracts\Encoder\Parameters\EncodingParametersInterface;
 
-class ExternalAPI extends AbstractRelationshipAdapter implements
+class GenericRelation extends AbstractRelationshipAdapter implements
   HasManyAdapterInterface
 {
   use QueriesRelations;
@@ -106,11 +106,7 @@ class ExternalAPI extends AbstractRelationshipAdapter implements
     array $relationship,
     EncodingParametersInterface $parameters
   ) {
-    $cis_array = array_map(function ($relation) {
-      return intval($relation['id']);
-    }, $relationship['data']);
-
-    $record->{$this->key} = $cis_array;
+    $record->{$this->key} = $relationship['data'];
     $record->save();
   }
 

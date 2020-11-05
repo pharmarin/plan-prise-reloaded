@@ -1,12 +1,14 @@
 <?php
 
-namespace App\JsonApi\PlanPrise;
+namespace App\JsonApi\PlanPrises;
 
+use App\JsonApi\CustomRelations\GenericRelation;
 use App\Models\PlanPrise;
 use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
 use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class Adapter extends AbstractAdapter
 {
@@ -48,5 +50,21 @@ class Adapter extends AbstractAdapter
   protected function filter($query, Collection $filters)
   {
     $this->filterWithScopes($query, $filters);
+  }
+
+  public function medicaments()
+  {
+    return new GenericRelation('medic_data');
+  }
+
+  protected function creating(PlanPrise $planPrise)
+  {
+    $max_id = PlanPrise::where('user_id', Auth::id())
+      ->withTrashed()
+      ->max('pp_id');
+    $max_id = $max_id ?: 0;
+
+    $planPrise->pp_id = $max_id + 1;
+    $planPrise->user_id = Auth::id();
   }
 }

@@ -27,9 +27,16 @@ type IExtractModel<T> = Omit<T, 'attributes' | 'relationships'> &
 
 type IExtractID<T> = Pick<T, 'id' | 'type'>;
 
+type TLoadingState = 'not-loaded' | 'loaded' | 'loading';
+
 declare namespace IModels {
-  interface Medicament {
-    id: string;
+  interface ApiMedicament extends MedicamentIdentity {
+    type: 'api-medicaments';
+    attributes: {
+      denomination: string;
+    };
+  }
+  interface Medicament extends MedicamentIdentity {
     type: 'medicaments';
     attributes: {
       conservation_duree: { laboratoire: string; duree: string }[];
@@ -39,16 +46,37 @@ declare namespace IModels {
       voies_administration: number[];
     };
     relationships: {
-      bdpm: BDPM[];
+      bdpm: ApiMedicament[];
       composition: PrincipeActif[];
       precautions: Precaution[];
     };
   }
-  interface BDPM {
+  interface MedicamentIdentity {
     id: string;
-    type: 'api-medicaments';
+    type: ApiMedicament['type'] | Medicament['type'];
+  }
+  interface MedicamentIdentityWithLoading extends MedicamentIdentity {
+    loading?: boolean;
+  }
+  interface PlanPrise {
+    id: string;
+    type: 'plan-prises';
     attributes: {
-      denomination: string;
+      custom_data: {
+        [id: string]: {
+          [field: string]: string;
+        };
+      };
+      custom_settings: {
+        inputs: {
+          [inputName: string]: {
+            checked: boolean;
+          };
+        };
+      };
+    };
+    relationships: {
+      medicaments: MedicamentIdentityWithLoading[];
     };
   }
   interface Precaution {

@@ -6,23 +6,24 @@ import { find, get, isArray } from 'lodash';
 import useLoadAsync from 'helpers/hooks/use-load-async';
 import { addNotification } from 'store/app';
 import { cache, inCache } from 'store/cache';
-import { addItem } from 'store/plan-prise';
+import { addItem, createContent } from 'store/plan-prise';
 import {
   selectPlanPriseContent,
-  selectStatus,
-} from 'store/plan-prise/selectors';
+  selectPlanPriseStatus,
+} from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = (state: IRedux.State) => ({
   cacheContent: state.cache,
-  medicData: get(selectPlanPriseContent(state), 'medic_data', {}),
+  medicData: get(selectPlanPriseContent(state), 'medic_data', []),
   planPriseContent: selectPlanPriseContent(state),
-  status: selectStatus(state),
+  status: selectPlanPriseStatus(state),
 });
 
 const mapDispatch = {
+  addItem,
   addNotification,
   cache,
-  addItem,
+  createContent,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -34,13 +35,18 @@ const Select = ({
   addNotification,
   cache,
   cacheContent,
+  createContent,
   medicData,
   status,
 }: SelectProps) => {
   const { loadGeneric } = useLoadAsync();
 
   const handleChange = (
-    value: ValueType<{ label: string; value: string; type: string }>,
+    value: ValueType<{
+      label: string;
+      value: string;
+      type: IModels.MedicamentIdentity['type'];
+    }>,
     { action }: ActionMeta<{ label: string; value: string; type: string }>
   ) => {
     if (
@@ -66,6 +72,9 @@ const Select = ({
         console.warn('Ce médicament est déjà dans le plan de prise');
       }
       addItem({ id: value.value, type: value.type });
+      if (status.isNew) {
+        createContent();
+      }
       if (
         value.type === 'api-medicaments' &&
         !inCache({ id: value.value, type: value.type }, cacheContent)
@@ -73,7 +82,8 @@ const Select = ({
         cache({
           id: value.value,
           type: value.type,
-          attributes: { denomination: value.label },
+          denomination: value.label,
+          relationshipNames: [],
         });
       }
     }
