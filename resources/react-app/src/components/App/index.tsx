@@ -78,7 +78,7 @@ export default () => {
         persistor={persistor}
       >
         <NotificationStack />
-        <Sanctum config={sanctumConfig}>
+        <Sanctum config={sanctumConfig} checkOnInit={false}>
           <Router basename="/">
             <NavigationBar />
             <Container>
@@ -94,21 +94,29 @@ export default () => {
                     <Route path="/connexion">
                       <Authentification role={Role.signin} />
                     </Route>
-                    <ProtectedRoute path="/deconnexion">
-                      <Authentification role={Role.signout} />
-                    </ProtectedRoute>
-                    <ErrorBoundary returnTo="/connexion">
-                      <ProtectedRoute path="/profil">
+                    <Route path="/deconnexion">
+                      <ProtectedRoute>
+                        <ErrorBoundary returnTo="/">
+                          <Authentification role={Role.signout} />
+                        </ErrorBoundary>
+                      </ProtectedRoute>
+                    </Route>
+                    <Route path="/profil">
+                      <ProtectedRoute>
                         <ErrorBoundary returnTo="/">
                           <Profil />
                         </ErrorBoundary>
                       </ProtectedRoute>
-                      <ProtectedRoute path="/plan-prise/:id?/:action?">
+                    </Route>
+                    <Route path="/plan-prise/:id?/:action?">
+                      <ProtectedRoute>
                         <ErrorBoundary returnTo="/">
                           <PlanPrise />
                         </ErrorBoundary>
                       </ProtectedRoute>
-                      <ProtectedRoute admin path="/admin">
+                    </Route>
+                    <Route path="/admin">
+                      <ProtectedRoute admin>
                         <ErrorBoundary returnTo="/">
                           <Suspense
                             fallback={
@@ -122,7 +130,7 @@ export default () => {
                           </Suspense>
                         </ErrorBoundary>
                       </ProtectedRoute>
-                    </ErrorBoundary>
+                    </Route>
                   </Switch>
                 </CardBody>
               </Card>

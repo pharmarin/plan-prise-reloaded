@@ -18,6 +18,7 @@ export default (props: ProtectedRouteProps) => {
 
   useEffect(() => {
     checkAuthentication().then(() => setCheckDone(true));
+    console.log('checkAuthentication ---');
   }, [checkAuthentication]);
 
   if (checkDone && authenticated === false) {
