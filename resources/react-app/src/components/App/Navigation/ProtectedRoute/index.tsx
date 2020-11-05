@@ -17,7 +17,7 @@ export default (props: ProtectedRouteProps) => {
   if (!checkAuthentication) throw new Error('Sanctum props are missing');
 
   useEffect(() => {
-    checkAuthentication().then(setCheckDone);
+    checkAuthentication().then(() => setCheckDone(true));
   }, [checkAuthentication]);
 
   if (checkDone && authenticated === false) {

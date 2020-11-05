@@ -25,28 +25,38 @@ type CardProps = IProps.Card & ConnectedProps<typeof connector>;
 
 const ItemCard = ({
   addNotification,
-  id,
+  identifier,
   loadItem,
   removeItem,
   setLoading,
   storedMedicaments,
 }: CardProps) => {
   const [isOpened, setIsOpened] = useState(false);
+
   const repository = useRepository();
-  const medicament = find<IMedicament>(storedMedicaments, {
-    id: id.id,
-    type: id.type,
+
+  const medicament = find<
+    IExtractModel<IModels.Medicament> | IExtractModel<IModels.ApiMedicament>
+  >(storedMedicaments, {
+    id: identifier.id,
+    type: identifier.type,
   });
 
   useEffect(() => {
-    if (!medicament && !id.loading) {
-      setLoading({ id, status: true });
-      loadItem(id);
+    if (!medicament && !identifier.loading) {
+      setLoading({
+        id: { id: identifier.id, type: identifier.type },
+        status: true,
+      });
+      loadItem(identifier);
     }
-    if (medicament && id.loading) {
-      setLoading({ id, status: false });
+    if (medicament && identifier.loading) {
+      setLoading({
+        id: { id: identifier.id, type: identifier.type },
+        status: false,
+      });
     }
-  }, [id, loadItem, medicament, setLoading, storedMedicaments]);
+  }, [identifier, loadItem, medicament, setLoading, storedMedicaments]);
 
   return (
     <Card className="mb-3">
@@ -66,12 +76,12 @@ const ItemCard = ({
             >
               <div className="d-flex">
                 <div className="text-truncate">
-                  {get(medicament, 'attributes.denomination', '')}
+                  {medicament.denomination || ''}
                 </div>
               </div>
               <div className="text-muted text-truncate">
                 <small>
-                  {get(medicament, 'attributes.composition', [])
+                  {get(medicament, 'composition', [])
                     .map((composant: IComposition) => composant.denomination)
                     .join(' + ')}
                 </small>
@@ -80,7 +90,7 @@ const ItemCard = ({
                 {(() => {
                   const voies_administration = get(
                     medicament,
-                    'attributes.voies_administration',
+                    'voies_administration',
                     []
                   );
                   if (voies_administration.length === 1) {
@@ -114,9 +124,9 @@ const ItemCard = ({
                 tabIndex={-1}
                 color="neutral"
                 onClick={() => {
-                  removeItem(id);
+                  removeItem({ id: identifier.id, type: identifier.type });
                   addNotification({
-                    header: `Suppression de ${medicament.attributes.denomination}`,
+                    header: `Suppression de ${medicament.denomination}`,
                     icon: 'danger',
                     timer: 2000,
                   });
@@ -157,7 +167,7 @@ const ItemCard = ({
       </CardHeader>
       {medicament && (
         <CardBody className="row">
-          <Content isOpened={isOpened} id={id} />
+          <Content isOpened={isOpened} identifier={identifier} />
         </CardBody>
       )}
     </Card>

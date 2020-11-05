@@ -1,19 +1,21 @@
 <?php
 
-namespace App\JsonApi\PlanPrise;
+namespace App\JsonApi\PlanPrises;
 
 use Neomerx\JsonApi\Schema\SchemaProvider;
-use App\Repositories\GenericRepository;
-use App\Models\OldMedicament;
 use App\Models\Medicament;
 use App\Models\ApiMedicament;
+use CloudCreativity\LaravelJsonApi\Document\Error\Error;
+use CloudCreativity\LaravelJsonApi\Exceptions\JsonApiException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Schema extends SchemaProvider
 {
   /**
    * @var string
    */
-  protected $resourceType = 'plan-prise';
+  protected $resourceType = 'plan-prises';
 
   protected $relationships = ['medicaments'];
 
@@ -24,7 +26,16 @@ class Schema extends SchemaProvider
    */
   public function getId($resource)
   {
-    return 'pp_id';
+    if (Auth::id() !== $resource->user_id) {
+      throw new JsonApiException(
+        Error::fromArray([
+          'status' => 401,
+          'message' =>
+            "Vous n'avez pas l'autorisation d'accéder à ce plan de prise. ",
+        ])
+      );
+    }
+    return $resource->pp_id;
   }
 
   /**
@@ -35,11 +46,8 @@ class Schema extends SchemaProvider
   public function getAttributes($resource)
   {
     return [
-      'pp-id' => $resource->pp_id,
-      'custom-data' => $resource->custom_data,
-      'custom-settings' => $resource->custom_settings,
-      'created-at' => $resource->created_at->toAtomString(),
-      'updated-at' => $resource->updated_at->toAtomString(),
+      'custom_data' => $resource->custom_data,
+      'custom_settings' => $resource->custom_settings,
     ];
   }
 
@@ -58,17 +66,17 @@ class Schema extends SchemaProvider
       'medicaments' => [
         self::SHOW_SELF => false,
         self::SHOW_RELATED => false,
-        self::SHOW_DATA => isset($includedRelationships['precautions']),
+        self::SHOW_DATA => isset($includedRelationships['medicaments']),
         self::DATA => function () use ($resource) {
           return array_filter(
             array_map(function ($r) {
               switch ($r['type']) {
-                case 'medicament':
+                case 'medicaments':
                   return Medicament::find($r['id']);
                 case 'api-medicaments':
                   return ApiMedicament::find($r['id']);
                 default:
-                  \Log::alert(
+                  Log::alert(
                     "Type de médicament inconnu - type: {$r['type']} - id: {$r['id']}"
                   );
                   return null;

@@ -18,12 +18,20 @@ declare namespace IRedux {
     title: string;
   }
   interface Cache {
-    medicaments: IMedicament[];
+    medicaments: (
+      | IExtractModel<IModels.Medicament>
+      | IExtractModel<IModels.ApiMedicament>
+    )[];
   }
   interface PlanPrise {
-    id: number | null;
-    content: null | IPlanPriseStatus | IPlanPriseContent;
-    list: null | 'loading' | 'error' | number[];
+    list: {
+      status: TLoadingState;
+      data?: IModels.PlanPrise['id'][];
+    };
+    content: {
+      status: TLoadingState | 'deleted' | 'deleting' | 'creating';
+      data?: IExtractModel<IModels.PlanPrise>;
+    };
   }
   export interface State {
     app: IRedux.App;

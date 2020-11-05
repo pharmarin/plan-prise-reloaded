@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\PlanPrise;
+namespace App\JsonApi\PlanPrises;
 
 use CloudCreativity\LaravelJsonApi\Validation\AbstractValidators;
 
@@ -12,7 +12,12 @@ class Validators extends AbstractValidators
    * @var string[]|null
    *      the allowed paths, an empty array for none allowed, or null to allow all paths.
    */
-  protected $allowedIncludePaths = ['medicaments'];
+  protected $allowedIncludePaths = [
+    'medicaments',
+    'medicaments.bdpm',
+    'medicaments.composition',
+    'medicaments.precautions',
+  ];
 
   /**
    * The sort field names a client is allowed send.
@@ -20,7 +25,7 @@ class Validators extends AbstractValidators
    * @var string[]|null
    *      the allowed fields, an empty array for none allowed, or null to allow all fields.
    */
-  protected $allowedSortParameters = [];
+  protected $allowedSortParameters = ['id'];
 
   /**
    * The filters a client is allowed send.
@@ -37,11 +42,11 @@ class Validators extends AbstractValidators
    *      the record being updated, or null if creating a resource.
    * @return mixed
    */
-  protected function rules($record = null, array $data): array
+  protected function rules($record, array $data): array
   {
     return [
-      //
-    ];
+        //
+      ];
   }
 
   /**
@@ -52,7 +57,7 @@ class Validators extends AbstractValidators
   protected function queryRules(): array
   {
     return [
-      //
-    ];
+        //
+      ];
   }
 }

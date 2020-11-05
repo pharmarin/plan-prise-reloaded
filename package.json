@@ -15,7 +15,6 @@
     "json-api-normalizer": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "lru-cache": "^6.0.0",
-    "normalizr": "^3.6.0",
     "pdfmake": "^0.1.65",
     "react": "^16.13.1",
     "react-async": "^10.0.1",

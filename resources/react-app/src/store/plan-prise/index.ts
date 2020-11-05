@@ -14,55 +14,98 @@ import {
   unset,
 } from 'lodash';
 import { typeToInt } from 'helpers/type-switcher';
-import { isLoaded } from './selectors';
+import { isLoaded } from './selectors/plan-prise';
+import { normalizeOne, requestUrl } from 'helpers/hooks/use-json-api';
 
-const loadList = createAsyncThunk<number[]>('planPrise/loadList', async () => {
-  const response = await axios.get('/plan-prise');
-  return map(response.data.data, (pp: any) => pp.attributes['pp-id']);
-});
+const loadList = createAsyncThunk<IModels.PlanPrise['id'][]>(
+  'planPrise/loadList',
+  async () => {
+    const response = await axios.get<IServerResponse<IModels.PlanPrise[]>>(
+      requestUrl('plan-prises', {
+        fields: {
+          'plan-prises': ['id', 'type'],
+        },
+        sort: '-id',
+      }).url
+    );
+    return map(response.data.data, (p) => p.id);
+  }
+);
 
 const loadContent = createAsyncThunk<
-  IPlanPriseContent,
-  IPlanPriseID,
+  IExtractModel<IModels.PlanPrise> | undefined,
+  IModels.PlanPrise['id'] | undefined,
   { state: IRedux.State }
 >('planPrise/loadContent', async (id, { dispatch, getState }) => {
-  const response = await axios.get(`/plan-prise/${id}?include=medicaments`);
-  const state = getState();
-  forEach(get(response, 'data.included', []), (medicament) => {
-    if (!inCache({ id: medicament.id, type: medicament.type }, state.cache))
-      dispatch(cache(medicament));
-  });
-  const data = response.data.data;
-  return {
-    id: Number(data.attributes['pp-id']),
-    medic_data: isArray(data.relationships.medicaments.data)
-      ? data.relationships.medicaments.data
-      : [],
-    custom_data: isPlainObject(data.attributes['custom-data'])
-      ? data.attributes['custom-data']
-      : {},
-    custom_settings: isPlainObject(data.attributes['custom-settings'])
-      ? data.attributes['custom-settings']
-      : {},
-  };
+  if (id === 'new') {
+    return {
+      id: 'new',
+      type: 'plan-prises',
+      medicaments: [],
+      relationshipNames: [],
+    };
+  } else if (id === undefined) {
+    return undefined;
+  } else {
+    const response = await axios.get<IServerResponse<IModels.PlanPrise>>(
+      requestUrl('plan-prises', {
+        id: id,
+        include: [
+          'medicaments',
+          'medicaments.bdpm',
+          'medicaments.composition',
+          'medicaments.precautions',
+        ],
+      }).url
+    );
+
+    const state = getState();
+
+    forEach(get(response, 'data.included', []), (included) => {
+      if (
+        included.type !== 'medicaments' &&
+        included.type !== 'api-medicaments'
+      )
+        return;
+
+      if (!inCache({ id: included.id, type: included.type }, state.cache))
+        dispatch(
+          cache(
+            normalizeOne(
+              { id: included.id, type: included.type },
+              response.data
+            )
+          )
+        );
+    });
+
+    const data = normalizeOne({ id, type: 'plan-prises' }, response.data);
+
+    if (!data) throw new Error('Impossible de charger le plan de prise ' + id);
+
+    return data;
+  }
 });
 
 const loadItem = createAsyncThunk<
   boolean,
-  IMedicamentID,
+  IModels.MedicamentIdentity,
   { state: IRedux.State }
 >(
   'planPrise/loadItem',
   async ({ id, type }, { dispatch, getState, rejectWithValue }) => {
     return await axios
-      .get(`/${type}/${id}`)
+      .get(
+        requestUrl(type, {
+          id,
+          include: ['bdpm', 'composition', 'precautions'],
+        }).url
+      )
       .then((response) => {
-        const data = response.data.data;
         const state = getState();
+
         if (!inCache({ id, type }, state.cache)) {
-          dispatch(
-            cache({ id: data.id, type: data.type, attributes: data.attributes })
-          );
+          dispatch(cache(normalizeOne({ id, type }, response.data)));
         }
         return true;
       })
@@ -74,138 +117,189 @@ const loadItem = createAsyncThunk<
   }
 );
 
-const manage = createAsyncThunk<
-  boolean | IPlanPriseID,
-  { id: IPlanPriseID; action: 'delete' }
->('planPrise/manage', async ({ id, action }, { dispatch }) => {
-  switch (action) {
-    case 'delete':
-      await axios.delete(`/plan-prise/${id}`);
-      dispatch(loadList());
-      return true;
-  }
-  return false;
+const createContent = createAsyncThunk<
+  IExtractModel<IModels.PlanPrise>,
+  undefined
+>('planPrise/create', async (_, { dispatch, getState }) => {
+  const state = getState() as IRedux.State;
+
+  const response = await axios.post<IServerResponse<IModels.PlanPrise>>(
+    requestUrl('plan-prises', { include: ['medicaments'] }).url,
+    {
+      data: {
+        type: 'plan-prises',
+        relationships: {
+          medicaments: {
+            data: state.planPrise.content.data?.medicaments.map(
+              (medicament) => ({ id: medicament.id, type: medicament.type })
+            ),
+          },
+        },
+      },
+    }
+  );
+
+  dispatch(loadList());
+
+  return normalizeOne(
+    { id: response.data.data.id, type: 'plan-prises' },
+    response.data
+  );
 });
 
+const deleteContent = createAsyncThunk<void, IModels.PlanPrise['id']>(
+  'planPrise/delete',
+  async (id, { dispatch, getState }) => {
+    await axios.delete(requestUrl('plan-prises', { id }).url);
+
+    dispatch(loadList());
+  }
+);
+
 const initialState: IRedux.PlanPrise = {
-  id: null,
-  list: null,
-  content: null,
+  list: {
+    status: 'not-loaded',
+  },
+  content: {
+    status: 'not-loaded',
+  },
 };
 
 const ppSlice = createSlice({
   name: 'planPrise',
   initialState,
   reducers: {
-    addItem: (state, { payload }: PayloadAction<IMedicamentID>) => {
+    addItem: (
+      state,
+      { payload }: PayloadAction<IModels.MedicamentIdentity>
+    ) => {
       if (isLoaded(state.content)) {
-        if (!find(state.content.medic_data, payload))
-          state.content.medic_data.push({
+        if (!find(state.content.data.medicaments, payload))
+          state.content.data.medicaments.push({
             id: payload.id,
             type: payload.type,
+            relationshipNames: [],
           });
       }
     },
-    removeItem: (state, { payload }: PayloadAction<IMedicamentID>) => {
+    removeItem: (
+      state,
+      { payload }: PayloadAction<IModels.MedicamentIdentity>
+    ) => {
       if (isLoaded(state.content)) {
-        remove(state.content.medic_data, {
+        remove(state.content.data.medicaments, {
           id: payload.id,
           type: payload.type,
         });
         unset(
-          state.content,
+          state.content.data,
           `custom_data.${typeToInt(payload.type)}-${payload.id}`
         );
       }
     },
     setLoading: (
       state,
-      { payload }: PayloadAction<{ id: IMedicamentID; status: boolean }>
+      {
+        payload,
+      }: PayloadAction<{ id: IModels.MedicamentIdentity; status: boolean }>
     ) => {
       if (isLoaded(state.content)) {
-        const index = findIndex(state.content.medic_data, payload.id);
+        const index = findIndex(state.content.data.medicaments, payload.id);
         if (payload.status === true) {
-          state.content.medic_data[index].loading = payload.status;
+          (state.content.data.medicaments[
+            index
+          ] as IModels.MedicamentIdentityWithLoading).loading = payload.status;
         } else {
-          unset(state.content.medic_data, `${index}.loading`);
+          unset(state.content.data.medicaments, `${index}.loading`);
         }
       }
-    },
-    setId: (state, { payload }: PayloadAction<number | null>) => {
-      if (payload && state.id === -1 && isLoaded(state.content)) {
-        return {
-          ...initialState,
-          content: { ...state.content, id: payload },
-          id: payload || null,
-          list: state.list,
-        };
-      }
-      return {
-        ...initialState,
-        content:
-          payload === -1
-            ? {
-                id: -1,
-                custom_data: {},
-                custom_settings: {},
-                medic_data: [],
-              }
-            : initialState.content,
-        id: payload || null,
-        list: state.list,
-      };
     },
     setSettings: (
       state,
       { payload }: PayloadAction<{ id: string; value: any }>
     ) => {
       if (isLoaded(state.content))
-        set(state.content, `custom_settings.${payload.id}`, payload.value);
+        set(state.content.data, `custom_settings.${payload.id}`, payload.value);
     },
     setValue: (
       state,
       { payload }: PayloadAction<{ id: string; value: any }>
     ) => {
       if (isLoaded(state.content))
-        set(state.content, `custom_data.${payload.id}`, payload.value);
+        set(state.content.data, `custom_data.${payload.id}`, payload.value);
     },
     removeValue: (state, { payload }: PayloadAction<{ id: string }>) => {
       if (isLoaded(state.content))
-        unset(state.content, `custom_data.${payload.id}`);
+        unset(state.content.data, `custom_data.${payload.id}`);
     },
   },
   extraReducers: (builder) => {
     builder.addCase(loadList.pending, (state) => {
-      state.list = 'loading';
+      state.list.status = 'loading';
     });
     builder.addCase(loadList.rejected, (state) => {
-      state.list = 'error';
+      state.list.status = 'not-loaded';
+      throw new Error(
+        'Impossible de charger la liste des plans de prise associés à votre compte'
+      );
     });
-    builder.addCase(loadList.fulfilled, (state, { payload }) => {
-      if (isArray(payload)) {
-        state.list = payload;
-      } else {
-        state.list = 'error';
+    builder.addCase(
+      loadList.fulfilled,
+      (state, { payload }: PayloadAction<IModels.PlanPrise['id'][]>) => {
+        if (isArray(payload)) {
+          state.list.data = payload;
+          state.list.status = 'loaded';
+        } else {
+          throw new Error(
+            'Impossible de charger la liste des plans de prise associés à votre compte'
+          );
+        }
       }
-    });
+    );
     builder.addCase(loadContent.pending, (state) => {
-      state.content = 'loading';
+      state.content.data = undefined;
+      state.content.status = 'loading';
     });
     builder.addCase(loadContent.rejected, (state) => {
-      state.content = 'error';
+      state.content.status = 'not-loaded';
+      throw new Error('Impossible de charger le plan de prise');
     });
     builder.addCase(loadContent.fulfilled, (state, { payload }) => {
-      state.content = payload;
+      if (payload === undefined) {
+        state.content.data = undefined;
+        state.content.status = 'not-loaded';
+      } else {
+        state.content.data = payload;
+        state.content.status = 'loaded';
+      }
     });
     /*builder.addCase(loadItem.pending, (state) => {});*/
     /*builder.addCase(loadItem.rejected, (state) => {});*/
     /*builder.addCase(loadItem.fulfilled, (state) => {});*/
-    builder.addCase(manage.pending, (state) => {
-      state.content = 'deleting';
+    builder.addCase(createContent.pending, (state) => {
+      state.content.status = 'creating';
     });
-    /*builder.addCase(manage.rejected, (state) => {});*/
-    builder.addCase(manage.fulfilled, (state) => {
-      state.content = 'deleted';
+    builder.addCase(createContent.rejected, () => {
+      throw new Error("Le plan de prise n'a pas pu être créé");
+    });
+    builder.addCase(
+      createContent.fulfilled,
+      (state, { payload }: PayloadAction<IExtractModel<IModels.PlanPrise>>) => {
+        if (isPlainObject(payload)) {
+          state.content.data = payload;
+          state.content.status = 'loaded';
+        }
+      }
+    );
+    builder.addCase(deleteContent.pending, (state) => {
+      state.content.status = 'deleting';
+    });
+    builder.addCase(deleteContent.rejected, () => {
+      throw new Error("Le plan de prise n'a pas pu être supprimé");
+    });
+    builder.addCase(deleteContent.fulfilled, (state) => {
+      state.content.data = undefined;
+      state.content.status = 'deleted';
     });
   },
 });
@@ -214,10 +308,9 @@ export const {
   addItem,
   removeItem,
   removeValue,
-  setId,
   setLoading,
   setSettings,
   setValue,
 } = ppSlice.actions;
-export { loadContent, loadItem, loadList, manage };
+export { loadContent, loadItem, loadList, createContent, deleteContent };
 export default ppSlice.reducer;

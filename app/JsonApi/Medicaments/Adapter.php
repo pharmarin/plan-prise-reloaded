@@ -28,7 +28,7 @@ class Adapter extends AbstractAdapter
   protected $filterScopes = [];
 
   protected $includePaths = [
-    'bdpm' => null
+    'bdpm' => null,
   ];
 
   protected $defaultPagination = ['number' => 20];
@@ -62,7 +62,7 @@ class Adapter extends AbstractAdapter
 
   public function bdpm()
   {
-    return new ExternalAPI('bdpm');
+    return new ExternalAPI('cis');
   }
 
   protected function composition()
