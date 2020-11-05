@@ -59,7 +59,6 @@ declare namespace IProps {
   interface ProtectedRoute {
     admin?: boolean;
     children: React.ReactNode;
-    path: string;
   }
   interface SplashScreen {
     type: 'load' | 'info' | 'danger' | 'warning';
