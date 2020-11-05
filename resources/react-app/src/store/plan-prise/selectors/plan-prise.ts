@@ -133,6 +133,22 @@ const selectContent = createSelector(
   }
 );
 
+const isCreating = (
+  content: IRedux.PlanPrise['content']
+): content is {
+  status: 'creating';
+  data: IExtractModel<IModels.PlanPrise>;
+} => {
+  if (content.status === 'creating') {
+    if (!isPlainObject(content.data))
+      throw new Error(
+        'Le contenu devrait être un objet lorsque le plan de prise est en cours de création'
+      );
+    return true;
+  }
+  return false;
+};
+
 const isDeleted = (
   content: IRedux.PlanPrise['content']
 ): content is { status: 'deleted'; data: undefined } => {
@@ -210,6 +226,7 @@ export const selectPlanPriseStatus = createSelector(
   [selectPlanPrise, selectPlanPriseContent],
   (planPrise, planPriseContent) => {
     return {
+      isCreating: isCreating(planPrise),
       isLoaded: isLoaded(planPrise),
       isLoading: isLoading(planPrise),
       isEmpty: get(planPriseContent, 'medic_data', []).length === 0,

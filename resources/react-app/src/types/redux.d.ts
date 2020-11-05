@@ -24,7 +24,6 @@ declare namespace IRedux {
     )[];
   }
   interface PlanPrise {
-    id: number | null; //à enlever
     list: {
       status: TLoadingState;
       data?: IModels.PlanPrise['id'][];

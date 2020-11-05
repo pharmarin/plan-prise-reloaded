@@ -2,12 +2,11 @@ import { debounce, fromPairs, get } from 'lodash';
 import axios from 'helpers/axios-clients';
 import { MiddlewareAPI, Dispatch, Action } from 'redux';
 import {
+  addItem,
   setSettings,
-  removeValue,
   setValue,
   removeItem,
-  addItem,
-  setId,
+  removeValue,
 } from 'store/plan-prise';
 import { addNotification, removeNotification } from 'store/app';
 import { requestUrl } from 'helpers/hooks/use-json-api';
@@ -122,10 +121,7 @@ const saveToAPI = ({
             icon: 'spinner',
           })
         ),
-      (response) => {
-        if (state.planPrise.id === -1 && response && response.id) {
-          dispatch(setId(response.id));
-        }
+      () => {
         dispatch(removeNotification(SAVING_NOTIFICATION_TYPE));
       }
     );

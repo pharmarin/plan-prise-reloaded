@@ -6,7 +6,7 @@ import { find, get, isArray } from 'lodash';
 import useLoadAsync from 'helpers/hooks/use-load-async';
 import { addNotification } from 'store/app';
 import { cache, inCache } from 'store/cache';
-import { addItem, create } from 'store/plan-prise';
+import { addItem, createContent } from 'store/plan-prise';
 import {
   selectPlanPriseContent,
   selectPlanPriseStatus,
@@ -23,7 +23,7 @@ const mapDispatch = {
   addItem,
   addNotification,
   cache,
-  create,
+  createContent,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -35,7 +35,7 @@ const Select = ({
   addNotification,
   cache,
   cacheContent,
-  create,
+  createContent,
   medicData,
   status,
 }: SelectProps) => {
@@ -73,7 +73,7 @@ const Select = ({
       }
       addItem({ id: value.value, type: value.type });
       if (status.isNew) {
-        create();
+        createContent();
       }
       if (
         value.type === 'api-medicaments' &&

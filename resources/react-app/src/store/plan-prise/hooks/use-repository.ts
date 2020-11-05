@@ -57,8 +57,8 @@ export default () => {
     (state) => state.planPrise.content
   );
 
-  const id = useSelector<IRedux.State, number | null>(
-    (state) => state.planPrise.id
+  const id = useSelector<IRedux.State, string | undefined>(
+    (state) => state.planPrise.content.data?.id
   );
 
   const customData = useSelector<IRedux.State>((state) =>
@@ -68,7 +68,7 @@ export default () => {
   const posologies = usePosologies();
 
   const getContent = (): IPlanPriseRepository => ({
-    id: id || 0,
+    id,
     status: content.status,
     data: isLoaded(content)
       ? map<IModels.MedicamentIdentity, IMedicamentRepository>(

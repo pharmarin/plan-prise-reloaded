@@ -49,7 +49,7 @@ interface IPlanPriseContent {
 }
 
 interface IPlanPriseRepository {
-  id: IPlanPriseID;
+  id: IModels.PlanPrise['id'] | undefined;
   status: IRedux.State['planPrise']['content']['status'];
   data?: IMedicamentRepository[];
 }
