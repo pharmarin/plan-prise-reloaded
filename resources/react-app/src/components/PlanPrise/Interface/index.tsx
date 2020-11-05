@@ -17,7 +17,7 @@ const mapState = (state: IRedux.State) => ({
 
 const connector = connect(mapState);
 
-type InterfaceProps = ConnectedProps<typeof connector> & IProps.Interface;
+type InterfaceProps = ConnectedProps<typeof connector> & Props.Interface;
 
 const Interface = ({
   isLoaded,

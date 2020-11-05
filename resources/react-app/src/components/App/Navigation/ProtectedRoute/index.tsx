@@ -3,7 +3,7 @@ import { Redirect, Route as RouterRoute, useLocation } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
 import SplashScreen from 'components/App/SplashScreen';
 
-type ProtectedRouteProps = IProps.ProtectedRoute;
+type ProtectedRouteProps = Props.ProtectedRoute;
 
 export default (props: ProtectedRouteProps) => {
   const { authenticated, checkAuthentication, user } = useContext(

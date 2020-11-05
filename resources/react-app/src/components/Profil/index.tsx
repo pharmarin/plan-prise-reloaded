@@ -41,7 +41,7 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
 
   if (!user) throw new Error("L'utilisateur n'a pas pu être chargé");
 
-  const [formData, setFormData] = useState<IModels.User>(cloneDeep(user));
+  const [formData, setFormData] = useState<Models.App.User>(cloneDeep(user));
 
   const fields = [
     {

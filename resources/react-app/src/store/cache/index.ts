@@ -6,7 +6,7 @@ const initialState: IRedux.Cache = {
 };
 
 const inCache = (
-  { id, type }: IModels.MedicamentIdentity,
+  { id, type }: Models.MedicamentIdentity,
   cache: IRedux.Cache
 ) => {
   return find(cache.medicaments, {
@@ -24,7 +24,7 @@ const cacheSlice = createSlice({
       {
         payload,
       }: PayloadAction<
-        IExtractModel<IModels.Medicament> | IExtractModel<IModels.ApiMedicament>
+        ExtractModel<Models.Medicament> | ExtractModel<Models.ApiMedicament>
       >
     ) {
       if (!inCache({ id: payload.id, type: payload.type }, state))

@@ -3,9 +3,9 @@ declare namespace IRedux {
     auth: {
       isError: boolean | string;
       isLoading: boolean;
-      tokens: ITokens | null;
+      tokens: Models.Tokens | null;
     };
-    notifications: ICustomNotification[];
+    notifications: Models.App.Notification[];
     options?: {
       label: string;
       path: string;
@@ -19,18 +19,18 @@ declare namespace IRedux {
   }
   interface Cache {
     medicaments: (
-      | IExtractModel<IModels.Medicament>
-      | IExtractModel<IModels.ApiMedicament>
+      | ExtractModel<Models.Medicament>
+      | ExtractModel<Models.ApiMedicament>
     )[];
   }
   interface PlanPrise {
     list: {
-      status: TLoadingState;
-      data?: IModels.PlanPrise['id'][];
+      status: LoadingState;
+      data?: Models.PlanPrise['id'][];
     };
     content: {
-      status: TLoadingState | 'deleted' | 'deleting' | 'creating';
-      data?: IExtractModel<IModels.PlanPrise>;
+      status: LoadingState | 'deleted' | 'deleting' | 'creating';
+      data?: ExtractModel<Models.PlanPrise>;
     };
   }
   export interface State {

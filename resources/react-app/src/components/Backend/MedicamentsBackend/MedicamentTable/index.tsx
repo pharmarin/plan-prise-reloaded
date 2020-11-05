@@ -3,7 +3,7 @@ import { FaPen, FaRecycle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
 
-export default ({ data }: IProps.Backend.MedicamentTable) => {
+export default ({ data }: Props.Backend.MedicamentTable) => {
   return (
     <Table bordered responsive>
       <thead>

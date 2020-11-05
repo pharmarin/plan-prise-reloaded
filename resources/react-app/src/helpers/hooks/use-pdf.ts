@@ -11,9 +11,9 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const pageMargins = 20;
 
-const usePdf = ({ user }: { user: IModels.User | null }) => {
+const usePdf = ({ user }: { user: Models.App.User | null }) => {
   const fromPlanPrise = (
-    content: IPlanPriseRepository
+    content: Repositories.PlanPriseRepository
   ): TDocumentDefinitions => {
     if (!content.data)
       throw new Error(
@@ -57,7 +57,7 @@ const usePdf = ({ user }: { user: IModels.User | null }) => {
       margin: [pageMargins, pageMargins],
     });
 
-    const planPriseColumns = (content: IMedicamentRepository[]) => [
+    const planPriseColumns = (content: Repositories.MedicamentRepository[]) => [
       { id: 'informations', label: 'Médicament' },
       { id: 'conservation', label: 'Conservation' },
       ...map(content[0].attributes.posologies, (p) => ({

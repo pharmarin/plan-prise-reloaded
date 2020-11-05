@@ -7,9 +7,9 @@ import CustomInput from '../CustomInput';
 import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
 import { makeUniqueSelectorInstance } from 'store/plan-prise/selectors/plan-prise';
 
-const mapState = (state: IRedux.State, props: IProps.Content) => {
+const mapState = (state: IRedux.State, props: Props.Content) => {
   const selectMedicamentForContent = makeUniqueSelectorInstance();
-  return (state: IRedux.State, { identifier }: IProps.Content) => {
+  return (state: IRedux.State, { identifier }: Props.Content) => {
     const data = selectMedicamentForContent(state, {
       id: identifier.id,
       type: identifier.type,
@@ -27,7 +27,7 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch);
 
-type ContentProps = IProps.Content & ConnectedProps<typeof connector>;
+type ContentProps = Props.Content & ConnectedProps<typeof connector>;
 
 const Content = ({ isOpened, removeValue, setValue, data }: ContentProps) => {
   const uid = data?.uid;
@@ -142,7 +142,7 @@ const Content = ({ isOpened, removeValue, setValue, data }: ContentProps) => {
           <FormGroup check>
             {data?.precautions.map(
               (
-                precaution: IExtractModel<IModels.Precaution> & {
+                precaution: ExtractModel<Models.Precaution> & {
                   checked: boolean;
                 }
               ) => (

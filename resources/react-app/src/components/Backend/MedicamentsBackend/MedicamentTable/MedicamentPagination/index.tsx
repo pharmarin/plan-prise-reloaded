@@ -12,7 +12,7 @@ export default ({
   page,
   prevPage,
   setPages,
-}: IProps.Backend.MedicamentPagination) => {
+}: Props.Backend.MedicamentPagination) => {
   return (
     <Pagination className="mx-auto">
       <PaginationItem disabled={page === 1}>

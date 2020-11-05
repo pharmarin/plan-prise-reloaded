@@ -45,7 +45,7 @@ const Select = ({
     value: ValueType<{
       label: string;
       value: string;
-      type: IModels.MedicamentIdentity['type'];
+      type: Models.MedicamentIdentity['type'];
     }>,
     { action }: ActionMeta<{ label: string; value: string; type: string }>
   ) => {

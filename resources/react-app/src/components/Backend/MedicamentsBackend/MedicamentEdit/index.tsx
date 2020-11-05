@@ -17,7 +17,7 @@ const mapDispatch = {
 const connector = connect(null, mapDispatch);
 
 type MedicamentEditProps = ConnectedProps<typeof connector> &
-  IProps.Backend.MedicamentEdit;
+  Props.Backend.MedicamentEdit;
 
 const MedicamentEdit = ({
   medicament: medicamentID,
@@ -26,13 +26,13 @@ const MedicamentEdit = ({
   const { normalizeOne, requestUrl } = useJsonApi();
 
   const [precautions, setPrecautions] = useState<
-    undefined | IExtractModel<IModels.Precaution>[]
+    undefined | ExtractModel<Models.Precaution>[]
   >();
 
-  let medicament: IExtractModel<IModels.Medicament> | undefined = undefined;
+  let medicament: ExtractModel<Models.Medicament> | undefined = undefined;
 
   const [{ data, loading, error }] = useAxios<
-    IServerResponse<IModels.Medicament>
+    IServerResponse<Models.Medicament>
   >({
     url: requestUrl('medicaments', {
       id: medicamentID.id,
@@ -78,7 +78,7 @@ const MedicamentEdit = ({
       type: medicamentID.type,
     },
     data
-  ) as IExtractModel<IModels.Medicament>;
+  ) as ExtractModel<Models.Medicament>;
 
   return (
     <React.Fragment>

@@ -21,7 +21,7 @@ export const selectPlanPriseContent = createSelector(
 
 export const selectMedicament = (
   state: IRedux.State,
-  identifier: IModels.MedicamentIdentity
+  identifier: Models.MedicamentIdentity
 ) =>
   find(state.cache.medicaments, identifier) as
     | IRedux.State['cache']['medicaments'][0]
@@ -56,9 +56,9 @@ const selectCheckedPosologies = createSelector(
 
 const isMedicament = (
   medicament:
-    | IExtractModel<IModels.Medicament>
-    | IExtractModel<IModels.ApiMedicament>
-): medicament is IExtractModel<IModels.Medicament> => {
+    | ExtractModel<Models.Medicament>
+    | ExtractModel<Models.ApiMedicament>
+): medicament is ExtractModel<Models.Medicament> => {
   if (medicament.type === 'medicaments') return true;
   return false;
 };
@@ -109,8 +109,8 @@ const selectContent = createSelector(
         })),
         'id'
       ),
-      precautions: (get(medicament, 'precautions', []) as IExtractModel<
-        IModels.Precaution
+      precautions: (get(medicament, 'precautions', []) as ExtractModel<
+        Models.Precaution
       >[]).map((p) => ({
         ...p,
         commentaire:
@@ -137,7 +137,7 @@ const isCreating = (
   content: IRedux.PlanPrise['content']
 ): content is {
   status: 'creating';
-  data: IExtractModel<IModels.PlanPrise>;
+  data: ExtractModel<Models.PlanPrise>;
 } => {
   if (content.status === 'creating') {
     if (!isPlainObject(content.data))
@@ -166,7 +166,7 @@ const isDeleting = (
   content: IRedux.PlanPrise['content']
 ): content is {
   status: 'deleting';
-  data: IExtractModel<IModels.PlanPrise>;
+  data: ExtractModel<Models.PlanPrise>;
 } => {
   if (content.status === 'deleting') {
     if (!isPlainObject(content.data))
@@ -180,7 +180,7 @@ const isDeleting = (
 
 export const isLoaded = (
   content: IRedux.PlanPrise['content']
-): content is { status: 'loaded'; data: IExtractModel<IModels.PlanPrise> } => {
+): content is { status: 'loaded'; data: ExtractModel<Models.PlanPrise> } => {
   if (content.status === 'loaded') {
     if (!isPlainObject(content.data))
       throw new Error(

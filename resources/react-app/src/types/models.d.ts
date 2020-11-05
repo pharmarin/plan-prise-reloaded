@@ -17,19 +17,41 @@ declare interface IServerResponse<T> {
   };
 }
 
-type IExtractModel<T> = Omit<T, 'attributes' | 'relationships'> &
+type ExtractModel<T> = Omit<T, 'attributes' | 'relationships'> &
   { [A in keyof T['attributes']]: T['attributes'][A] } &
   {
-    [R in keyof T['relationships']]: IExtractModel<T['relationships'][R][0]>[];
+    [R in keyof T['relationships']]: ExtractModel<T['relationships'][R][0]>[];
   } & {
     relationshipNames: string[];
   };
 
-type IExtractID<T> = Pick<T, 'id' | 'type'>;
+type ExtractID<T> = Pick<T, 'id' | 'type'>;
 
-type TLoadingState = 'not-loaded' | 'loaded' | 'loading';
+type LoadingState = 'not-loaded' | 'loaded' | 'loading';
 
-declare namespace IModels {
+declare namespace Models {
+  declare namespace App {
+    interface Notification {
+      id: string;
+      header?: string;
+      content?: string;
+      icon?: string;
+      timer?: number;
+    }
+    interface Tokens {
+      token_type: string;
+      access_token: string;
+      refresh_token: string;
+      expires_in: number;
+    }
+    interface User {
+      [key: string]: string | undefined;
+      admin: boolean;
+      name: string;
+      display_name?: string;
+      email: string;
+    }
+  }
   interface ApiMedicament extends MedicamentIdentity {
     type: 'api-medicaments';
     attributes: {
@@ -94,12 +116,5 @@ declare namespace IModels {
     attributes: {
       denomination: string;
     };
-  }
-  interface User {
-    [key: string]: string | undefined;
-    admin: boolean;
-    name: string;
-    display_name?: string;
-    email: string;
   }
 }

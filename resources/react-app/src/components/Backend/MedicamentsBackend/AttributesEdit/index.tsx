@@ -35,7 +35,7 @@ yup.setLocale({
   },
 });
 
-type AttributesEditProps = IProps.Backend.AttributesEdit;
+type AttributesEditProps = Props.Backend.AttributesEdit;
 
 export default ({ medicament }: AttributesEditProps) => {
   const { requestUrl } = useJsonApi();
@@ -52,7 +52,7 @@ export default ({ medicament }: AttributesEditProps) => {
       filter: { field: 'denomination', value: query },
       sort: 'denomination',
     });
-    const res = await axios.get<IServerResponse<IModels.PrincipeActif[]>>(
+    const res = await axios.get<IServerResponse<Models.PrincipeActif[]>>(
       url.url
     );
     const data = res.data;
@@ -245,7 +245,7 @@ export default ({ medicament }: AttributesEditProps) => {
                   isMulti
                   loadOptions={async (query: string) => {
                     const response = await axios.get<
-                      IServerResponse<IModels.ApiMedicament[]>
+                      IServerResponse<Models.ApiMedicament[]>
                     >(
                       requestUrl('api-medicaments', {
                         fields: {

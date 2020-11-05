@@ -21,7 +21,7 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch);
 
-type CardProps = IProps.Card & ConnectedProps<typeof connector>;
+type CardProps = Props.Card & ConnectedProps<typeof connector>;
 
 const ItemCard = ({
   addNotification,
@@ -36,7 +36,7 @@ const ItemCard = ({
   const repository = useRepository();
 
   const medicament = find<
-    IExtractModel<IModels.Medicament> | IExtractModel<IModels.ApiMedicament>
+    ExtractModel<Models.Medicament> | ExtractModel<Models.ApiMedicament>
   >(storedMedicaments, {
     id: identifier.id,
     type: identifier.type,
@@ -82,7 +82,10 @@ const ItemCard = ({
               <div className="text-muted text-truncate">
                 <small>
                   {get(medicament, 'composition', [])
-                    .map((composant: IComposition) => composant.denomination)
+                    .map(
+                      (composant: ExtractModel<Models.PrincipeActif>) =>
+                        composant.denomination
+                    )
                     .join(' + ')}
                 </small>
               </div>

@@ -5,7 +5,7 @@ const selectList = (state: IRedux.State) => state.planPrise.list;
 
 export const isLoaded = (
   content: IRedux.PlanPrise['list']
-): content is { status: 'loaded'; data: IModels.PlanPrise['id'][] } => {
+): content is { status: 'loaded'; data: Models.PlanPrise['id'][] } => {
   if (content.status === 'loaded' && isArray(content.data)) {
     return true;
   }

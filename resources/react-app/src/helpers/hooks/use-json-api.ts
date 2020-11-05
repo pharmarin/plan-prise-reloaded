@@ -74,7 +74,7 @@ export const extractOne = (
       (k: string) =>
         (relationships[k] = (
           relationships[k].data || []
-        ).map((relatedIdentifier: IModels.MedicamentIdentity) =>
+        ).map((relatedIdentifier: Models.MedicamentIdentity) =>
           extractOne(
             { id: relatedIdentifier.id, type: relatedIdentifier.type },
             cacheOverride

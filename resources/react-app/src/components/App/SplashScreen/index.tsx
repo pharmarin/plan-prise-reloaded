@@ -5,7 +5,7 @@ import { BsFillExclamationOctagonFill } from 'react-icons/bs';
 import styles from './index.module.scss';
 import { Link } from 'react-router-dom';
 
-export default ({ button, message, type }: IProps.SplashScreen) => {
+export default ({ button, message, type }: Props.SplashScreen) => {
   return (
     <div
       className={`${styles.splashscreen} d-flex`}

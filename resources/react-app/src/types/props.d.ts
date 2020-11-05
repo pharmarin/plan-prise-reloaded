@@ -1,11 +1,11 @@
-declare namespace IProps {
+declare namespace Props {
   declare namespace Backend {
     interface AttributesEdit {
-      medicament: IExtractModel<IModels.Medicament>;
+      medicament: ExtractModel<Models.Medicament>;
     }
     interface MedicamentEdit {
-      medicament: IExtractID<IModels.Medicament> &
-        Pick<IExtractModel<IModels.Medicament>, 'denomination' | 'precautions'>;
+      medicament: ExtractID<Models.Medicament> &
+        Pick<ExtractModel<Models.Medicament>, 'denomination' | 'precautions'>;
     }
     interface MedicamentPagination {
       last: number | null;
@@ -15,20 +15,20 @@ declare namespace IProps {
       setPages: (page: number, previous: number) => void;
     }
     interface MedicamentTable {
-      data: IExtractModel<IModels.Medicament>[];
+      data: ExtractModel<Models.Medicament>[];
     }
     interface PrecautionEdit {
       cibles: { id: string; label: string }[];
-      precaution: IExtractID<IModels.Precaution>;
+      precaution: ExtractID<Models.Precaution>;
       remove: (id: string) => void;
     }
   }
   interface Card {
-    identifier: IModels.MedicamentIdentityWithLoading;
+    identifier: Models.MedicamentIdentityWithLoading;
   }
   interface Content {
     isOpened: boolean;
-    identifier: IModels.MedicamentIdentityWithLoading;
+    identifier: Models.MedicamentIdentityWithLoading;
   }
   interface CustomInput {
     onChange: (value: string) => function;
@@ -46,7 +46,7 @@ declare namespace IProps {
       multiple?: boolean;
       readOnly?: boolean;
     };
-    medicament: IModels.MedicamentIdentity;
+    medicament: Models.MedicamentIdentity;
   }
   interface Interface {}
   interface NavbarLinkProps {

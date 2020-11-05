@@ -22,13 +22,13 @@ export default ({
   cibles,
   precaution: precautionID,
   remove,
-}: IProps.Backend.PrecautionEdit) => {
+}: Props.Backend.PrecautionEdit) => {
   const voiesAdministration = useConfig('default.voies_administration');
 
   const { normalizeOne, requestUrl } = useJsonApi();
 
   const [{ data, loading, error }] = useAxios<
-    IServerResponse<IModels.Medicament>
+    IServerResponse<Models.Medicament>
   >({
     url: requestUrl('precautions', {
       id: precautionID.id,

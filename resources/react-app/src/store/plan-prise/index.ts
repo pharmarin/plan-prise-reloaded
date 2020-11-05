@@ -17,10 +17,10 @@ import { typeToInt } from 'helpers/type-switcher';
 import { isLoaded } from './selectors/plan-prise';
 import { normalizeOne, requestUrl } from 'helpers/hooks/use-json-api';
 
-const loadList = createAsyncThunk<IModels.PlanPrise['id'][]>(
+const loadList = createAsyncThunk<Models.PlanPrise['id'][]>(
   'planPrise/loadList',
   async () => {
-    const response = await axios.get<IServerResponse<IModels.PlanPrise[]>>(
+    const response = await axios.get<IServerResponse<Models.PlanPrise[]>>(
       requestUrl('plan-prises', {
         fields: {
           'plan-prises': ['id', 'type'],
@@ -33,8 +33,8 @@ const loadList = createAsyncThunk<IModels.PlanPrise['id'][]>(
 );
 
 const loadContent = createAsyncThunk<
-  IExtractModel<IModels.PlanPrise> | undefined,
-  IModels.PlanPrise['id'] | undefined,
+  ExtractModel<Models.PlanPrise> | undefined,
+  Models.PlanPrise['id'] | undefined,
   { state: IRedux.State }
 >('planPrise/loadContent', async (id, { dispatch, getState }) => {
   if (id === 'new') {
@@ -47,7 +47,7 @@ const loadContent = createAsyncThunk<
   } else if (id === undefined) {
     return undefined;
   } else {
-    const response = await axios.get<IServerResponse<IModels.PlanPrise>>(
+    const response = await axios.get<IServerResponse<Models.PlanPrise>>(
       requestUrl('plan-prises', {
         id: id,
         include: [
@@ -89,7 +89,7 @@ const loadContent = createAsyncThunk<
 
 const loadItem = createAsyncThunk<
   boolean,
-  IModels.MedicamentIdentity,
+  Models.MedicamentIdentity,
   { state: IRedux.State }
 >(
   'planPrise/loadItem',
@@ -118,12 +118,12 @@ const loadItem = createAsyncThunk<
 );
 
 const createContent = createAsyncThunk<
-  IExtractModel<IModels.PlanPrise>,
+  ExtractModel<Models.PlanPrise>,
   undefined
 >('planPrise/create', async (_, { dispatch, getState }) => {
   const state = getState() as IRedux.State;
 
-  const response = await axios.post<IServerResponse<IModels.PlanPrise>>(
+  const response = await axios.post<IServerResponse<Models.PlanPrise>>(
     requestUrl('plan-prises', { include: ['medicaments'] }).url,
     {
       data: {
@@ -147,7 +147,7 @@ const createContent = createAsyncThunk<
   );
 });
 
-const deleteContent = createAsyncThunk<void, IModels.PlanPrise['id']>(
+const deleteContent = createAsyncThunk<void, Models.PlanPrise['id']>(
   'planPrise/delete',
   async (id, { dispatch, getState }) => {
     await axios.delete(requestUrl('plan-prises', { id }).url);
@@ -169,10 +169,7 @@ const ppSlice = createSlice({
   name: 'planPrise',
   initialState,
   reducers: {
-    addItem: (
-      state,
-      { payload }: PayloadAction<IModels.MedicamentIdentity>
-    ) => {
+    addItem: (state, { payload }: PayloadAction<Models.MedicamentIdentity>) => {
       if (isLoaded(state.content)) {
         if (!find(state.content.data.medicaments, payload))
           state.content.data.medicaments.push({
@@ -184,7 +181,7 @@ const ppSlice = createSlice({
     },
     removeItem: (
       state,
-      { payload }: PayloadAction<IModels.MedicamentIdentity>
+      { payload }: PayloadAction<Models.MedicamentIdentity>
     ) => {
       if (isLoaded(state.content)) {
         remove(state.content.data.medicaments, {
@@ -201,14 +198,14 @@ const ppSlice = createSlice({
       state,
       {
         payload,
-      }: PayloadAction<{ id: IModels.MedicamentIdentity; status: boolean }>
+      }: PayloadAction<{ id: Models.MedicamentIdentity; status: boolean }>
     ) => {
       if (isLoaded(state.content)) {
         const index = findIndex(state.content.data.medicaments, payload.id);
         if (payload.status === true) {
           (state.content.data.medicaments[
             index
-          ] as IModels.MedicamentIdentityWithLoading).loading = payload.status;
+          ] as Models.MedicamentIdentityWithLoading).loading = payload.status;
         } else {
           unset(state.content.data.medicaments, `${index}.loading`);
         }
@@ -245,7 +242,7 @@ const ppSlice = createSlice({
     });
     builder.addCase(
       loadList.fulfilled,
-      (state, { payload }: PayloadAction<IModels.PlanPrise['id'][]>) => {
+      (state, { payload }: PayloadAction<Models.PlanPrise['id'][]>) => {
         if (isArray(payload)) {
           state.list.data = payload;
           state.list.status = 'loaded';
@@ -284,7 +281,7 @@ const ppSlice = createSlice({
     });
     builder.addCase(
       createContent.fulfilled,
-      (state, { payload }: PayloadAction<IExtractModel<IModels.PlanPrise>>) => {
+      (state, { payload }: PayloadAction<ExtractModel<Models.PlanPrise>>) => {
         if (isPlainObject(payload)) {
           state.content.data = payload;
           state.content.status = 'loaded';
