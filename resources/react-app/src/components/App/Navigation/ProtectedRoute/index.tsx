@@ -18,7 +18,6 @@ export default (props: ProtectedRouteProps) => {
 
   useEffect(() => {
     checkAuthentication().then(() => setCheckDone(true));
-    console.log('checkAuthentication ---');
   }, [checkAuthentication]);
 
   if (checkDone && authenticated === false) {
@@ -36,7 +35,7 @@ export default (props: ProtectedRouteProps) => {
   }
 
   if (checkDone && authenticated === true) {
-    if (user?.admin !== true) {
+    if (props.admin && user?.admin !== true) {
       return (
         <Redirect
           to={{
@@ -50,6 +49,7 @@ export default (props: ProtectedRouteProps) => {
         />
       );
     }
+
     return <RouterRoute {...props} />;
   }
 
