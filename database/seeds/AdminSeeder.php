@@ -12,14 +12,16 @@ class AdminSeeder extends Seeder
    */
   public function run()
   {
-    User::create([
-      'name' => 'Admin',
-      'display_name' => 'Administrateur',
-      'email' => 'admin@admin.com',
-      'email_verified_at' => now(),
-      'password' => bcrypt('verysafepassword'),
-      'admin' => true,
-      'approved_at' => now(),
-    ]);
+    if (User::where('name', 'Admin')->count() === 0) {
+      User::create([
+        'name' => 'Admin',
+        'display_name' => 'Administrateur',
+        'email' => 'admin@admin.com',
+        'email_verified_at' => now(),
+        'password' => bcrypt('verysafepassword'),
+        'admin' => true,
+        'approved_at' => now(),
+      ]);
+    }
   }
 }

@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Builders\MultipleTypesBuilder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PlanPrise extends Model
 {
+  use HasFactory;
   use SoftDeletes;
   use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
