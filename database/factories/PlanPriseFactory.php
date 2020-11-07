@@ -25,9 +25,9 @@ class PlanPriseFactory extends Factory
     return [
       'pp_id' => $this->faker->unique()->randomNumber(),
       'user_id' => User::factory(),
-      'medic_data' => '[]',
-      'custom_data' => '{}',
-      'custom_settings' => '{}',
+      'medic_data' => [],
+      'custom_data' => (object) [],
+      'custom_settings' => (object) [],
     ];
   }
 }

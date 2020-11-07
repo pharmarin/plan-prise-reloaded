@@ -29,8 +29,8 @@ class PlanPrise extends Model
 
   protected $casts = [
     'medic_data' => 'json',
-    'custom_data' => 'object',
-    'custom_settings' => 'object',
+    'custom_data' => 'json',
+    'custom_settings' => 'json',
   ];
 
   protected $fillable = ['custom_data', 'custom_settings'];
