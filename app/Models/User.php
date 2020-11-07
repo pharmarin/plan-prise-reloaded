@@ -45,4 +45,15 @@ class User extends Authenticatable
   {
     return $this->hasMany('App\PlanPrise');
   }
+
+  protected static function boot()
+  {
+    parent::boot();
+
+    static::deleting(function ($user) {
+      foreach ($user->plans_prise as $plan_prise) {
+        $plan_prise->forceDelete();
+      }
+    });
+  }
 }
