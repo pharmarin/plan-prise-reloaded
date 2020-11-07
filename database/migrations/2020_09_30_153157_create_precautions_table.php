@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Medicament;
+use App\Models\Utility\PrincipeActif;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +20,10 @@ class CreatePrecautionsTable extends Migration
       $table->integer('voie_administration');
       $table->string('population');
       $table->text('commentaire');
-      $table->string('precaution_cible_type');
+      $table->enum('precaution_cible_type', [
+        Medicament::class,
+        PrincipeActif::class,
+      ]);
       $table->bigInteger('precaution_cible_id');
     });
   }

@@ -17,23 +17,23 @@ class MigrateDataFromMedicsSimple extends Migration
     $old = DB::table('medics_simple')->get();
 
     $old->each(function ($o) {
+      $principes_actifs = $this->encodePrincipesActifs($o->nomGenerique);
       $medic = \App\Models\Medicament::create([
         'denomination' => trim($o->nomMedicament),
-        'principes_actifs' => $this->encodePrincipesActifs($o->nomGenerique),
+        'principes_actifs' => $principes_actifs,
         'indications' => array_map(function ($i) {
           return trim($i);
         }, explode(' OU ', $o->indication)),
         'conservation_frigo' => $o->frigo === 1 ? true : false,
-        'conservation_duree' =>
-        $this->encodeConservationDuree($o->dureeConservation),
+        'conservation_duree' => $this->encodeConservationDuree(
+          $o->dureeConservation
+        ),
         'voies_administration' => [
           switchVoieAdministration($o->voieAdministration),
         ],
       ]);
       $medic->precautions()->saveMany(
-        collect(json_decode(strip_tags($o->commentaire)))->map(function (
-          $com
-        ) {
+        collect(json_decode(strip_tags($o->commentaire)))->map(function ($com) {
           return new \App\Models\Utility\Precaution([
             'voie_administration' => 0,
             'population' => trim($com->span),
@@ -64,19 +64,23 @@ class MigrateDataFromMedicsSimple extends Migration
 
   private function encodeConservationDuree($dureeConservation)
   {
-    if ($dureeConservation == "") return [];
-    return [json_decode($dureeConservation)
-      ? array_map(
-        function ($duree, $laboratoire) {
-          return [
-            'laboratoire' => trim($laboratoire),
-            'duree' => trim($duree),
-          ];
-        },
-        array_keys(json_decode($dureeConservation, true)),
-        json_decode($dureeConservation, true)
-      )
-      : ['laboratoire' => "", 'duree' => trim($dureeConservation)]];
+    if ($dureeConservation == '') {
+      return [];
+    }
+    return [
+      json_decode($dureeConservation)
+        ? array_map(
+          function ($duree, $laboratoire) {
+            return [
+              'laboratoire' => trim($laboratoire),
+              'duree' => trim($duree),
+            ];
+          },
+          array_keys(json_decode($dureeConservation, true)),
+          json_decode($dureeConservation, true)
+        )
+        : ['laboratoire' => '', 'duree' => trim($dureeConservation)],
+    ];
   }
 
   /**

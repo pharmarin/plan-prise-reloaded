@@ -21,7 +21,7 @@ class CreateMedicamentsTable extends Migration
       $table->boolean('conservation_frigo');
       $table->json('conservation_duree');
       $table->json('voies_administration');
-      $table->json('cis')->nullable();
+      $table->json('cis')->default('[]');
       $table->timestamps();
       $table->softDeletes();
     });
