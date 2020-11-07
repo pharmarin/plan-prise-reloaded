@@ -57,6 +57,11 @@ class Adapter extends AbstractAdapter
     return new GenericRelation('medic_data');
   }
 
+  protected function searchAll($query)
+  {
+    return $query->where('user_id', Auth::id())->get();
+  }
+
   protected function creating(PlanPrise $planPrise)
   {
     $max_id = PlanPrise::where('user_id', Auth::id())

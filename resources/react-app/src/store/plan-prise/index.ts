@@ -28,6 +28,7 @@ const loadList = createAsyncThunk<Models.PlanPrise['id'][]>(
         sort: '-id',
       }).url
     );
+
     return map(response.data.data, (p) => p.id);
   }
 );

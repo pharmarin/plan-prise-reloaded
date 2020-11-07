@@ -30,7 +30,7 @@ class Schema extends SchemaProvider
       throw new JsonApiException(
         Error::fromArray([
           'status' => 401,
-          'message' =>
+          'title' =>
             "Vous n'avez pas l'autorisation d'accéder à ce plan de prise. ",
         ])
       );
