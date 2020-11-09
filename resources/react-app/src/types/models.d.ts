@@ -38,12 +38,6 @@ declare namespace Models {
       icon?: string;
       timer?: number;
     }
-    interface Tokens {
-      token_type: string;
-      access_token: string;
-      refresh_token: string;
-      expires_in: number;
-    }
     interface User {
       [key: string]: string | undefined;
       admin: boolean;

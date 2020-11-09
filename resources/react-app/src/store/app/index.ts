@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { filter, findIndex, uniqueId } from 'lodash';
 
 const initialState: IRedux.App = {
-  auth: { isLoading: false, isError: false, tokens: null },
   notifications: [],
   options: undefined,
   returnTo: {
@@ -17,33 +16,25 @@ const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    setShowSettings: (state, { payload }: PayloadAction<boolean>) => {
+    setShowSettings: (
+      state,
+      { payload }: PayloadAction<IRedux.App['showSettings']>
+    ) => {
       state.showSettings = payload;
     },
     updateAppNav: (
       state,
       {
-        payload,
-      }: PayloadAction<{
-        title: string;
-        returnTo?: { path: string; label: string };
-        options?: { path: string; label: string; args?: any }[];
-      }>
+        payload: { options, returnTo, title },
+      }: PayloadAction<Pick<IRedux.App, 'title' | 'returnTo' | 'options'>>
     ) => {
-      const { options, returnTo, title } = payload;
       state.title = title;
       state.returnTo = returnTo;
       state.options = options;
     },
     addNotification: (
       state,
-      action: PayloadAction<{
-        id?: string;
-        header?: string;
-        content?: string;
-        icon?: string;
-        timer?: number;
-      }>
+      action: PayloadAction<Partial<Models.App.Notification>>
     ) => {
       const index = findIndex(state.notifications, { id: action.payload.id });
       if (action.payload.id && index > -1) {
@@ -64,10 +55,13 @@ const appSlice = createSlice({
         });
       }
     },
-    removeNotification: (state, action: PayloadAction<string>) => {
+    removeNotification: (
+      state,
+      { payload }: PayloadAction<Models.App.Notification['id']>
+    ) => {
       state.notifications = filter(
         state.notifications,
-        (n) => n.id !== action.payload
+        (n) => n.id !== payload
       );
     },
   },

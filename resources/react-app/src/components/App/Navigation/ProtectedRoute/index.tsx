@@ -1,26 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Redirect, Route as RouterRoute, useLocation } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Redirect, useLocation } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
 import SplashScreen from 'components/App/SplashScreen';
 
 type ProtectedRouteProps = Props.ProtectedRoute;
 
-export default (props: ProtectedRouteProps) => {
-  const { authenticated, checkAuthentication, user } = useContext(
-    SanctumContext
-  );
+export default ({ admin, children }: ProtectedRouteProps) => {
+  const { authenticated, user } = useContext(SanctumContext);
 
   const { pathname } = useLocation();
 
-  const [checkDone, setCheckDone] = useState<null | boolean>(null);
-
-  if (!checkAuthentication) throw new Error('Sanctum props are missing');
-
-  useEffect(() => {
-    checkAuthentication().then(() => setCheckDone(true));
-  }, [checkAuthentication]);
-
-  if (checkDone && authenticated === false) {
+  if (authenticated === false) {
     return (
       <Redirect
         to={{
@@ -34,8 +24,8 @@ export default (props: ProtectedRouteProps) => {
     );
   }
 
-  if (checkDone && authenticated === true) {
-    if (props.admin && user?.admin !== true) {
+  if (authenticated === true) {
+    if (admin && user?.admin !== true) {
       return (
         <Redirect
           to={{
@@ -50,7 +40,7 @@ export default (props: ProtectedRouteProps) => {
       );
     }
 
-    return <RouterRoute {...props} />;
+    return children || null;
   }
 
   return <SplashScreen message="Authentification en cours" type="load" />;

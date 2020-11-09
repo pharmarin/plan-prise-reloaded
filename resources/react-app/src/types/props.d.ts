@@ -58,7 +58,7 @@ declare namespace Props {
   }
   interface ProtectedRoute {
     admin?: boolean;
-    children: React.ReactNode;
+    children: JSX.Element;
   }
   interface SplashScreen {
     type: 'load' | 'info' | 'danger' | 'warning';

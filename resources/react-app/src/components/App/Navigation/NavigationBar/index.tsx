@@ -89,7 +89,9 @@ const NavigationBar = ({ options, returnTo, title }: NavigationBarProps) => {
             </Row>
           </div>
           <Nav className="ml-lg-auto" navbar>
-            {authenticated ? (
+            {authenticated === null ? (
+              <Spinner size="sm" />
+            ) : authenticated ? (
               <React.Fragment>
                 {user?.admin === true && (
                   <NavbarLink label="Administration" path="/admin" />
@@ -97,13 +99,11 @@ const NavigationBar = ({ options, returnTo, title }: NavigationBarProps) => {
                 <NavbarLink label="Profil" path="/profil" />
                 <NavbarLink label="Déconnexion" path="/deconnexion" />
               </React.Fragment>
-            ) : authenticated === false ? (
+            ) : (
               <React.Fragment>
                 <NavbarLink label="Connexion" path="/connexion" />
                 <NavbarLink label="Inscription" path="/inscription" />
               </React.Fragment>
-            ) : (
-              <Spinner size="sm" />
             )}
           </Nav>
         </UncontrolledCollapse>

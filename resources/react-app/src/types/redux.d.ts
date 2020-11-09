@@ -1,12 +1,8 @@
 declare namespace IRedux {
   interface App {
-    auth: {
-      isError: boolean | string;
-      isLoading: boolean;
-      tokens: Models.Tokens | null;
-    };
     notifications: Models.App.Notification[];
     options?: {
+      args?: any;
       label: string;
       path: string;
     }[];

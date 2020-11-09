@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner } from 'reactstrap';
+import { Button, Spinner } from 'reactstrap';
 import { BsFillExclamationOctagonFill } from 'react-icons/bs';
 
 import styles from './index.module.scss';
@@ -27,9 +27,18 @@ export default ({ button, message, type }: Props.SplashScreen) => {
         </div>
         {button && (
           <div className="mt-5">
-            <Link className="btn btn-light" to={button.path}>
-              {button.label}
-            </Link>
+            {button.path === 'refresh' ? (
+              <Button
+                color="light"
+                onClick={() => window.location.reload(false)}
+              >
+                {button.label}
+              </Button>
+            ) : (
+              <Link className="btn btn-light" to={button.path}>
+                {button.label}
+              </Link>
+            )}
           </div>
         )}
       </div>
