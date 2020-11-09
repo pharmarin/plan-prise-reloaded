@@ -20,11 +20,8 @@ class CreatePrecautionsTable extends Migration
       $table->integer('voie_administration');
       $table->string('population');
       $table->text('commentaire');
-      $table->enum('precaution_cible_type', [
-        Medicament::class,
-        PrincipeActif::class,
-      ]);
-      $table->bigInteger('precaution_cible_id');
+      $table->string('precaution_cible_type');
+      $table->foreignId('precaution_cible_id');
     });
   }
 

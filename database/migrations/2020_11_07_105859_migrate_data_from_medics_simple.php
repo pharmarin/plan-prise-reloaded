@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Medicament;
+use App\Models\Utility\Precaution;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +20,7 @@ class MigrateDataFromMedicsSimple extends Migration
 
     $old->each(function ($o) {
       $principes_actifs = $this->encodePrincipesActifs($o->nomGenerique);
-      $medic = \App\Models\Medicament::create([
+      $medic = Medicament::create([
         'denomination' => trim($o->nomMedicament),
         'principes_actifs' => $principes_actifs,
         'indications' => array_map(function ($i) {
@@ -34,7 +36,7 @@ class MigrateDataFromMedicsSimple extends Migration
       ]);
       $medic->precautions()->saveMany(
         collect(json_decode(strip_tags($o->commentaire)))->map(function ($com) {
-          return new \App\Models\Utility\Precaution([
+          return new Precaution([
             'voie_administration' => 0,
             'population' => trim($com->span),
             'commentaire' => trim(str_replace('<br>', "\n", $com->text)),
