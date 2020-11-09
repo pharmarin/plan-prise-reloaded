@@ -27,7 +27,6 @@ declare namespace Props {
     identifier: Models.MedicamentIdentityWithLoading;
   }
   interface Content {
-    isOpened: boolean;
     identifier: Models.MedicamentIdentityWithLoading;
   }
   interface CustomInput {

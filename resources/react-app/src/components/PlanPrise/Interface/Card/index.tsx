@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, CardHeader, Button, CardBody, Spinner, Input } from 'reactstrap';
-import { BsTrash, BsCaretDown, BsCaretUpFill } from 'react-icons/bs';
 import { find, get } from 'lodash';
 import { loadItem, removeItem, setLoading } from 'store/plan-prise';
 import Content from './Content';
 import { addNotification } from 'store/app';
 import useRepository from 'store/plan-prise/hooks/use-repository';
+import { FaTrash } from 'react-icons/fa';
 
 const mapState = (state: IRedux.State) => ({
   storedMedicaments: state.cache.medicaments,
@@ -31,8 +31,6 @@ const ItemCard = ({
   setLoading,
   storedMedicaments,
 }: CardProps) => {
-  const [isOpened, setIsOpened] = useState(false);
-
   const repository = useRepository();
 
   const medicament = find<
@@ -62,7 +60,11 @@ const ItemCard = ({
     <Card className="mb-3">
       <CardHeader
         className="d-flex"
-        onClick={(event) => setIsOpened(!isOpened)}
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 5,
+        }}
       >
         {medicament ? (
           <React.Fragment>
@@ -138,26 +140,7 @@ const ItemCard = ({
                 <small className="mr-1 prevent-toggle">
                   Supprimer la ligne
                 </small>
-                <BsTrash className="prevent-toggle" />
-              </Button>
-              <Button
-                block={true}
-                className="rounded-pill text-muted py-0 mt-1"
-                size="sm"
-                tabIndex={-1}
-                color="neutral"
-              >
-                {isOpened ? (
-                  <React.Fragment>
-                    <small className="mr-1">Masquer les détails</small>
-                    <BsCaretUpFill />
-                  </React.Fragment>
-                ) : (
-                  <React.Fragment>
-                    <small className="mr-1">Afficher les détails</small>
-                    <BsCaretDown />
-                  </React.Fragment>
-                )}
+                <FaTrash className="prevent-toggle" />
               </Button>
             </div>
           </React.Fragment>
@@ -170,7 +153,7 @@ const ItemCard = ({
       </CardHeader>
       {medicament && (
         <CardBody className="row">
-          <Content isOpened={isOpened} identifier={identifier} />
+          <Content identifier={identifier} />
         </CardBody>
       )}
     </Card>
