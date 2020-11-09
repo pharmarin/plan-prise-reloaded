@@ -164,6 +164,9 @@ const initialState: IRedux.PlanPrise = {
   content: {
     status: 'not-loaded',
   },
+  options: {
+    showSettings: false,
+  },
 };
 
 const ppSlice = createSlice({
@@ -218,6 +221,12 @@ const ppSlice = createSlice({
     ) => {
       if (isLoaded(state.content))
         set(state.content.data, `custom_settings.${payload.id}`, payload.value);
+    },
+    setShowSettings: (
+      state,
+      { payload }: PayloadAction<IRedux.PlanPrise['options']['showSettings']>
+    ) => {
+      state.options.showSettings = payload;
     },
     setValue: (
       state,
@@ -308,6 +317,7 @@ export const {
   removeValue,
   setLoading,
   setSettings,
+  setShowSettings,
   setValue,
 } = ppSlice.actions;
 export { loadContent, loadItem, loadList, createContent, deleteContent };

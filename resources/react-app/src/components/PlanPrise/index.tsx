@@ -2,8 +2,8 @@ import React, { useContext, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
 import { get, isNumber } from 'lodash';
-import { setShowSettings, updateAppNav } from 'store/app';
-import { loadContent, loadList } from 'store/plan-prise';
+import { updateAppNav } from 'store/app';
+import { loadContent, loadList, setShowSettings } from 'store/plan-prise';
 import usePdf from 'helpers/hooks/use-pdf';
 
 import Selection from './Selection';
@@ -18,7 +18,7 @@ import SplashScreen from 'components/App/SplashScreen';
 const mapState = (state: IRedux.State) => ({
   id: state.planPrise.content.data?.id,
   list: state.planPrise.list,
-  showSettings: state.app.showSettings,
+  showSettings: state.planPrise.options.showSettings,
   status: selectPlanPriseStatus(state),
 });
 

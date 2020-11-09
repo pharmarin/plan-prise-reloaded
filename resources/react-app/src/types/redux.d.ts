@@ -13,7 +13,6 @@ declare namespace IRedux {
       title: string;
     };
     notifications: Models.App.Notification[];
-    showSettings: boolean;
   }
   interface Cache {
     medicaments: (
@@ -29,6 +28,9 @@ declare namespace IRedux {
     content: {
       status: LoadingState | 'deleted' | 'deleting' | 'creating';
       data?: ExtractModel<Models.PlanPrise>;
+    };
+    options: {
+      showSettings: boolean;
     };
   }
   export interface State {

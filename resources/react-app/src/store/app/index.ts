@@ -11,19 +11,12 @@ const initialState: IRedux.App = {
     title: '',
   },
   notifications: [],
-  showSettings: false,
 };
 
 const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    setShowSettings: (
-      state,
-      { payload }: PayloadAction<IRedux.App['showSettings']>
-    ) => {
-      state.showSettings = payload;
-    },
     updateAppNav: (
       state,
       {
@@ -74,7 +67,6 @@ const appSlice = createSlice({
 export const {
   addNotification,
   removeNotification,
-  setShowSettings,
   updateAppNav,
 } = appSlice.actions;
 export default appSlice.reducer;

@@ -9,8 +9,7 @@ import {
 import { connect, ConnectedProps } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, NavItem, NavLink } from 'reactstrap';
-import { setShowSettings } from 'store/app';
-import { deleteContent } from 'store/plan-prise';
+import { deleteContent, setShowSettings } from 'store/plan-prise';
 
 const mapDispatch = { deleteContent, setShowSettings };
 
