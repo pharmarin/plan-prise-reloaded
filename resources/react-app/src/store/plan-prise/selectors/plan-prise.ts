@@ -229,7 +229,7 @@ export const selectPlanPriseStatus = createSelector(
       isCreating: isCreating(planPrise),
       isLoaded: isLoaded(planPrise),
       isLoading: isLoading(planPrise),
-      isEmpty: get(planPriseContent, 'medic_data', []).length === 0,
+      isEmpty: get(planPriseContent, 'medicaments', []).length === 0,
       isDeleting: isDeleting(planPrise),
       isDeleted: isDeleted(planPrise),
       isNew: isNew(planPrise),
