@@ -4,8 +4,8 @@ import TextareaAutosize from 'react-textarea-autosize';
 const CustomInput = ({ onChange, readOnly, value }: Props.CustomInput) => {
   return (
     <TextareaAutosize
+      className={`form-control${readOnly ? '-plaintext' : ''}`}
       disabled={readOnly}
-      className="form-control"
       value={value || ''}
       onChange={(e) => onChange(e.currentTarget.value)}
     />

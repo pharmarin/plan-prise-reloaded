@@ -38,7 +38,7 @@ const Content = ({ isOpened, removeValue, setValue, data }: ContentProps) => {
           <div>
             <Label>Indication</Label>
             <FormGroup>
-              {isArray(data?.indications) ? (
+              {(data?.indications || []).length > 1 ? (
                 <ButtonGroup vertical style={{ width: '100%' }}>
                   {data?.indications.map((indication: string) => (
                     <Button
