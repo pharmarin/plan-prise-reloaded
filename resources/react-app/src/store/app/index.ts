@@ -2,14 +2,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { filter, findIndex, uniqueId } from 'lodash';
 
 const initialState: IRedux.App = {
-  notifications: [],
-  options: undefined,
-  returnTo: {
-    path: '/',
-    label: '',
+  navigation: {
+    options: undefined,
+    returnTo: {
+      path: '/',
+      label: '',
+    },
+    title: '',
   },
+  notifications: [],
   showSettings: false,
-  title: '',
 };
 
 const appSlice = createSlice({
@@ -26,11 +28,13 @@ const appSlice = createSlice({
       state,
       {
         payload: { options, returnTo, title },
-      }: PayloadAction<Pick<IRedux.App, 'title' | 'returnTo' | 'options'>>
+      }: PayloadAction<
+        Pick<IRedux.App['navigation'], 'title' | 'returnTo' | 'options'>
+      >
     ) => {
-      state.title = title;
-      state.returnTo = returnTo;
-      state.options = options;
+      state.navigation.title = title;
+      state.navigation.returnTo = returnTo;
+      state.navigation.options = options;
     },
     addNotification: (
       state,

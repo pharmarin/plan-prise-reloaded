@@ -16,9 +16,9 @@ import NavbarLink from '../NavbarLink';
 const NAVBAR_TITLE = 'plandeprise.fr';
 
 const mapState = (state: IRedux.State) => ({
-  options: state.app.options,
-  returnTo: state.app.returnTo,
-  title: state.app.title,
+  options: state.app.navigation.options,
+  returnTo: state.app.navigation.returnTo,
+  title: state.app.navigation.title,
 });
 
 const connector = connect(mapState);

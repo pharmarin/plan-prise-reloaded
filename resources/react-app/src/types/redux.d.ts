@@ -1,17 +1,19 @@
 declare namespace IRedux {
   interface App {
-    notifications: Models.App.Notification[];
-    options?: {
-      args?: any;
-      label: string;
-      path: string;
-    }[];
-    returnTo?: {
-      label: string;
-      path: string;
+    navigation: {
+      options?: {
+        args?: any;
+        label: string;
+        path: string;
+      }[];
+      returnTo?: {
+        label: string;
+        path: string;
+      };
+      title: string;
     };
+    notifications: Models.App.Notification[];
     showSettings: boolean;
-    title: string;
   }
   interface Cache {
     medicaments: (
