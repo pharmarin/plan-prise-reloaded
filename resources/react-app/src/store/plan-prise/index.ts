@@ -232,7 +232,6 @@ const ppSlice = createSlice({
       state,
       { payload }: PayloadAction<{ id: string; value: any }>
     ) => {
-      console.log('payload.value: ', payload.value);
       if (isLoaded(state.content))
         set(state.content.data, `custom_data.${payload.id}`, payload.value);
     },

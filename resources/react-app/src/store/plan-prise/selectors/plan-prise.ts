@@ -19,6 +19,11 @@ export const selectPlanPriseContent = createSelector(
   (planPrise) => planPrise.data
 );
 
+const selectPlanPriseStatus = createSelector(
+  [selectPlanPrise],
+  (planPrise) => planPrise.status
+);
+
 export const selectMedicament = (
   state: IRedux.State,
   identifier: Models.MedicamentIdentity
@@ -133,51 +138,6 @@ const selectContent = createSelector(
   }
 );
 
-const isCreating = (
-  content: IRedux.PlanPrise['content']
-): content is {
-  status: 'creating';
-  data: ExtractModel<Models.PlanPrise>;
-} => {
-  if (content.status === 'creating') {
-    if (!isPlainObject(content.data))
-      throw new Error(
-        'Le contenu devrait être un objet lorsque le plan de prise est en cours de création'
-      );
-    return true;
-  }
-  return false;
-};
-
-const isDeleted = (
-  content: IRedux.PlanPrise['content']
-): content is { status: 'deleted'; data: undefined } => {
-  if (content.status === 'deleted') {
-    if (content.data !== undefined)
-      throw new Error(
-        'Le contenu devrait être vide lorsque le plan de prise est supprimé'
-      );
-    return true;
-  }
-  return false;
-};
-
-const isDeleting = (
-  content: IRedux.PlanPrise['content']
-): content is {
-  status: 'deleting';
-  data: ExtractModel<Models.PlanPrise>;
-} => {
-  if (content.status === 'deleting') {
-    if (!isPlainObject(content.data))
-      throw new Error(
-        'Le contenu devrait être un objet lorsque le plan de prise est en cours de suppression'
-      );
-    return true;
-  }
-  return false;
-};
-
 export const isLoaded = (
   content: IRedux.PlanPrise['content']
 ): content is { status: 'loaded'; data: ExtractModel<Models.PlanPrise> } => {
@@ -191,49 +151,28 @@ export const isLoaded = (
   return false;
 };
 
-const isLoading = (
-  content: IRedux.PlanPrise['content']
-): content is { status: 'loading'; data: undefined } => {
-  if (content.status === 'loading') {
-    if (content.data !== undefined)
-      throw new Error(
-        'Le contenu devrait être vide lorsque le plan de prise est en cours de chargement'
-      );
-    return true;
-  }
-  return false;
-};
+const selectPlanPriseContentLength = createSelector(
+  [selectPlanPriseContent],
+  (planPriseContent) => (planPriseContent?.medicaments || []).length
+);
 
-const isNew = (content: IRedux.PlanPrise['content']) => {
-  if (content.data?.id === 'new') return true;
-  return false;
-};
+export const selectPlanPriseID = createSelector(
+  [selectPlanPriseContent],
+  (planPriseContent) => planPriseContent?.id
+);
 
-const isNotLoaded = (
-  content: IRedux.PlanPrise['content']
-): content is { status: 'not-loaded'; data: undefined } => {
-  if (content.status === 'not-loaded') {
-    if (content.data !== undefined)
-      throw new Error(
-        "Le plan de prise devrait être vide lorsqu'il n'est pas encore chargé"
-      );
-    return true;
-  }
-  return false;
-};
-
-export const selectPlanPriseStatus = createSelector(
-  [selectPlanPrise, selectPlanPriseContent],
-  (planPrise, planPriseContent) => {
+export const selectPlanPriseState = createSelector(
+  [selectPlanPriseStatus, selectPlanPriseContentLength, selectPlanPriseID],
+  (planPriseStatus, planPriseContentLength, planPriseID) => {
     return {
-      isCreating: isCreating(planPrise),
-      isLoaded: isLoaded(planPrise),
-      isLoading: isLoading(planPrise),
-      isEmpty: get(planPriseContent, 'medicaments', []).length === 0,
-      isDeleting: isDeleting(planPrise),
-      isDeleted: isDeleted(planPrise),
-      isNew: isNew(planPrise),
-      isNotLoaded: isNotLoaded(planPrise),
+      isCreating: planPriseStatus === 'creating',
+      isLoaded: planPriseStatus === 'loaded',
+      isLoading: planPriseStatus === 'loading',
+      isEmpty: planPriseContentLength === 0,
+      isDeleting: planPriseStatus === 'deleting',
+      isDeleted: planPriseStatus === 'deleted',
+      isNew: planPriseID === 'new',
+      isNotLoaded: planPriseStatus === 'not-loaded',
     };
   }
 );

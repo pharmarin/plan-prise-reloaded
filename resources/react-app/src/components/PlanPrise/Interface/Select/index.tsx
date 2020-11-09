@@ -9,14 +9,14 @@ import { cache, inCache } from 'store/cache';
 import { addItem, createContent } from 'store/plan-prise';
 import {
   selectPlanPriseContent,
-  selectPlanPriseStatus,
+  selectPlanPriseState,
 } from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = (state: IRedux.State) => ({
   cacheContent: state.cache,
   medicData: get(selectPlanPriseContent(state), 'medic_data', []),
   planPriseContent: selectPlanPriseContent(state),
-  status: selectPlanPriseStatus(state),
+  status: selectPlanPriseState(state),
 });
 
 const mapDispatch = {

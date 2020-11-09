@@ -4,10 +4,10 @@ import { keys, map, toNumber } from 'lodash';
 import Card from './Card';
 import Select from './Select';
 import SplashScreen from 'components/App/SplashScreen';
-import { selectPlanPriseStatus } from 'store/plan-prise/selectors/plan-prise';
+import { selectPlanPriseState } from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = (state: IRedux.State) => ({
-  ...selectPlanPriseStatus(state),
+  ...selectPlanPriseState(state),
   medicaments: (state.planPrise.content.data?.medicaments || []).map((m) => ({
     id: m.id,
     type: m.type,
