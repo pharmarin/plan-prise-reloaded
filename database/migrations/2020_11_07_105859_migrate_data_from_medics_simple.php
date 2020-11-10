@@ -80,20 +80,18 @@ class MigrateDataFromMedicsSimple extends Migration
     if ($dureeConservation == '') {
       return [];
     }
-    return [
-      json_decode($dureeConservation)
-        ? array_map(
-          function ($laboratoire, $duree) {
-            return [
-              'laboratoire' => trim($laboratoire),
-              'duree' => trim($duree),
-            ];
-          },
-          array_keys(json_decode($dureeConservation, true)),
-          json_decode($dureeConservation, true)
-        )
-        : ['laboratoire' => '', 'duree' => trim($dureeConservation)],
-    ];
+    return json_decode($dureeConservation)
+      ? array_map(
+        function ($laboratoire, $duree) {
+          return [
+            'laboratoire' => trim($laboratoire),
+            'duree' => trim($duree),
+          ];
+        },
+        array_keys(json_decode($dureeConservation, true)),
+        json_decode($dureeConservation, true)
+      )
+      : [['laboratoire' => '', 'duree' => trim($dureeConservation)]];
   }
 
   /**
