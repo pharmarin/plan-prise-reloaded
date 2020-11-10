@@ -8,6 +8,7 @@ import {
   get,
   isArray,
   isPlainObject,
+  isString,
   map,
   remove,
   set,
@@ -27,6 +28,13 @@ const loadList = createAsyncThunk<Models.PlanPrise['id'][]>(
         sort: '-id',
       }).url
     );
+
+    if (!isArray(response.data.data))
+      throw new Error("La réponse reçue n'est par un array");
+    if (response.data.data.some((p) => !isString(p.id)))
+      throw new Error(
+        "La réponse reçue ne contient pas d'identifiants de plan de prise valides"
+      );
 
     return map(response.data.data, (p) => p.id);
   }
@@ -105,7 +113,12 @@ const loadItem = createAsyncThunk<
         const state = getState();
 
         if (!inCache({ id, type }, state.cache)) {
-          dispatch(cache(normalizeOne({ id, type }, response.data)));
+          const data = normalizeOne({ id, type }, response.data);
+
+          if (!data)
+            throw new Error('Impossible de charge le médicament' + id + type);
+
+          dispatch(cache(data));
         }
         return true;
       })
