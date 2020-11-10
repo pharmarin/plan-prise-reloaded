@@ -14,7 +14,6 @@ import {
   unset,
 } from 'lodash';
 import { typeToInt } from 'helpers/type-switcher';
-import { isLoaded } from './selectors/plan-prise';
 import { normalizeOne, requestUrl } from 'helpers/hooks/use-json-api';
 
 const loadList = createAsyncThunk<Models.PlanPrise['id'][]>(
@@ -174,29 +173,43 @@ const ppSlice = createSlice({
   initialState,
   reducers: {
     addItem: (state, { payload }: PayloadAction<Models.MedicamentIdentity>) => {
-      if (isLoaded(state.content)) {
-        if (!find(state.content.data.medicaments, payload))
-          state.content.data.medicaments.push({
-            id: payload.id,
-            type: payload.type,
-            relationshipNames: [],
-          });
-      }
+      if (state.content.status !== 'loaded')
+        throw new Error(
+          "Impossible d'ajouter un médicament à un plan de prise non chargé"
+        );
+      if (!isPlainObject(state.content.data))
+        throw new Error('Un plan de prise chargé doit être un objet');
+
+      if (!find(state.content.data?.medicaments, payload))
+        state.content.data?.medicaments.push({
+          id: payload.id,
+          type: payload.type,
+          relationshipNames: [],
+        });
     },
     removeItem: (
       state,
       { payload }: PayloadAction<Models.MedicamentIdentity>
     ) => {
-      if (isLoaded(state.content)) {
-        remove(state.content.data.medicaments, {
-          id: payload.id,
-          type: payload.type,
-        });
-        unset(
-          state.content.data,
-          `custom_data.${typeToInt(payload.type)}-${payload.id}`
+      if (state.content.status !== 'loaded')
+        throw new Error(
+          "Impossible de supprimer un médicament d'un plan de prise non chargé"
         );
-      }
+      if (
+        !isPlainObject(state.content.data) ||
+        !state.content.data?.medicaments
+      )
+        throw new Error('Un plan de prise chargé doit être un objet');
+
+      remove(state.content.data.medicaments, {
+        id: payload.id,
+        type: payload.type,
+      });
+
+      unset(
+        state.content.data,
+        `custom_data.${typeToInt(payload.type)}-${payload.id}`
+      );
     },
     setLoading: (
       state,
@@ -204,23 +217,37 @@ const ppSlice = createSlice({
         payload,
       }: PayloadAction<{ id: Models.MedicamentIdentity; status: boolean }>
     ) => {
-      if (isLoaded(state.content)) {
-        const index = findIndex(state.content.data.medicaments, payload.id);
-        if (payload.status === true) {
-          (state.content.data.medicaments[
-            index
-          ] as Models.MedicamentIdentityWithLoading).loading = payload.status;
-        } else {
-          unset(state.content.data.medicaments, `${index}.loading`);
-        }
+      if (state.content.status !== 'loaded')
+        throw new Error(
+          "Impossible de modifier un médicament d'un plan de prise non chargé"
+        );
+      if (!isPlainObject(state.content.data))
+        throw new Error('Un plan de prise chargé doit être un objet');
+
+      const index = findIndex(state.content.data?.medicaments, payload.id);
+      if (payload.status === true) {
+        (state.content.data?.medicaments[
+          index
+        ] as Models.MedicamentIdentityWithLoading).loading = payload.status;
+      } else {
+        unset(state.content.data?.medicaments, `${index}.loading`);
       }
     },
     setSettings: (
       state,
       { payload }: PayloadAction<{ id: string; value: any }>
     ) => {
-      if (isLoaded(state.content))
-        set(state.content.data, `custom_settings.${payload.id}`, payload.value);
+      if (state.content.status !== 'loaded')
+        throw new Error(
+          "Impossible de modifier les paramètres d'un plan de prise non chargé"
+        );
+      if (
+        !isPlainObject(state.content.data) ||
+        !state.content.data?.medicaments
+      )
+        throw new Error('Un plan de prise chargé doit être un objet');
+
+      set(state.content.data, `custom_settings.${payload.id}`, payload.value);
     },
     setShowSettings: (
       state,
@@ -232,12 +259,30 @@ const ppSlice = createSlice({
       state,
       { payload }: PayloadAction<{ id: string; value: any }>
     ) => {
-      if (isLoaded(state.content))
-        set(state.content.data, `custom_data.${payload.id}`, payload.value);
+      if (state.content.status !== 'loaded')
+        throw new Error(
+          "Impossible de modifier une valeur d'un plan de prise non chargé"
+        );
+      if (
+        !isPlainObject(state.content.data) ||
+        !state.content.data?.medicaments
+      )
+        throw new Error('Un plan de prise chargé doit être un objet');
+
+      set(state.content.data, `custom_data.${payload.id}`, payload.value);
     },
     removeValue: (state, { payload }: PayloadAction<{ id: string }>) => {
-      if (isLoaded(state.content))
-        unset(state.content.data, `custom_data.${payload.id}`);
+      if (state.content.status !== 'loaded')
+        throw new Error(
+          "Impossible de supprimer une valeur d'un plan de prise non chargé"
+        );
+      if (
+        !isPlainObject(state.content.data) ||
+        !state.content.data?.medicaments
+      )
+        throw new Error('Un plan de prise chargé doit être un objet');
+
+      unset(state.content.data, `custom_data.${payload.id}`);
     },
   },
   extraReducers: (builder) => {

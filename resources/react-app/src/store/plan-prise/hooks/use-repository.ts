@@ -2,7 +2,6 @@ import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
 import { filter, find, get, keyBy, keys, map } from 'lodash';
 import { useSelector } from 'react-redux';
-import { isLoaded } from '../selectors/plan-prise';
 
 const usePosologies = () => {
   const posologies = useConfig('default.posologies');
@@ -70,89 +69,97 @@ export default () => {
   const getContent = (): Repositories.PlanPriseRepository => ({
     id,
     status: content.status,
-    data: isLoaded(content)
-      ? map(content.data.medicaments, (m) => {
-          const id = { id: m?.id, type: m?.type };
-          const uid = `${typeToInt(id.type)}-${id.id}`;
+    data:
+      content.status === 'loaded'
+        ? map(content.data?.medicaments || [], (m) => {
+            const id = { id: m?.id, type: m?.type };
+            const uid = `${typeToInt(id.type)}-${id.id}`;
 
-          const medicament = find<Models.ApiMedicament | Models.Medicament>(
-            cache,
-            id
-          );
-
-          if (!medicament)
-            // TODO: Utiliser la valeur loading ?
-            throw new Error(
-              "Impossible de construire le tableau alors qu'un médicament n'est pas chargé. "
+            const medicament = find<Models.ApiMedicament | Models.Medicament>(
+              cache,
+              id
             );
 
-          const getValue = (customLocation: string, defaultLocation?: string) =>
-            get(
-              customData,
-              `${uid}.${customLocation}`,
-              defaultLocation ? get(medicament, defaultLocation, '') : ''
-            );
+            if (!medicament)
+              // TODO: Utiliser la valeur loading ?
+              throw new Error(
+                "Impossible de construire le tableau alors qu'un médicament n'est pas chargé. "
+              );
 
-          const conservationDuree = get(medicament, 'conservation_duree', []);
-          const customConservationDuree = find(conservationDuree, {
-            laboratoire: get(customData, `${uid}.conservation_duree`),
-          });
+            const getValue = (
+              customLocation: string,
+              defaultLocation?: string
+            ) =>
+              get(
+                customData,
+                `${uid}.${customLocation}`,
+                defaultLocation ? get(medicament, defaultLocation, '') : ''
+              );
 
-          return {
-            id: medicament.id,
-            type: medicament.type,
-            data: {
-              denomination: get(medicament, 'denomination', ''),
-              composition: map(
-                get(medicament, 'composition', []),
-                'denomination'
-              ),
-            },
-            attributes: {
-              indications: getValue('indications', 'indications'),
-              conservation_frigo: get(medicament, 'conservation_frigo', false),
-              conservation_duree: {
-                custom: customConservationDuree !== undefined,
-                data:
-                  customConservationDuree || conservationDuree.length === 1
-                    ? (customConservationDuree || conservationDuree[0]).duree
-                    : map(conservationDuree, 'laboratoire'),
-              },
-              posologies: keyBy(
-                map(posologies, (p) => ({
-                  id: p.id,
-                  label: p.label,
-                  value: getValue(p.id),
-                })),
-                'id'
-              ),
-              precautions: map(get(medicament, 'precautions', []), (p) => ({
-                ...p,
-                checked: get(
-                  customData,
-                  `${uid}.precautions.${p.id}.checked`,
-                  p.population !== undefined
+            const conservationDuree = get(medicament, 'conservation_duree', []);
+            const customConservationDuree = find(conservationDuree, {
+              laboratoire: get(customData, `${uid}.conservation_duree`),
+            });
+
+            return {
+              id: medicament.id,
+              type: medicament.type,
+              data: {
+                denomination: get(medicament, 'denomination', ''),
+                composition: map(
+                  get(medicament, 'composition', []),
+                  'denomination'
                 ),
-              })),
-              custom_precautions: map(
-                keys(get(customData, `${uid}.custom_precautions`, {})),
-                (c) => ({
-                  id: c,
-                  commentaire: get(
+              },
+              attributes: {
+                indications: getValue('indications', 'indications'),
+                conservation_frigo: get(
+                  medicament,
+                  'conservation_frigo',
+                  false
+                ),
+                conservation_duree: {
+                  custom: customConservationDuree !== undefined,
+                  data:
+                    customConservationDuree || conservationDuree.length === 1
+                      ? (customConservationDuree || conservationDuree[0]).duree
+                      : map(conservationDuree, 'laboratoire'),
+                },
+                posologies: keyBy(
+                  map(posologies, (p) => ({
+                    id: p.id,
+                    label: p.label,
+                    value: getValue(p.id),
+                  })),
+                  'id'
+                ),
+                precautions: map(get(medicament, 'precautions', []), (p) => ({
+                  ...p,
+                  checked: get(
                     customData,
-                    `${uid}.custom_precautions.${c}`,
-                    ''
+                    `${uid}.precautions.${p.id}.checked`,
+                    p.population !== undefined
                   ),
-                })
-              ),
-              voies_administration: map(
-                get(medicament, 'voies_administration', []),
-                (va) => switchVoiesAdministration(va)
-              ),
-            },
-          };
-        })
-      : undefined,
+                })),
+                custom_precautions: map(
+                  keys(get(customData, `${uid}.custom_precautions`, {})),
+                  (c) => ({
+                    id: c,
+                    commentaire: get(
+                      customData,
+                      `${uid}.custom_precautions.${c}`,
+                      ''
+                    ),
+                  })
+                ),
+                voies_administration: map(
+                  get(medicament, 'voies_administration', []),
+                  (va) => switchVoiesAdministration(va)
+                ),
+              },
+            };
+          })
+        : undefined,
   });
 
   return { getContent, switchVoiesAdministration };

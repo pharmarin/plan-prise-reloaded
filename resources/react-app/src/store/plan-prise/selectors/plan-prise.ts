@@ -1,16 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
-import {
-  filter,
-  find,
-  get,
-  isNil,
-  isPlainObject,
-  keyBy,
-  keys,
-  map,
-} from 'lodash';
+import { filter, find, get, isNil, keyBy, keys, map } from 'lodash';
 
 const selectPlanPrise = (state: IRedux.State) => state.planPrise.content;
 
@@ -137,19 +128,6 @@ const selectContent = createSelector(
     };
   }
 );
-
-export const isLoaded = (
-  content: IRedux.PlanPrise['content']
-): content is { status: 'loaded'; data: ExtractModel<Models.PlanPrise> } => {
-  if (content.status === 'loaded') {
-    if (!isPlainObject(content.data))
-      throw new Error(
-        'Le contenu devrait être un objet lorsque le plan de prise est chargé'
-      );
-    return true;
-  }
-  return false;
-};
 
 const selectPlanPriseContentLength = createSelector(
   [selectPlanPriseContent],

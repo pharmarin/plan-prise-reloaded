@@ -15,7 +15,7 @@ import classNames from 'classnames';
 import { BsSearch } from 'react-icons/bs';
 import ReactPlaceholder from 'react-placeholder';
 import { isArray, map, uniqueId } from 'lodash';
-import { selectListStatus } from 'store/plan-prise/selectors/list';
+import { selectListState } from 'store/plan-prise/selectors/list';
 
 const Square: React.FC = ({ children }) => {
   return (
@@ -81,7 +81,7 @@ const TextFit: React.FC<{ text: string }> = ({ text }) => {
 };
 
 const mapState = (state: IRedux.State) => ({
-  status: selectListStatus(state),
+  status: selectListState(state),
   list: state.planPrise.list.data,
 });
 
