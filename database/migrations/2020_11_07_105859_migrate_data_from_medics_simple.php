@@ -4,6 +4,8 @@ use App\Models\Medicament;
 use App\Models\Utility\Precaution;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class MigrateDataFromMedicsSimple extends Migration
 {
@@ -18,7 +20,13 @@ class MigrateDataFromMedicsSimple extends Migration
 
     $old = DB::table('medics_simple')->get();
 
-    $old->each(function ($o) {
+    $output = new ConsoleOutput();
+
+    $progress = new ProgressBar($output, count($old));
+
+    $progress->start();
+
+    $old->each(function ($o) use ($progress) {
       $principes_actifs = $this->encodePrincipesActifs($o->nomGenerique);
       $medic = Medicament::create([
         'denomination' => trim($o->nomMedicament),
@@ -43,7 +51,10 @@ class MigrateDataFromMedicsSimple extends Migration
           ]);
         })
       );
+      $progress->advance();
     });
+
+    $progress->finish();
   }
 
   private function encodePrincipesActifs($nomGenerique)
