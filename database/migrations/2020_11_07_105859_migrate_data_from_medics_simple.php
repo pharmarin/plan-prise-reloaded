@@ -83,7 +83,7 @@ class MigrateDataFromMedicsSimple extends Migration
     return [
       json_decode($dureeConservation)
         ? array_map(
-          function ($duree, $laboratoire) {
+          function ($laboratoire, $duree) {
             return [
               'laboratoire' => trim($laboratoire),
               'duree' => trim($duree),
