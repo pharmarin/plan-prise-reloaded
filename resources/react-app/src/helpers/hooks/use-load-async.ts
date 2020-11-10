@@ -1,5 +1,5 @@
 import axios from 'helpers/axios-clients';
-import { groupBy, map, toString } from 'lodash';
+import { groupBy, map, toString } from 'lodash-es';
 import debounce from 'debounce-promise';
 
 const loadGeneric = async (query: string) => {

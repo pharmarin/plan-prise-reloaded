@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
 import { Alert, Spinner, Col } from 'reactstrap';
 import { SanctumContext } from 'react-sanctum';
-import { includes } from 'lodash';
+import { includes } from 'lodash-es';
 
 import { updateAppNav } from 'store/app';
 import ConnectionForm from './ConnectionForm';

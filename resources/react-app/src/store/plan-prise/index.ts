@@ -13,7 +13,7 @@ import {
   remove,
   setWith,
   unset,
-} from 'lodash';
+} from 'lodash-es';
 import { typeToInt } from 'helpers/type-switcher';
 import { normalizeOne, requestUrl } from 'helpers/hooks/use-json-api';
 

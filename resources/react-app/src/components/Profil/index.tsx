@@ -11,10 +11,10 @@ import {
 } from 'reactstrap';
 import { BsCheck, BsX } from 'react-icons/bs';
 import { updateAppNav } from 'store/app';
-import map from 'lodash/map';
-import find from 'lodash/find';
-import cloneDeep from 'lodash/cloneDeep';
-import includes from 'lodash/includes';
+import map from 'lodash-es/map';
+import find from 'lodash-es/find';
+import cloneDeep from 'lodash-es/cloneDeep';
+import includes from 'lodash-es/includes';
 import { SanctumContext } from 'react-sanctum';
 
 const mapDispatch = {

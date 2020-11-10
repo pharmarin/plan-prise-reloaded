@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { keys, map, toNumber } from 'lodash';
+import { keys, map, toNumber } from 'lodash-es';
 import Card from './Card';
 import Select from './Select';
 import SplashScreen from 'components/App/SplashScreen';

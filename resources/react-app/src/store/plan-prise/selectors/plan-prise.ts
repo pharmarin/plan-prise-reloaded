@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
-import { filter, find, get, isArray, isNil, keyBy, keys, map } from 'lodash';
+import { filter, find, get, isArray, isNil, keyBy, keys, map } from 'lodash-es';
 
 const castArray = (value: any) => (isArray(value) ? value : [value]);
 

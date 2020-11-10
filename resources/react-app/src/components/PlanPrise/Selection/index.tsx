@@ -14,7 +14,7 @@ import {
 import classNames from 'classnames';
 import { BsSearch } from 'react-icons/bs';
 import ReactPlaceholder from 'react-placeholder';
-import { isArray, map, uniqueId } from 'lodash';
+import { isArray, map, uniqueId } from 'lodash-es';
 import { selectListState } from 'store/plan-prise/selectors/list';
 
 const Square: React.FC = ({ children }) => {

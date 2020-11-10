@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, CardHeader, Button, CardBody, Spinner, Input } from 'reactstrap';
-import { find, get } from 'lodash';
+import { find, get } from 'lodash-es';
 import { loadItem, removeItem, setLoading } from 'store/plan-prise';
 import Content from './Content';
 import { addNotification } from 'store/app';

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { filter, findIndex, uniqueId } from 'lodash';
+import { filter, findIndex, uniqueId } from 'lodash-es';
 
 const initialState: IRedux.App = {
   navigation: {

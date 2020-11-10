@@ -9,7 +9,7 @@ import {
   FormGroup,
   CustomInput,
 } from 'reactstrap';
-import { ceil, chunk, keys, map, get } from 'lodash';
+import { ceil, chunk, keys, map, get } from 'lodash-es';
 
 import { setSettings } from 'store/plan-prise';
 import useConfig from 'helpers/hooks/use-config';

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { find } from 'lodash';
+import { find } from 'lodash-es';
 
 const initialState: IRedux.Cache = {
   medicaments: [],

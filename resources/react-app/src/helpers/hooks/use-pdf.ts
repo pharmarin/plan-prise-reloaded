@@ -5,7 +5,7 @@ import {
   DynamicContent,
   TDocumentDefinitions,
 } from 'pdfmake/interfaces';
-import { isArray, map, startsWith } from 'lodash';
+import { isArray, map, startsWith } from 'lodash-es';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 

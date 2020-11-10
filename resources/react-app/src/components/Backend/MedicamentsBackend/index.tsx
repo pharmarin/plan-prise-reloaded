@@ -3,7 +3,7 @@ import useAxios from 'axios-hooks';
 import MedicamentTable from './MedicamentTable';
 import MedicamentPagination from './MedicamentTable/MedicamentPagination';
 import MedicamentEdit from './MedicamentEdit';
-import { get, merge } from 'lodash';
+import { get, merge } from 'lodash-es';
 import useJsonApi from 'helpers/hooks/use-json-api';
 import SplashScreen from 'components/App/SplashScreen';
 import { connect, ConnectedProps } from 'react-redux';

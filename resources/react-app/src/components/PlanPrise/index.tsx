@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux';
-import { get, isNumber } from 'lodash';
+import { get, isNumber } from 'lodash-es';
 import { updateAppNav } from 'store/app';
 import { loadContent, loadList, setShowSettings } from 'store/plan-prise';
 import usePdf from 'helpers/hooks/use-pdf';

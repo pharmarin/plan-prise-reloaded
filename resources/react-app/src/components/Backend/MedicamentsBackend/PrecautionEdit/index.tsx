@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { Formik, Form, Field } from 'formik';
 import * as yup from 'yup';
 import { Input, Submit } from 'formstrap';
-import { keys, startsWith } from 'lodash';
+import { keys, startsWith } from 'lodash-es';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
   Card,

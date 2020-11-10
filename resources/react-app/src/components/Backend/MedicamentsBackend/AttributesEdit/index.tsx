@@ -19,7 +19,7 @@ import useJsonApi from 'helpers/hooks/use-json-api';
 import debounce from 'debounce-promise';
 import { Input, Submit } from 'formstrap';
 import useConfig from 'helpers/hooks/use-config';
-import { keys } from 'lodash';
+import { keys } from 'lodash-es';
 import Select, { InputActionTypes } from 'react-select';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 import { AsyncPaginate } from 'react-select-async-paginate';

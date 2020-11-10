@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Button, CardColumns } from 'reactstrap';
 import { updateAppNav } from 'store/app';
 import useJsonApi from 'helpers/hooks/use-json-api';
-import { uniqueId, remove } from 'lodash';
+import { uniqueId, remove } from 'lodash-es';
 import ConditionalWrapper from 'components/Utility/ConditionalWrapper';
 import PrecautionEdit from '../PrecautionEdit';
 import useAxios from 'axios-hooks';

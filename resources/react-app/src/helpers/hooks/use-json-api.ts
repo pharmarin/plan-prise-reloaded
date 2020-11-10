@@ -1,5 +1,5 @@
 import normalize from 'json-api-normalizer';
-import { cloneDeep, get, keys, values } from 'lodash';
+import { cloneDeep, get, keys, values } from 'lodash-es';
 import { useState } from 'react';
 
 export const requestUrl = (

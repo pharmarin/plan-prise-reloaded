@@ -1,4 +1,4 @@
-import { debounce, fromPairs, get } from 'lodash';
+import { debounce, fromPairs, get } from 'lodash-es';
 import axios from 'helpers/axios-clients';
 import { MiddlewareAPI, Dispatch, Action } from 'redux';
 import {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Button, ButtonGroup, FormGroup, Input, Label } from 'reactstrap';
-import { has, isArray, isString, map, uniqueId } from 'lodash';
+import { has, isArray, isString, map, uniqueId } from 'lodash-es';
 import { removeValue, setValue } from 'store/plan-prise';
 import CustomInput from '../CustomInput';
 import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
