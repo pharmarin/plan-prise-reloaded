@@ -11,7 +11,7 @@ import {
   isString,
   map,
   remove,
-  set,
+  setWith,
   unset,
 } from 'lodash';
 import { typeToInt } from 'helpers/type-switcher';
@@ -260,7 +260,12 @@ const ppSlice = createSlice({
       )
         throw new Error('Un plan de prise chargé doit être un objet');
 
-      set(state.content.data, `custom_settings.${payload.id}`, payload.value);
+      setWith(
+        state.content.data,
+        `custom_settings.${payload.id}`,
+        payload.value,
+        Object
+      );
     },
     setShowSettings: (
       state,
@@ -282,7 +287,12 @@ const ppSlice = createSlice({
       )
         throw new Error('Un plan de prise chargé doit être un objet');
 
-      set(state.content.data, `custom_data.${payload.id}`, payload.value);
+      setWith(
+        state.content.data,
+        `custom_data.${payload.id}`,
+        payload.value,
+        Object
+      );
     },
     removeValue: (state, { payload }: PayloadAction<{ id: string }>) => {
       if (state.content.status !== 'loaded')
