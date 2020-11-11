@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
-import { filter, find, get, isArray, isNil, keyBy, keys, map } from 'lodash-es';
+import { filter, find, get, keyBy, map } from 'lodash-es';
 
-const castArray = (value: any) => (isArray(value) ? value : [value]);
+const castArray = (value: any) => (Array.isArray(value) ? value : [value]);
 
 const selectPlanPrise = (state: IRedux.State) => state.planPrise.content;
 
@@ -80,7 +80,9 @@ const selectContent = createSelector(
       indications: castArray(getValue('indications', 'indications')),
       conservation_frigo: medicament.conservation_frigo || false,
       conservation_duree: {
-        custom: !isNil(customData.conservation_duree),
+        custom:
+          customData.conservation_duree !== null &&
+          customData.conservation_duree !== undefined,
         data: customData.conservation_duree
           ? (
               find(medicament.conservation_duree, {
@@ -111,7 +113,7 @@ const selectContent = createSelector(
         };
       }),
       custom_precautions: map(
-        keys(customData.custom_precautions || {}),
+        Object.keys(customData.custom_precautions || {}),
         (c) => ({
           id: c,
           commentaire: customData.custom_precautions?.[c] || '',

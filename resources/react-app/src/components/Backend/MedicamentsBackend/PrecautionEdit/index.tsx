@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { Formik, Form, Field } from 'formik';
 import * as yup from 'yup';
 import { Input, Submit } from 'formstrap';
-import { keys, startsWith } from 'lodash-es';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
   Card,
@@ -92,8 +91,7 @@ export default ({
                   attributes: {
                     commentaire: values.commentaire,
                     population: values.population,
-                    voie_administration: startsWith(
-                      values.cible,
+                    voie_administration: values.cible.startsWith(
                       'principe-actifs'
                     )
                       ? values.voie_administration
@@ -114,7 +112,7 @@ export default ({
           validationSchema={yup.object().shape({
             cible: yup.string().required(),
             voie_administration: yup.number().when('cible', {
-              is: (cible) => startsWith(cible, 'principe-actifs'),
+              is: (cible) => cible.startsWith('principe-actifs'),
               then: yup.number().min(0).max(12),
               otherwise: yup.number().min(0).max(0),
             }),
@@ -135,7 +133,7 @@ export default ({
                   ))}
                 </Input>
               </FormGroup>
-              {startsWith(values.cible, 'principe-actifs') && (
+              {values.cible.startsWith('principe-actifs') && (
                 <FormGroup>
                   <Input
                     className="mt-1"
@@ -147,7 +145,7 @@ export default ({
                     <option key={0} value={0}>
                       Toutes les voies d'administration
                     </option>
-                    {keys(voiesAdministration).map((id) => (
+                    {Object.keys(voiesAdministration).map((id) => (
                       <option key={id} value={id}>
                         {voiesAdministration[id]}
                       </option>

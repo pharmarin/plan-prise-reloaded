@@ -5,7 +5,6 @@ import {
   DynamicContent,
   TDocumentDefinitions,
 } from 'pdfmake/interfaces';
-import { isArray, map, startsWith } from 'lodash-es';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -60,9 +59,9 @@ const usePdf = ({ user }: { user: Models.App.User | null }) => {
     const planPriseColumns = (content: Repositories.MedicamentRepository[]) => [
       { id: 'informations', label: 'Médicament' },
       { id: 'conservation', label: 'Conservation' },
-      ...map(content[0].attributes.posologies, (p) => ({
-        id: p.id,
-        label: p.label,
+      ...Object.keys(content[0].attributes.posologies).map((p) => ({
+        id: content[0].attributes.posologies[p].id,
+        label: content[0].attributes.posologies[p].label,
       })),
       { id: 'precautions', label: "Conseils d'utilisation" },
     ];
@@ -86,15 +85,15 @@ const usePdf = ({ user }: { user: Models.App.User | null }) => {
             dontBreakRows: true,
             body: [
               [
-                ...map(planPriseColumns(content.data), (c) => ({
+                ...planPriseColumns(content.data).map((c) => ({
                   text: c.label,
                   style: [
                     'tableHeader',
-                    startsWith(c.id, 'poso_') ? 'posologies' : {},
+                    c.id.startsWith('poso_') ? 'posologies' : {},
                   ],
                 })),
               ],
-              ...map(content.data, (m) => [
+              ...content.data.map((m) => [
                 {
                   stack: [
                     { text: m.data.denomination, style: 'denomination' },
@@ -113,20 +112,20 @@ const usePdf = ({ user }: { user: Models.App.User | null }) => {
                     },
                   ],
                 },
-                !isArray(m.attributes.conservation_duree.data)
+                !Array.isArray(m.attributes.conservation_duree.data)
                   ? m.attributes.conservation_duree.data
                   : '',
-                ...map(m.attributes.posologies, (p) => ({
+                ...m.attributes.posologies.map((p: any) => ({
                   text: p.value,
                   style: 'posologies',
                 })),
                 {
                   stack: [
-                    ...map(m.attributes.precautions, (p) => ({
+                    ...m.attributes.precautions.map((p: any) => ({
                       text: p.commentaire,
                       margin: [0, 0, 0, 5],
                     })),
-                    ...map(m.attributes.custom_precautions, (c) => ({
+                    ...m.attributes.custom_precautions.map((c: any) => ({
                       text: c.commentaire,
                       margin: [0, 0, 0, 5],
                     })),
@@ -137,7 +136,7 @@ const usePdf = ({ user }: { user: Models.App.User | null }) => {
             widths: [
               '20%',
               'auto',
-              ...map(content.data[0].attributes.posologies, () => 40),
+              ...content.data[0].attributes.posologies.map(() => 40),
               '*',
             ],
           },

@@ -14,7 +14,7 @@ import {
 import classNames from 'classnames';
 import { BsSearch } from 'react-icons/bs';
 import ReactPlaceholder from 'react-placeholder';
-import { isArray, map, uniqueId } from 'lodash-es';
+import { uniqueId } from 'lodash-es';
 import { selectListState } from 'store/plan-prise/selectors/list';
 
 const Square: React.FC = ({ children }) => {
@@ -111,11 +111,11 @@ const Selection = ({ list, status }: SelectionProps) => {
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!status.isLoaded || !search) return;
-    if (isArray(list) && list.includes(search)) setRedirect(true);
+    if (Array.isArray(list) && list.includes(search)) setRedirect(true);
   };
 
   if (status.isLoaded && search) {
-    searchSuccess = isArray(list) && list.includes(search);
+    searchSuccess = Array.isArray(list) && list.includes(search);
 
     if (redirect && searchSuccess)
       return <Redirect to={`/plan-prise/${search}`} />;
@@ -176,8 +176,7 @@ const Selection = ({ list, status }: SelectionProps) => {
             </Link>
           </Square>
         </Col>
-        {map(
-          isArray(list) ? list : map(Array(5), (i) => uniqueId(i)),
+        {(Array.isArray(list) ? list : Array(5).map((i) => uniqueId(i))).map(
           (item) => (
             <Col {...cardSize} key={item} className="mb-4">
               <Square>

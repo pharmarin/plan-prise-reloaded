@@ -1,5 +1,5 @@
 import normalize from 'json-api-normalizer';
-import { cloneDeep, get, keys, values } from 'lodash-es';
+import { cloneDeep, get } from 'lodash-es';
 import { useState } from 'react';
 
 export const requestUrl = (
@@ -22,7 +22,7 @@ export const requestUrl = (
       : {}),
     ...(query && query.fields
       ? {
-          fields: keys(query.fields)
+          fields: Object.keys(query.fields)
             .map(
               (type) =>
                 `fields[${type}]=${(query.fields![type] || []).join(',')}`
@@ -36,7 +36,9 @@ export const requestUrl = (
   };
   return {
     url: `${base}${query && query.id ? `/${query.id}` : ''}${
-      keys(params).length > 0 ? '?' + values(params).join('&') : ''
+      Object.keys(params).length > 0
+        ? '?' + Object.values(params).join('&')
+        : ''
     }`,
     base,
     ...params,
@@ -70,7 +72,7 @@ export const extractOne = (
   let { attributes, relationships, ...meta } = entity;
 
   if (relationships) {
-    (keys(relationships) || []).forEach(
+    (Object.keys(relationships) || []).forEach(
       (k: string) =>
         (relationships[k] = (
           relationships[k].data || []

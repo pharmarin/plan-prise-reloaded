@@ -1,0 +1,7 @@
+{
+  "extends": [
+    "react-app",
+    "plugin:you-dont-need-lodash-underscore/compatible-warn"
+  ],
+  "plugins": ["you-dont-need-lodash-underscore"]
+}

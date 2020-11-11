@@ -6,7 +6,6 @@ import {
   findIndex,
   forEach,
   get,
-  isArray,
   isPlainObject,
   isString,
   map,
@@ -29,7 +28,7 @@ const loadList = createAsyncThunk<Models.PlanPrise['id'][]>(
       }).url
     );
 
-    if (!isArray(response.data.data))
+    if (!Array.isArray(response.data.data))
       throw new Error("La réponse reçue n'est par un array");
     if (response.data.data.some((p) => !isString(p.id)))
       throw new Error(
@@ -321,7 +320,7 @@ const ppSlice = createSlice({
     builder.addCase(
       loadList.fulfilled,
       (state, { payload }: PayloadAction<Models.PlanPrise['id'][]>) => {
-        if (isArray(payload)) {
+        if (Array.isArray(payload)) {
           state.list.data = payload;
           state.list.status = 'loaded';
         } else {
