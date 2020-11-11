@@ -1,13 +1,14 @@
 import { createSelector } from '@reduxjs/toolkit';
 import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
+import switchVoiesAdministration from 'helpers/switch-voie-administration';
 import { get } from 'lodash-es';
 
 const castArray = (value: any) => (Array.isArray(value) ? value : [value]);
 
 const selectPlanPrise = (state: IRedux.State) => state.planPrise.content;
 
-export const selectPlanPriseContent = createSelector(
+export const selectPlanPriseData = createSelector(
   [selectPlanPrise],
   (planPrise) => planPrise.data
 );
@@ -30,13 +31,13 @@ const selectUID = createSelector([selectMedicament], (medicament) =>
 );
 
 const selectSettings = createSelector(
-  [selectPlanPriseContent],
-  (planPriseContent) => planPriseContent?.custom_settings || {}
+  [selectPlanPriseData],
+  (planPriseData) => planPriseData?.custom_settings || {}
 );
 
 const selectCustomData = createSelector(
-  [selectPlanPriseContent, selectUID],
-  (planPriseContent, uid) => get(planPriseContent, `custom_data.${uid}`, {})
+  [selectPlanPriseData, selectUID],
+  (planPriseData, uid) => get(planPriseData, `custom_data.${uid}`, {})
 );
 
 const selectInputSettings = createSelector(selectSettings, (settings) =>
@@ -50,11 +51,11 @@ const selectCheckedPosologies = createSelector(
 
     return posologies
       .map((p) => (inputs?.[p.id]?.checked || p.default ? p : null))
-      .filter((i) => i !== null);
+      .filter((i): i is Models.Posologie => i !== null);
   }
 );
 
-const selectContent = createSelector(
+const selectMedicamentContent = createSelector(
   [selectMedicament, selectUID, selectCustomData, selectCheckedPosologies],
   (medicament, uid, customData, posologies) => {
     if (!medicament) return null;
@@ -76,6 +77,15 @@ const selectContent = createSelector(
     return {
       uid,
       indications: castArray(getValue('indications', 'indications')),
+      composition: ('composition' in medicament ? medicament.composition : [])
+        .map(
+          (composant: ExtractModel<Models.PrincipeActif>) =>
+            composant.denomination
+        )
+        .join(' + '),
+      voies_administration: medicament.voies_administration.map((va) =>
+        switchVoiesAdministration(va)
+      ),
       conservation_frigo: medicament.conservation_frigo || false,
       conservation_duree: {
         custom:
@@ -94,17 +104,11 @@ const selectContent = createSelector(
               ] || []
             : medicament.conservation_duree.map((i) => i.laboratoire) || [],
       },
-      posologies: posologies.reduce(
-        (object, value) => ({
-          ...object,
-          [value?.id || '']: {
-            id: value?.id,
-            label: value?.label,
-            value: getValue(value?.id || ''),
-          },
-        }),
-        {}
-      ) as { [id: string]: { id: string; label: string; value: string } },
+      posologies: posologies.map((value) => ({
+        id: value?.id,
+        label: value?.label,
+        value: getValue(value?.id || ''),
+      })),
       precautions: (medicament.precautions || []).map((p) => {
         const customChecked = customData.precautions?.[p.id]?.checked;
 
@@ -129,13 +133,13 @@ const selectContent = createSelector(
 );
 
 const selectPlanPriseContentLength = createSelector(
-  [selectPlanPriseContent],
-  (planPriseContent) => (planPriseContent?.medicaments || []).length
+  [selectPlanPriseData],
+  (planPriseData) => (planPriseData?.medicaments || []).length
 );
 
 export const selectPlanPriseID = createSelector(
-  [selectPlanPriseContent],
-  (planPriseContent) => planPriseContent?.id
+  [selectPlanPriseData],
+  (planPriseData) => planPriseData?.id
 );
 
 export const selectPlanPriseState = createSelector(
@@ -154,4 +158,17 @@ export const selectPlanPriseState = createSelector(
   }
 );
 
-export const makeUniqueSelectorInstance = () => selectContent;
+export const selectPlanPriseColumns = createSelector(
+  [selectCheckedPosologies],
+  (posologies) => [
+    { id: 'informations', label: 'Médicament' },
+    { id: 'conservation', label: 'Conservation' },
+    ...posologies.map((p) => ({
+      id: p?.id,
+      label: p?.label,
+    })),
+    { id: 'precautions', label: "Conseils d'utilisation" },
+  ]
+);
+
+export const makeUniqueSelectorInstance = () => selectMedicamentContent;

@@ -7,14 +7,13 @@ import { addNotification } from 'store/app';
 import { cache, inCache } from 'store/cache';
 import { addItem, createContent } from 'store/plan-prise';
 import {
-  selectPlanPriseContent,
+  selectPlanPriseData,
   selectPlanPriseState,
 } from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = (state: IRedux.State) => ({
   cacheContent: state.cache,
-  medicData: selectPlanPriseContent(state)?.medicaments || [],
-  planPriseContent: selectPlanPriseContent(state),
+  medicData: selectPlanPriseData(state)?.medicaments || [],
   status: selectPlanPriseState(state),
 });
 

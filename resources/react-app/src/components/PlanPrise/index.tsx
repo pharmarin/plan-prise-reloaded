@@ -1,22 +1,21 @@
 import React, { useContext, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect, ConnectedProps, useSelector } from 'react-redux';
 import { get, isNumber } from 'lodash-es';
 import { updateAppNav } from 'store/app';
 import { loadContent, loadList, setShowSettings } from 'store/plan-prise';
-import usePdf from 'helpers/hooks/use-pdf';
 
 import Selection from './Selection';
 import Interface from './Interface';
 import Settings from './Settings';
 import ErrorBoundary from 'components/App/ErrorBoundary';
-import useRepository from 'store/plan-prise/hooks/use-repository';
 import {
   selectPlanPriseID,
   selectPlanPriseState,
 } from 'store/plan-prise/selectors/plan-prise';
 import { SanctumContext } from 'react-sanctum';
 import SplashScreen from 'components/App/SplashScreen';
+import { fromPlanPrise, generate } from 'helpers/make-pdf';
 
 const mapState = (state: IRedux.State) => ({
   id: selectPlanPriseID(state),
@@ -56,13 +55,11 @@ const PlanPrise = ({
 }: PlanPriseProps) => {
   const { user } = useContext(SanctumContext);
 
-  const repository = useRepository();
+  const state = useSelector((state: IRedux.State) => state);
 
   const routerParams = useParams();
 
   const history = useHistory();
-
-  const { fromPlanPrise, generate } = usePdf({ user });
 
   const routeIdParam = get(routerParams, 'id') as string | undefined;
 
@@ -131,8 +128,8 @@ const PlanPrise = ({
         loadContent();
         history.push('/plan-prise');
       }
-      if (isLoaded && isPdfRoute) {
-        generate(fromPlanPrise(repository.getContent()));
+      if (isLoaded && isPdfRoute && id) {
+        generate(fromPlanPrise(state, user));
         history.goBack();
       }
     } else {
@@ -150,9 +147,8 @@ const PlanPrise = ({
     isLoaded,
     history,
     isDeleted,
-    generate,
-    fromPlanPrise,
-    repository,
+    state,
+    user,
   ]);
 
   if (!routeIdParam) {

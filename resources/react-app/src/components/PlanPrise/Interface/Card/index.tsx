@@ -5,7 +5,7 @@ import { get } from 'lodash-es';
 import { loadItem, removeItem, setLoading } from 'store/plan-prise';
 import Content from './Content';
 import { addNotification } from 'store/app';
-import useRepository from 'store/plan-prise/hooks/use-repository';
+import switchVoiesAdministration from 'helpers/switch-voie-administration';
 import { FaTrash } from 'react-icons/fa';
 
 const mapState = (state: IRedux.State) => ({
@@ -31,8 +31,6 @@ const ItemCard = ({
   setLoading,
   storedMedicaments,
 }: CardProps) => {
-  const repository = useRepository();
-
   const medicament = storedMedicaments.find(
     (i) => i.type === identifier.type && i.id === identifier.id
   );
@@ -80,7 +78,7 @@ const ItemCard = ({
               </div>
               <div className="text-muted text-truncate">
                 <small>
-                  {get(medicament, 'composition', [])
+                  {('composition' in medicament ? medicament.composition : [])
                     .map(
                       (composant: ExtractModel<Models.PrincipeActif>) =>
                         composant.denomination
@@ -99,9 +97,7 @@ const ItemCard = ({
                     return (
                       <small>
                         Voie{' '}
-                        {repository.switchVoiesAdministration(
-                          voies_administration[0]
-                        )}
+                        {switchVoiesAdministration(voies_administration[0])}
                       </small>
                     );
                   } else if (voies_administration.length > 1) {
