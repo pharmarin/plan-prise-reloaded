@@ -9,7 +9,7 @@ import {
   FormGroup,
   CustomInput,
 } from 'reactstrap';
-import { ceil, chunk, keys, map, get } from 'lodash';
+import { ceil, chunk, get } from 'lodash-es';
 
 import { setSettings } from 'store/plan-prise';
 import useConfig from 'helpers/hooks/use-config';
@@ -38,11 +38,10 @@ const Settings = ({ settings, setSettings, show, toggle }: SettingsProps) => {
       <ModalBody>
         <h5>Colonnes à afficher</h5>
         <Row>
-          {map(
-            chunk(keys(posologies), ceil(posologies.length / 2)),
+          {chunk(Object.keys(posologies), ceil(posologies.length / 2)).map(
             (c, ckey) => (
               <Col key={ckey} sm={6}>
-                {map(c, (key) => {
+                {c.map((key) => {
                   const input = posologies[key];
                   return (
                     <FormGroup key={key} className="mb-0" check>

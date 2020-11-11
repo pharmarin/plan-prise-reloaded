@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
 import { Alert, Spinner, Col } from 'reactstrap';
 import { SanctumContext } from 'react-sanctum';
-import { includes } from 'lodash';
 
 import { updateAppNav } from 'store/app';
 import ConnectionForm from './ConnectionForm';
@@ -61,7 +60,7 @@ export default ({ role }: AuthentificationProps) => {
 
   if (authenticated === true && role !== Role.signout) {
     const redirectTo =
-      state?.redirectTo && includes(cancelRedirect, state.redirectTo)
+      state?.redirectTo && cancelRedirect.includes(state.redirectTo)
         ? '/'
         : state?.redirectTo || '/';
     return <Redirect to={redirectTo} />;

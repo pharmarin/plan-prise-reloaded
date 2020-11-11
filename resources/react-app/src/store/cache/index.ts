@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { find } from 'lodash';
 
 const initialState: IRedux.Cache = {
   medicaments: [],
@@ -9,10 +8,7 @@ const inCache = (
   { id, type }: Models.MedicamentIdentity,
   cache: IRedux.Cache
 ) => {
-  return find(cache.medicaments, {
-    id,
-    type,
-  });
+  return cache.medicaments.find((i) => i.type === type && i.id === id);
 };
 
 const cacheSlice = createSlice({

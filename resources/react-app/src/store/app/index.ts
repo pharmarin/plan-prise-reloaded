@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { filter, findIndex, uniqueId } from 'lodash';
+import { uniqueId } from 'lodash-es';
 
 const initialState: IRedux.App = {
   navigation: {
@@ -33,7 +33,9 @@ const appSlice = createSlice({
       state,
       action: PayloadAction<Partial<Models.App.Notification>>
     ) => {
-      const index = findIndex(state.notifications, { id: action.payload.id });
+      const index = state.notifications.findIndex(
+        (i) => i.id === action.payload.id
+      );
       if (action.payload.id && index > -1) {
         state.notifications[index] = {
           id: action.payload.id,
@@ -56,10 +58,7 @@ const appSlice = createSlice({
       state,
       { payload }: PayloadAction<Models.App.Notification['id']>
     ) => {
-      state.notifications = filter(
-        state.notifications,
-        (n) => n.id !== payload
-      );
+      state.notifications = state.notifications.filter((n) => n.id !== payload);
     },
   },
 });

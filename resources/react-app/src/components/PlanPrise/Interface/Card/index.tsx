@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Card, CardHeader, Button, CardBody, Spinner, Input } from 'reactstrap';
-import { find, get } from 'lodash';
+import { get } from 'lodash-es';
 import { loadItem, removeItem, setLoading } from 'store/plan-prise';
 import Content from './Content';
 import { addNotification } from 'store/app';
@@ -33,12 +33,9 @@ const ItemCard = ({
 }: CardProps) => {
   const repository = useRepository();
 
-  const medicament = find<
-    ExtractModel<Models.Medicament> | ExtractModel<Models.ApiMedicament>
-  >(storedMedicaments, {
-    id: identifier.id,
-    type: identifier.type,
-  });
+  const medicament = storedMedicaments.find(
+    (i) => i.type === identifier.type && i.id === identifier.id
+  );
 
   useEffect(() => {
     if (!medicament && !identifier.loading) {

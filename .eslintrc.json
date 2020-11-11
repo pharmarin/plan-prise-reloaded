@@ -1,0 +1,4 @@
+{
+  "extends": ["react-app", "plugin:you-dont-need-lodash-underscore/all-warn"],
+  "plugins": ["you-dont-need-lodash-underscore"]
+}

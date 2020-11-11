@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Button, ButtonGroup, FormGroup, Input, Label } from 'reactstrap';
-import { has, isArray, isString, map, uniqueId } from 'lodash';
+import { has, uniqueId } from 'lodash-es';
 import { removeValue, setValue } from 'store/plan-prise';
 import CustomInput from '../CustomInput';
 import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
@@ -31,6 +31,7 @@ type ContentProps = Props.Content & ConnectedProps<typeof connector>;
 
 const Content = ({ removeValue, setValue, data }: ContentProps) => {
   const uid = data?.uid;
+
   return (
     <React.Fragment>
       <div className="col-md-3">
@@ -39,7 +40,7 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
           <FormGroup>
             {(data?.indications || []).length > 1 ? (
               <ButtonGroup vertical style={{ width: '100%' }}>
-                {data?.indications.map((indication: string) => (
+                {(data?.indications || []).map((indication: string) => (
                   <Button
                     key={indication}
                     onClick={(e) =>
@@ -58,15 +59,15 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
                 onChange={(value) =>
                   setValue({ id: `${uid}.indications`, value })
                 }
-                value={data?.indications}
+                value={data?.indications?.[0] || ''}
               />
             )}
           </FormGroup>
         </div>
-        {(data?.conservation_duree.data).length > 0 && (
+        {(data?.conservation_duree?.data || []).length > 0 && (
           <div>
             <Label>Conservation après ouverture</Label>
-            {data?.conservation_duree.custom && (
+            {data?.conservation_duree?.custom && (
               <Button
                 className="float-right"
                 color="link"
@@ -82,56 +83,53 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
               </Button>
             )}
             <FormGroup>
-              {isString(data?.conservation_duree.data) && (
-                <CustomInput
-                  onChange={() => null}
-                  value={data?.conservation_duree.data || ''}
-                  readOnly={true}
-                />
-              )}
-              {isArray(data?.conservation_duree.data) && (
-                <ButtonGroup vertical style={{ width: '100%' }}>
-                  {data?.conservation_duree.data.map((laboratoire: string) => (
-                    <Button
-                      key={laboratoire}
-                      onClick={(e) =>
-                        setValue({
-                          id: `${uid}.conservation_duree`,
-                          value: e.currentTarget.innerText,
-                        })
-                      }
-                    >
-                      {laboratoire}
-                    </Button>
-                  ))}
-                </ButtonGroup>
-              )}
+              {Array.isArray(data?.conservation_duree?.data) &&
+                (data?.conservation_duree?.data.length === 1 ? (
+                  <CustomInput
+                    onChange={() => null}
+                    value={data?.conservation_duree?.data[0] || ''}
+                    readOnly={true}
+                  />
+                ) : (
+                  <ButtonGroup vertical style={{ width: '100%' }}>
+                    {(data?.conservation_duree?.data || []).map(
+                      (laboratoire: string) => (
+                        <Button
+                          key={laboratoire}
+                          onClick={(e) =>
+                            setValue({
+                              id: `${uid}.conservation_duree`,
+                              value: e.currentTarget.innerText,
+                            })
+                          }
+                        >
+                          {laboratoire}
+                        </Button>
+                      )
+                    )}
+                  </ButtonGroup>
+                ))}
             </FormGroup>
           </div>
         )}
       </div>
       <div className="col-md-3">
-        {map(
-          data?.posologies,
-          (p: { id: string; label: string; value: string }) => (
-            <div key={p.id}>
-              <Label>{p.label}</Label>
-              <FormGroup>
-                <CustomInput
-                  onChange={(value) =>
-                    setValue({ id: `${uid}.${p.id}`, value })
-                  }
-                  value={p.value}
-                />
-              </FormGroup>
-            </div>
-          )
-        )}
+        {Object.values(data?.posologies || {}).map((p) => (
+          <div key={p.id}>
+            <Label>{p.label}</Label>
+            <FormGroup>
+              <CustomInput
+                onChange={(value) => setValue({ id: `${uid}.${p.id}`, value })}
+                value={p.value}
+              />
+            </FormGroup>
+          </div>
+        ))}
       </div>
       <div className="col-md-6">
         <Label>Commentaires</Label>
         <FormGroup check>
-          {data?.precautions.map(
+          {(data?.precautions || []).map(
             (
               precaution: ExtractModel<Models.Precaution> & {
                 checked: boolean;
@@ -167,7 +165,7 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
               </React.Fragment>
             )
           )}
-          {data?.custom_precautions.map((custom: any) => (
+          {(data?.custom_precautions || []).map((custom: any) => (
             <div key={custom.id} className="mb-1">
               <Button
                 className="form-check-input p-0"
@@ -199,7 +197,9 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
               color="link"
               onClick={(e) => {
                 let newID;
-                const customPrecautionsID = map(data?.custom_precautions, 'id');
+                const customPrecautionsID = (
+                  data?.custom_precautions || []
+                ).map((i) => i.id);
                 while (true) {
                   newID = uniqueId(`custom_precautions_`);
                   if (!has(customPrecautionsID, newID)) {

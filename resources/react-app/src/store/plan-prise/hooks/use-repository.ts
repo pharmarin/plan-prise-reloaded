@@ -1,6 +1,6 @@
 import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
-import { filter, find, get, keyBy, keys, map } from 'lodash';
+import { filter, find, get, keyBy, keys, map } from 'lodash-es';
 import { useSelector } from 'react-redux';
 
 const usePosologies = () => {

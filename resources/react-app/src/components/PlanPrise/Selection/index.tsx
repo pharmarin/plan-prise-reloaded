@@ -14,7 +14,7 @@ import {
 import classNames from 'classnames';
 import { BsSearch } from 'react-icons/bs';
 import ReactPlaceholder from 'react-placeholder';
-import { isArray, map, uniqueId } from 'lodash';
+import { uniqueId } from 'lodash-es';
 import { selectListState } from 'store/plan-prise/selectors/list';
 
 const Square: React.FC = ({ children }) => {
@@ -111,11 +111,11 @@ const Selection = ({ list, status }: SelectionProps) => {
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!status.isLoaded || !search) return;
-    if (isArray(list) && list.includes(search)) setRedirect(true);
+    if (Array.isArray(list) && list.includes(search)) setRedirect(true);
   };
 
   if (status.isLoaded && search) {
-    searchSuccess = isArray(list) && list.includes(search);
+    searchSuccess = Array.isArray(list) && list.includes(search);
 
     if (redirect && searchSuccess)
       return <Redirect to={`/plan-prise/${search}`} />;
@@ -176,25 +176,25 @@ const Selection = ({ list, status }: SelectionProps) => {
             </Link>
           </Square>
         </Col>
-        {map(
-          isArray(list) ? list : map(Array(5), (i) => uniqueId(i)),
-          (item) => (
-            <Col {...cardSize} key={item} className="mb-4">
-              <Square>
-                <ReactPlaceholder
-                  type="rect"
-                  showLoadingAnimation={true}
-                  ready={status.isLoaded}
-                  className="m-0"
-                >
-                  <Link key={item} to={`/plan-prise/${item}`}>
-                    <TextFit text={`#${item}`} />
-                  </Link>
-                </ReactPlaceholder>
-              </Square>
-            </Col>
-          )
-        )}
+        {(Array.isArray(list)
+          ? list
+          : Array.from({ length: 5 }, () => uniqueId())
+        ).map((item) => (
+          <Col {...cardSize} key={item} className="mb-4">
+            <Square>
+              <ReactPlaceholder
+                type="rect"
+                showLoadingAnimation={true}
+                ready={status.isLoaded}
+                className="m-0"
+              >
+                <Link key={item} to={`/plan-prise/${item}`}>
+                  <TextFit text={`#${item}`} />
+                </Link>
+              </ReactPlaceholder>
+            </Square>
+          </Col>
+        ))}
       </Row>
     </React.Fragment>
   );

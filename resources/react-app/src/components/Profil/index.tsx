@@ -11,10 +11,7 @@ import {
 } from 'reactstrap';
 import { BsCheck, BsX } from 'react-icons/bs';
 import { updateAppNav } from 'store/app';
-import map from 'lodash/map';
-import find from 'lodash/find';
-import cloneDeep from 'lodash/cloneDeep';
-import includes from 'lodash/includes';
+import { cloneDeep } from 'lodash-es';
 import { SanctumContext } from 'react-sanctum';
 
 const mapDispatch = {
@@ -92,7 +89,7 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
 
   return (
     <Form>
-      {map(fields, (field) => {
+      {fields.map((field) => {
         if (field.extends && isEditing.field !== field.extends) return null;
         const isReadOnly =
           isEditing.field !== field.id && isEditing.field !== field.extends;
@@ -121,7 +118,7 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
                 readOnly={isReadOnly}
                 type={
                   field.extends
-                    ? (find(fields, ['id', field.extends]) || {}).type
+                    ? (fields.find((i) => i.id === field.extends) || {}).type
                     : field.type
                 }
               />
@@ -156,7 +153,7 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
                       onClick={() => {
                         setFormData({
                           ...formData,
-                          ...(includes(field.id, 'password')
+                          ...(field.id.includes('password')
                             ? {
                                 'current-password': undefined,
                                 'new-password-1': undefined,

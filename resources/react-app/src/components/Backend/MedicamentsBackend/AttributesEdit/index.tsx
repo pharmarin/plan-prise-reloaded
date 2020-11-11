@@ -19,7 +19,6 @@ import useJsonApi from 'helpers/hooks/use-json-api';
 import debounce from 'debounce-promise';
 import { Input, Submit } from 'formstrap';
 import useConfig from 'helpers/hooks/use-config';
-import { keys } from 'lodash';
 import Select, { InputActionTypes } from 'react-select';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 import { AsyncPaginate } from 'react-select-async-paginate';
@@ -286,7 +285,7 @@ export default ({ medicament }: AttributesEditProps) => {
                   onChange={(options: Option[]) =>
                     setFieldValue('voies_administration', options)
                   }
-                  options={keys(voiesAdministration).map((i) => ({
+                  options={Object.keys(voiesAdministration).map((i) => ({
                     value: String(i),
                     label: voiesAdministration[i],
                   }))}

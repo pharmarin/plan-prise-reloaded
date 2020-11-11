@@ -1,5 +1,5 @@
 import axios from 'helpers/axios-clients';
-import { groupBy, map, toString } from 'lodash';
+import { groupBy, toString } from 'lodash-es';
 import debounce from 'debounce-promise';
 
 const loadGeneric = async (query: string) => {
@@ -13,7 +13,7 @@ const loadGeneric = async (query: string) => {
 
     if (response.data.data.length > 0) {
       const grouped = groupBy(
-        map(response.data.data, (m: any) => ({
+        response.data.data.map((m: any) => ({
           value: toString(m.id),
           label: m.denomination,
           type: m.type,

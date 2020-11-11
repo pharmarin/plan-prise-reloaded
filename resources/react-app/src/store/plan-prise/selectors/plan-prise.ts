@@ -1,7 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
-import { filter, find, get, isNil, keyBy, keys, map } from 'lodash';
+import { get } from 'lodash-es';
+
+const castArray = (value: any) => (Array.isArray(value) ? value : [value]);
 
 const selectPlanPrise = (state: IRedux.State) => state.planPrise.content;
 
@@ -19,18 +21,22 @@ export const selectMedicament = (
   state: IRedux.State,
   identifier: Models.MedicamentIdentity
 ) =>
-  find(state.cache.medicaments, identifier) as
-    | IRedux.State['cache']['medicaments'][0]
-    | undefined;
+  state.cache.medicaments.find(
+    (i) => i.id === identifier.id && i.type === identifier.type
+  ) as IRedux.State['cache']['medicaments'][0] | undefined;
+
+const selectUID = createSelector([selectMedicament], (medicament) =>
+  medicament ? `${typeToInt(medicament.type)}-${medicament.id}` : ''
+);
 
 const selectSettings = createSelector(
   [selectPlanPriseContent],
-  (planPriseContent) => get(planPriseContent, 'custom_settings', {})
+  (planPriseContent) => planPriseContent?.custom_settings || {}
 );
 
 const selectCustomData = createSelector(
-  [selectPlanPriseContent],
-  (planPriseContent) => get(planPriseContent, 'custom_data', {})
+  [selectPlanPriseContent, selectUID],
+  (planPriseContent, uid) => get(planPriseContent, `custom_data.${uid}`, {})
 );
 
 const selectInputSettings = createSelector(selectSettings, (settings) =>
@@ -40,91 +46,84 @@ const selectInputSettings = createSelector(selectSettings, (settings) =>
 const selectCheckedPosologies = createSelector(
   [selectInputSettings],
   (inputs) => {
-    const posologies = useConfig('default.posologies');
+    const posologies = useConfig('default.posologies') as Models.Posologie[];
 
-    return filter(
-      map(posologies, (p) =>
-        get(inputs, `${p.id}.checked`, p.default) ? p : null
-      )
-    );
+    return posologies
+      .map((p) => (inputs?.[p.id]?.checked || p.default ? p : null))
+      .filter((i) => i !== null);
   }
 );
 
-const isMedicament = (
-  medicament:
-    | ExtractModel<Models.Medicament>
-    | ExtractModel<Models.ApiMedicament>
-): medicament is ExtractModel<Models.Medicament> => {
-  if (medicament.type === 'medicaments') return true;
-  return false;
-};
-
 const selectContent = createSelector(
-  [selectMedicament, selectCustomData, selectCheckedPosologies],
-  (medicament, customData, posologies) => {
+  [selectMedicament, selectUID, selectCustomData, selectCheckedPosologies],
+  (medicament, uid, customData, posologies) => {
     if (!medicament) return null;
-
-    const uid = `${typeToInt(medicament.type)}-${medicament.id}`;
 
     const getValue = (customLocation: string, defaultLocation?: string) =>
       get(
         customData,
-        `${uid}.${customLocation}`,
+        customLocation,
         defaultLocation ? get(medicament, defaultLocation, '') : ''
       );
 
-    const conservationDuree = get(medicament, 'conservation_duree', []);
-
-    const customConservationDuree = get(
-      customData,
-      `${uid}.conservation_duree`
-    );
+    if (medicament.type === 'api-medicaments') {
+      return {
+        uid,
+        denomination: medicament.denomination,
+      };
+    }
 
     return {
       uid,
-      indications: isMedicament(medicament)
-        ? getValue('indications', 'indications')
-        : [],
-      conservation_frigo: get(medicament, 'conservation_frigo', false),
+      indications: castArray(getValue('indications', 'indications')),
+      conservation_frigo: medicament.conservation_frigo || false,
       conservation_duree: {
-        custom: !isNil(customConservationDuree),
+        custom:
+          customData.conservation_duree !== null &&
+          customData.conservation_duree !== undefined,
         data:
-          customConservationDuree || conservationDuree.length === 1
-            ? (
-                find(conservationDuree, {
-                  laboratoire: customConservationDuree,
-                }) || conservationDuree[0]
-              ).duree || []
-            : map(conservationDuree, 'laboratoire'),
+          medicament.conservation_duree.length === 1
+            ? [medicament.conservation_duree[0].duree]
+            : customData.conservation_duree
+            ? [
+                (
+                  medicament.conservation_duree.find(
+                    (i) => i.laboratoire === customData.conservation_duree
+                  ) || medicament.conservation_duree[0]
+                ).duree,
+              ] || []
+            : medicament.conservation_duree.map((i) => i.laboratoire) || [],
       },
-      posologies: keyBy(
-        map(posologies, (p) => ({
-          id: p.id,
-          label: p.label,
-          value: getValue(p.id),
-        })),
-        'id'
-      ),
-      precautions: (get(medicament, 'precautions', []) as ExtractModel<
-        Models.Precaution
-      >[]).map((p) => ({
-        ...p,
-        commentaire:
-          get(customData, `${uid}.precautions[${p.id}]commentaire`) ||
-          p.commentaire,
-        checked: get(
-          customData,
-          `${uid}.precautions[${p.id}]checked`,
-          p.population !== undefined
-        ),
+      posologies: posologies.reduce(
+        (object, value) => ({
+          ...object,
+          [value?.id || '']: {
+            id: value?.id,
+            label: value?.label,
+            value: getValue(value?.id || ''),
+          },
+        }),
+        {}
+      ) as { [id: string]: { id: string; label: string; value: string } },
+      precautions: (medicament.precautions || []).map((p) => {
+        const customChecked = customData.precautions?.[p.id]?.checked;
+
+        return {
+          ...p,
+          commentaire:
+            customData.precautions?.[p.id]?.commentaire || p.commentaire || '',
+          checked:
+            customChecked === undefined
+              ? p.population !== undefined
+              : customChecked, // Si on utilise customChecked || defaultValue, on se retrouve avec defaultValue si customChecked est false
+        };
+      }),
+      custom_precautions: Object.entries(
+        customData.custom_precautions || {}
+      ).map(([id, commentaire]) => ({
+        id,
+        commentaire: commentaire || '',
       })),
-      custom_precautions: map(
-        keys(get(customData, `${uid}.custom_precautions`, {})),
-        (c) => ({
-          id: c,
-          commentaire: get(customData, `${uid}.custom_precautions[${c}]`, ''),
-        })
-      ),
     };
   }
 );

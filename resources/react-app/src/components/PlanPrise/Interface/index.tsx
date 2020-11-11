@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { keys, map, toNumber } from 'lodash';
 import Card from './Card';
 import Select from './Select';
 import SplashScreen from 'components/App/SplashScreen';
@@ -40,11 +39,9 @@ const Interface = ({
 
   return (
     <React.Fragment>
-      {map(keys(medicaments), toNumber)
-        .sort()
-        .map((key: number) => (
-          <Card key={medicaments[key].id} identifier={medicaments[key]} />
-        ))}
+      {medicaments.map((medicament) => (
+        <Card key={medicament.id} identifier={medicament} />
+      ))}
       <Select />
     </React.Fragment>
   );

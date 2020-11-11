@@ -12,7 +12,6 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import logger from 'redux-logger';
-import { concat } from 'lodash';
 import saveToAPI from 'store/middleware/save-data';
 
 import appReducer from './app';
@@ -27,15 +26,11 @@ const rootReducer = combineReducers({
 
 let store = configureStore({
   reducer: rootReducer,
-  middleware: concat(
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    }),
-    logger,
-    saveToAPI
-  ),
+  middleware: getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    },
+  }).concat(logger, saveToAPI),
 });
 
 let persistor = persistStore(store);
