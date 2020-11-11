@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Button, ButtonGroup, FormGroup, Input, Label } from 'reactstrap';
-import { has, isString, map, uniqueId } from 'lodash-es';
+import { has, map, uniqueId } from 'lodash-es';
 import { removeValue, setValue } from 'store/plan-prise';
 import CustomInput from '../CustomInput';
 import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
@@ -83,32 +83,36 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
               </Button>
             )}
             <FormGroup>
-              {isString(data?.conservation_duree?.data) && (
-                <CustomInput
-                  onChange={() => null}
-                  value={data?.conservation_duree?.data || ''}
-                  readOnly={true}
-                />
+              {console.log(
+                'data?.conservation_duree: ',
+                data?.conservation_duree
               )}
-              {Array.isArray(data?.conservation_duree?.data) && (
-                <ButtonGroup vertical style={{ width: '100%' }}>
-                  {(data?.conservation_duree?.data || []).map(
-                    (laboratoire: string) => (
-                      <Button
-                        key={laboratoire}
-                        onClick={(e) =>
-                          setValue({
-                            id: `${uid}.conservation_duree`,
-                            value: e.currentTarget.innerText,
-                          })
-                        }
-                      >
-                        {laboratoire}
-                      </Button>
-                    )
-                  )}
-                </ButtonGroup>
-              )}
+              {Array.isArray(data?.conservation_duree?.data) &&
+                (data?.conservation_duree?.data.length === 1 ? (
+                  <CustomInput
+                    onChange={() => null}
+                    value={data?.conservation_duree?.data[0] || ''}
+                    readOnly={true}
+                  />
+                ) : (
+                  <ButtonGroup vertical style={{ width: '100%' }}>
+                    {(data?.conservation_duree?.data || []).map(
+                      (laboratoire: string) => (
+                        <Button
+                          key={laboratoire}
+                          onClick={(e) =>
+                            setValue({
+                              id: `${uid}.conservation_duree`,
+                              value: e.currentTarget.innerText,
+                            })
+                          }
+                        >
+                          {laboratoire}
+                        </Button>
+                      )
+                    )}
+                  </ButtonGroup>
+                ))}
             </FormGroup>
           </div>
         )}

@@ -83,13 +83,18 @@ const selectContent = createSelector(
         custom:
           customData.conservation_duree !== null &&
           customData.conservation_duree !== undefined,
-        data: customData.conservation_duree
-          ? (
-              find(medicament.conservation_duree, {
-                laboratoire: customData.conservation_duree,
-              }) || medicament.conservation_duree[0]
-            ).duree || []
-          : map(medicament.conservation_duree, 'laboratoire') || [],
+        data:
+          medicament.conservation_duree.length === 1
+            ? [medicament.conservation_duree[0].duree]
+            : customData.conservation_duree
+            ? [
+                (
+                  find(medicament.conservation_duree, {
+                    laboratoire: customData.conservation_duree,
+                  }) || medicament.conservation_duree[0]
+                ).duree,
+              ] || []
+            : map(medicament.conservation_duree, 'laboratoire') || [],
       },
       posologies: keyBy(
         map(posologies, (p) => ({
