@@ -7,10 +7,9 @@ import CustomInput from '../CustomInput';
 import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
 import { makeUniqueSelectorInstance } from 'store/plan-prise/selectors/plan-prise';
 
-const mapState = (state: IRedux.State, props: Props.Content) => {
-  const selectMedicamentForContent = makeUniqueSelectorInstance();
+const mapState = () => {
   return (state: IRedux.State, { identifier }: Props.Content) => {
-    const data = selectMedicamentForContent(state, {
+    const data = makeUniqueSelectorInstance()(state, {
       id: identifier.id,
       type: identifier.type,
     });
@@ -114,7 +113,7 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
         )}
       </div>
       <div className="col-md-3">
-        {Object.values(data?.posologies || {}).map((p) => (
+        {(data?.posologies || []).map((p) => (
           <div key={p.id}>
             <Label>{p.label}</Label>
             <FormGroup>
