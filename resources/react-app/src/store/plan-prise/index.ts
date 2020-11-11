@@ -2,13 +2,9 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'helpers/axios-clients';
 import { cache, inCache } from 'store/cache';
 import {
-  find,
-  findIndex,
-  forEach,
   get,
   isPlainObject,
   isString,
-  map,
   remove,
   setWith,
   unset,
@@ -35,7 +31,7 @@ const loadList = createAsyncThunk<Models.PlanPrise['id'][]>(
         "La réponse reçue ne contient pas d'identifiants de plan de prise valides"
       );
 
-    return map(response.data.data, (p) => p.id);
+    return response.data.data.map((p) => p.id);
   }
 );
 
@@ -68,23 +64,27 @@ const loadContent = createAsyncThunk<
 
     const state = getState();
 
-    forEach(get(response, 'data.included', []), (included) => {
-      if (
-        included.type !== 'medicaments' &&
-        included.type !== 'api-medicaments'
-      )
-        return;
+    get(response, 'data.included', []).forEach(
+      (
+        included: any // TODO: Type included
+      ) => {
+        if (
+          included.type !== 'medicaments' &&
+          included.type !== 'api-medicaments'
+        )
+          return;
 
-      if (!inCache({ id: included.id, type: included.type }, state.cache))
-        dispatch(
-          cache(
-            normalizeOne(
-              { id: included.id, type: included.type },
-              response.data
+        if (!inCache({ id: included.id, type: included.type }, state.cache))
+          dispatch(
+            cache(
+              normalizeOne(
+                { id: included.id, type: included.type },
+                response.data
+              )
             )
-          )
-        );
-    });
+          );
+      }
+    );
 
     const data = normalizeOne({ id, type: 'plan-prises' }, response.data);
 
@@ -192,7 +192,11 @@ const ppSlice = createSlice({
       if (!isPlainObject(state.content.data))
         throw new Error('Un plan de prise chargé doit être un objet');
 
-      if (!find(state.content.data?.medicaments, payload))
+      if (
+        !state.content.data?.medicaments.find(
+          (i) => i.type === payload.type && i.id === payload.id
+        )
+      )
         state.content.data?.medicaments.push({
           id: payload.id,
           type: payload.type,
@@ -236,7 +240,13 @@ const ppSlice = createSlice({
       if (!isPlainObject(state.content.data))
         throw new Error('Un plan de prise chargé doit être un objet');
 
-      const index = findIndex(state.content.data?.medicaments, payload.id);
+      const index = state.content.data?.medicaments.findIndex(
+        (i) => i.type === payload.id.type && i.id === payload.id.id
+      );
+
+      if (!index)
+        throw new Error('Impossible de trouver le médicament à charger');
+
       if (payload.status === true) {
         (state.content.data?.medicaments[
           index

@@ -95,6 +95,12 @@ declare namespace Models {
       medicaments: MedicamentIdentityWithLoading[];
     };
   }
+  interface Posologie {
+    id: string;
+    label: string;
+    default?: boolean;
+    color: string;
+  }
   interface Precaution {
     id: string;
     type: 'precautions';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Button, ButtonGroup, FormGroup, Input, Label } from 'reactstrap';
-import { has, map, uniqueId } from 'lodash-es';
+import { has, uniqueId } from 'lodash-es';
 import { removeValue, setValue } from 'store/plan-prise';
 import CustomInput from '../CustomInput';
 import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
@@ -83,10 +83,6 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
               </Button>
             )}
             <FormGroup>
-              {console.log(
-                'data?.conservation_duree: ',
-                data?.conservation_duree
-              )}
               {Array.isArray(data?.conservation_duree?.data) &&
                 (data?.conservation_duree?.data.length === 1 ? (
                   <CustomInput
@@ -118,22 +114,17 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
         )}
       </div>
       <div className="col-md-3">
-        {map(
-          data?.posologies,
-          (p: { id: string; label: string; value: string }) => (
-            <div key={p.id}>
-              <Label>{p.label}</Label>
-              <FormGroup>
-                <CustomInput
-                  onChange={(value) =>
-                    setValue({ id: `${uid}.${p.id}`, value })
-                  }
-                  value={p.value}
-                />
-              </FormGroup>
-            </div>
-          )
-        )}
+        {Object.values(data?.posologies || {}).map((p) => (
+          <div key={p.id}>
+            <Label>{p.label}</Label>
+            <FormGroup>
+              <CustomInput
+                onChange={(value) => setValue({ id: `${uid}.${p.id}`, value })}
+                value={p.value}
+              />
+            </FormGroup>
+          </div>
+        ))}
       </div>
       <div className="col-md-6">
         <Label>Commentaires</Label>
@@ -206,7 +197,9 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
               color="link"
               onClick={(e) => {
                 let newID;
-                const customPrecautionsID = map(data?.custom_precautions, 'id');
+                const customPrecautionsID = (
+                  data?.custom_precautions || []
+                ).map((i) => i.id);
                 while (true) {
                   newID = uniqueId(`custom_precautions_`);
                   if (!has(customPrecautionsID, newID)) {

@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
-import { filter, find, get, keyBy, map } from 'lodash-es';
+import { get } from 'lodash-es';
 
 const castArray = (value: any) => (Array.isArray(value) ? value : [value]);
 
@@ -21,9 +21,9 @@ export const selectMedicament = (
   state: IRedux.State,
   identifier: Models.MedicamentIdentity
 ) =>
-  find(state.cache.medicaments, identifier) as
-    | IRedux.State['cache']['medicaments'][0]
-    | undefined;
+  state.cache.medicaments.find(
+    (i) => i.id === identifier.id && i.type === identifier.type
+  ) as IRedux.State['cache']['medicaments'][0] | undefined;
 
 const selectUID = createSelector([selectMedicament], (medicament) =>
   medicament ? `${typeToInt(medicament.type)}-${medicament.id}` : ''
@@ -46,13 +46,11 @@ const selectInputSettings = createSelector(selectSettings, (settings) =>
 const selectCheckedPosologies = createSelector(
   [selectInputSettings],
   (inputs) => {
-    const posologies = useConfig('default.posologies');
+    const posologies = useConfig('default.posologies') as Models.Posologie[];
 
-    return filter(
-      map(posologies, (p) =>
-        get(inputs, `${p.id}.checked`, p.default) ? p : null
-      )
-    );
+    return posologies
+      .map((p) => (inputs?.[p.id]?.checked || p.default ? p : null))
+      .filter((i) => i !== null);
   }
 );
 
@@ -89,21 +87,24 @@ const selectContent = createSelector(
             : customData.conservation_duree
             ? [
                 (
-                  find(medicament.conservation_duree, {
-                    laboratoire: customData.conservation_duree,
-                  }) || medicament.conservation_duree[0]
+                  medicament.conservation_duree.find(
+                    (i) => i.laboratoire === customData.conservation_duree
+                  ) || medicament.conservation_duree[0]
                 ).duree,
               ] || []
-            : map(medicament.conservation_duree, 'laboratoire') || [],
+            : medicament.conservation_duree.map((i) => i.laboratoire) || [],
       },
-      posologies: keyBy(
-        map(posologies, (p) => ({
-          id: p.id,
-          label: p.label,
-          value: getValue(p.id),
-        })),
-        'id'
-      ),
+      posologies: posologies.reduce(
+        (object, value) => ({
+          ...object,
+          [value?.id || '']: {
+            id: value?.id,
+            label: value?.label,
+            value: getValue(value?.id || ''),
+          },
+        }),
+        {}
+      ) as { [id: string]: { id: string; label: string; value: string } },
       precautions: (medicament.precautions || []).map((p) => {
         const customChecked = customData.precautions?.[p.id]?.checked;
 
@@ -117,13 +118,12 @@ const selectContent = createSelector(
               : customChecked, // Si on utilise customChecked || defaultValue, on se retrouve avec defaultValue si customChecked est false
         };
       }),
-      custom_precautions: map(
-        Object.keys(customData.custom_precautions || {}),
-        (c) => ({
-          id: c,
-          commentaire: customData.custom_precautions?.[c] || '',
-        })
-      ),
+      custom_precautions: Object.entries(
+        customData.custom_precautions || {}
+      ).map(([id, commentaire]) => ({
+        id,
+        commentaire: commentaire || '',
+      })),
     };
   }
 );
