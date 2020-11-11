@@ -176,24 +176,25 @@ const Selection = ({ list, status }: SelectionProps) => {
             </Link>
           </Square>
         </Col>
-        {(Array.isArray(list) ? list : Array(5).map((i) => uniqueId(i))).map(
-          (item) => (
-            <Col {...cardSize} key={item} className="mb-4">
-              <Square>
-                <ReactPlaceholder
-                  type="rect"
-                  showLoadingAnimation={true}
-                  ready={status.isLoaded}
-                  className="m-0"
-                >
-                  <Link key={item} to={`/plan-prise/${item}`}>
-                    <TextFit text={`#${item}`} />
-                  </Link>
-                </ReactPlaceholder>
-              </Square>
-            </Col>
-          )
-        )}
+        {(Array.isArray(list)
+          ? list
+          : Array.from({ length: 5 }, () => uniqueId())
+        ).map((item) => (
+          <Col {...cardSize} key={item} className="mb-4">
+            <Square>
+              <ReactPlaceholder
+                type="rect"
+                showLoadingAnimation={true}
+                ready={status.isLoaded}
+                className="m-0"
+              >
+                <Link key={item} to={`/plan-prise/${item}`}>
+                  <TextFit text={`#${item}`} />
+                </Link>
+              </ReactPlaceholder>
+            </Square>
+          </Col>
+        ))}
       </Row>
     </React.Fragment>
   );
