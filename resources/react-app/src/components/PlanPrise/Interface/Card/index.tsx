@@ -8,7 +8,7 @@ import { addNotification } from 'store/app';
 import switchVoiesAdministration from 'helpers/switch-voie-administration';
 import { FaTrash } from 'react-icons/fa';
 
-const mapState = (state: IRedux.State) => ({
+const mapState = (state: Redux.State) => ({
   storedMedicaments: state.cache.medicaments,
 });
 

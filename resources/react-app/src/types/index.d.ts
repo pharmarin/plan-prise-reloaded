@@ -21,7 +21,7 @@ declare namespace Repositories {
   }
   interface PlanPriseRepository {
     id: Models.PlanPrise['id'] | undefined;
-    status: IRedux.State['planPrise']['content']['status'];
+    status: Redux.State['planPrise']['content']['status'];
     data?: IMedicamentRepository[];
   }
 }

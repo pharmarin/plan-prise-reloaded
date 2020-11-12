@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { uniqueId } from 'lodash-es';
 
-const initialState: IRedux.App = {
+const initialState: Redux.App = {
   navigation: {
     options: undefined,
     returnTo: {
@@ -22,7 +22,7 @@ const appSlice = createSlice({
       {
         payload: { options, returnTo, title },
       }: PayloadAction<
-        Pick<IRedux.App['navigation'], 'title' | 'returnTo' | 'options'>
+        Pick<Redux.App['navigation'], 'title' | 'returnTo' | 'options'>
       >
     ) => {
       state.navigation.title = title;

@@ -38,7 +38,7 @@ const loadList = createAsyncThunk<Models.PlanPrise['id'][]>(
 const loadContent = createAsyncThunk<
   ExtractModel<Models.PlanPrise> | undefined,
   Models.PlanPrise['id'] | undefined,
-  { state: IRedux.State }
+  { state: Redux.State }
 >('planPrise/loadContent', async (id, { dispatch, getState }) => {
   if (id === 'new') {
     return {
@@ -95,7 +95,7 @@ const loadContent = createAsyncThunk<
 const loadItem = createAsyncThunk<
   boolean,
   Models.MedicamentIdentity,
-  { state: IRedux.State }
+  { state: Redux.State }
 >(
   'planPrise/loadItem',
   async ({ id, type }, { dispatch, getState, rejectWithValue }) => {
@@ -131,7 +131,7 @@ const createContent = createAsyncThunk<
   ExtractModel<Models.PlanPrise>,
   undefined
 >('planPrise/create', async (_, { dispatch, getState }) => {
-  const state = getState() as IRedux.State;
+  const state = getState() as Redux.State;
 
   const response = await axios.post<IServerResponse<Models.PlanPrise>>(
     requestUrl('plan-prises', { include: ['medicaments'] }).url,
@@ -166,7 +166,7 @@ const deleteContent = createAsyncThunk<void, Models.PlanPrise['id']>(
   }
 );
 
-const initialState: IRedux.PlanPrise = {
+const initialState: Redux.PlanPrise = {
   list: {
     status: 'not-loaded',
   },
@@ -276,7 +276,7 @@ const ppSlice = createSlice({
     },
     setShowSettings: (
       state,
-      { payload }: PayloadAction<IRedux.PlanPrise['options']['showSettings']>
+      { payload }: PayloadAction<Redux.PlanPrise['options']['showSettings']>
     ) => {
       state.options.showSettings = payload;
     },

@@ -17,7 +17,7 @@ import { SanctumContext } from 'react-sanctum';
 import SplashScreen from 'components/App/SplashScreen';
 import { fromPlanPrise, generate } from 'helpers/make-pdf';
 
-const mapState = (state: IRedux.State) => ({
+const mapState = (state: Redux.State) => ({
   id: selectPlanPriseID(state),
   list: state.planPrise.list,
   showSettings: state.planPrise.options.showSettings,
@@ -55,7 +55,7 @@ const PlanPrise = ({
 }: PlanPriseProps) => {
   const { user } = useContext(SanctumContext);
 
-  const state = useSelector((state: IRedux.State) => state);
+  const state = useSelector((state: Redux.State) => state);
 
   const routerParams = useParams();
 

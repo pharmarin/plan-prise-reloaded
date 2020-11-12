@@ -6,7 +6,7 @@ import { get } from 'lodash-es';
 
 const castArray = (value: any) => (Array.isArray(value) ? value : [value]);
 
-const selectPlanPrise = (state: IRedux.State) => state.planPrise.content;
+const selectPlanPrise = (state: Redux.State) => state.planPrise.content;
 
 export const selectPlanPriseData = createSelector(
   [selectPlanPrise],
@@ -19,12 +19,12 @@ const selectPlanPriseStatus = createSelector(
 );
 
 export const selectMedicament = (
-  state: IRedux.State,
+  state: Redux.State,
   identifier: Models.MedicamentIdentity
 ) =>
   state.cache.medicaments.find(
     (i) => i.id === identifier.id && i.type === identifier.type
-  ) as IRedux.State['cache']['medicaments'][0] | undefined;
+  ) as Redux.State['cache']['medicaments'][0] | undefined;
 
 const selectUID = createSelector([selectMedicament], (medicament) =>
   medicament ? `${typeToInt(medicament.type)}-${medicament.id}` : ''

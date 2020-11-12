@@ -11,7 +11,7 @@ import {
   selectPlanPriseState,
 } from 'store/plan-prise/selectors/plan-prise';
 
-const mapState = (state: IRedux.State) => ({
+const mapState = (state: Redux.State) => ({
   cacheContent: state.cache,
   medicData: selectPlanPriseData(state)?.medicaments || [],
   status: selectPlanPriseState(state),

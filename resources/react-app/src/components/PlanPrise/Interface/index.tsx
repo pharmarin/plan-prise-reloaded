@@ -5,7 +5,7 @@ import Select from './Select';
 import SplashScreen from 'components/App/SplashScreen';
 import { selectPlanPriseState } from 'store/plan-prise/selectors/plan-prise';
 
-const mapState = (state: IRedux.State) => ({
+const mapState = (state: Redux.State) => ({
   ...selectPlanPriseState(state),
   medicaments: (state.planPrise.content.data?.medicaments || []).map((m) => ({
     id: m.id,

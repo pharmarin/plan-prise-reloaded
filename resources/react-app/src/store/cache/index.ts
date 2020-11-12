@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: IRedux.Cache = {
+const initialState: Redux.Cache = {
   medicaments: [],
 };
 
 const inCache = (
   { id, type }: Models.MedicamentIdentity,
-  cache: IRedux.Cache
+  cache: Redux.Cache
 ) => {
   return cache.medicaments.find((i) => i.type === type && i.id === id);
 };

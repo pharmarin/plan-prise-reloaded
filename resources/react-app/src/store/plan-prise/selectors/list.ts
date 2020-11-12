@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 
-const selectListStatus = (state: IRedux.State) => state.planPrise.list.status;
+const selectListStatus = (state: Redux.State) => state.planPrise.list.status;
 
 export const selectListState = createSelector(
   [selectListStatus],

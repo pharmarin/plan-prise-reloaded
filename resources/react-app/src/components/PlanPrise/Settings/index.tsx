@@ -14,7 +14,7 @@ import { ceil, chunk, get } from 'lodash-es';
 import { setSettings } from 'store/plan-prise';
 import useConfig from 'helpers/hooks/use-config';
 
-const mapState = (state: IRedux.State) => ({
+const mapState = (state: Redux.State) => ({
   settings: state.planPrise.content.data?.custom_settings || {},
 });
 

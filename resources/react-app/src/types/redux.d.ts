@@ -1,4 +1,4 @@
-declare namespace IRedux {
+declare namespace Redux {
   interface App {
     navigation: {
       options?: {
@@ -34,8 +34,8 @@ declare namespace IRedux {
     };
   }
   export interface State {
-    app: IRedux.App;
-    cache: IRedux.Cache;
-    planPrise: IRedux.PlanPrise;
+    app: Redux.App;
+    cache: Redux.Cache;
+    planPrise: Redux.PlanPrise;
   }
 }

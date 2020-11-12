@@ -21,7 +21,7 @@ export const generate = async (document: TDocumentDefinitions) => {
 };
 
 export const fromPlanPrise = (
-  state: IRedux.State,
+  state: Redux.State,
   user: Models.App.User
 ): TDocumentDefinitions => {
   const planPriseContent = (
