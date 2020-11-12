@@ -65,9 +65,7 @@ const loadContent = createAsyncThunk<
     const state = getState();
 
     get(response, 'data.included', []).forEach(
-      (
-        included: any // TODO: Type included
-      ) => {
+      (included: Models.Medicament | Models.ApiMedicament) => {
         if (
           included.type !== 'medicaments' &&
           included.type !== 'api-medicaments'

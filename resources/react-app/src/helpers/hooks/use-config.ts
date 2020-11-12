@@ -1,19 +1,8 @@
 import get from 'lodash-es/get';
 
-export type Config = {
-  [key: string]: any;
-  version: string;
-  validation: {
-    [key: string]: string;
-  };
-  default: {
-    pp_inputs: any; // TODO
-  };
-} | null;
-
 const STORAGE_KEY = 'pharmarin.config';
 
-const getLocalStorage = (): Config | false => {
+const getLocalStorage = (): Models.App.Config | false => {
   const local = localStorage.getItem(STORAGE_KEY);
   if (!local) return false;
   const config = JSON.parse(local);
@@ -21,7 +10,7 @@ const getLocalStorage = (): Config | false => {
   return config;
 };
 
-export const storeConfig = (config: Config) => {
+export const storeConfig = (config: Models.App.Config) => {
   const string = JSON.stringify(config);
   return localStorage.setItem(STORAGE_KEY, string);
 };
