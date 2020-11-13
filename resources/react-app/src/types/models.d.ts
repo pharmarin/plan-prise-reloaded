@@ -20,7 +20,9 @@ declare interface IServerResponse<T> {
 type ExtractModel<T> = Omit<T, 'attributes' | 'relationships'> &
   { [A in keyof T['attributes']]: T['attributes'][A] } &
   {
-    [R in keyof T['relationships']]: ExtractModel<T['relationships'][R][0]>[];
+    [R in keyof T['relationships']]: ExtractModel<
+      T['relationships'][R]['data'][0]
+    >[];
   } & {
     relationshipNames: string[];
   };
@@ -82,14 +84,14 @@ declare namespace Models {
         voies_administration: number[];
       };
       relationships: {
-        bdpm: ApiMedicament.Entity[];
-        composition: PrincipeActif.Entity[];
-        precautions: Precaution.Entity[];
+        bdpm: { data: ApiMedicament.Entity[] };
+        composition: { data: PrincipeActif.Entity[] };
+        precautions: { data: Precaution.Entity[] };
       };
     }
     type Extracted = ExtractModel<Medicament.Entity>;
   }
-  interface MedicamentIdentity {
+  interface MedicamentIdentity extends ResourceObject {
     id: string;
     type: ApiMedicament['type'] | Medicament['type'];
   }
@@ -115,7 +117,7 @@ declare namespace Models {
         };
       };
       relationships: {
-        medicaments: MedicamentIdentityWithLoading[];
+        medicaments: { data: MedicamentIdentityWithLoading[] };
       };
     }
     type Extracted = ExtractModel<PlanPrise.Entity>;
