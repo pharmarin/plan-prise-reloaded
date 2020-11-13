@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import { Input, Submit } from 'formstrap';
 import { SanctumContext } from 'react-sanctum';
 import { Form, FormGroup, FormText, Label } from 'reactstrap';
+import * as yup from 'yup';
 
 export default () => {
   const { signIn } = useContext(SanctumContext);
@@ -23,9 +24,31 @@ export default () => {
           setSubmitting(false);
         }
       }}
+      validationSchema={yup.object().shape({
+        email: yup
+          .string()
+          .email(
+            'Veuillez entrer une adresse mail correcte pour vous connecter'
+          )
+          .required('Veuillez entrer une adresse mail pour vous connecter'),
+        password: yup
+          .string()
+          .required(
+            "Veuillez entrer le mot de passe défini à l'inscription pour vous connecter"
+          )
+          .min(
+            6,
+            "Veuillez entrer le mot de passe défini à l'inscription pour vous connecter"
+          )
+          .max(
+            20,
+            "Veuillez entrer le mot de passe défini à l'inscription pour vous connecter"
+          ),
+      })}
+      validateOnChange={false}
     >
-      {({ handleSubmit }) => (
-        <Form noValidate onSubmit={handleSubmit}>
+      {({ handleSubmit, isValid }) => (
+        <Form onSubmit={handleSubmit}>
           <FormGroup>
             <Label for="email">Adresse mail</Label>
             <Input
@@ -52,7 +75,7 @@ export default () => {
             />
           </FormGroup>
           <div className="text-center">
-            <Submit color="default" withLoading withSpinner>
+            <Submit color="default" disabled={!isValid} withLoading withSpinner>
               Se connecter
             </Submit>
           </div>
