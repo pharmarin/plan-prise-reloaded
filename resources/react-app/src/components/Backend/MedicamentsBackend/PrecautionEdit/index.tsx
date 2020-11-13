@@ -27,7 +27,7 @@ export default ({
   const { normalizeOne, requestUrl } = useJsonApi();
 
   const [{ data, loading, error }] = useAxios<
-    IServerResponse<Models.Medicament>
+    IServerResponse<Models.Medicament.Entity>
   >({
     url: requestUrl('precautions', {
       id: precautionID.id,

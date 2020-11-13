@@ -130,7 +130,7 @@ const Content = ({ removeValue, setValue, data }: ContentProps) => {
         <FormGroup check>
           {(data?.precautions || []).map(
             (
-              precaution: ExtractModel<Models.Precaution> & {
+              precaution: Models.Precaution.Extracted & {
                 checked: boolean;
               }
             ) => (

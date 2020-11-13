@@ -26,13 +26,13 @@ const MedicamentEdit = ({
   const { normalizeOne, requestUrl } = useJsonApi();
 
   const [precautions, setPrecautions] = useState<
-    undefined | ExtractModel<Models.Precaution>[]
+    undefined | Models.Precaution.Extracted[]
   >();
 
-  let medicament: ExtractModel<Models.Medicament> | undefined = undefined;
+  let medicament: Models.Medicament.Extracted | undefined = undefined;
 
   const [{ data, loading, error }] = useAxios<
-    IServerResponse<Models.Medicament>
+    IServerResponse<Models.Medicament.Entity>
   >({
     url: requestUrl('medicaments', {
       id: medicamentID.id,
@@ -78,7 +78,7 @@ const MedicamentEdit = ({
       type: medicamentID.type,
     },
     data
-  ) as ExtractModel<Models.Medicament>;
+  ) as Models.Medicament.Extracted;
 
   return (
     <React.Fragment>

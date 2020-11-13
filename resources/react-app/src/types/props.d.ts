@@ -1,11 +1,11 @@
 declare namespace Props {
   declare namespace Backend {
     interface AttributesEdit {
-      medicament: ExtractModel<Models.Medicament>;
+      medicament: Models.Medicament.Extracted;
     }
     interface MedicamentEdit {
-      medicament: ExtractID<Models.Medicament> &
-        Pick<ExtractModel<Models.Medicament>, 'denomination' | 'precautions'>;
+      medicament: ExtractID<Models.Medicament.Entity> &
+        Pick<Models.Medicament.Extracted, 'denomination' | 'precautions'>;
     }
     interface MedicamentPagination {
       last: number | null;
@@ -15,11 +15,11 @@ declare namespace Props {
       setPages: (page: number, previous: number) => void;
     }
     interface MedicamentTable {
-      data: ExtractModel<Models.Medicament>[];
+      data: Models.Medicament.Extracted[];
     }
     interface PrecautionEdit {
       cibles: { id: string; label: string }[];
-      precaution: ExtractID<Models.Precaution>;
+      precaution: ExtractID<Models.Precaution.Entity>;
       remove: (id: string) => void;
     }
   }

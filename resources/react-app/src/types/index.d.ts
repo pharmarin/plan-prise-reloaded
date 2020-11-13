@@ -12,15 +12,15 @@ declare namespace Repositories {
         custom: boolean;
         data: string[] | string;
       };
-      custom_precautions: Omit<ExtractModel<Models.Precaution>, 'population'>[];
+      custom_precautions: Omit<Models.Precaution.Extracted, 'population'>[];
       indications: string[];
       posologies: Record<string, { id: string; label: string; value: string }>;
-      precautions: (ExtractModel<Models.Precaution> & { checked: boolean })[];
+      precautions: (Models.Precaution.Extracted & { checked: boolean })[];
       voies_administration: string[];
     };
   }
   interface PlanPriseRepository {
-    id: Models.PlanPrise['id'] | undefined;
+    id: Models.PlanPrise.Entity['id'] | undefined;
     status: Redux.State['planPrise']['content']['status'];
     data?: IMedicamentRepository[];
   }

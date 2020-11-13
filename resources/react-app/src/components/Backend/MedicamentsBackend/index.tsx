@@ -66,7 +66,7 @@ const MedicamentsBackend = ({ updateAppNav }: MedicamentsBackendProps) => {
   const [{ data, loading, error }, execute] = useAxios<
     IServerResponse<
       Pick<
-        ExtractModel<Models.Medicament>,
+        Models.Medicament.Extracted,
         'id' | 'denomination' | 'precautions' | 'type'
       >
     >

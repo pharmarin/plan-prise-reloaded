@@ -51,7 +51,7 @@ export default ({ medicament }: AttributesEditProps) => {
       filter: { field: 'denomination', value: query },
       sort: 'denomination',
     });
-    const res = await axios.get<IServerResponse<Models.PrincipeActif[]>>(
+    const res = await axios.get<IServerResponse<Models.PrincipeActif.Entity[]>>(
       url.url
     );
     const data = res.data;
@@ -244,7 +244,7 @@ export default ({ medicament }: AttributesEditProps) => {
                   isMulti
                   loadOptions={async (query: string) => {
                     const response = await axios.get<
-                      IServerResponse<Models.ApiMedicament[]>
+                      IServerResponse<Models.ApiMedicament.Entity[]>
                     >(
                       requestUrl('api-medicaments', {
                         fields: {

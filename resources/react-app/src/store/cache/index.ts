@@ -20,7 +20,7 @@ const cacheSlice = createSlice({
       {
         payload,
       }: PayloadAction<
-        ExtractModel<Models.Medicament> | ExtractModel<Models.ApiMedicament>
+        Models.Medicament.Extracted | Models.ApiMedicament.Extracted
       >
     ) {
       if (!inCache({ id: payload.id, type: payload.type }, state))

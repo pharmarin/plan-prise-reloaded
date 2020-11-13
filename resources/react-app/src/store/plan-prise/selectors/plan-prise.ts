@@ -79,8 +79,7 @@ const selectMedicamentContent = createSelector(
       indications: castArray(getValue('indications', 'indications')),
       composition: ('composition' in medicament ? medicament.composition : [])
         .map(
-          (composant: ExtractModel<Models.PrincipeActif>) =>
-            composant.denomination
+          (composant: Models.PrincipeActif.Extracted) => composant.denomination
         )
         .join(' + '),
       voies_administration: medicament.voies_administration.map((va) =>

@@ -16,18 +16,18 @@ declare namespace Redux {
   }
   interface Cache {
     medicaments: (
-      | ExtractModel<Models.Medicament>
-      | ExtractModel<Models.ApiMedicament>
+      | Models.Medicament.Extracted
+      | Models.ApiMedicament.Extracted
     )[];
   }
   interface PlanPrise {
     list: {
       status: LoadingState;
-      data?: Models.PlanPrise['id'][];
+      data?: Models.PlanPrise.Entity['id'][];
     };
     content: {
       status: LoadingState | 'deleted' | 'deleting' | 'creating';
-      data?: ExtractModel<Models.PlanPrise>;
+      data?: Models.PlanPrise.Extracted;
     };
     options: {
       showSettings: boolean;

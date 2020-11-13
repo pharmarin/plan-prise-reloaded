@@ -30,7 +30,7 @@ type ExtractID<T> = Pick<T, 'id' | 'type'>;
 type LoadingState = 'not-loaded' | 'loaded' | 'loading';
 
 declare namespace Models {
-  declare namespace App {
+  namespace App {
     type Config = {
       version: string;
       validation: {
@@ -62,26 +62,32 @@ declare namespace Models {
       email: string;
     }
   }
-  interface ApiMedicament extends MedicamentIdentity {
-    type: 'api-medicaments';
-    attributes: {
-      denomination: string;
-    };
+  namespace ApiMedicament {
+    interface Entity extends MedicamentIdentity {
+      type: 'api-medicaments';
+      attributes: {
+        denomination: string;
+      };
+    }
+    type Extracted = ExtractModel<ApiMedicament.Entity>;
   }
-  interface Medicament extends MedicamentIdentity {
-    type: 'medicaments';
-    attributes: {
-      conservation_duree: { laboratoire: string; duree: string }[];
-      conservation_frigo: boolean;
-      denomination: string;
-      indications: string[];
-      voies_administration: number[];
-    };
-    relationships: {
-      bdpm: ApiMedicament[];
-      composition: PrincipeActif[];
-      precautions: Precaution[];
-    };
+  namespace Medicament {
+    interface Entity extends MedicamentIdentity {
+      type: 'medicaments';
+      attributes: {
+        conservation_duree: { laboratoire: string; duree: string }[];
+        conservation_frigo: boolean;
+        denomination: string;
+        indications: string[];
+        voies_administration: number[];
+      };
+      relationships: {
+        bdpm: ApiMedicament.Entity[];
+        composition: PrincipeActif.Entity[];
+        precautions: Precaution.Entity[];
+      };
+    }
+    type Extracted = ExtractModel<Medicament.Entity>;
   }
   interface MedicamentIdentity {
     id: string;
@@ -90,47 +96,57 @@ declare namespace Models {
   interface MedicamentIdentityWithLoading extends MedicamentIdentity {
     loading?: boolean;
   }
-  interface PlanPrise {
-    id: string;
-    type: 'plan-prises';
-    attributes: {
-      custom_data: {
-        [id: string]: {
-          [field: string]: string;
+  namespace PlanPrise {
+    interface Entity {
+      id: string;
+      type: 'plan-prises';
+      attributes: {
+        custom_data: {
+          [id: string]: {
+            [field: string]: string;
+          };
         };
-      };
-      custom_settings: {
-        inputs: {
-          [inputName: string]: {
-            checked: boolean;
+        custom_settings: {
+          inputs: {
+            [inputName: string]: {
+              checked: boolean;
+            };
           };
         };
       };
-    };
-    relationships: {
-      medicaments: MedicamentIdentityWithLoading[];
-    };
+      relationships: {
+        medicaments: MedicamentIdentityWithLoading[];
+      };
+    }
+    type Extracted = ExtractModel<PlanPrise.Entity>;
   }
   interface Posologie {
+    // TODO: Delte
     id: string;
     label: string;
     default?: boolean;
     color: string;
   }
-  interface Precaution {
-    id: string;
-    type: 'precautions';
-    attributes: {
-      commentaire: string;
-      population: string;
-      voie_administration: number;
-    };
+  namespace Precaution {
+    interface Entity {
+      id: string;
+      type: 'precautions';
+      attributes: {
+        commentaire: string;
+        population: string;
+        voie_administration: number;
+      };
+    }
+    type Extracted = ExtractModel<Precaution.Entity>;
   }
-  interface PrincipeActif {
-    id: string;
-    type: 'principe-actifs';
-    attributes: {
-      denomination: string;
-    };
+  namespace PrincipeActif {
+    interface Entity {
+      id: string;
+      type: 'principe-actifs';
+      attributes: {
+        denomination: string;
+      };
+    }
+    type Extracted = ExtractModel<PrincipeActif.Entity>;
   }
 }

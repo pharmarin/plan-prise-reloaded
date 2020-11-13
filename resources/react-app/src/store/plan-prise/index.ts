@@ -12,10 +12,12 @@ import {
 import { typeToInt } from 'helpers/type-switcher';
 import { normalizeOne, requestUrl } from 'helpers/hooks/use-json-api';
 
-const loadList = createAsyncThunk<Models.PlanPrise['id'][]>(
+const loadList = createAsyncThunk<Models.PlanPrise.Entity['id'][]>(
   'planPrise/loadList',
   async () => {
-    const response = await axios.get<IServerResponse<Models.PlanPrise[]>>(
+    const response = await axios.get<
+      IServerResponse<Models.PlanPrise.Entity[]>
+    >(
       requestUrl('plan-prises', {
         fields: {
           'plan-prises': ['id', 'type'],
@@ -36,8 +38,8 @@ const loadList = createAsyncThunk<Models.PlanPrise['id'][]>(
 );
 
 const loadContent = createAsyncThunk<
-  ExtractModel<Models.PlanPrise> | undefined,
-  Models.PlanPrise['id'] | undefined,
+  Models.PlanPrise.Extracted | undefined,
+  Models.PlanPrise.Entity['id'] | undefined,
   { state: Redux.State }
 >('planPrise/loadContent', async (id, { dispatch, getState }) => {
   if (id === 'new') {
@@ -50,7 +52,7 @@ const loadContent = createAsyncThunk<
   } else if (id === undefined) {
     return undefined;
   } else {
-    const response = await axios.get<IServerResponse<Models.PlanPrise>>(
+    const response = await axios.get<IServerResponse<Models.PlanPrise.Entity>>(
       requestUrl('plan-prises', {
         id: id,
         include: [
@@ -65,7 +67,7 @@ const loadContent = createAsyncThunk<
     const state = getState();
 
     get(response, 'data.included', []).forEach(
-      (included: Models.Medicament | Models.ApiMedicament) => {
+      (included: Models.Medicament.Entity | Models.ApiMedicament.Entity) => {
         if (
           included.type !== 'medicaments' &&
           included.type !== 'api-medicaments'
@@ -127,37 +129,37 @@ const loadItem = createAsyncThunk<
   }
 );
 
-const createContent = createAsyncThunk<
-  ExtractModel<Models.PlanPrise>,
-  undefined
->('planPrise/create', async (_, { dispatch, getState }) => {
-  const state = getState() as Redux.State;
+const createContent = createAsyncThunk<Models.PlanPrise.Extracted, undefined>(
+  'planPrise/create',
+  async (_, { dispatch, getState }) => {
+    const state = getState() as Redux.State;
 
-  const response = await axios.post<IServerResponse<Models.PlanPrise>>(
-    requestUrl('plan-prises', { include: ['medicaments'] }).url,
-    {
-      data: {
-        type: 'plan-prises',
-        relationships: {
-          medicaments: {
-            data: state.planPrise.content.data?.medicaments.map(
-              (medicament) => ({ id: medicament.id, type: medicament.type })
-            ),
+    const response = await axios.post<IServerResponse<Models.PlanPrise.Entity>>(
+      requestUrl('plan-prises', { include: ['medicaments'] }).url,
+      {
+        data: {
+          type: 'plan-prises',
+          relationships: {
+            medicaments: {
+              data: state.planPrise.content.data?.medicaments.map(
+                (medicament) => ({ id: medicament.id, type: medicament.type })
+              ),
+            },
           },
         },
-      },
-    }
-  );
+      }
+    );
 
-  dispatch(loadList());
+    dispatch(loadList());
 
-  return normalizeOne(
-    { id: response.data.data.id, type: 'plan-prises' },
-    response.data
-  );
-});
+    return normalizeOne(
+      { id: response.data.data.id, type: 'plan-prises' },
+      response.data
+    );
+  }
+);
 
-const deleteContent = createAsyncThunk<void, Models.PlanPrise['id']>(
+const deleteContent = createAsyncThunk<void, Models.PlanPrise.Entity['id']>(
   'planPrise/delete',
   async (id, { dispatch, getState }) => {
     await axios.delete(requestUrl('plan-prises', { id }).url);
@@ -327,7 +329,7 @@ const ppSlice = createSlice({
     });
     builder.addCase(
       loadList.fulfilled,
-      (state, { payload }: PayloadAction<Models.PlanPrise['id'][]>) => {
+      (state, { payload }: PayloadAction<Models.PlanPrise.Entity['id'][]>) => {
         if (Array.isArray(payload)) {
           state.list.data = payload;
           state.list.status = 'loaded';
@@ -366,7 +368,7 @@ const ppSlice = createSlice({
     });
     builder.addCase(
       createContent.fulfilled,
-      (state, { payload }: PayloadAction<ExtractModel<Models.PlanPrise>>) => {
+      (state, { payload }: PayloadAction<Models.PlanPrise.Extracted>) => {
         if (isPlainObject(payload)) {
           state.content.data = payload;
           state.content.status = 'loaded';

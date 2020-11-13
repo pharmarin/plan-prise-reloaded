@@ -80,7 +80,7 @@ const ItemCard = ({
                 <small>
                   {('composition' in medicament ? medicament.composition : [])
                     .map(
-                      (composant: ExtractModel<Models.PrincipeActif>) =>
+                      (composant: Models.PrincipeActif.Extracted) =>
                         composant.denomination
                     )
                     .join(' + ')}
