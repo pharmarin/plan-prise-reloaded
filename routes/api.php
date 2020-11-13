@@ -33,10 +33,5 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
       $api->resource('principe-actifs')->only('index', 'create');
       $api->resource('precautions')->only('read', 'update');
     });
-    JsonApi::register('default')->routes(function ($api) {
-      $api
-        ->resource('plan-prise', ['has-many' => 'plan-prise-content'])
-        ->only('index', 'read');
-    });
   });
 });
