@@ -2,8 +2,9 @@ import React, { useContext } from 'react';
 import { Formik } from 'formik';
 import { Input, Submit } from 'formstrap';
 import { SanctumContext } from 'react-sanctum';
-import { Form, FormGroup, FormText, Label } from 'reactstrap';
+import { Col, Form, FormGroup, Label } from 'reactstrap';
 import * as yup from 'yup';
+import errors from '../errors.json';
 
 export default () => {
   const { signIn } = useContext(SanctumContext);
@@ -27,23 +28,14 @@ export default () => {
       validationSchema={yup.object().shape({
         email: yup
           .string()
-          .email(
-            'Veuillez entrer une adresse mail correcte pour vous connecter'
-          )
-          .required('Veuillez entrer une adresse mail pour vous connecter'),
+          .typeError(errors.connexion.mail)
+          .email(errors.generic.mail)
+          .required(errors.connexion.mail),
         password: yup
           .string()
-          .required(
-            "Veuillez entrer le mot de passe défini à l'inscription pour vous connecter"
-          )
-          .min(
-            6,
-            "Veuillez entrer le mot de passe défini à l'inscription pour vous connecter"
-          )
-          .max(
-            20,
-            "Veuillez entrer le mot de passe défini à l'inscription pour vous connecter"
-          ),
+          .required(errors.connexion.password)
+          .min(6, errors.connexion.password)
+          .max(20, errors.connexion.password),
       })}
       validateOnChange={false}
     >
@@ -52,16 +44,14 @@ export default () => {
           <FormGroup>
             <Label for="email">Adresse mail</Label>
             <Input
-              autoComplete="username"
+              autoComplete="email"
               name="email"
               placeholder="Adresse mail"
+              required
               type="email"
               withFeedback
               withLoading
             />
-            <FormText color="muted">
-              Ne sera jamais utilisée ou diffusée.
-            </FormText>
           </FormGroup>
           <FormGroup>
             <Label for="password">Mot de passe</Label>
@@ -69,16 +59,21 @@ export default () => {
               autoComplete="current-password"
               name="password"
               placeholder="Adresse mail"
+              required
               type="password"
               withFeedback
               withLoading
             />
           </FormGroup>
-          <div className="text-center">
-            <Submit color="default" disabled={!isValid} withLoading withSpinner>
-              Se connecter
+          <Col
+            className="p-0"
+            lg={{ size: 8, offset: 2 }}
+            xl={{ size: 6, offset: 3 }}
+          >
+            <Submit color="success" disabled={!isValid} withLoading withSpinner>
+              Me connecter
             </Submit>
-          </div>
+          </Col>
         </Form>
       )}
     </Formik>

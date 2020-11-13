@@ -6,6 +6,7 @@ import { SanctumContext } from 'react-sanctum';
 
 import { updateAppNav } from 'store/app';
 import ConnectionForm from './ConnectionForm';
+import InscriptionForm from './InscriptionForm';
 
 const cancelRedirect = ['/deconnexion'];
 
@@ -67,10 +68,10 @@ export default ({ role }: AuthentificationProps) => {
   }
 
   return (
-    <Col className="mx-auto" sm={6}>
+    <Col className="mx-auto" md="6">
       {state?.message && <Alert variant="danger">{state?.message}</Alert>}
       {role === Role.signin && <ConnectionForm />}
-      {role === Role.register && <p>À mettre en place... </p>}
+      {role === Role.register && <InscriptionForm />}
       {role === Role.signout && (
         <div className="text-center">
           <Spinner animation="border" as="span" className="mr-2" size="sm" />
