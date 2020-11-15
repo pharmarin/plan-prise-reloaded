@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Field, Formik } from 'formik';
-import { Input, Submit } from 'formstrap';
+import { CustomInput, Input, Submit } from 'formstrap';
 import { Button, Col, Form, FormGroup, FormText, Label } from 'reactstrap';
 import * as yup from 'yup';
 import errors from '../errors.json';
@@ -11,9 +11,17 @@ export default () => {
 
   const reCaptchaRef = useRef<ReCAPTCHA>(null);
 
+  const ALLOWED_FILE_TYPES = [
+    'image/png',
+    'image/jpg',
+    'image/jpeg',
+    'application/pdf',
+  ];
+
   return (
     <Formik
       initialValues={{
+        certificate: undefined,
         email: '',
         name: '',
         rpps: undefined,
@@ -51,6 +59,20 @@ export default () => {
               .min(11, errors.inscription.rpps.length)
               .max(11, errors.inscription.rpps.length),
           }),
+        certificate: yup.mixed().when('status', {
+          is: 'student',
+          then: yup
+            .mixed()
+            .required(errors.inscription.certificate.required)
+            .test('fileSize', errors.inscription.certificate.size, (value) =>
+              'size' in (value || {}) ? value.size <= 2000000 : false
+            )
+            .test('fileType', errors.inscription.certificate.type, (value) =>
+              'type' in (value || {})
+                ? ALLOWED_FILE_TYPES.includes(value.type)
+                : false
+            ),
+        }),
         display_name: yup
           .string()
           .notRequired()
@@ -102,13 +124,23 @@ export default () => {
                 <Label>Status</Label>
                 <FormGroup check>
                   <Label check>
-                    <Field type="radio" name="status" value="pharmacist" />{' '}
+                    <Field
+                      className="form-check-input"
+                      type="radio"
+                      name="status"
+                      value="pharmacist"
+                    />{' '}
                     Pharmacien
                   </Label>
                 </FormGroup>
                 <FormGroup check>
                   <Label check>
-                    <Field type="radio" name="status" value="student" />{' '}
+                    <Field
+                      className="form-check-input"
+                      type="radio"
+                      name="status"
+                      value="student"
+                    />{' '}
                     Étudiant
                   </Label>
                 </FormGroup>
@@ -125,6 +157,21 @@ export default () => {
                   />
                 </FormGroup>
               )}
+              {values.status === 'student' && (
+                <FormGroup>
+                  <Label for="name">
+                    Justificatif d'inscription en études de pharmacie
+                  </Label>
+                  <CustomInput
+                    accept={ALLOWED_FILE_TYPES.join(',')}
+                    name="certificate"
+                    label="Ajouter un fichier... "
+                    type="file"
+                    withFeedback
+                    withLoading
+                  />
+                </FormGroup>
+              )}
               <Col
                 className="p-0"
                 lg={{ size: 8, offset: 2 }}
@@ -136,7 +183,8 @@ export default () => {
                   disabled={
                     errors.name !== undefined ||
                     errors.status !== undefined ||
-                    errors.rpps !== undefined
+                    errors.rpps !== undefined ||
+                    errors.certificate !== undefined
                   }
                   onClick={() => setStep(2)}
                   withLoading

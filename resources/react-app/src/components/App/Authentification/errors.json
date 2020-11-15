@@ -9,6 +9,11 @@
       "length": "Merci de fournir les 11 chiffres de votre numéro RPPS",
       "required": "Merci d'indiquer votre numéro RPPS afin que nous puissions valider votre statut de pharmacien"
     },
+    "certificate": {
+      "size": "Le fichier doit faire moins de 2 Mo",
+      "type": "Le fichier foit être au format jpg, png ou pdf",
+      "required": "Merci de fournir un justificatif d'inscription afin que nous puissions valider votre statut d'étudiant en pharmacie"
+    },
     "display_name": {
       "min": "Veuillez fournir un nom de plus de 3 caractères",
       "max": "Veuillez fournir un nom de moins de 3 caractères"
