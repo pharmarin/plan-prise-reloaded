@@ -25,9 +25,10 @@ class UserFactory extends Factory
       'name' => $this->faker->name,
       'display_name' => 'display_' . $this->faker->name,
       'email' => $this->faker->email,
-      'email_verified_at' => now(),
       'password' => bcrypt('password'),
       'admin' => $this->faker->boolean,
+      'status' => $this->faker->randomElement(['pharmacist', 'student']),
+      'email_verified_at' => now(),
       'approved_at' => now(),
     ];
   }
