@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Field, Formik } from 'formik';
 import { Input, Submit } from 'formstrap';
 import { Button, Col, Form, FormGroup, FormText, Label } from 'reactstrap';
 import * as yup from 'yup';
 import errors from '../errors.json';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default () => {
   const [step, setStep] = useState(1);
+
+  const reCaptchaRef = useRef<ReCAPTCHA>(null);
 
   return (
     <Formik
@@ -18,9 +21,15 @@ export default () => {
         password: '',
         password_confirmation: '',
       }}
-      onSubmit={(values, { setSubmitting }) => {
+      onSubmit={async (values, { setSubmitting }) => {
+        if (!reCaptchaRef) {
+          throw new Error("Le service ReCAPTCHA n'a pas pu être chargé");
+        }
+
+        const reCaptchaValue = await (reCaptchaRef.current as ReCAPTCHA).executeAsync();
+
         setSubmitting(true);
-        console.log(values);
+        console.log(values, reCaptchaValue);
       }}
       validateOnMount
       validationSchema={yup.object().shape({
@@ -67,6 +76,11 @@ export default () => {
     >
       {({ errors, handleSubmit, isValid, values }) => (
         <Form onSubmit={handleSubmit}>
+          <ReCAPTCHA
+            ref={reCaptchaRef}
+            size="invisible"
+            sitekey={process.env.REACT_APP_CAPTCHA_SITE_KEY || ''}
+          />
           {step === 1 && (
             <React.Fragment>
               <h4>Votre identité</h4>
