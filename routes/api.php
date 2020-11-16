@@ -21,7 +21,6 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
   Route::group(['middleware' => 'auth:sanctum'], function () {
     /* app */
     Route::get('user', 'Api\v1\UserController@info');
-    Route::delete('oauth/token', 'Api\v1\UserController@logout');
     /* generic */
     Route::apiResource('generic', 'Api\v1\GenericController')->only(['index']);
     JsonApi::register('default')->routes(function ($api) {
