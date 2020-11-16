@@ -70,7 +70,13 @@ export default () => {
             lg={{ size: 8, offset: 2 }}
             xl={{ size: 6, offset: 3 }}
           >
-            <Submit color="success" disabled={!isValid} withLoading withSpinner>
+            <Submit
+              block
+              color="success"
+              disabled={!isValid}
+              withLoading
+              withSpinner
+            >
               Me connecter
             </Submit>
           </Col>
