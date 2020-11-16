@@ -77,6 +77,7 @@ return [
     'plan-prises' => PlanPrise::class,
     'precautions' => Precaution::class,
     'principe-actifs' => PrincipeActif::class,
+    'users' => User::class,
   ],
 
   /*

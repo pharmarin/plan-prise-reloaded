@@ -5,11 +5,20 @@ import { Button, Col, Form, FormGroup, FormText, Label } from 'reactstrap';
 import * as yup from 'yup';
 import errors from '../errors.json';
 import ReCAPTCHA from 'react-google-recaptcha';
+import useAxios from 'axios-hooks';
+import { requestUrl } from 'helpers/hooks/use-json-api';
 
 export default () => {
   const [step, setStep] = useState(1);
 
   const reCaptchaRef = useRef<ReCAPTCHA>(null);
+
+  const [{ loading, error, data }, signUp] = useAxios(
+    { method: 'POST', url: 'register' },
+    {
+      manual: true,
+    }
+  );
 
   const ALLOWED_FILE_TYPES = [
     'image/png',
@@ -30,14 +39,28 @@ export default () => {
         password_confirmation: '',
       }}
       onSubmit={async (values, { setSubmitting }) => {
+        console.log('values: ', values);
         if (!reCaptchaRef) {
           throw new Error("Le service ReCAPTCHA n'a pas pu être chargé");
         }
 
+        setSubmitting(true);
+
         const reCaptchaValue = await (reCaptchaRef.current as ReCAPTCHA).executeAsync();
 
-        setSubmitting(true);
-        console.log(values, reCaptchaValue);
+        const formData = new FormData();
+
+        Object.entries(values).forEach((pair) => {
+          formData.append(pair[0], pair[1] || '');
+        });
+
+        formData.append('recaptcha', reCaptchaValue || '');
+
+        await signUp({
+          data: formData,
+        });
+
+        setSubmitting(false);
       }}
       validateOnMount
       validationSchema={yup.object().shape({

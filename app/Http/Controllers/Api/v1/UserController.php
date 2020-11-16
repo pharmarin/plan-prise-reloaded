@@ -30,7 +30,10 @@ class UserController extends Controller
     return response()->json(Auth::user());
   }
 
-  public function logout(Request $request)
+  /**
+   * Logout the currently logged in user
+   */
+  public function logout()
   {
     Auth::user()
       ->token()

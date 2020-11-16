@@ -91,7 +91,7 @@ declare namespace Models {
     }
     type Extracted = ExtractModel<Medicament.Entity>;
   }
-  interface MedicamentIdentity extends ResourceObject {
+  interface MedicamentIdentity {
     id: string;
     type: ApiMedicament['type'] | Medicament['type'];
   }

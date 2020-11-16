@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
-use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
@@ -31,6 +32,11 @@ class RegisterController extends Controller
    */
   protected $redirectTo = RouteServiceProvider::HOME;
 
+  public function showRegistrationForm()
+  {
+    return view('app');
+  }
+
   /**
    * Create a new controller instance.
    *
@@ -50,9 +56,24 @@ class RegisterController extends Controller
   protected function validator(array $data)
   {
     return Validator::make($data, [
-      'name' => ['required', 'string', 'max:255'],
-      'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-      'password' => ['required', 'string', 'min:8', 'confirmed'],
+      'recaptcha' => ['required', 'captcha'],
+      'name' => ['required', 'string', 'min:3', 'max:50'],
+      'status' => ['required', Rule::in(['pharmacist', 'student'])],
+      'rpps' => [
+        'required_if:status,pharmacist',
+        'integer',
+        'digits:11',
+        'nullable',
+      ],
+      'certificate' => [
+        'required_if:status,student',
+        'file',
+        'mimes:png,jpg,jpeg,pdf',
+        'nullable',
+      ],
+      'display_name' => ['string', 'min:3', 'max:50'],
+      'email' => ['required', 'string', 'email', 'unique:users'],
+      'password' => ['required', 'confirmed', 'min:8', 'max:20'],
     ]);
   }
 
@@ -64,10 +85,27 @@ class RegisterController extends Controller
    */
   protected function create(array $data)
   {
-    return User::create([
+    $user = User::create([
       'name' => $data['name'],
+      'display_name' => $data['display_name'],
       'email' => $data['email'],
       'password' => Hash::make($data['password']),
+      'status' => $data['status'],
+      'rpps' => $data['status'] === 'pharmacist' ? $data['rpps'] : null,
     ]);
+
+    if ($data['status'] === 'student') {
+      request()
+        ->file('certificate')
+        ->storeAs(
+          'school_certs',
+          $user->id .
+            request()
+              ->file('certificate')
+              ->getClientOriginalExtension()
+        );
+    }
+
+    return $user;
   }
 }

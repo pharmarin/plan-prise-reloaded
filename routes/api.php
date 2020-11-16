@@ -23,7 +23,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
     Route::get('user', 'Api\v1\UserController@info');
     Route::delete('oauth/token', 'Api\v1\UserController@logout');
     /* generic */
-    Route::resource('generic', 'Api\v1\GenericController')->only(['index']);
+    Route::apiResource('generic', 'Api\v1\GenericController')->only(['index']);
     JsonApi::register('default')->routes(function ($api) {
       $api->resource('medicaments')->only('index', 'read', 'update');
       $api->resource('api-medicaments')->only('index', 'read');
