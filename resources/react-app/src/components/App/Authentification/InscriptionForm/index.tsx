@@ -3,10 +3,9 @@ import { Field, Formik } from 'formik';
 import { CustomInput, Input, Submit } from 'formstrap';
 import { Button, Col, Form, FormGroup, FormText, Label } from 'reactstrap';
 import * as yup from 'yup';
-import errors from '../errors.json';
+import errors from 'helpers/error-messages.json';
 import ReCAPTCHA from 'react-google-recaptcha';
 import useAxios from 'axios-hooks';
-import { requestUrl } from 'helpers/hooks/use-json-api';
 
 export default () => {
   const [step, setStep] = useState(1);
@@ -144,7 +143,7 @@ export default () => {
                 />
               </FormGroup>
               <FormGroup>
-                <Label>Status</Label>
+                <Label>Statut</Label>
                 <FormGroup check>
                   <Label check>
                     <Field
@@ -271,11 +270,7 @@ export default () => {
                   withLoading
                 />
               </FormGroup>
-              <Col
-                className="p-0"
-                lg={{ size: 8, offset: 2 }}
-                xl={{ size: 6, offset: 3 }}
-              >
+              <Col className="p-0 mx-auto" lg="8" xl="6">
                 <Button
                   block
                   color="light"

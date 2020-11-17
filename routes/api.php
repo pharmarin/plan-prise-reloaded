@@ -20,7 +20,11 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
   Route::get('preload', 'Api\v1\FrontendController@config');
   Route::group(['middleware' => 'auth:sanctum'], function () {
     /* app */
-    Route::get('user', 'Api\v1\UserController@info');
+    Route::get('user', function () {
+      return json_api()
+        ->encoder()
+        ->serializeData(Auth::user());
+    });
     /* generic */
     Route::apiResource('generic', 'Api\v1\GenericController')->only(['index']);
     JsonApi::register('default')->routes(function ($api) {
@@ -31,6 +35,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
         ->only('index', 'read', 'update', 'delete', 'create');
       $api->resource('principe-actifs')->only('index', 'create');
       $api->resource('precautions')->only('read', 'update');
+      $api->resource('users')->only('read');
     });
   });
 });

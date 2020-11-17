@@ -28,6 +28,13 @@ class Schema extends SchemaProvider
    */
   public function getAttributes($resource)
   {
-    return [];
+    return [
+      'admin' => $resource->admin,
+      'name' => $resource->name,
+      'display_name' => $resource->display_name,
+      'email' => $resource->email,
+      'status' => $resource->status,
+      'rpps' => $resource->rpps,
+    ];
   }
 }

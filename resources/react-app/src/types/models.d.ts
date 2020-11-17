@@ -57,11 +57,16 @@ declare namespace Models {
       timer?: number;
     }
     interface User {
-      [key: string]: string | undefined;
-      admin: boolean;
-      name: string;
-      display_name?: string;
-      email: string;
+      id: string;
+      type: 'users';
+      attributes: {
+        admin: boolean;
+        name: string;
+        display_name?: string;
+        email: string;
+        rpps?: string;
+        status: 'student' | 'pharmacist';
+      };
     }
   }
   namespace ApiMedicament {

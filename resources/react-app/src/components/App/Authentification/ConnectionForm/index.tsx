@@ -4,7 +4,7 @@ import { Input, Submit } from 'formstrap';
 import { SanctumContext } from 'react-sanctum';
 import { Col, Form, FormGroup, Label } from 'reactstrap';
 import * as yup from 'yup';
-import errors from '../errors.json';
+import errors from 'helpers/error-messages.json';
 
 export default () => {
   const { signIn } = useContext(SanctumContext);
@@ -65,11 +65,7 @@ export default () => {
               withLoading
             />
           </FormGroup>
-          <Col
-            className="p-0"
-            lg={{ size: 8, offset: 2 }}
-            xl={{ size: 6, offset: 3 }}
-          >
+          <Col className="p-0 mx-auto" lg="8" xl="6">
             <Submit
               block
               color="success"

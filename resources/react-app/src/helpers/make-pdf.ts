@@ -57,7 +57,9 @@ export const fromPlanPrise = (
   const planPriseFooter = (): DynamicContent => (currentPage, pageCount) => ({
     columns: [
       {
-        text: `Édité par ${user.display_name || user.name}`,
+        text: `Édité par ${
+          user.attributes.display_name || user.attributes.name
+        }`,
         style: 'footer',
       },
       {
