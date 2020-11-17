@@ -70,7 +70,6 @@ export default () => {
         password_confirmation: '',
       }}
       onSubmit={async (values, { setSubmitting }) => {
-        console.log('values: ', values);
         if (!reCaptchaRef) {
           throw new Error("Le service ReCAPTCHA n'a pas pu être chargé");
         }
@@ -87,11 +86,14 @@ export default () => {
 
         formData.append('recaptcha', reCaptchaValue || '');
 
-        await signUp({
-          data: formData,
-        });
-
-        if (data !== 'success') setSubmitting(false);
+        try {
+          await signUp({
+            data: formData,
+          });
+        } catch {
+          setSubmitting(false);
+          (reCaptchaRef.current as ReCAPTCHA).reset();
+        }
       }}
       validateOnMount
       validationSchema={yup.object().shape({
