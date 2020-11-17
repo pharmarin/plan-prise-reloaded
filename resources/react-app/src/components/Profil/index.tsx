@@ -79,14 +79,7 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
             .required(errors.inscription.email.required),
         })}
       >
-        {({
-          errors,
-          handleSubmit,
-          isValid,
-          resetForm,
-          setFieldValue,
-          values,
-        }) => (
+        {({ handleSubmit, isValid, resetForm, setFieldValue, values }) => (
           <Form onSubmit={handleSubmit}>
             <FormGroup row>
               <Label for="name" sm="4">
@@ -111,7 +104,6 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
                   {values.status === 'student' ? (
                     isEditing ? (
                       <Button
-                        block
                         className="mt-2"
                         color="link"
                         onClick={() => setFieldValue('status', 'pharmacist')}
@@ -178,6 +170,16 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
                   withFeedback
                   withLoading
                 />
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label for="password-edit" sm="4">
+                Mot de passe
+              </Label>
+              <Col sm="8">
+                <Button className="mt-2" color="link" size="sm">
+                  Modifier le mot de passe
+                </Button>
               </Col>
             </FormGroup>
             <Col

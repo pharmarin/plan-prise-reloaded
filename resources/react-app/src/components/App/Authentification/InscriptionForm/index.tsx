@@ -1,18 +1,31 @@
 import React, { useRef, useState } from 'react';
 import { Field, Formik } from 'formik';
 import { CustomInput, Input, Submit } from 'formstrap';
-import { Button, Col, Form, FormGroup, FormText, Label } from 'reactstrap';
+import {
+  Button,
+  Card,
+  CardText,
+  CardTitle,
+  Col,
+  Form,
+  FormGroup,
+  FormText,
+  Label,
+} from 'reactstrap';
 import * as yup from 'yup';
 import errors from 'helpers/error-messages.json';
 import ReCAPTCHA from 'react-google-recaptcha';
 import useAxios from 'axios-hooks';
+import { useHistory } from 'react-router-dom';
 
 export default () => {
   const [step, setStep] = useState(1);
 
   const reCaptchaRef = useRef<ReCAPTCHA>(null);
 
-  const [{ loading, error, data }, signUp] = useAxios(
+  const history = useHistory();
+
+  const [{ error, data }, signUp] = useAxios(
     { method: 'POST', url: 'register' },
     {
       manual: true,
@@ -25,6 +38,25 @@ export default () => {
     'image/jpeg',
     'application/pdf',
   ];
+
+  if (data === 'success') {
+    return (
+      <Card body outline color="success">
+        <CardTitle tag="h5">Demande d'inscription terminée</CardTitle>
+        <CardText>
+          Votre demande d'inscription sur plandeprise.fr est maintenant
+          terminée. Nous allons examiner votre demande dans les plus brefs
+          délais.
+          <br />
+          Vous recevrez prochainement un mail vous informant de l'activation de
+          votre compte.
+        </CardText>
+        <Button block color="light" onClick={() => history.push('/')}>
+          Retour
+        </Button>
+      </Card>
+    );
+  }
 
   return (
     <Formik
@@ -59,7 +91,7 @@ export default () => {
           data: formData,
         });
 
-        setSubmitting(false);
+        if (data !== 'success') setSubmitting(false);
       }}
       validateOnMount
       validationSchema={yup.object().shape({
@@ -270,6 +302,18 @@ export default () => {
                   withLoading
                 />
               </FormGroup>
+              {error && (
+                <div>
+                  {(Object.values(error.response?.data.errors) || []).map(
+                    (errors: any) =>
+                      errors.map((error: string) => (
+                        <p key={error} className="text-danger">
+                          {error}
+                        </p>
+                      ))
+                  )}
+                </div>
+              )}
               <Col className="p-0 mx-auto" lg="8" xl="6">
                 <Button
                   block
