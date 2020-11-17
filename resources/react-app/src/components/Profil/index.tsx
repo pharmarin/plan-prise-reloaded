@@ -4,7 +4,7 @@ import { Col, FormGroup, Label, Form, FormText, Button } from 'reactstrap';
 import { updateAppNav } from 'store/app';
 import { cloneDeep } from 'lodash-es';
 import { SanctumContext } from 'react-sanctum';
-import { Field, Formik } from 'formik';
+import { Formik } from 'formik';
 import * as yup from 'yup';
 import errors from 'helpers/error-messages.json';
 import { Input, Submit } from 'formstrap';
@@ -29,11 +29,6 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
   }, [updateAppNav]);
 
   if (!user) throw new Error("L'utilisateur n'a pas pu être chargé");
-  console.log('user: ', user);
-
-  const [formData, setFormData] = useState<Models.App.User>(
-    cloneDeep(user.data)
-  );
 
   const readOnly = {
     plaintext: !isEditing,
