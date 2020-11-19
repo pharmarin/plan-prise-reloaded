@@ -7,6 +7,9 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import errors from 'helpers/error-messages.json';
 import { Input, Submit } from 'formstrap';
+import useAxios from 'axios-hooks';
+import { requestUrl } from 'helpers/hooks/use-json-api';
+import { ContextProps } from 'react-sanctum/build/SanctumContext';
 
 const mapDispatch = {
   updateAppNav,
@@ -16,10 +19,23 @@ const connector = connect(null, mapDispatch);
 
 type ProfilProps = ConnectedProps<typeof connector>;
 
+interface SanctumProps extends Partial<ContextProps> {
+  user?: IServerResponse<Models.App.User>;
+}
+
 const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
-  const { user } = useContext<ContextProps>(SanctumContext);
+  const { setUser, user } = useContext<SanctumProps>(SanctumContext);
+
+  if (!user || !setUser)
+    throw new Error("L'utilisateur n'a pas pu être chargé");
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const [{ error }, update] = useAxios(
+    requestUrl('users', {
+      id: user.data.id,
+    }).url
+  );
 
   useEffect(() => {
     updateAppNav({
@@ -27,25 +43,58 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
     });
   }, [updateAppNav]);
 
-  if (!user) throw new Error("L'utilisateur n'a pas pu être chargé");
-
   const readOnly = {
     plaintext: !isEditing,
     disabled: !isEditing,
   };
 
+  const initialValues = {
+    display_name: user.data.attributes.display_name,
+    email: user.data.attributes.email,
+    name: user.data.attributes.name,
+    rpps: user.data.attributes.rpps,
+    status: user.data.attributes.status,
+  };
+
+  const getChanged = (
+    values: typeof initialValues,
+    initial: typeof initialValues
+  ) =>
+    Object.keys(values).reduce((result, field) => {
+      if ((values as any)[field] !== (initial as any)[field])
+        (result as any)[field] = (values as any)[field];
+      return result;
+    }, {});
+
   return (
     <Col className="mx-auto" md="6">
-      <Formik
-        initialValues={{
-          display_name: user.data.attributes.display_name,
-          email: user.data.attributes.email,
-          name: user.data.attributes.name,
-          rpps: user.data.attributes.rpps,
-          status: user.data.attributes.status,
-        }}
-        onSubmit={(values, { setSubmitting }) => {
+      <Formik<typeof initialValues>
+        enableReinitialize
+        initialValues={initialValues}
+        onSubmit={async (values, { setSubmitting }) => {
           setSubmitting(true);
+
+          const difference = getChanged(values, initialValues);
+
+          if (Object.keys(difference).length > 0) {
+            try {
+              const response = await update({
+                data: {
+                  data: {
+                    id: user.data.id,
+                    type: 'users',
+                    attributes: difference,
+                  },
+                },
+                method: 'PATCH',
+              });
+
+              setUser(response.data);
+              setIsEditing(false);
+            } catch {
+              // Error handling with error variable from useAxios
+            }
+          }
         }}
         validateOnMount
         validationSchema={yup.object().shape({
@@ -181,6 +230,15 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
                 </Button>
               </Col>
             </FormGroup>
+            {error && (
+              <div>
+                {(error.response?.data.errors || []).map((errorItem: any) => (
+                  <p key={errorItem.title} className="text-danger">
+                    {errorItem.detail}
+                  </p>
+                ))}
+              </div>
+            )}
             <Col
               className="p-0"
               lg={{ size: 8, offset: 2 }}
@@ -201,7 +259,10 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
                 <Submit
                   block
                   color="success"
-                  disabled={!isValid}
+                  disabled={
+                    !isValid ||
+                    Object.keys(getChanged(values, initialValues)).length === 0
+                  }
                   withLoading
                   withSpinner
                 >

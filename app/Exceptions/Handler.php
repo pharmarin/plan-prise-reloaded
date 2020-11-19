@@ -9,7 +9,6 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
-
   use HandlesErrors;
 
   /**
@@ -17,9 +16,7 @@ class Handler extends ExceptionHandler
    *
    * @var array
    */
-  protected $dontReport = [
-    JsonApiException::class,
-  ];
+  protected $dontReport = [JsonApiException::class];
 
   /**
    * A list of the inputs that are never flashed for validation exceptions.
@@ -52,8 +49,8 @@ class Handler extends ExceptionHandler
    */
   public function render($request, Throwable $exception)
   {
-    if ($this->isJsonApi($request, $exception)) {
-      //return $this->renderJsonApi($request, $exception);
+    if ($this->isJsonApi($request, $exception) && !$request->has('raw')) {
+      return $this->renderJsonApi($request, $exception);
     }
     return parent::render($request, $exception);
   }

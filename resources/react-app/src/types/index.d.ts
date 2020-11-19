@@ -25,7 +25,3 @@ declare namespace Repositories {
     data?: IMedicamentRepository[];
   }
 }
-
-interface ContextProps {
-  user?: IServerResponse<Models.App.User>;
-}

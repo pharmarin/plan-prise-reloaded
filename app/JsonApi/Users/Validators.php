@@ -2,7 +2,10 @@
 
 namespace App\JsonApi\Users;
 
+use CloudCreativity\LaravelJsonApi\Document\Error\Error;
+use CloudCreativity\LaravelJsonApi\Exceptions\JsonApiException;
 use CloudCreativity\LaravelJsonApi\Validation\AbstractValidators;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class Validators extends AbstractValidators
@@ -42,17 +45,39 @@ class Validators extends AbstractValidators
    */
   protected function rules($record, array $data): array
   {
+    $user = Auth::user();
+
+    if ($record === null) {
+      throw new JsonApiException(
+        Error::fromArray([
+          'status' => 500,
+          'title' => 'Impossible action',
+          'detail' => "Il est interdit de créer un utilisateur via l'API JSON",
+        ])
+      );
+    }
+
+    if ($user->id !== intval($data['id']) && !$user->admin) {
+      throw new JsonApiException(
+        Error::fromArray([
+          'status' => 401,
+          'title' => 'Unauthorized action',
+          'detail' =>
+            "L'utilisateur n'est pas autorisé à effectuer cette action",
+        ])
+      );
+    }
+
     return [
-      'g-recaptcha-response' => 'recaptcha',
-      'name' => ['required', 'string', 'min:3', 'max:50'],
-      'status' => ['required', Rule::in(['pharmacist', 'student'])],
-      'rpps' => ['required_if:status,pharmacist', 'integer', 'digits:11'],
-      'certificate' => [
-        'required_if:status,student',
-        'file',
-        'mimes:image/png,image/jpg,image/jpeg,application/pdf',
+      'display_name' => ['string', 'min:3', 'max:50', 'nullable'],
+      'email' => [
+        'required',
+        'email',
+        isset($data['email']) ? 'unique:users,email' : '',
       ],
-      'email' => ['required', 'email', 'unique:users,email'],
+      'name' => ['required', 'string', 'min:3', 'max:50'],
+      'rpps' => ['required_if:status,pharmacist', 'integer', 'digits:11'],
+      'status' => [Rule::in(['pharmacist', 'student'])],
     ];
   }
 

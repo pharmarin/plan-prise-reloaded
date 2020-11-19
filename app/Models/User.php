@@ -50,6 +50,7 @@ class User extends Authenticatable
   protected $casts = [
     'admin' => 'boolean',
     'email_verified_at' => 'datetime',
+    'rpps' => 'string',
   ];
 
   public function plans_prise()
