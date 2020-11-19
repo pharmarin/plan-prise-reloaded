@@ -35,7 +35,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
         ->only('index', 'read', 'update', 'delete', 'create');
       $api->resource('principe-actifs')->only('index', 'create');
       $api->resource('precautions')->only('read', 'update');
-      $api->resource('users')->only('read', 'update');
+      $api->resource('users')->only('index', 'read', 'update');
     });
   });
 });

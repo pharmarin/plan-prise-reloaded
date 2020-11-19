@@ -10,6 +10,7 @@ import { Input, Submit } from 'formstrap';
 import useAxios from 'axios-hooks';
 import { requestUrl } from 'helpers/hooks/use-json-api';
 import { ContextProps } from 'react-sanctum/build/SanctumContext';
+import UpdatePasswordForm from './UpdatePasswordForm';
 
 const mapDispatch = {
   updateAppNav,
@@ -31,10 +32,16 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
 
   const [isEditing, setIsEditing] = useState(false);
 
+  const [modal, setModal] = useState(true);
+
   const [{ error }, update] = useAxios(
-    requestUrl('users', {
-      id: user.data.id,
-    }).url
+    {
+      method: 'PATCH',
+      url: requestUrl('users', {
+        id: user.data.id,
+      }).url,
+    },
+    { manual: true }
   );
 
   useEffect(() => {
@@ -86,7 +93,6 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
                     attributes: difference,
                   },
                 },
-                method: 'PATCH',
               });
 
               setUser(response.data);
@@ -225,7 +231,12 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
                 Mot de passe
               </Label>
               <Col sm="8">
-                <Button className="mt-2" color="link" size="sm">
+                <Button
+                  className="mt-2"
+                  color="link"
+                  onClick={() => setModal(true)}
+                  size="sm"
+                >
                   Modifier le mot de passe
                 </Button>
               </Col>
@@ -273,6 +284,11 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
           </Form>
         )}
       </Formik>
+      <UpdatePasswordForm
+        isOpen={modal}
+        toggle={() => setModal(!modal)}
+        user={user}
+      />
     </Col>
   );
 };

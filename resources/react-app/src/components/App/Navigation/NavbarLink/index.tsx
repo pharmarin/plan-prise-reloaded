@@ -15,7 +15,8 @@ const mapDispatch = { deleteContent, setShowSettings };
 
 const connector = connect(null, mapDispatch);
 
-type NavbarLinkProps = ConnectedProps<typeof connector> & Props.NavbarLinkProps;
+type NavbarLinkProps = ConnectedProps<typeof connector> &
+  Props.Frontend.App.NavbarLink;
 
 const NavbarLink = ({
   args,

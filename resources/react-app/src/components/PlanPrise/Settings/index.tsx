@@ -24,10 +24,8 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch);
 
-type SettingsProps = ConnectedProps<typeof connector> & {
-  show: boolean;
-  toggle?: (e: React.MouseEvent) => void;
-};
+type SettingsProps = ConnectedProps<typeof connector> &
+  Props.Frontend.PlanPrise.Settings;
 
 const Settings = ({ settings, setSettings, show, toggle }: SettingsProps) => {
   const posologies = useConfig('default.posologies');

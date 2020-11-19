@@ -8,7 +8,10 @@ import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
 import { makeUniqueSelectorInstance } from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = () => {
-  return (state: Redux.State, { identifier }: Props.Content) => {
+  return (
+    state: Redux.State,
+    { identifier }: Props.Frontend.PlanPrise.Content
+  ) => {
     const data = makeUniqueSelectorInstance()(state, {
       id: identifier.id,
       type: identifier.type,
@@ -26,7 +29,8 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch);
 
-type ContentProps = Props.Content & ConnectedProps<typeof connector>;
+type ContentProps = Props.Frontend.PlanPrise.Content &
+  ConnectedProps<typeof connector>;
 
 const Content = ({ removeValue, setValue, data }: ContentProps) => {
   const uid = data?.uid;

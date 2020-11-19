@@ -1,7 +1,7 @@
 {
   "connexion": {
-    "password": "Veuillez entrer le mot de passe défini lors de l'inscription pour vous connecter",
-    "mail": "Veuillez entrer l'adresse mail fournie lors de l'inscription pour vous connecter"
+    "password": "Veuillez entrer le mot de passe pour vous connecter",
+    "mail": "Veuillez entrer l'adresse mail pour vous connecter"
   },
   "inscription": {
     "name": "Merci d'indiquer votre nom et prénom",
@@ -27,6 +27,11 @@
       "max": "Veuillez fournir un mot de passe de moins de 20 caractères"
     },
     "password_confirmation": "Veuillez entrer le mot de passe une seconde fois"
+  },
+  "update_profile": {
+    "current_password": {
+      "required": "Veuillez indiquer le mot de passe enregistré"
+    }
   },
   "generic": {
     "mail": "Veuillez entrer une adresse mail correcte"

@@ -21,7 +21,8 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch);
 
-type CardProps = Props.Card & ConnectedProps<typeof connector>;
+type CardProps = Props.Frontend.PlanPrise.Card &
+  ConnectedProps<typeof connector>;
 
 const ItemCard = ({
   addNotification,

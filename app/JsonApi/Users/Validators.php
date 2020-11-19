@@ -2,10 +2,12 @@
 
 namespace App\JsonApi\Users;
 
+use CloudCreativity\LaravelJsonApi\Contracts\Validation\ValidatorInterface;
 use CloudCreativity\LaravelJsonApi\Document\Error\Error;
 use CloudCreativity\LaravelJsonApi\Exceptions\JsonApiException;
 use CloudCreativity\LaravelJsonApi\Validation\AbstractValidators;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class Validators extends AbstractValidators
@@ -47,16 +49,6 @@ class Validators extends AbstractValidators
   {
     $user = Auth::user();
 
-    if ($record === null) {
-      throw new JsonApiException(
-        Error::fromArray([
-          'status' => 500,
-          'title' => 'Impossible action',
-          'detail' => "Il est interdit de créer un utilisateur via l'API JSON",
-        ])
-      );
-    }
-
     if ($user->id !== intval($data['id']) && !$user->admin) {
       throw new JsonApiException(
         Error::fromArray([
@@ -78,7 +70,59 @@ class Validators extends AbstractValidators
       'name' => ['required', 'string', 'min:3', 'max:50'],
       'rpps' => ['required_if:status,pharmacist', 'integer', 'digits:11'],
       'status' => [Rule::in(['pharmacist', 'student'])],
+      'password' => [
+        'required_with:current-password',
+        'confirmed',
+        'min:8',
+        'max:20',
+      ],
     ];
+  }
+
+  /**
+   * @param array $document
+   * @return \CloudCreativity\LaravelJsonApi\Contracts\Validation\ValidatorInterface
+   */
+  public function create(array $document): ValidatorInterface
+  {
+    //$validator = parent::create($document);
+
+    throw new JsonApiException(
+      Error::fromArray([
+        'status' => 500,
+        'title' => 'Impossible action',
+        'detail' => "Il est interdit de créer un utilisateur via l'API JSON",
+      ])
+    );
+  }
+
+  /**
+   * @param array $document
+   * @return \CloudCreativity\LaravelJsonApi\Contracts\Validation\ValidatorInterface
+   */
+  public function update($record, array $document): ValidatorInterface
+  {
+    $validator = parent::update($record, $document);
+
+    if (isset($document['data']['attributes']['current_password'])) {
+      $user = Auth::user();
+
+      $current_password = $document['data']['attributes']['current_password'];
+
+      if (!Hash::check($current_password, $user->password)) {
+        throw new JsonApiException(
+          Error::fromArray([
+            'status' => 401,
+            'code' => 'password-mismatch',
+            'title' => 'Password mismatch',
+            'detail' =>
+              'Le mot de passe ne correspond pas au mot de passe enregistré',
+          ])
+        );
+      }
+    }
+
+    return $validator;
   }
 
   /**

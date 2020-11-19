@@ -7,6 +7,7 @@ use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
 use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Hash;
 
 class Adapter extends AbstractAdapter
 {
@@ -23,6 +24,11 @@ class Adapter extends AbstractAdapter
    * @var array
    */
   protected $filterScopes = [];
+
+  protected function deserializePasswordField($value)
+  {
+    return Hash::make($value);
+  }
 
   /**
    * Adapter constructor.
