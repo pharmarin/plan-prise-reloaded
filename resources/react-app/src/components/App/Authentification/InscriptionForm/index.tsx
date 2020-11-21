@@ -325,13 +325,7 @@ export default () => {
                 >
                   Retour
                 </Button>
-                <Submit
-                  block
-                  color="success"
-                  disabled={!isValid}
-                  withLoading
-                  withSpinner
-                >
+                <Submit block color="success" withLoading withSpinner>
                   Demander mon inscription
                 </Submit>
               </Col>

@@ -66,13 +66,7 @@ export default () => {
             />
           </FormGroup>
           <Col className="p-0 mx-auto" lg="8" xl="6">
-            <Submit
-              block
-              color="success"
-              disabled={!isValid}
-              withLoading
-              withSpinner
-            >
+            <Submit block color="success" withLoading withSpinner>
               Me connecter
             </Submit>
           </Col>
