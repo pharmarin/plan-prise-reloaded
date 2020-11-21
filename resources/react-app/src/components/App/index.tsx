@@ -99,7 +99,7 @@ export default () => {
                         </ErrorBoundary>
                       </ProtectedRoute>
                     </Route>
-                    <Route path="/profil">
+                    <Route path="/profil/:password?">
                       <ProtectedRoute>
                         <ErrorBoundary returnTo="/">
                           <Profil />

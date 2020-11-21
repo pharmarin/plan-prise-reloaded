@@ -25,14 +25,12 @@ export default ({
   const [{ error }, update] = useAxios(
     {
       method: 'PATCH',
-      url: requestUrl('users', { id: user.data.id }).url + '?raw',
+      url: requestUrl('users', { id: user.data.id }).url,
     },
     {
       manual: true,
     }
   );
-
-  // TODO: Mettre à jour le mot de passe dans le navigateur
 
   return (
     <Modal centered fade isOpen={isOpen} toggle={toggle} unmountOnClose>

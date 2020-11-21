@@ -11,6 +11,7 @@ import useAxios from 'axios-hooks';
 import { requestUrl } from 'helpers/hooks/use-json-api';
 import { ContextProps } from 'react-sanctum/build/SanctumContext';
 import UpdatePasswordForm from './UpdatePasswordForm';
+import { useHistory, useParams } from 'react-router-dom';
 
 const mapDispatch = {
   updateAppNav,
@@ -32,7 +33,9 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const [modal, setModal] = useState(true);
+  const history = useHistory();
+
+  const { password } = useParams();
 
   const [{ error }, update] = useAxios(
     {
@@ -234,7 +237,7 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
                 <Button
                   className="mt-2"
                   color="link"
-                  onClick={() => setModal(true)}
+                  onClick={() => history.push('/profil/password')}
                   size="sm"
                 >
                   Modifier le mot de passe
@@ -285,8 +288,8 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
         )}
       </Formik>
       <UpdatePasswordForm
-        isOpen={modal}
-        toggle={() => setModal(!modal)}
+        isOpen={password === 'password'}
+        toggle={() => history.push('/profil')}
         user={user}
       />
     </Col>
