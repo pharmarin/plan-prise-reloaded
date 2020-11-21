@@ -33,7 +33,13 @@ export default ({
   );
 
   return (
-    <Modal centered fade isOpen={isOpen} toggle={toggle} unmountOnClose>
+    <Modal
+      centered
+      fade
+      isOpen={isOpen}
+      // No toggle prop, to prevent backdrop or keyboard toggle
+      unmountOnClose
+    >
       <Formik
         initialValues={{
           current_password: undefined,
@@ -70,9 +76,9 @@ export default ({
             .required(errors.inscription.password_confirmation),
         })}
       >
-        {({ handleSubmit }) => (
+        {({ handleSubmit, isSubmitting }) => (
           <Form onSubmit={handleSubmit}>
-            <ModalHeader toggle={toggle}>
+            <ModalHeader toggle={isSubmitting ? undefined : toggle}>
               Modification du mot de passe
             </ModalHeader>
             <ModalBody>
@@ -137,7 +143,9 @@ export default ({
               </FormGroup>
             </ModalBody>
             <ModalFooter>
-              <Submit color="success">Enregistrer</Submit>
+              <Submit color="success" withLoading withSpinner>
+                Enregistrer
+              </Submit>
             </ModalFooter>
           </Form>
         )}
