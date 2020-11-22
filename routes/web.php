@@ -11,16 +11,6 @@
 |
 */
 
-/* Route::middleware(['auth'])->group(function () {
-    Route::get('/approval', 'HomeController@approval')->name('approval');
-
-    Route::middleware(['approved'])->group(function () {
-        
-    });
-});*/
-
-Auth::routes();
-
 Route::get('/{any?}', function () {
   return view('app');
 })->name('home');
