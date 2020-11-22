@@ -5,15 +5,15 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.3.6",
     "@umijs/hooks": "^1.9.2",
-    "argon-design-system-react": "^1.1.0",
+    "argon-design-system-free": "^1.2.0",
     "axios": "^0.19.2",
     "axios-hooks": "^2.1.0",
+    "bootstrap": "^4.5.3",
     "classnames": "^2.2.6",
     "debounce-promise": "^3.1.2",
     "formik": "^2.1.4",
     "formstrap": "^1.1.2",
     "json-api-normalizer": "^1.0.0",
-    "jsonwebtoken": "^8.5.1",
     "lodash-es": "^4.17.15",
     "lru-cache": "^6.0.0",
     "pdfmake": "^0.1.65",
@@ -28,7 +28,7 @@
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.2.0",
     "react-sanctum": "^0.0.9",
-    "react-scripts-laravel": "3.3.0-rc.3",
+    "react-scripts": "^4.0.0",
     "react-select": "^3.1.0",
     "react-select-async-paginate": "^0.4.1",
     "react-select-fetch": "^0.2.1",
@@ -71,10 +71,10 @@
   "proxy": "http://localhost:8000",
   "devDependencies": {
     "@prettier/plugin-php": "^0.14.3",
+    "@types/bootstrap": "*",
     "@types/classnames": "^2.2.10",
     "@types/debounce-promise": "*",
     "@types/jest": "^25.2.3",
-    "@types/jsonwebtoken": "^8.5",
     "@types/lodash-es": "^4.14.152",
     "@types/lru-cache": "*",
     "@types/node": "^14.0.5",
@@ -98,7 +98,6 @@
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.1.1",
     "react-app-rewired": "^2.1.6",
-    "react-scripts": "^3.4.1",
     "source-map-explorer": "^2.5.0"
   }
 }
