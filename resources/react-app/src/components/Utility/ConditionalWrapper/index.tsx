@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default ({
+const ConditionalWrapper = ({
   children,
   condition: conditionIsTrue,
   wrapper: ComponentWrapper,
@@ -14,3 +14,5 @@ export default ({
   }
   return <React.Fragment>{children}</React.Fragment>;
 };
+
+export default ConditionalWrapper;

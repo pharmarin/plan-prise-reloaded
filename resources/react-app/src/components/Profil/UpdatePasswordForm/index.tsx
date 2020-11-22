@@ -17,7 +17,7 @@ import errors from 'helpers/error-messages.json';
 import useAxios from 'axios-hooks';
 import { requestUrl } from 'helpers/hooks/use-json-api';
 
-export default ({
+const UpdatePasswordForm = ({
   isOpen,
   toggle,
   user,
@@ -153,3 +153,5 @@ export default ({
     </Modal>
   );
 };
+
+export default UpdatePasswordForm;

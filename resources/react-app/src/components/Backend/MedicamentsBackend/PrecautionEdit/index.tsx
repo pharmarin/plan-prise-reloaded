@@ -17,7 +17,7 @@ import {
 import useConfig from 'helpers/hooks/use-config';
 import useJsonApi from 'helpers/hooks/use-json-api';
 
-export default ({
+const PrecautionEdit = ({
   cibles,
   precaution: precautionID,
   remove,
@@ -236,3 +236,5 @@ export default ({
     </Card>
   );
 };
+
+export default PrecautionEdit;

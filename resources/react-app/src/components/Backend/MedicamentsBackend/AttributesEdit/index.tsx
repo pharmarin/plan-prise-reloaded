@@ -36,7 +36,7 @@ yup.setLocale({
 
 type AttributesEditProps = Props.Backend.AttributesEdit;
 
-export default ({ medicament }: AttributesEditProps) => {
+const AttributesEdit = ({ medicament }: AttributesEditProps) => {
   const { requestUrl } = useJsonApi();
 
   const [CISInputValue, setCISInputValue] = useState(medicament.denomination);
@@ -440,3 +440,5 @@ export default ({ medicament }: AttributesEditProps) => {
     </Card>
   );
 };
+
+export default AttributesEdit;

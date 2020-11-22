@@ -6,7 +6,7 @@ import {
   Spinner,
 } from 'reactstrap';
 
-export default ({
+const MedicamentPagination = ({
   last,
   loading,
   page,
@@ -47,3 +47,5 @@ export default ({
     </Pagination>
   );
 };
+
+export default MedicamentPagination;

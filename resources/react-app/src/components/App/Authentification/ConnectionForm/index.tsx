@@ -6,7 +6,7 @@ import { Col, Form, FormGroup, Label } from 'reactstrap';
 import * as yup from 'yup';
 import errors from 'helpers/error-messages.json';
 
-export default () => {
+const ConnectionForm = () => {
   const { signIn } = useContext(SanctumContext);
 
   if (!signIn) throw new Error('Sanctum props are missing');
@@ -75,3 +75,5 @@ export default () => {
     </Formik>
   );
 };
+
+export default ConnectionForm;

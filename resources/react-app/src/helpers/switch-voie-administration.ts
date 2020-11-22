@@ -1,4 +1,4 @@
-export default (voie: number) => {
+const switchVoieAdministration = (voie: number) => {
   switch (voie) {
     case 1:
       return 'Orale';
@@ -28,3 +28,5 @@ export default (voie: number) => {
       return 'Inconnue';
   }
 };
+
+export default switchVoieAdministration;

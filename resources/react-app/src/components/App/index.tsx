@@ -33,7 +33,7 @@ const cache = new LRU();
 
 configure({ axios, cache });
 
-export default () => {
+const App = () => {
   const [needUpdate, setNeedUpdate] = useState(false);
 
   const config = useConfig();
@@ -139,3 +139,5 @@ export default () => {
     </Provider>
   );
 };
+
+export default App;

@@ -38,6 +38,8 @@ const loadGeneric = async (query: string) => {
   }
 };
 
-export default () => ({
+const useLoadAsync = () => ({
   loadGeneric: debounce(loadGeneric, 1000),
 });
+
+export default useLoadAsync;

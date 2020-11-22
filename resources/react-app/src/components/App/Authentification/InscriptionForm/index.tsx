@@ -18,7 +18,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import useAxios from 'axios-hooks';
 import { useHistory } from 'react-router-dom';
 
-export default () => {
+const InscriptionForm = () => {
   const [step, setStep] = useState(1);
 
   const reCaptchaRef = useRef<ReCAPTCHA>(null);
@@ -336,3 +336,5 @@ export default () => {
     </Formik>
   );
 };
+
+export default InscriptionForm;

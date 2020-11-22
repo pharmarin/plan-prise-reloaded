@@ -20,7 +20,7 @@ type AuthentificationProps = {
   role: Role;
 };
 
-export default ({ role }: AuthentificationProps) => {
+const Authentification = ({ role }: AuthentificationProps) => {
   const { authenticated, signOut } = useContext(SanctumContext);
 
   const dispatch = useDispatch();
@@ -81,3 +81,5 @@ export default ({ role }: AuthentificationProps) => {
     </Col>
   );
 };
+
+export default Authentification;

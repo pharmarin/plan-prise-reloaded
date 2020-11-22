@@ -3,7 +3,7 @@ import { FaPen, FaRecycle } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
 
-export default ({ data }: Props.Backend.MedicamentTable) => {
+const MedicamentTable = ({ data }: Props.Backend.MedicamentTable) => {
   return (
     <Table bordered responsive>
       <thead>
@@ -39,3 +39,5 @@ export default ({ data }: Props.Backend.MedicamentTable) => {
     </Table>
   );
 };
+
+export default MedicamentTable;

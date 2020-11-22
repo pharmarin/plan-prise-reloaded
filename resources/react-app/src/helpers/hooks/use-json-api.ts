@@ -101,7 +101,7 @@ const extractMany = (
   return identifiers.map((i) => extractOne(i, cacheOverride));
 };
 
-export default () => {
+const useJsonApi = () => {
   const [cache, setCache] = useState<{
     medicament?: {};
     meta?: {
@@ -131,3 +131,5 @@ export default () => {
     sync,
   };
 };
+
+export default useJsonApi;
