@@ -11,16 +11,6 @@
 |
 */
 
-use App\Mail\RegisteredAdmin;
-use App\Models\User;
-
-Route::get('test', function () {
-  return new RegisteredAdmin(User::find(11));
-  return Mail::to('rouxmarin@outlook.com')->queue(
-    new RegisteredAdmin(User::find(11))
-  );
-});
-
 Route::get('/{any?}', function () {
   return view('app');
 })->name('home');
