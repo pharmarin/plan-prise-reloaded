@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Mail\Registered as MailRegistered;
-use App\Models\User;
+use App\Mail\RegisteredAdmin as MailRegisteredAdmin;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -29,6 +29,9 @@ class SendRegisterConfirmation implements ShouldQueue
    */
   public function handle(Registered $event)
   {
-    Mail::to($event->user->email)->send(new MailRegistered());
+    Mail::to($event->user->email)->queue(new MailRegistered());
+    Mail::to('plandeprise@gmail.com')->queue(
+      new MailRegisteredAdmin($event->user)
+    );
   }
 }

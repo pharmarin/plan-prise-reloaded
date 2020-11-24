@@ -53,6 +53,11 @@ class User extends Authenticatable
     'rpps' => 'string',
   ];
 
+  public function getNameAttribute()
+  {
+    return $this->first_name . ' ' . $this->last_name;
+  }
+
   public function plans_prise()
   {
     return $this->hasMany(PlanPrise::class);

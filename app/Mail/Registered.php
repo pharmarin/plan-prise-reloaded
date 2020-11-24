@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class Registered extends Mailable
+class Registered extends Mailable implements ShouldQueue
 {
   use Queueable, SerializesModels;
 
@@ -28,6 +28,8 @@ class Registered extends Mailable
    */
   public function build()
   {
-    return $this->markdown('emails.registered');
+    return $this->subject('Bienvenue sur plandeprise.fr !')->markdown(
+      'emails.registered'
+    );
   }
 }

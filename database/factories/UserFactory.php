@@ -22,12 +22,14 @@ class UserFactory extends Factory
   public function definition()
   {
     return [
-      'name' => $this->faker->name,
+      'last_name' => $this->faker->lastName,
+      'first_name' => $this->faker->firstName,
       'display_name' => 'display_' . $this->faker->name,
       'email' => $this->faker->email,
       'password' => bcrypt('password'),
-      'admin' => $this->faker->boolean,
+      'admin' => false,
       'status' => $this->faker->randomElement(['pharmacist', 'student']),
+      'rpps' => '10101' . $this->faker->randomNumber(6),
       'email_verified_at' => now(),
       'approved_at' => now(),
     ];

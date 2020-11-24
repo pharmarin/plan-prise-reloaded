@@ -100,13 +100,7 @@ class RegisterController extends Controller
     if ($data['status'] === 'student') {
       request()
         ->file('certificate')
-        ->storeAs(
-          'school_certs',
-          $user->id .
-            request()
-              ->file('certificate')
-              ->getClientOriginalExtension()
-        );
+        ->storeAs('school_certs', $user->id);
     }
 
     return $user;
