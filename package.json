@@ -51,7 +51,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "postinstall": "patch-package",
-    "serve": "concurrently -n JS,PHP \"yarn start\" \"php artisan serve\""
+    "serve": "concurrently -n JS,PHP,QUEUE \"yarn start\" \"php artisan serve\" \"php artisan queue:work\" \"php artisan schedule:run >> /dev/null 2>&1\""
   },
   "eslintConfig": {
     "extends": "react-app"
