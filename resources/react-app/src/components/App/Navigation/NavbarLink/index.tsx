@@ -9,6 +9,7 @@ import {
 import { connect, ConnectedProps } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, NavItem, NavLink } from 'reactstrap';
+import classNames from 'classnames';
 import { deleteContent, setShowSettings } from 'store/plan-prise';
 
 const mapDispatch = { deleteContent, setShowSettings };
@@ -28,6 +29,7 @@ const NavbarLink = ({
   setShowSettings,
 }: NavbarLinkProps) => {
   const location = useLocation().pathname;
+
   const isActive = location === path;
 
   const switchLabel = (string: string) => {
@@ -54,6 +56,17 @@ const NavbarLink = ({
   };
 
   const { action, tag } = switchTag(path, args);
+
+  return (
+    <Link
+      className={classNames('px-3 py-2 text-sm font-medium text-green-600', {
+        'text-blue': isActive,
+      })}
+      to={path}
+    >
+      {switchLabel(label)}
+    </Link>
+  );
 
   return (
     <NavItem className={(className || '') + ' mr-3'}>

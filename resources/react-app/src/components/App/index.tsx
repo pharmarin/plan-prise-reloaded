@@ -6,7 +6,6 @@ import { CardBody, Card, Container } from 'reactstrap';
 import { Sanctum } from 'react-sanctum';
 import LRU from 'lru-cache';
 import { store, persistor } from 'store/store';
-import NavigationBar from 'components/App/Navigation/NavigationBar';
 import SplashScreen from './SplashScreen';
 import axios from 'helpers/axios-clients';
 import useConfig, { storeConfig } from 'helpers/hooks/use-config';
@@ -19,6 +18,7 @@ import ErrorBoundary from './ErrorBoundary';
 import Profil from 'components/Profil';
 import PlanPrise from 'components/PlanPrise';
 import Backend from 'components/Backend';
+import NavigationBar from './Navigation/NavigationBar';
 
 const sanctumConfig = {
   api_url: '',

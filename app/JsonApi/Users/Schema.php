@@ -31,6 +31,8 @@ class Schema extends SchemaProvider
     return [
       'admin' => $resource->admin,
       'name' => $resource->name,
+      'first_name' => $resource->first_name,
+      'last_name' => $resource->last_name,
       'display_name' => $resource->display_name,
       'email' => $resource->email,
       'status' => $resource->status,

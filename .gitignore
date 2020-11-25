@@ -34,5 +34,9 @@ yarn-error.log*
 public/static/*
 public/*manifest*
 public/service-worker.js
-resources/views/app.blade.php
+
 _ide_helper.php
+
+# build generated files
+resources/views/app.blade.php
+resources/react-app/src/styles.output.css

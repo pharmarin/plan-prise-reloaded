@@ -61,6 +61,8 @@ declare namespace Models {
       type: 'users';
       attributes: {
         admin: boolean;
+        first_name: string;
+        last_name: string;
         name: string;
         display_name?: string;
         email: string;

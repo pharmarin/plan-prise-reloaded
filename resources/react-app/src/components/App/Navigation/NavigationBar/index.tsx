@@ -1,16 +1,10 @@
+import Dropdown from 'base-components/Dropdown';
+import Navbar from 'base-components/Navbar';
+import Spinner from 'base-components/Spinner';
 import React, { useContext } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { Link as RouterLink } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
-import {
-  UncontrolledCollapse,
-  Navbar,
-  Nav,
-  Container,
-  Row,
-  Col,
-  Spinner,
-} from 'reactstrap';
+import { ContextProps } from 'react-sanctum/build/SanctumContext';
 import NavbarLink from '../NavbarLink';
 
 const NAVBAR_TITLE = 'plandeprise.fr';
@@ -25,89 +19,70 @@ const connector = connect(mapState);
 
 type NavigationBarProps = ConnectedProps<typeof connector>;
 
+interface SanctumProps extends Partial<ContextProps> {
+  user?: IServerResponse<Models.App.User>;
+}
+
 const NavigationBar = ({ options, returnTo, title }: NavigationBarProps) => {
-  const { authenticated, user } = useContext(SanctumContext);
+  const { authenticated, user } = useContext<SanctumProps>(SanctumContext);
 
   return (
-    <Navbar
-      className="navbar-horizontal navbar-dark bg-default mb-4"
-      expand="lg"
-    >
-      <Container>
-        <Nav navbar>
-          <NavbarLink
-            className="d-none d-lg-block"
-            path="/"
-            label={NAVBAR_TITLE}
-          />
-        </Nav>
-        <Nav className="mx-auto flex-row" navbar>
-          {returnTo && <NavbarLink light {...returnTo} />}
-          <span className="h5 mx-4 my-auto pt-1 text-light">{title}</span>
-          {options &&
-            options.map((option) => (
-              <NavbarLink key={option.path} light {...option} />
-            ))}
-        </Nav>
-        <button
-          aria-controls="navbar-default"
-          aria-expanded={false}
-          aria-label="Toggle navigation"
-          className="navbar-toggler"
-          data-target="#navbar-default"
-          data-toggle="collapse"
-          id="navbar-default"
-          type="button"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-        <UncontrolledCollapse
-          className="flex-grow-0"
-          navbar
-          toggler="#navbar-default"
-        >
-          <div className="navbar-collapse-header">
-            <Row>
-              <Col className="collapse-brand" xs="6">
-                <RouterLink to="/">{NAVBAR_TITLE}</RouterLink>
-              </Col>
-              <Col className="collapse-close" xs="6">
-                <button
-                  aria-controls="navbar-default"
-                  aria-expanded={false}
-                  aria-label="Toggle navigation"
-                  className="navbar-toggler"
-                  data-target="#navbar-default"
-                  data-toggle="collapse"
-                  id="navbar-default"
-                  type="button"
-                >
-                  <span />
-                  <span />
-                </button>
-              </Col>
-            </Row>
+    <Navbar>
+      <Navbar.Left>
+        <Navbar.Brand>
+          <img
+            className="block h-8 w-auto"
+            src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
+            alt="Workflow"
+          />{' '}
+          <Navbar.BrandName>{NAVBAR_TITLE}</Navbar.BrandName>
+        </Navbar.Brand>
+        <Navbar.Content>
+          {returnTo && <NavbarLink {...returnTo} />}
+          <div className="flex flex-grow justify-center">
+            <Navbar.Title>{title}</Navbar.Title>
+            {options &&
+              options.map((option) => (
+                <NavbarLink key={option.path} {...option} />
+              ))}
           </div>
-          <Nav className="ml-lg-auto" navbar>
-            {authenticated === null ? (
-              <Spinner size="sm" />
-            ) : authenticated ? (
-              <React.Fragment>
-                {user?.admin === true && (
-                  <NavbarLink label="Administration" path="/admin" />
-                )}
-                <NavbarLink label="Profil" path="/profil" />
-                <NavbarLink label="Déconnexion" path="/deconnexion" />
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <NavbarLink label="Connexion" path="/connexion" />
-                <NavbarLink label="Inscription" path="/inscription" />
-              </React.Fragment>
-            )}
-          </Nav>
-        </UncontrolledCollapse>
-      </Container>
+          <div></div>
+        </Navbar.Content>
+      </Navbar.Left>
+      <Navbar.Right>
+        {/* Profile dropdown */}
+        <div className="ml-3 relative">
+          {authenticated === null ? (
+            <Spinner color="text-green-600" />
+          ) : authenticated ? (
+            <Dropdown
+              buttonClass="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+              buttonContent={
+                <React.Fragment>
+                  <span className="sr-only">Ouvrir le menu utilisateur</span>
+                  <img
+                    className="h-8 w-8 rounded-full"
+                    src={`https://eu.ui-avatars.com/api/?name=${user?.data.attributes.first_name}+${user?.data.attributes.last_name}&color=059669&background=ECFDF5`}
+                    alt=""
+                  />
+                </React.Fragment>
+              }
+              items={[
+                {
+                  label: 'Profil',
+                  path: '/profil',
+                },
+                { label: 'Déconnexion', path: '/deconnexion' },
+              ]}
+            />
+          ) : (
+            <React.Fragment>
+              <NavbarLink label="Connexion" path="/connexion" />
+              <NavbarLink label="Inscription" path="/inscription" />
+            </React.Fragment>
+          )}
+        </div>
+      </Navbar.Right>
     </Navbar>
   );
 };

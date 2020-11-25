@@ -35,7 +35,7 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
 
   const history = useHistory();
 
-  const { password } = useParams();
+  const { password } = useParams<{ password?: string }>();
 
   const [{ error }, update] = useAxios(
     {
@@ -61,7 +61,8 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
   const initialValues = {
     display_name: user.data.attributes.display_name,
     email: user.data.attributes.email,
-    name: user.data.attributes.name,
+    first_name: user.data.attributes.first_name,
+    last_name: user.data.attributes.last_name,
     rpps: user.data.attributes.rpps,
     status: user.data.attributes.status,
   };
@@ -107,7 +108,12 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
         }}
         validateOnMount
         validationSchema={yup.object().shape({
-          name: yup
+          first_name: yup
+            .string()
+            .required(errors.inscription.name)
+            .min(3, errors.inscription.name)
+            .max(50, errors.inscription.name),
+          last_name: yup
             .string()
             .required(errors.inscription.name)
             .min(3, errors.inscription.name)
@@ -139,14 +145,30 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
         {({ handleSubmit, isValid, resetForm, setFieldValue, values }) => (
           <Form onSubmit={handleSubmit}>
             <FormGroup row>
-              <Label for="name" sm="4">
-                Nom et prénom
+              <Label for="last_name" sm="4">
+                Nom
               </Label>
               <Col sm="8">
                 <Input
-                  autoComplete="name"
-                  name="name"
-                  placeholder={isEditing ? 'Nom et prénom' : ''}
+                  autoComplete="last-name"
+                  name="last_name"
+                  placeholder={isEditing ? 'Nom' : ''}
+                  {...readOnly}
+                  required
+                  withFeedback
+                  withLoading
+                />
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label for="first_name" sm="4">
+                Prénom
+              </Label>
+              <Col sm="8">
+                <Input
+                  autoComplete="first-name"
+                  name="first_name"
+                  placeholder={isEditing ? 'Prénom' : ''}
                   {...readOnly}
                   required
                   withFeedback
