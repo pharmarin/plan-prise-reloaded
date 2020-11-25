@@ -1,9 +1,17 @@
 import React from 'react';
+import classNames from 'classnames';
 
-const Spinner: React.FC<{ color?: string }> = ({ color }) => {
+const Spinner: React.FC<{ className?: string; color?: string }> = ({
+  className,
+  color,
+}) => {
   return (
     <svg
-      className={'animate-spin h-5 w-5 ' + color || 'text-white'}
+      className={classNames(
+        'animate-spin h-5 w-5',
+        color || 'text-white',
+        className
+      )}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

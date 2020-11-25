@@ -25,6 +25,9 @@ declare namespace Props {
   }
   namespace Frontend {
     namespace App {
+      interface ConnectionForm {
+        message?: string;
+      }
       interface NavbarLink {
         args?: { id: number };
         className?: string;

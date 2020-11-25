@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
-import { Alert, Spinner, Col } from 'reactstrap';
 import { SanctumContext } from 'react-sanctum';
 
 import { updateAppNav } from 'store/app';
 import ConnectionForm from './ConnectionForm';
 import InscriptionForm from './InscriptionForm';
+import Spinner from 'base-components/Spinner';
 
 const cancelRedirect = ['/deconnexion'];
 
@@ -68,17 +68,16 @@ const Authentification = ({ role }: AuthentificationProps) => {
   }
 
   return (
-    <Col className="mx-auto" md="6">
-      {state?.message && <Alert variant="danger">{state?.message}</Alert>}
-      {role === Role.signin && <ConnectionForm />}
+    <div className="w-full max-w-sm mx-auto">
+      {role === Role.signin && <ConnectionForm message={state?.message} />}
       {role === Role.register && <InscriptionForm />}
       {role === Role.signout && (
         <div className="text-center">
-          <Spinner animation="border" as="span" className="mr-2" size="sm" />
+          <Spinner className="mr-2" />
           Déconnexion en cours
         </div>
       )}
-    </Col>
+    </div>
   );
 };
 
