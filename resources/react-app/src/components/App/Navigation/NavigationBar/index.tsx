@@ -1,6 +1,8 @@
+import Avatar from 'base-components/Avatar';
 import Dropdown from 'base-components/Dropdown';
 import Navbar from 'base-components/Navbar';
 import Spinner from 'base-components/Spinner';
+import Logo from 'components/App/Logo';
 import React, { useContext } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { SanctumContext } from 'react-sanctum';
@@ -30,12 +32,7 @@ const NavigationBar = ({ options, returnTo, title }: NavigationBarProps) => {
     <Navbar>
       <Navbar.Left>
         <Navbar.Brand>
-          <img
-            className="block h-8 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
-            alt="Workflow"
-          />{' '}
-          <Navbar.BrandName>{NAVBAR_TITLE}</Navbar.BrandName>
+          <Logo /> <Navbar.BrandName>{NAVBAR_TITLE}</Navbar.BrandName>
         </Navbar.Brand>
         <Navbar.Content>
           {returnTo && <NavbarLink {...returnTo} />}
@@ -60,10 +57,9 @@ const NavigationBar = ({ options, returnTo, title }: NavigationBarProps) => {
               buttonContent={
                 <React.Fragment>
                   <span className="sr-only">Ouvrir le menu utilisateur</span>
-                  <img
-                    className="h-8 w-8 rounded-full"
-                    src={`https://eu.ui-avatars.com/api/?name=${user?.data.attributes.first_name}+${user?.data.attributes.last_name}&color=059669&background=ECFDF5`}
-                    alt=""
+                  <Avatar
+                    firstName={user?.data.attributes.first_name || ''}
+                    lastName={user?.data.attributes.last_name || ''}
                   />
                 </React.Fragment>
               }
