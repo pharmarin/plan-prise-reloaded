@@ -18,6 +18,7 @@ const Submit: React.FC<{
     <Button
       color={color || 'gray'}
       disabled={disabled ? disabled : withLoading ? isSubmitting : false}
+      type="submit"
       {...props}
     >
       {withSpinner && isSubmitting && <Spinner className="mr-3" />}
