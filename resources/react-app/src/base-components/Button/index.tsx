@@ -3,11 +3,12 @@ import classNames from 'classnames';
 
 const Button: React.FC<{
   block?: boolean;
+  className?: string;
   color: string;
   disabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   type?: 'button' | 'submit' | 'reset';
-}> = ({ block, children, color, disabled, onClick, type }) => {
+}> = ({ block, children, className, color, disabled, onClick, type }) => {
   return (
     <button
       className={classNames(
@@ -24,7 +25,8 @@ const Button: React.FC<{
             color === 'gray',
           'bg-green-500 hover:bg-green-400 active:bg-green-600  focus:border-green-600':
             color === 'green',
-        }
+        },
+        className
       )}
       disabled={disabled}
       onClick={onClick}

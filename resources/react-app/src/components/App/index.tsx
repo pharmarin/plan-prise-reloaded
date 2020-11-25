@@ -97,7 +97,7 @@ const App = () => {
                     </ErrorBoundary>
                   </ProtectedRoute>
                 </Route>
-                <Route path="/profil/:password?">
+                <Route path="/profil">
                   <ProtectedRoute>
                     <ErrorBoundary returnTo="/">
                       <Profil />
