@@ -3,5 +3,9 @@
 @tailwind utilities;
 
 @layer components {
-  @import bootstrap.css;
+  @import 'styles/bootstrap.css';
+}
+
+body {
+  @apply bg-gray-100;
 }

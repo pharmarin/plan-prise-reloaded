@@ -39,4 +39,4 @@ _ide_helper.php
 
 # build generated files
 resources/views/app.blade.php
-resources/react-app/src/styles.output.css
+resources/react-app/src/styles.css

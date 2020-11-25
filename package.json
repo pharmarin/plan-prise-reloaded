@@ -51,12 +51,13 @@
     "build": "react-scripts build",
     "react:test": "react-scripts test",
     "react:eject": "react-scripts eject",
-    "tailwind:build": "tailwind build src/tailwind.css -o src/tailwind.output.css",
-    "tailwind:watch": "chokidar 'resources/react-app/src/styles/styles.css' --ignore resources/react-app/src/styles.css -c 'yarn tailwind:build'",
+    "tailwind": "postcss 'resources/react-app/src/styles/styles.css' -o resources/react-app/src/styles.css",
     "laravel:serve": "php artisan serve",
     "laravel:queue": "php artisan queue:work",
     "laravel:schedule": "php artisan schedule:run >> /dev/null 2>&1",
     "postinstall": "patch-package",
+    "prestart": "yarn tailwind",
+    "prebuild": "yarn tailwind",
     "start": "run-p react:start laravel:*"
   },
   "eslintConfig": {
@@ -102,6 +103,7 @@
     "node-sass": "^4.14.1",
     "npm-run-all": "^4.1.5",
     "patch-package": "^6.2.2",
+    "postcss": "^8.1.8",
     "postcss-cli": "^8.3.0",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.1.1",

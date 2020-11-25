@@ -1,3 +1,4 @@
+import Card from 'base-components/Card';
 import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -20,11 +21,11 @@ const Accueil = (props: AccueilProps) => {
   }, [updateAppNav]);
 
   return (
-    <div>
+    <Card>
       <p>Welcome !!</p>
       <Link to="/plan-prise">Plan de prise</Link>
       <Link to="/admin">Administration</Link>
-    </div>
+    </Card>
   );
 };
 

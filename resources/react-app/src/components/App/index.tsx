@@ -2,7 +2,6 @@ import React, { Suspense, useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { CardBody, Card, Container } from 'reactstrap';
 import { Sanctum } from 'react-sanctum';
 import LRU from 'lru-cache';
 import { store, persistor } from 'store/store';
@@ -19,6 +18,7 @@ import Profil from 'components/Profil';
 import PlanPrise from 'components/PlanPrise';
 import Backend from 'components/Backend';
 import NavigationBar from './Navigation/NavigationBar';
+import Container from 'base-components/Container';
 
 const sanctumConfig = {
   api_url: '',
@@ -80,58 +80,54 @@ const App = () => {
             )}
             <NavigationBar />
             <Container>
-              <Card className="mb-4">
-                <CardBody>
-                  <Switch>
-                    <Route exact path="/">
-                      <Accueil />
-                    </Route>
-                    <Route path="/inscription">
-                      <Authentification role={Role.register} />
-                    </Route>
-                    <Route path="/connexion">
-                      <Authentification role={Role.signin} />
-                    </Route>
-                    <Route path="/deconnexion">
-                      <ProtectedRoute>
-                        <ErrorBoundary returnTo="/">
-                          <Authentification role={Role.signout} />
-                        </ErrorBoundary>
-                      </ProtectedRoute>
-                    </Route>
-                    <Route path="/profil/:password?">
-                      <ProtectedRoute>
-                        <ErrorBoundary returnTo="/">
-                          <Profil />
-                        </ErrorBoundary>
-                      </ProtectedRoute>
-                    </Route>
-                    <Route path="/plan-prise/:id?/:action?">
-                      <ProtectedRoute>
-                        <ErrorBoundary returnTo="/">
-                          <PlanPrise />
-                        </ErrorBoundary>
-                      </ProtectedRoute>
-                    </Route>
-                    <Route path="/admin">
-                      <ProtectedRoute admin>
-                        <ErrorBoundary returnTo="/">
-                          <Suspense
-                            fallback={
-                              <SplashScreen
-                                type="load"
-                                message="Chargement du module"
-                              />
-                            }
-                          >
-                            <Backend />
-                          </Suspense>
-                        </ErrorBoundary>
-                      </ProtectedRoute>
-                    </Route>
-                  </Switch>
-                </CardBody>
-              </Card>
+              <Switch>
+                <Route exact path="/">
+                  <Accueil />
+                </Route>
+                <Route path="/inscription">
+                  <Authentification role={Role.register} />
+                </Route>
+                <Route path="/connexion">
+                  <Authentification role={Role.signin} />
+                </Route>
+                <Route path="/deconnexion">
+                  <ProtectedRoute>
+                    <ErrorBoundary returnTo="/">
+                      <Authentification role={Role.signout} />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/profil/:password?">
+                  <ProtectedRoute>
+                    <ErrorBoundary returnTo="/">
+                      <Profil />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/plan-prise/:id?/:action?">
+                  <ProtectedRoute>
+                    <ErrorBoundary returnTo="/">
+                      <PlanPrise />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/admin">
+                  <ProtectedRoute admin>
+                    <ErrorBoundary returnTo="/">
+                      <Suspense
+                        fallback={
+                          <SplashScreen
+                            type="load"
+                            message="Chargement du module"
+                          />
+                        }
+                      >
+                        <Backend />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                </Route>
+              </Switch>
             </Container>
           </Router>
         </Sanctum>
