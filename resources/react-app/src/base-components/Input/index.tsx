@@ -11,6 +11,8 @@ const Input: React.FC<{
   disabled?: boolean;
   multiple?: boolean;
   name: string;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   required?: boolean;
   type?: string;
@@ -23,6 +25,8 @@ const Input: React.FC<{
   disabled,
   multiple: propsMultiple,
   name,
+  onBlur,
+  onChange,
   placeholder,
   required,
   type,
@@ -30,25 +34,26 @@ const Input: React.FC<{
   withFeedback,
   withLoading,
 }) => {
-  const formikContext = useFormikContext(),
-    errors = formikContext.errors,
-    values = formikContext.values,
-    touched = formikContext.touched,
-    isSubmitting = formikContext.isSubmitting,
-    handleBlur = formikContext.handleBlur,
-    setFieldValue = formikContext.setFieldValue,
-    handleChange =
-      type === 'file'
-        ? (e: React.ChangeEvent<HTMLInputElement>) => {
-            const file = e.target.files ? e.target.files[0] : null;
-            console.log('file: ', file);
-            setFieldValue(name, file);
-          }
-        : formikContext.handleChange;
+  const formikContext = useFormikContext();
 
-  let error = getIn(errors, name);
-  let value = propsValue || getIn(values, name);
-  let touch = getIn(touched, name);
+  const isFormikInput = formikContext !== undefined;
+
+  const handleBlur = isFormikInput ? formikContext.handleBlur : onBlur;
+  const handleChange = isFormikInput
+    ? type === 'file'
+      ? (e: React.ChangeEvent<HTMLInputElement>) => {
+          const file = e.target.files ? e.target.files[0] : null;
+          console.log('file: ', file);
+          formikContext.setFieldValue(name, file);
+        }
+      : formikContext.handleChange
+    : onChange;
+
+  const value = isFormikInput ? getIn(formikContext.values, name) : propsValue;
+  const error = isFormikInput ? getIn(formikContext.errors, name) : false;
+  const touch = isFormikInput ? getIn(formikContext.touched, name) : false;
+
+  const isSubmitting = isFormikInput ? formikContext.isSubmitting : false;
 
   return (
     <div>
