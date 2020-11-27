@@ -10,12 +10,12 @@ import Label from 'base-components/Label';
 import Input from 'base-components/Input';
 import Submit from 'base-components/Submit';
 
-const EditPassword = ({ user }: Props.Frontend.App.EditPassword) => {
+const EditPassword = ({ id, email }: Props.Frontend.App.EditPassword) => {
   const [{ error }, update] = useAxios(
     {
       method: 'PATCH',
       url: requestUrl('users', {
-        id: user.data.id,
+        id,
       }).url,
     },
     { manual: true }
@@ -34,7 +34,7 @@ const EditPassword = ({ user }: Props.Frontend.App.EditPassword) => {
           await update({
             data: {
               data: {
-                id: user.data.id,
+                id,
                 type: 'users',
                 attributes: values,
               },
@@ -62,12 +62,7 @@ const EditPassword = ({ user }: Props.Frontend.App.EditPassword) => {
     >
       {({ handleSubmit }) => (
         <Form onSubmit={handleSubmit}>
-          <input
-            autoComplete="off"
-            name="email"
-            type="hidden"
-            value={user.data.attributes.email}
-          />
+          <input autoComplete="off" name="email" type="hidden" value={email} />
           <FormGroup>
             <Label>Mot de passe actuel</Label>
             <div>

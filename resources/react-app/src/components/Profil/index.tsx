@@ -75,7 +75,10 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
           </div>
           <div className="mt-5 md:mt-0 md:col-span-2">
             <Card>
-              <EditPassword user={user} />
+              <EditPassword
+                id={user.data.id}
+                email={user.data.attributes.email}
+              />
             </Card>
           </div>
         </div>
@@ -98,7 +101,7 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
           </div>
           <div className="mt-5 md:mt-0 md:col-span-2">
             <Card>
-              <DeleteUser />
+              <DeleteUser id={user.data.id} />
             </Card>
           </div>
         </div>

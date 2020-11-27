@@ -126,6 +126,45 @@ class Validators extends AbstractValidators
   }
 
   /**
+   * @param array $document
+   * @return \CloudCreativity\LaravelJsonApi\Contracts\Validation\ValidatorInterface
+   */
+  public function delete($record): ?ValidatorInterface
+  {
+    $validator = parent::delete($record);
+
+    if (!request()->has('meta.password')) {
+      throw new JsonApiException(
+        Error::fromArray([
+          'status' => 401,
+          'code' => 'password-needed',
+          'title' => 'Password needed',
+          'detail' =>
+            'La confirmation du mot de passe est obligatoire lors de la suppression du compte',
+        ])
+      );
+    }
+
+    $user = Auth::user();
+
+    $current_password = request()->input('meta.password');
+
+    if (!Hash::check($current_password, $user->password)) {
+      throw new JsonApiException(
+        Error::fromArray([
+          'status' => 401,
+          'code' => 'password-mismatch',
+          'title' => 'Password mismatch',
+          'detail' =>
+            'Le mot de passe ne correspond pas au mot de passe enregistré',
+        ])
+      );
+    }
+
+    return $validator;
+  }
+
+  /**
    * Get query parameter validation rules.
    *
    * @return array
