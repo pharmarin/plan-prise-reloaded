@@ -101,7 +101,7 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
           </div>
           <div className="mt-5 md:mt-0 md:col-span-2">
             <Card>
-              <DeleteUser id={user.data.id} />
+              <DeleteUser id={user.data.id} setUser={setUser} />
             </Card>
           </div>
         </div>

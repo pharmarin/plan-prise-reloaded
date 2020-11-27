@@ -4,18 +4,17 @@ import Label from 'base-components/Label';
 import Modal from 'base-components/Modal';
 import Submit from 'base-components/Submit';
 import { Formik } from 'formik';
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import * as yup from 'yup';
 import errors from 'helpers/error-messages.json';
 import Button from 'base-components/Button';
 
 const ConfirmPassword: React.FC<{
+  errorMessage?: string;
   onCancel: () => void;
   onSubmit: (password: string) => Promise<boolean>;
-}> = ({ onCancel, onSubmit }) => {
+}> = ({ errorMessage, onCancel, onSubmit }) => {
   const passwordRef = useRef<HTMLInputElement | null>(null);
-
-  const [passwordError, setPasswordError] = useState(false);
 
   return (
     <Modal show={true}>
@@ -23,8 +22,7 @@ const ConfirmPassword: React.FC<{
         initialValues={{ password: '' }}
         onSubmit={async ({ password }, { setSubmitting }) => {
           setSubmitting(true);
-          const error = await onSubmit(password);
-          setPasswordError(error);
+          await onSubmit(password);
         }}
         validationSchema={yup.object().shape({
           password: yup
@@ -55,8 +53,8 @@ const ConfirmPassword: React.FC<{
                 withFeedback
                 withLoading
               />
-              {typeof passwordError === 'string' && (
-                <Form.Text className="text-red-600">{passwordError}</Form.Text>
+              {typeof errorMessage === 'string' && (
+                <Form.Text className="text-red-600">{errorMessage}</Form.Text>
               )}
             </Modal.Content>
             <Modal.Footer>

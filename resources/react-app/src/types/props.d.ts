@@ -30,6 +30,7 @@ declare namespace Props {
       }
       interface DeleteUser {
         id: Models.App.User['id'];
+        setUser: (user: object, authenticated?: boolean | undefined) => void;
       }
       interface EditInformations {
         user: IServerResponse<Models.App.User>;

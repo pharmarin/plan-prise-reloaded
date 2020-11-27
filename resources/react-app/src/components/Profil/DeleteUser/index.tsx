@@ -6,7 +6,7 @@ import ConfirmPassword from 'components/App/Authentification/ConfirmPassword';
 import { requestUrl } from 'helpers/hooks/use-json-api';
 import React, { useState } from 'react';
 
-const DeleteUser = ({ id }: Props.Frontend.App.DeleteUser) => {
+const DeleteUser = ({ id, setUser }: Props.Frontend.App.DeleteUser) => {
   const [showForm, setShowForm] = useState(false);
 
   const [{ error }, deleteUser] = useAxios(
@@ -31,14 +31,15 @@ const DeleteUser = ({ id }: Props.Frontend.App.DeleteUser) => {
       </Form.Text>
       {showForm && (
         <ConfirmPassword
+          errorMessage={error?.response?.data?.errors?.[0].detail}
           onCancel={() => setShowForm(false)}
           onSubmit={async (password) => {
-            console.log(password);
             try {
               await deleteUser({ data: { meta: { password } } });
+              setUser({}, false);
               return true;
             } catch {
-              return error?.response?.data?.errors?.[0].detail || false;
+              return false;
             }
           }}
         />
