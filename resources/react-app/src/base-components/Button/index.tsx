@@ -6,7 +6,7 @@ const Button: React.FC<{
   className?: string;
   color: string;
   disabled?: boolean;
-  size: 'sm' | 'lg';
+  size?: 'sm' | 'lg';
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   type?: 'button' | 'submit' | 'reset';
 }> = ({ block, children, className, color, disabled, onClick, size, type }) => {
