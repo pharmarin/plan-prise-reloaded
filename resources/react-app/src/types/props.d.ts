@@ -28,6 +28,13 @@ declare namespace Props {
       interface ConnectionForm {
         message?: string;
       }
+      interface EditInformations {
+        user: IServerResponse<Models.App.User>;
+        setUser: (user: object, authenticated?: boolean) => void;
+      }
+      interface EditPassword {
+        user: IServerResponse<Models.App.User>;
+      }
       interface NavbarLink {
         args?: { id: number };
         className?: string;
