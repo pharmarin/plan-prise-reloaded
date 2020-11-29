@@ -2,11 +2,16 @@ import SplashScreen from 'components/App/SplashScreen';
 import React, { useContext } from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
+import { ContextProps } from 'react-sanctum/build/SanctumContext';
 
 type ProtectedRouteProps = Props.Frontend.App.ProtectedRoute;
 
+interface SanctumProps extends Partial<ContextProps> {
+  user?: IServerResponse<Models.App.User>;
+}
+
 const ProtectedRoute = ({ admin, children }: ProtectedRouteProps) => {
-  const { authenticated, user } = useContext(SanctumContext);
+  const { authenticated, user } = useContext<SanctumProps>(SanctumContext);
 
   const { pathname } = useLocation();
 
@@ -25,7 +30,7 @@ const ProtectedRoute = ({ admin, children }: ProtectedRouteProps) => {
   }
 
   if (authenticated === true) {
-    if (admin && user?.admin !== true) {
+    if (admin && user?.data.attributes.admin !== true) {
       return (
         <Redirect
           to={{
