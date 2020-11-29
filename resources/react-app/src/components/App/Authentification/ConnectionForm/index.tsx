@@ -24,7 +24,7 @@ const ConnectionForm = ({ message }: Props.Frontend.App.ConnectionForm) => {
           {message}
         </div>
       )}
-      <Card>
+      <Card className="mt-6">
         <Formik
           initialValues={{ email: '', password: '' }}
           onSubmit={({ email, password }, { setSubmitting }) => {
