@@ -1,13 +1,13 @@
+import Button from 'base-components/Button';
 import Form from 'base-components/Form';
 import Input from 'base-components/Input';
 import Label from 'base-components/Label';
 import Modal from 'base-components/Modal';
 import Submit from 'base-components/Submit';
 import { Formik } from 'formik';
+import errors from 'helpers/error-messages.json';
 import React, { useRef } from 'react';
 import * as yup from 'yup';
-import errors from 'helpers/error-messages.json';
-import Button from 'base-components/Button';
 
 const ConfirmPassword: React.FC<{
   errorMessage?: string;

@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
+import Card from 'base-components/Card';
+import Form from 'base-components/Form';
+import FormGroup from 'base-components/FormGroup';
+import Input from 'base-components/Input';
+import Label from 'base-components/Label';
+import Submit from 'base-components/Submit';
+import Logo from 'components/App/Logo';
 import { Formik } from 'formik';
+import errors from 'helpers/error-messages.json';
+import React, { useContext } from 'react';
 import { SanctumContext } from 'react-sanctum';
 import * as yup from 'yup';
-import errors from 'helpers/error-messages.json';
-import Label from 'base-components/Label';
-import Logo from 'components/App/Logo';
-import Input from 'base-components/Input';
-import Submit from 'base-components/Submit';
-import Card from 'base-components/Card';
-import FormGroup from 'base-components/FormGroup';
-import Form from 'base-components/Form';
 
 const ConnectionForm = ({ message }: Props.Frontend.App.ConnectionForm) => {
   const { signIn } = useContext(SanctumContext);

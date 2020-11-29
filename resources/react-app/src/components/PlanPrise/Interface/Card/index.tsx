@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { Card, CardHeader, Button, CardBody, Spinner, Input } from 'reactstrap';
-import { get } from 'lodash-es';
-import { loadItem, removeItem, setLoading } from 'store/plan-prise';
-import Content from './Content';
-import { addNotification } from 'store/app';
+import Content from 'components/PlanPrise/Interface/Card/Content';
 import switchVoiesAdministration from 'helpers/switch-voie-administration';
+import { get } from 'lodash-es';
+import React, { useEffect } from 'react';
 import { FaTrash } from 'react-icons/fa';
+import { connect, ConnectedProps } from 'react-redux';
+import { Button, Card, CardBody, CardHeader, Input, Spinner } from 'reactstrap';
+import { addNotification } from 'store/app';
+import { loadItem, removeItem, setLoading } from 'store/plan-prise';
 
 const mapState = (state: Redux.State) => ({
   storedMedicaments: state.cache.medicaments,

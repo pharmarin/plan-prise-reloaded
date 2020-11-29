@@ -1,12 +1,11 @@
+import Spinner from 'base-components/Spinner';
 import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
-
 import { updateAppNav } from 'store/app';
 import ConnectionForm from './ConnectionForm';
 import InscriptionForm from './InscriptionForm';
-import Spinner from 'base-components/Spinner';
 
 const cancelRedirect = ['/deconnexion'];
 

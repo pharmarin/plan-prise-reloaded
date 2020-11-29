@@ -1,21 +1,21 @@
-import React from 'react';
 import useAxios from 'axios-hooks';
 import classNames from 'classnames';
-import { Formik, Form, Field } from 'formik';
-import * as yup from 'yup';
+import { Field, Form, Formik } from 'formik';
 import { Input, Submit } from 'formstrap';
-import TextareaAutosize from 'react-textarea-autosize';
-import {
-  Card,
-  CardBody,
-  Button,
-  CardImgOverlay,
-  Spinner,
-  FormFeedback,
-  FormGroup,
-} from 'reactstrap';
 import useConfig from 'helpers/hooks/use-config';
 import useJsonApi from 'helpers/hooks/use-json-api';
+import React from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardImgOverlay,
+  FormFeedback,
+  FormGroup,
+  Spinner,
+} from 'reactstrap';
+import * as yup from 'yup';
 
 const PrecautionEdit = ({
   cibles,

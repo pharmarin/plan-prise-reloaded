@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React from 'react';
 import {
   FaArrowLeft,
@@ -9,7 +10,6 @@ import {
 import { connect, ConnectedProps } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, NavItem, NavLink } from 'reactstrap';
-import classNames from 'classnames';
 import { deleteContent, setShowSettings } from 'store/plan-prise';
 
 const mapDispatch = { deleteContent, setShowSettings };

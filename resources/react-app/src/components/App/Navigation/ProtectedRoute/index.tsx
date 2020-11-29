@@ -1,11 +1,11 @@
+import SplashScreen from 'components/App/SplashScreen';
 import React, { useContext } from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
-import SplashScreen from 'components/App/SplashScreen';
 
 type ProtectedRouteProps = Props.Frontend.App.ProtectedRoute;
 
-export default ({ admin, children }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ admin, children }: ProtectedRouteProps) => {
   const { authenticated, user } = useContext(SanctumContext);
 
   const { pathname } = useLocation();
@@ -45,3 +45,5 @@ export default ({ admin, children }: ProtectedRouteProps) => {
 
   return <SplashScreen message="Authentification en cours" type="load" />;
 };
+
+export default ProtectedRoute;

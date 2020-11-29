@@ -1,7 +1,7 @@
+import Notification from 'components/App/NotificationStack/Notification';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Col } from 'reactstrap';
-import Notification from './Notification';
 
 const mapState = (state: Redux.State) => ({
   notifications: state.app.notifications,

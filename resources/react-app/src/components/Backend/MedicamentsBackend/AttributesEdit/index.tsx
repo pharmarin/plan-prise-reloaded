@@ -1,4 +1,15 @@
+import debounce from 'debounce-promise';
+import { Field, FieldArray, Formik } from 'formik';
+import { Input, Submit } from 'formstrap';
+import axios from 'helpers/axios-clients';
+import useConfig from 'helpers/hooks/use-config';
+import useJsonApi from 'helpers/hooks/use-json-api';
 import React, { useState } from 'react';
+import { FaMinusCircle, FaPlusCircle } from 'react-icons/fa';
+import Select, { InputActionTypes } from 'react-select';
+import { AsyncPaginate } from 'react-select-async-paginate';
+import AsyncCreatableSelect from 'react-select/async-creatable';
+import { Option } from 'react-select/src/filters';
 import {
   Button,
   Card,
@@ -6,25 +17,14 @@ import {
   CardImgOverlay,
   Col,
   Form,
+  FormFeedback,
   FormGroup,
+  InputGroup,
+  InputGroupAddon,
   Label,
   Row,
   Spinner,
-  InputGroup,
-  InputGroupAddon,
-  FormFeedback,
 } from 'reactstrap';
-import axios from 'helpers/axios-clients';
-import useJsonApi from 'helpers/hooks/use-json-api';
-import debounce from 'debounce-promise';
-import { Input, Submit } from 'formstrap';
-import useConfig from 'helpers/hooks/use-config';
-import Select, { InputActionTypes } from 'react-select';
-import AsyncCreatableSelect from 'react-select/async-creatable';
-import { AsyncPaginate } from 'react-select-async-paginate';
-import { Formik, Field, FieldArray } from 'formik';
-import { FaMinusCircle, FaPlusCircle } from 'react-icons/fa';
-import { Option } from 'react-select/src/filters';
 import * as yup from 'yup';
 
 yup.setLocale({

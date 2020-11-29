@@ -1,8 +1,8 @@
+import SplashScreen from 'components/App/SplashScreen';
+import Card from 'components/PlanPrise/Interface/Card';
+import Select from 'components/PlanPrise/Interface/Select';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import Card from './Card';
-import Select from './Select';
-import SplashScreen from 'components/App/SplashScreen';
 import { selectPlanPriseState } from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = (state: Redux.State) => ({

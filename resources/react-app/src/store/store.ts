@@ -1,22 +1,21 @@
-import { combineReducers } from 'redux';
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
+import logger from 'redux-logger';
 import {
-  persistStore,
-  persistReducer,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
+  persistReducer,
+  persistStore,
   PURGE,
   REGISTER,
+  REHYDRATE,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import logger from 'redux-logger';
+import appReducer from 'store/app';
+import cacheReducer from 'store/cache';
 import saveToAPI from 'store/middleware/save-data';
-
-import appReducer from './app';
-import cacheReducer from './cache';
-import planPriseReducer from './plan-prise';
+import planPriseReducer from 'store/plan-prise';
 
 const rootReducer = combineReducers({
   app: appReducer,

@@ -1,18 +1,18 @@
-import React, { useRef, useState } from 'react';
-import { Field, Formik } from 'formik';
-import * as yup from 'yup';
-import errors from 'helpers/error-messages.json';
-import ReCAPTCHA from 'react-google-recaptcha';
 import useAxios from 'axios-hooks';
-import { useHistory } from 'react-router-dom';
-import Logo from 'components/App/Logo';
-import Label from 'base-components/Label';
-import Input from 'base-components/Input';
-import Submit from 'base-components/Submit';
 import Button from 'base-components/Button';
 import Card from 'base-components/Card';
-import FormGroup from 'base-components/FormGroup';
 import Form from 'base-components/Form';
+import FormGroup from 'base-components/FormGroup';
+import Input from 'base-components/Input';
+import Label from 'base-components/Label';
+import Submit from 'base-components/Submit';
+import Logo from 'components/App/Logo';
+import { Field, Formik } from 'formik';
+import errors from 'helpers/error-messages.json';
+import React, { useRef, useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { useHistory } from 'react-router-dom';
+import * as yup from 'yup';
 
 const InscriptionForm = () => {
   const [step, setStep] = useState(1);

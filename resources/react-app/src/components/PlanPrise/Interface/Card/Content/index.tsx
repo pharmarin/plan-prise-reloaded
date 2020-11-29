@@ -1,10 +1,10 @@
+import CustomInput from 'components/PlanPrise/Interface/Card/CustomInput';
+import { has, uniqueId } from 'lodash-es';
 import React from 'react';
+import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
 import { connect, ConnectedProps } from 'react-redux';
 import { Button, ButtonGroup, FormGroup, Input, Label } from 'reactstrap';
-import { has, uniqueId } from 'lodash-es';
 import { removeValue, setValue } from 'store/plan-prise';
-import CustomInput from '../CustomInput';
-import { BsPlusCircle, BsXCircle } from 'react-icons/bs';
 import { makeUniqueSelectorInstance } from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = () => {

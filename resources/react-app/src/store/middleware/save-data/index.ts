@@ -1,15 +1,15 @@
-import { debounce, fromPairs, get } from 'lodash-es';
 import axios from 'helpers/axios-clients';
-import { MiddlewareAPI, Dispatch, Action } from 'redux';
+import { requestUrl } from 'helpers/hooks/use-json-api';
+import { debounce, fromPairs, get } from 'lodash-es';
+import { Action, Dispatch, MiddlewareAPI } from 'redux';
+import { addNotification, removeNotification } from 'store/app';
 import {
   addItem,
-  setSettings,
-  setValue,
   removeItem,
   removeValue,
+  setSettings,
+  setValue,
 } from 'store/plan-prise';
-import { addNotification, removeNotification } from 'store/app';
-import { requestUrl } from 'helpers/hooks/use-json-api';
 
 const update = debounce(
   (

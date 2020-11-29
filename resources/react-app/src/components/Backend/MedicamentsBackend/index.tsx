@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
 import useAxios from 'axios-hooks';
+import SplashScreen from 'components/App/SplashScreen';
+import useJsonApi from 'helpers/hooks/use-json-api';
+import { get, merge } from 'lodash-es';
+import React, { useEffect, useState } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { updateAppNav } from 'store/app';
+import MedicamentEdit from './MedicamentEdit';
 import MedicamentTable from './MedicamentTable';
 import MedicamentPagination from './MedicamentTable/MedicamentPagination';
-import MedicamentEdit from './MedicamentEdit';
-import { get, merge } from 'lodash-es';
-import useJsonApi from 'helpers/hooks/use-json-api';
-import SplashScreen from 'components/App/SplashScreen';
-import { connect, ConnectedProps } from 'react-redux';
-import { updateAppNav } from 'store/app';
-import { useParams } from 'react-router-dom';
 
 const mapDispatch = {
   updateAppNav,

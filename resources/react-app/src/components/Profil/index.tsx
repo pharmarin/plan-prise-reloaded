@@ -1,12 +1,12 @@
+import Card from 'base-components/Card';
+import DeleteUser from 'components/Profil/DeleteUser';
+import EditInformations from 'components/Profil/EditInformations';
+import EditPassword from 'components/Profil/EditPassword';
 import React, { useContext, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { updateAppNav } from 'store/app';
 import { SanctumContext } from 'react-sanctum';
 import { ContextProps } from 'react-sanctum/build/SanctumContext';
-import Card from 'base-components/Card';
-import EditInformations from './EditInformations';
-import EditPassword from './EditPassword';
-import DeleteUser from './DeleteUser';
+import { updateAppNav } from 'store/app';
 
 const mapDispatch = {
   updateAppNav,

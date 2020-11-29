@@ -1,9 +1,8 @@
 import React from 'react';
-import { Button, Spinner } from 'reactstrap';
 import { BsFillExclamationOctagonFill } from 'react-icons/bs';
-
-import styles from './index.module.scss';
 import { Link } from 'react-router-dom';
+import { Button, Spinner } from 'reactstrap';
+import styles from './index.module.scss';
 
 const SplashScreen = ({
   button,

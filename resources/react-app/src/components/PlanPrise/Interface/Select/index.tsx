@@ -1,8 +1,8 @@
+import useLoadAsync from 'helpers/hooks/use-load-async';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { ActionMeta, ValueType } from 'react-select';
 import AsyncSelect from 'react-select/async';
-import useLoadAsync from 'helpers/hooks/use-load-async';
 import { addNotification } from 'store/app';
 import { cache, inCache } from 'store/cache';
 import { addItem, createContent } from 'store/plan-prise';

@@ -1,21 +1,20 @@
-import React, { useContext, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import { connect, ConnectedProps, useSelector } from 'react-redux';
+import ErrorBoundary from 'components/App/ErrorBoundary';
+import SplashScreen from 'components/App/SplashScreen';
+import Interface from 'components/PlanPrise/Interface';
+import Selection from 'components/PlanPrise/Selection';
+import Settings from 'components/PlanPrise/Settings';
+import { fromPlanPrise, generate } from 'helpers/make-pdf';
 import { get, isNumber } from 'lodash-es';
+import React, { useContext, useEffect } from 'react';
+import { connect, ConnectedProps, useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import { SanctumContext } from 'react-sanctum';
 import { updateAppNav } from 'store/app';
 import { loadContent, loadList, setShowSettings } from 'store/plan-prise';
-
-import Selection from './Selection';
-import Interface from './Interface';
-import Settings from './Settings';
-import ErrorBoundary from 'components/App/ErrorBoundary';
 import {
   selectPlanPriseID,
   selectPlanPriseState,
 } from 'store/plan-prise/selectors/plan-prise';
-import { SanctumContext } from 'react-sanctum';
-import SplashScreen from 'components/App/SplashScreen';
-import { fromPlanPrise, generate } from 'helpers/make-pdf';
 
 const mapState = (state: Redux.State) => ({
   id: selectPlanPriseID(state),

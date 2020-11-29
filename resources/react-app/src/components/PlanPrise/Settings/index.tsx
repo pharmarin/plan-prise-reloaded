@@ -1,18 +1,17 @@
+import useConfig from 'helpers/hooks/use-config';
+import { ceil, chunk, get } from 'lodash-es';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {
   Col,
-  Modal,
-  Row,
-  ModalHeader,
-  ModalBody,
-  FormGroup,
   CustomInput,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Row,
 } from 'reactstrap';
-import { ceil, chunk, get } from 'lodash-es';
-
 import { setSettings } from 'store/plan-prise';
-import useConfig from 'helpers/hooks/use-config';
 
 const mapState = (state: Redux.State) => ({
   settings: state.planPrise.content.data?.custom_settings || {},

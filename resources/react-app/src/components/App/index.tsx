@@ -1,24 +1,24 @@
-import React, { Suspense, useEffect, useState } from 'react';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/es/integration/react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { Sanctum } from 'react-sanctum';
-import LRU from 'lru-cache';
-import { store, persistor } from 'store/store';
-import SplashScreen from './SplashScreen';
+import useAxios, { configure } from 'axios-hooks';
+import Container from 'base-components/Container';
+import Accueil from 'components/Accueil';
+import Authentification, { Role } from 'components/App/Authentification';
+import ErrorBoundary from 'components/App/ErrorBoundary';
+import NavigationBar from 'components/App/Navigation/NavigationBar';
+import ProtectedRoute from 'components/App/Navigation/ProtectedRoute';
+import NotificationStack from 'components/App/NotificationStack';
+import SplashScreen from 'components/App/SplashScreen';
+import Backend from 'components/Backend';
+import PlanPrise from 'components/PlanPrise';
+import Profil from 'components/Profil';
 import axios from 'helpers/axios-clients';
 import useConfig, { storeConfig } from 'helpers/hooks/use-config';
-import NotificationStack from './NotificationStack';
-import useAxios, { configure } from 'axios-hooks';
-import Accueil from 'components/Accueil';
-import Authentification, { Role } from './Authentification';
-import ProtectedRoute from './Navigation/ProtectedRoute';
-import ErrorBoundary from './ErrorBoundary';
-import Profil from 'components/Profil';
-import PlanPrise from 'components/PlanPrise';
-import Backend from 'components/Backend';
-import NavigationBar from './Navigation/NavigationBar';
-import Container from 'base-components/Container';
+import LRU from 'lru-cache';
+import React, { Suspense, useEffect, useState } from 'react';
+import { Provider } from 'react-redux';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Sanctum } from 'react-sanctum';
+import { PersistGate } from 'redux-persist/es/integration/react';
+import { persistor, store } from 'store/store';
 
 const sanctumConfig = {
   api_url: '',
@@ -66,8 +66,7 @@ const App = () => {
     <Provider store={store}>
       <PersistGate
         loading={<SplashScreen type="load" message="Chargement en cours..." />}
-        persistor={persistor}
-      >
+        persistor={persistor}>
         <NotificationStack />
         <Sanctum config={sanctumConfig}>
           <Router basename="/">
@@ -120,8 +119,7 @@ const App = () => {
                             type="load"
                             message="Chargement du module"
                           />
-                        }
-                      >
+                        }>
                         <Backend />
                       </Suspense>
                     </ErrorBoundary>

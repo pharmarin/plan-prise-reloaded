@@ -1,20 +1,20 @@
+import classNames from 'classnames';
+import { uniqueId } from 'lodash-es';
 import React, { useState } from 'react';
+import { BsSearch } from 'react-icons/bs';
+import ReactPlaceholder from 'react-placeholder';
 import { connect, ConnectedProps } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import {
-  Row,
   Col,
-  InputGroup,
+  Form,
+  FormGroup,
   Input,
+  InputGroup,
   InputGroupAddon,
   InputGroupText,
-  FormGroup,
-  Form,
+  Row,
 } from 'reactstrap';
-import classNames from 'classnames';
-import { BsSearch } from 'react-icons/bs';
-import ReactPlaceholder from 'react-placeholder';
-import { uniqueId } from 'lodash-es';
 import { selectListState } from 'store/plan-prise/selectors/list';
 
 const Square: React.FC = ({ children }) => {

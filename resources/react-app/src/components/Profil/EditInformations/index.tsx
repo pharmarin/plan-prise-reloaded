@@ -1,15 +1,15 @@
 import useAxios from 'axios-hooks';
+import Button from 'base-components/Button';
+import Form from 'base-components/Form';
+import FormGroup from 'base-components/FormGroup';
+import Input from 'base-components/Input';
+import Label from 'base-components/Label';
+import Submit from 'base-components/Submit';
 import { Formik } from 'formik';
+import errors from 'helpers/error-messages.json';
 import { requestUrl } from 'helpers/hooks/use-json-api';
 import React from 'react';
 import * as yup from 'yup';
-import errors from 'helpers/error-messages.json';
-import Form from 'base-components/Form';
-import FormGroup from 'base-components/FormGroup';
-import Label from 'base-components/Label';
-import Input from 'base-components/Input';
-import Button from 'base-components/Button';
-import Submit from 'base-components/Submit';
 
 const EditInformations = ({
   user,

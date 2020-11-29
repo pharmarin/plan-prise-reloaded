@@ -1,9 +1,8 @@
+import App from 'components/App';
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-import './styles.css';
-import App from 'components/App';
 import * as serviceWorker from './serviceWorker';
+import './styles.css';
 
 if (document.getElementById('root')) {
   const root = document.getElementById('root');

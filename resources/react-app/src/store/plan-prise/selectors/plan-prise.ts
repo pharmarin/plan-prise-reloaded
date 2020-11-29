@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import useConfig from 'helpers/hooks/use-config';
-import { typeToInt } from 'helpers/type-switcher';
 import switchVoiesAdministration from 'helpers/switch-voie-administration';
+import { typeToInt } from 'helpers/type-switcher';
 import { get } from 'lodash-es';
 
 const castArray = (value: any) => (Array.isArray(value) ? value : [value]);

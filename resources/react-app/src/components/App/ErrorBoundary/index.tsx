@@ -1,5 +1,5 @@
+import SplashScreen from 'components/App/SplashScreen';
 import React from 'react';
-import SplashScreen from '../SplashScreen';
 
 export default class ErrorBoundary extends React.Component<
   { returnTo: string },
