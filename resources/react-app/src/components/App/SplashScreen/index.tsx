@@ -2,7 +2,7 @@ import React from 'react';
 import { BsFillExclamationOctagonFill } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { Button, Spinner } from 'reactstrap';
-import styles from './index.module.scss';
+import styles from './index.module.css';
 
 const SplashScreen = ({
   button,
