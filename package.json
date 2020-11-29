@@ -41,39 +41,9 @@
     "typescript": "^3.9.3",
     "yup": "^0.29.3"
   },
-  "scripts": {
-    "react:start": "react-scripts start",
-    "react:analyze": "source-map-explorer 'public/static/js/*.js'",
-    "build": "react-scripts build",
-    "react:test": "react-scripts test",
-    "react:eject": "react-scripts eject",
-    "tailwind:build": "postcss 'resources/react-app/src/styles/styles.css' -o resources/react-app/src/styles.css",
-    "tailwind:watch": "postcss 'resources/react-app/src/styles/styles.css' -o resources/react-app/src/styles.css -w",
-    "laravel:serve": "php artisan serve",
-    "laravel:queue": "php artisan queue:work",
-    "laravel:schedule": "php artisan schedule:run >> /dev/null 2>&1",
-    "postinstall": "patch-package",
-    "prebuild": "yarn tailwind:build",
-    "start": "run-p react:start laravel:* tailwind:watch"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "proxy": "http://localhost:8000",
   "devDependencies": {
     "@prettier/plugin-php": "^0.14.3",
+    "@types/autoprefixer": "*",
     "@types/bootstrap": "*",
     "@types/classnames": "^2.2.10",
     "@types/debounce-promise": "*",
@@ -101,5 +71,42 @@
     "prettier": "^2.1.1",
     "react-app-rewired": "^2.1.6",
     "source-map-explorer": "^2.5.0"
-  }
+  },
+  "scripts": {
+    "react:start": "react-scripts start",
+    "react:analyze": "source-map-explorer 'public/static/js/*.js'",
+    "build": "react-scripts build",
+    "react:test": "react-scripts test",
+    "react:eject": "react-scripts eject",
+    "tailwind:build": "postcss 'resources/react-app/src/styles/styles.css' -o resources/react-app/src/styles.css",
+    "tailwind:watch": "postcss 'resources/react-app/src/styles/styles.css' -o resources/react-app/src/styles.css -w",
+    "laravel:serve": "php artisan serve",
+    "laravel:queue": "php artisan queue:work",
+    "laravel:schedule": "php artisan schedule:run >> /dev/null 2>&1",
+    "postinstall": "patch-package",
+    "prebuild": "yarn tailwind:build",
+    "start": "run-p react:start laravel:* tailwind:watch"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "plugin:you-dont-need-lodash-underscore/all-warn"
+    ],
+    "plugins": [
+      "you-dont-need-lodash-underscore"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:8000"
 }
