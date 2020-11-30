@@ -1,12 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": "resources/react-app/src",
+    "baseUrl": "src",
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -21,7 +17,5 @@
     "jsx": "react",
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "resources/react-app/src"
-  ]
+  "include": ["src"]
 }
