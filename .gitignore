@@ -1,12 +1,15 @@
-/public
-/storage/*.key
-/vendor
+resources/react-app/node_modules/**/*
+resources/react-app/.eslintcache
+resources/react-app/public
 .env
 .phpunit.result.cache
 composer.lock
 **/.DS_Store
 **/._*
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+vendor
+storage
 
 # misc
 .DS_Store
@@ -20,4 +23,3 @@ _ide_helper.php
 # build generated files
 resources/views/app.blade.php
 resources/react-app/src/styles.css
-resources/react-app/node_modules/**/*
