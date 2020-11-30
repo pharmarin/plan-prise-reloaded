@@ -62,7 +62,7 @@ const Modal: React.FC<{ show: boolean }> & {
         <Transition
           className="fixed inset-0 transition-opacity"
           aria-hidden="true"
-          show={show}
+          show={show || false}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -85,7 +85,7 @@ const Modal: React.FC<{ show: boolean }> & {
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-headline"
-          show={show}
+          show={show || false}
           enter="ease-out duration-300"
           enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           enterTo="opacity-100 translate-y-0 sm:scale-100"

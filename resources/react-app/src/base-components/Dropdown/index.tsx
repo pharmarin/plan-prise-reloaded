@@ -1,6 +1,6 @@
-import React from 'react';
-import classNames from 'classnames';
 import { Menu, Transition } from '@headlessui/react';
+import classNames from 'classnames';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Dropdown: React.FC<{
@@ -14,7 +14,7 @@ const Dropdown: React.FC<{
         <React.Fragment>
           <Menu.Button className={buttonClass}>{buttonContent}</Menu.Button>
           <Transition
-            show={open}
+            show={open || false}
             enter="transition ease-out duration-100"
             enterFrom="transform opacity-0 scale-95"
             enterTo="transform opacity-100 scale-100"
@@ -23,7 +23,7 @@ const Dropdown: React.FC<{
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white">
-              {items.map((item) => (
+              {(items || []).map((item) => (
                 <Menu.Item key={item.path}>
                   {({ active }) => (
                     <Link
