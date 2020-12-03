@@ -1,14 +1,19 @@
 module.exports = {
   purge: [
-    'resources/react-app/src/**/*.js',
-    'resources/react-app/src/**/*.jsx',
-    'resources/react-app/src/**/*.ts',
-    'resources/react-app/src/**/*.tsx',
-    'resources/react-app/public/**/*.html',
+    './src/**/*.js',
+    './src/**/*.jsx',
+    './src/**/*.ts',
+    './src/**/*.tsx',
+    './public/**/*.html',
   ],
   theme: {
     extend: {},
   },
-  variants: {},
-  plugins: [require('@tailwindcss/forms')],
+  variants: {
+    extend: { borderRadius: ['first', 'last'], borderColor: ['important'] },
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@neojp/tailwindcss-important-variant'),
+  ],
 };
