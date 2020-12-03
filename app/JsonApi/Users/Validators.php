@@ -34,7 +34,7 @@ class Validators extends AbstractValidators
    * @var string[]|null
    *      the allowed filters, an empty array for none allowed, or null to allow all.
    */
-  protected $allowedFilteringParameters = [];
+  protected $allowedFilteringParameters = ["approved_at"];
 
   /**
    * Get resource validation rules.
@@ -171,6 +171,18 @@ class Validators extends AbstractValidators
    */
   protected function queryRules(): array
   {
+    if (!request()->isMethod("PATCH") && !Auth::user()->admin) {
+      throw new JsonApiException(
+        Error::fromArray([
+          'status' => 403,
+          'code' => 'not-admin',
+          'title' => 'Vous ne pouvez pas effectuer cette action',
+          'detail' =>
+            'Seuls les administrateurs peuvent accéder à cette requête',
+        ])
+      );
+    }
+
     return [
         //
       ];

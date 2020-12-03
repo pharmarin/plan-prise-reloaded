@@ -40,11 +40,14 @@ const Select = ({
   const { loadGeneric } = useLoadAsync();
 
   const handleChange = (
-    value: ValueType<{
-      label: string;
-      value: string;
-      type: Models.MedicamentIdentity['type'];
-    }>,
+    value: ValueType<
+      {
+        label: string;
+        value: string;
+        type: Models.MedicamentIdentity['type'];
+      },
+      false
+    >,
     { action }: ActionMeta<{ label: string; value: string; type: string }>
   ) => {
     if (

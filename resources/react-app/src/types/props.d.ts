@@ -1,3 +1,5 @@
+type Colors = 'gray' | 'green' | 'light' | 'red' | 'link' | 'white';
+
 declare namespace Props {
   declare namespace Backend {
     interface AttributesEdit {
@@ -40,13 +42,10 @@ declare namespace Props {
         id: Models.App.User['id'];
         email: Models.App.User['attributes']['email'];
       }
-      interface NavbarLink {
+      type NavbarLink = {
         args?: { id: number };
         className?: string;
-        label: string;
-        light?: boolean;
-        path: string;
-      }
+      } & Redux.App['navigation']['returnTo'];
       interface ProtectedRoute {
         admin?: boolean;
         children: JSX.Element;

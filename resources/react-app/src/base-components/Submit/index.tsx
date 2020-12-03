@@ -6,7 +6,7 @@ import React from 'react';
 const Submit: React.FC<{
   block?: boolean;
   className?: string;
-  color?: string;
+  color?: Colors;
   disabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   withLoading?: boolean;
@@ -14,19 +14,20 @@ const Submit: React.FC<{
 }> = ({
   children,
   className,
-  color,
+  color = 'gray',
   disabled,
   withLoading,
   withSpinner,
   ...props
 }) => {
-  const formikContext = useFormikContext(),
-    isSubmitting = formikContext.isSubmitting;
+  const formikContext = useFormikContext();
+
+  const isSubmitting = formikContext ? formikContext.isSubmitting : false;
 
   return (
     <Button
       className={className}
-      color={color || 'gray'}
+      color={color}
       disabled={disabled ? disabled : withLoading ? isSubmitting : false}
       type="submit"
       {...props}

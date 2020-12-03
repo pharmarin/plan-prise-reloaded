@@ -68,6 +68,7 @@ declare namespace Models {
         email: string;
         rpps?: string;
         status: 'student' | 'pharmacist';
+        created_at: string;
       };
     }
   }

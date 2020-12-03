@@ -1,18 +1,19 @@
 import { Menu, Transition } from '@headlessui/react';
+import Button from 'base-components/Button';
 import classNames from 'classnames';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Dropdown: React.FC<{
-  buttonClass?: string;
-  buttonContent: React.ReactElement;
-  items: { label: string; path: string }[];
-}> = ({ buttonClass, buttonContent, items }) => {
+  buttonContent: React.ReactElement | string;
+  buttonProps?: any;
+  items: ({ label: string } & ({ path: string } | { action: () => void }))[];
+}> = ({ buttonContent, buttonProps, items }) => {
   return (
     <Menu>
       {({ open }) => (
-        <React.Fragment>
-          <Menu.Button className={buttonClass}>{buttonContent}</Menu.Button>
+        <div className="relative">
+          <Menu.Button {...buttonProps}>{buttonContent}</Menu.Button>
           <Transition
             show={open || false}
             enter="transition ease-out duration-100"
@@ -22,25 +23,39 @@ const Dropdown: React.FC<{
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white">
-              {(items || []).map((item) => (
-                <Menu.Item key={item.path}>
-                  {({ active }) => (
-                    <Link
-                      className={classNames(
-                        'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100',
-                        { 'bg-blue-500': active }
-                      )}
-                      to={item.path}
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+            <Menu.Items className="origin-top-right right-0 absolute mt-2 w-full rounded-md shadow-lg bg-white z-10">
+              {(items || []).map((item, index) => (
+                <Menu.Item key={index}>
+                  {({ active }) =>
+                    'path' in item ? (
+                      <Link
+                        className={classNames(
+                          'block px-4 py-2 text-sm normal-case! font-medium! tracking-normal! text-gray-700 hover:bg-gray-100 w-full',
+                          { 'bg-green-200': active }
+                        )}
+                        to={item.path}
+                      >
+                        {item.label}
+                      </Link>
+                    ) : 'action' in item ? (
+                      <Button
+                        className={classNames(
+                          'block text-sm normal-case! font-medium! tracking-normal! text-gray-700 hover:bg-gray-100 w-full',
+                          { 'bg-green-200': active }
+                        )}
+                        color="link"
+                        onClick={item.action}
+                        size="sm"
+                      >
+                        {item.label}
+                      </Button>
+                    ) : null
+                  }
                 </Menu.Item>
               ))}
             </Menu.Items>
           </Transition>
-        </React.Fragment>
+        </div>
       )}
     </Menu>
   );

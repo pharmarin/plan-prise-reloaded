@@ -10,7 +10,13 @@ module.exports = {
     extend: {},
   },
   variants: {
-    extend: { borderRadius: ['first', 'last'], borderColor: ['important'] },
+    extend: {
+      borderRadius: ['first', 'last'],
+      borderColor: ['important'],
+      fontSize: ['important'],
+      fontStyle: ['important'],
+      fontWeight: ['important'],
+    },
   },
   plugins: [
     require('@tailwindcss/forms'),

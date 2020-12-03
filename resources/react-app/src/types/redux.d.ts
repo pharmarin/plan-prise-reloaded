@@ -7,8 +7,13 @@ declare namespace Redux {
         path: string;
       }[];
       returnTo?: {
-        label: string;
-        path: string;
+        label?: string;
+        component?: {
+          name: string;
+          props?: any;
+        };
+        path?: string;
+        event?: string;
       };
       title: string;
     };

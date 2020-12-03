@@ -37,6 +37,7 @@ class Schema extends SchemaProvider
       'email' => $resource->email,
       'status' => $resource->status,
       'rpps' => $resource->rpps,
+      'created_at' => $resource->created_at
     ];
   }
 }

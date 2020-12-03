@@ -53,7 +53,10 @@ const NavigationBar = ({ options, returnTo, title }: NavigationBarProps) => {
             <Spinner color="text-green-600" />
           ) : authenticated ? (
             <Dropdown
-              buttonClass="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+              buttonProps={{
+                className:
+                  'bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white',
+              }}
               buttonContent={
                 <React.Fragment>
                   <span className="sr-only">Ouvrir le menu utilisateur</span>

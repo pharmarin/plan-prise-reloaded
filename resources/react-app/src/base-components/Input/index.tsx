@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { getIn, useFormikContext } from 'formik';
 import React from 'react';
 
@@ -8,36 +9,24 @@ const Feedback: React.FC = ({ children }) => (
 const Input = React.forwardRef<
   HTMLInputElement,
   {
-    accept?: string;
-    autoComplete?: string;
-    disabled?: boolean;
-    multiple?: boolean;
     name: string;
-    onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    placeholder?: string;
-    required?: boolean;
-    type?: string;
-    value?: string;
     withFeedback?: boolean;
     withLoading?: boolean;
-  }
+  } & React.ComponentPropsWithRef<'input'>
 >(
   (
     {
-      accept,
-      autoComplete,
+      className,
       disabled,
-      multiple,
       name,
       onBlur,
       onChange,
       placeholder,
-      required,
       type,
       value: propsValue,
       withFeedback,
       withLoading,
+      ...props
     },
     ref
   ) => {
@@ -69,13 +58,15 @@ const Input = React.forwardRef<
         {type === 'file' ? (
           <div className="relative">
             <input
-              accept={accept}
-              type={type}
-              className="relative w-full h-10 m-0 opacity-0 z-10"
+              className={classNames(
+                'relative w-full h-10 m-0 opacity-0 z-10',
+                className
+              )}
               name={name}
               onChange={handleChange}
               onBlur={handleBlur}
-              required={required}
+              type={type}
+              {...props}
             />
             <div className="flex absolute top-0 right-0 left-0 hover:cursor-pointer">
               <label className="inline-block flex-grow h-10 p-2 text-gray-500 bg-white-900 border-gray-300 border border-l-0 rounded-l-md">
@@ -88,18 +79,19 @@ const Input = React.forwardRef<
           </div>
         ) : (
           <input
-            autoComplete={autoComplete}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
+            className={classNames(
+              'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50',
+              className
+            )}
             disabled={disabled || withLoading ? isSubmitting : false}
-            multiple={multiple}
             name={name}
             onBlur={handleBlur}
             onChange={handleChange}
             placeholder={placeholder}
             ref={ref}
-            required={required}
             type={type || 'text'}
             value={value}
+            {...props}
           />
         )}
         {withFeedback && touch && error ? <Feedback>{error}</Feedback> : null}
