@@ -78,12 +78,8 @@
     "laravel:serve": "cd ../.. && php artisan serve",
     "laravel:queue": "cd ../.. && php artisan queue:work",
     "laravel:schedule": "cd ../.. && php artisan schedule:run >> /dev/null 2>&1",
-    "styleguide": "styleguidist server",
-    "styleguide:build": "styleguidist build",
     "postinstall": "patch-package",
-    "prebuild": "yarn tailwind:build",
-    "start": "run-p react:start laravel:*",
-    "start:with-css": "run-p start tailwind:watch"
+    "start": "run-p react:start laravel:*"
   },
   "eslintConfig": {
     "extends": [
