@@ -160,6 +160,7 @@ const UsersBackend: React.FC = () => {
           },
           all: { label: 'Tous les utilisateurs', filter: undefined },
         }}
+        searchKey="name"
         type="users"
       />
     </div>
