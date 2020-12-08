@@ -14,7 +14,7 @@ const SplashScreen = ({
       <div className="m-auto flex flex-col content-center items-center max-w-5xl">
         <div className="m-0 ml-4 space-x-6 flex flex-row items-center text-gray-600 text-7xl">
           {type === 'load' && (
-            <Spinner className="h-20 w-20 flex-shrink-0" strokeWidth={2} />
+            <Spinner className="p-3 h-20 w-20 flex-shrink-0" strokeWidth={2} />
           )}
           {type === 'danger' && (
             <Danger className="h-20 w-20 flex-shrink-0 text-red-600" fill />

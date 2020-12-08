@@ -7,7 +7,7 @@ const Spinner: React.FC<React.ComponentPropsWithoutRef<'svg'>> = ({
 }) => {
   return (
     <Icon
-      className={joinClassNames('animate-spin p-3', className)}
+      className={joinClassNames('animate-spin', className)}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
