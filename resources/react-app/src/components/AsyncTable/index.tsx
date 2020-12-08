@@ -6,6 +6,7 @@ import Input from 'components/Input';
 import Spinner from 'components/Spinner';
 import Table from 'components/Table';
 import { requestUrl } from 'helpers/hooks/use-json-api';
+import { debounce } from 'lodash';
 import React, { useState } from 'react';
 
 const AsyncTable: React.FC<
@@ -30,11 +31,24 @@ const AsyncTable: React.FC<
     Object.keys(filters)[0]
   );
 
+  const [search, setSearch] = useState('');
+
+  const setSearchDebounced = debounce(
+    (query: string) => setSearch(query),
+    2000
+  );
+
   const [{ data, error, loading }, reload] = useAxios<
     IServerResponse<Models.App.User[]>
   >({
     url: requestUrl(type, {
-      filter: filters[filter]?.filter,
+      filter:
+        search.length > 0
+          ? {
+              field: 'name',
+              value: `${search}`,
+            }
+          : filters[filter]?.filter,
     }).url,
   });
 
@@ -50,6 +64,7 @@ const AsyncTable: React.FC<
               name="search"
               type="search"
               placeholder="Rechercher..."
+              onChange={(event) => setSearchDebounced(event.target.value)}
             />
             <div className="absolute top-0 left-0 inline-flex items-center p-2">
               <Search className="w-6 h-6 text-gray-400" />

@@ -47,6 +47,12 @@ class Adapter extends AbstractAdapter
    */
   protected function filter($query, Collection $filters)
   {
-    $this->filterWithScopes($query, $filters);
+    if ($name = $filters->get('name')) {
+      $query
+        ->where('users.last_name', 'like', "{$name}%")
+        ->orWhere('users.first_name', 'like', "{$name}%");
+    } else {
+      $this->filterWithScopes($query, $filters);
+    }
   }
 }
