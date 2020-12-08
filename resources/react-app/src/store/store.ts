@@ -1,6 +1,5 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
-import { reducer as jsonApi, setAxiosConfig } from 'redux-json-api';
 import logger from 'redux-logger';
 import {
   FLUSH,
@@ -20,7 +19,6 @@ import planPriseReducer from 'store/plan-prise';
 
 const rootReducer = combineReducers({
   app: appReducer,
-  api: jsonApi,
   cache: persistReducer({ key: 'pp_cache', storage }, cacheReducer),
   planPrise: planPriseReducer,
 });
@@ -35,11 +33,5 @@ let store = configureStore({
 });
 
 let persistor = persistStore(store);
-
-store.dispatch(
-  setAxiosConfig({
-    baseUrl: 'http://localhost:3000/api/v1',
-  })
-);
 
 export { store, persistor };

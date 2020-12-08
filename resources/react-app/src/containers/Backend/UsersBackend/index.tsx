@@ -1,9 +1,85 @@
+import useAxios from 'axios-hooks';
 import AsyncTable from 'components/AsyncTable';
 import Avatar from 'components/Avatar';
+import Button from 'components/Button';
+import Check from 'components/Icons/Check';
+import Trash from 'components/Icons/Trash';
 import Pill from 'components/Pill';
+import Spinner from 'components/Spinner';
+import { requestUrl } from 'helpers/hooks/use-json-api';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateAppNav } from 'store/app';
+
+const ApproveButton: React.FC<{
+  id: Models.App.User['id'];
+  onSuccess: () => void;
+}> = ({ id, onSuccess }) => {
+  const [{ loading }, approveUser] = useAxios(
+    { url: requestUrl('users', { id }).url, method: 'PATCH' },
+    { manual: true }
+  );
+
+  return (
+    <Button
+      color="green"
+      disabled={loading}
+      size="sm"
+      onClick={async () => {
+        try {
+          await approveUser({
+            data: {
+              data: {
+                id,
+                type: 'users',
+                attributes: {
+                  approved_at: new Date(),
+                },
+              },
+            },
+          });
+          onSuccess();
+        } catch {
+          console.error(
+            "Une erreur est survenue lors de l'approbation de l'utilisateur"
+          );
+        }
+      }}
+    >
+      {loading ? <Spinner /> : <Check />}
+    </Button>
+  );
+};
+
+const DeleteButton: React.FC<{
+  id: Models.App.User['id'];
+  onSuccess: () => void;
+}> = ({ id, onSuccess }) => {
+  const [{ loading }, deleteUser] = useAxios(
+    { url: requestUrl('users', { id }).url, method: 'DELETE' },
+    { manual: true }
+  );
+
+  return (
+    <Button
+      color="red"
+      disabled={loading}
+      size="sm"
+      onClick={async () => {
+        try {
+          await deleteUser();
+          onSuccess();
+        } catch {
+          console.error(
+            "Une erreur est survenue lors de la suppression de l'utilisateur"
+          );
+        }
+      }}
+    >
+      {loading ? <Spinner /> : <Trash />}
+    </Button>
+  );
+};
 
 const UsersBackend: React.FC = () => {
   const dispatch = useDispatch();
@@ -30,8 +106,9 @@ const UsersBackend: React.FC = () => {
           { id: 'email', label: 'Adresse mail' },
           { id: 'status', label: 'Statut' },
           { id: 'signup_date', label: "Date d'inscription" },
+          { id: 'actions', label: '' },
         ]}
-        extractData={(columnId, user: Models.App.User) => {
+        extractData={(filter, columnId, user: Models.App.User, forceReload) => {
           switch (columnId) {
             case 'avatar':
               return (
@@ -59,6 +136,15 @@ const UsersBackend: React.FC = () => {
             case 'signup_date':
               return new Date(user.attributes.created_at).toLocaleDateString(
                 'fr-FR'
+              );
+            case 'actions':
+              return (
+                <div className="flex flex-row justify-end space-x-2">
+                  {filter === 'pending' && (
+                    <ApproveButton id={user.id} onSuccess={forceReload} />
+                  )}
+                  <DeleteButton id={user.id} onSuccess={forceReload} />
+                </div>
               );
             default:
               return '';

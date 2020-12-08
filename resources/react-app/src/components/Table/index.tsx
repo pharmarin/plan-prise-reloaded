@@ -52,18 +52,21 @@ const TableRow: React.FC = ({ children }) => {
   return <tr>{children}</tr>;
 };
 
-const Table: React.FC<{ stripped?: boolean }> & {
+const Table: React.FC<
+  React.ComponentPropsWithoutRef<'table'> & { stripped?: boolean }
+> & {
   Body: typeof TableBody;
   Cell: typeof TableCell;
   Head: typeof TableHead;
   HeadCell: typeof TableHeadCell;
   Row: typeof TableRow;
-} = ({ children, stripped }) => {
+} = ({ children, className, stripped }) => {
   return (
     <table
       className={joinClassNames(
         'bg-white rounded-lg shadow-md overflow-y-auto border-collapse table-auto w-full whitespace-no-wrap relative',
-        { 'table-striped': stripped }
+        { 'table-striped': stripped },
+        className
       )}
     >
       {children}

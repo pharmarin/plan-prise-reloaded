@@ -7,8 +7,8 @@ use CloudCreativity\LaravelJsonApi\Document\Error\Error;
 use CloudCreativity\LaravelJsonApi\Exceptions\JsonApiException;
 use CloudCreativity\LaravelJsonApi\Validation\AbstractValidators;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use function App\Helpers\verifyPassword;
 
 class Validators extends AbstractValidators
 {
@@ -34,7 +34,7 @@ class Validators extends AbstractValidators
    * @var string[]|null
    *      the allowed filters, an empty array for none allowed, or null to allow all.
    */
-  protected $allowedFilteringParameters = ["approved_at"];
+  protected $allowedFilteringParameters = ['approved_at'];
 
   /**
    * Get resource validation rules.
@@ -104,22 +104,8 @@ class Validators extends AbstractValidators
   {
     $validator = parent::update($record, $document);
 
-    if (isset($document['data']['attributes']['current_password'])) {
-      $user = Auth::user();
-
-      $current_password = $document['data']['attributes']['current_password'];
-
-      if (!Hash::check($current_password, $user->password)) {
-        throw new JsonApiException(
-          Error::fromArray([
-            'status' => 401,
-            'code' => 'password-mismatch',
-            'title' => 'Password mismatch',
-            'detail' =>
-              'Le mot de passe ne correspond pas au mot de passe enregistré',
-          ])
-        );
-      }
+    if (!Auth::user()->admin) {
+      verifyPassword();
     }
 
     return $validator;
@@ -133,32 +119,8 @@ class Validators extends AbstractValidators
   {
     $validator = parent::delete($record);
 
-    if (!request()->has('meta.password')) {
-      throw new JsonApiException(
-        Error::fromArray([
-          'status' => 401,
-          'code' => 'password-needed',
-          'title' => 'Password needed',
-          'detail' =>
-            'La confirmation du mot de passe est obligatoire lors de la suppression du compte',
-        ])
-      );
-    }
-
-    $user = Auth::user();
-
-    $current_password = request()->input('meta.password');
-
-    if (!Hash::check($current_password, $user->password)) {
-      throw new JsonApiException(
-        Error::fromArray([
-          'status' => 401,
-          'code' => 'password-mismatch',
-          'title' => 'Password mismatch',
-          'detail' =>
-            'Le mot de passe ne correspond pas au mot de passe enregistré',
-        ])
-      );
+    if (!Auth::user()->admin) {
+      verifyPassword();
     }
 
     return $validator;
@@ -171,7 +133,7 @@ class Validators extends AbstractValidators
    */
   protected function queryRules(): array
   {
-    if (!request()->isMethod("PATCH") && !Auth::user()->admin) {
+    if (!request()->isMethod('PATCH') && !Auth::user()->admin) {
       throw new JsonApiException(
         Error::fromArray([
           'status' => 403,

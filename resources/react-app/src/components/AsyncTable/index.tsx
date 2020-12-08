@@ -11,7 +11,12 @@ import React, { useState } from 'react';
 const AsyncTable: React.FC<
   {
     columns: { id: string; label: string }[];
-    extractData: (columnId: string, data: any) => string | React.ReactElement;
+    extractData: (
+      filter: React.ReactText,
+      columnId: string,
+      data: any,
+      forceReload?: any
+    ) => string | React.ReactElement;
     filters?: {
       [key: string]: {
         label: string;
@@ -25,7 +30,7 @@ const AsyncTable: React.FC<
     Object.keys(filters)[0]
   );
 
-  const [{ data, error, loading }] = useAxios<
+  const [{ data, error, loading }, reload] = useAxios<
     IServerResponse<Models.App.User[]>
   >({
     url: requestUrl(type, {
@@ -72,7 +77,7 @@ const AsyncTable: React.FC<
           </div>
         )}
       </div>
-      <Table stripped>
+      <Table className="text-center" stripped>
         <Table.Head>
           <Table.Row>
             {columns.map((column) => (
@@ -106,7 +111,7 @@ const AsyncTable: React.FC<
               <Table.Row key={row.id}>
                 {columns.map((column) => (
                   <Table.Cell key={column.id}>
-                    {extractData(column.id, row)}
+                    {extractData(filter, column.id, row, reload)}
                   </Table.Cell>
                 ))}
               </Table.Row>
