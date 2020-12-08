@@ -1,5 +1,5 @@
 import useAxios from 'axios-hooks';
-import SplashScreen from 'containers/App/SplashScreen';
+import SplashScreen from 'components/SplashScreen';
 import AttributesEdit from 'containers/Backend/MedicamentsBackend/AttributesEdit';
 import PrecautionEdit from 'containers/Backend/MedicamentsBackend/PrecautionEdit';
 import ConditionalWrapper from 'containers/Utility/ConditionalWrapper';

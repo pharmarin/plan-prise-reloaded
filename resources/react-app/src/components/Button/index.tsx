@@ -1,5 +1,5 @@
-import classNames from 'classnames';
 import React from 'react';
+import joinClassNames from 'utility/class-names';
 
 const Button: React.FC<{
   block?: boolean;
@@ -23,7 +23,7 @@ const Button: React.FC<{
 }) => {
   return (
     <button
-      className={classNames(
+      className={joinClassNames(
         'inline-flex items-center justify-center',
         'border border-transparent rounded-md',
         'font-semibold text-xs text-white uppercase tracking-widest',

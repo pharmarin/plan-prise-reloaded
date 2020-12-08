@@ -1,12 +1,12 @@
-import classNames from 'classnames';
 import React from 'react';
+import joinClassNames from 'utility/class-names';
 
 const Card: React.FC<
   { className?: string } & React.ComponentPropsWithRef<'div'>
 > = ({ children, className, ...props }) => {
   return (
     <div
-      className={classNames(
+      className={joinClassNames(
         'w-full px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg',
         className
       )}

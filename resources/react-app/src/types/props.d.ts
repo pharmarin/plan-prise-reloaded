@@ -1,4 +1,14 @@
-type Colors = 'gray' | 'green' | 'light' | 'red' | 'link' | 'white';
+type Colors =
+  | 'blue'
+  | 'gray'
+  | 'green'
+  | 'light'
+  | 'pink'
+  | 'purple'
+  | 'red'
+  | 'link'
+  | 'white'
+  | 'yellow';
 
 declare namespace Props {
   declare namespace Backend {

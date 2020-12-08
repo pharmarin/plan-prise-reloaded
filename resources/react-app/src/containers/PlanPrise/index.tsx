@@ -1,5 +1,5 @@
+import SplashScreen from 'components/SplashScreen';
 import ErrorBoundary from 'containers/App/ErrorBoundary';
-import SplashScreen from 'containers/App/SplashScreen';
 import Interface from 'containers/PlanPrise/Interface';
 import Selection from 'containers/PlanPrise/Selection';
 import Settings from 'containers/PlanPrise/Settings';

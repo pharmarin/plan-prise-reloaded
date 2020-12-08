@@ -1,12 +1,12 @@
 import useAxios, { configure } from 'axios-hooks';
 import Container from 'components/Container';
+import SplashScreen from 'components/SplashScreen';
 import Accueil from 'containers/Accueil';
 import Authentification, { Role } from 'containers/App/Authentification';
 import ErrorBoundary from 'containers/App/ErrorBoundary';
 import NavigationBar from 'containers/App/Navigation/NavigationBar';
 import ProtectedRoute from 'containers/App/Navigation/ProtectedRoute';
 import NotificationStack from 'containers/App/NotificationStack';
-import SplashScreen from 'containers/App/SplashScreen';
 import Backend from 'containers/Backend';
 import PlanPrise from 'containers/PlanPrise';
 import Profil from 'containers/Profil';

@@ -3,6 +3,7 @@ import Dropdown from 'components/Dropdown';
 import Arrow from 'components/Icons/Arrow';
 import Search from 'components/Icons/Search';
 import Input from 'components/Input';
+import Spinner from 'components/Spinner';
 import Table from 'components/Table';
 import { requestUrl } from 'helpers/hooks/use-json-api';
 import React, { useState } from 'react';
@@ -31,8 +32,6 @@ const AsyncTable: React.FC<
       filter: filters[filter]?.filter,
     }).url,
   });
-
-  if (loading) return <p>chargement en cours</p>;
 
   if (error) return <p>{JSON.stringify(error.message)}</p>;
 
@@ -82,15 +81,37 @@ const AsyncTable: React.FC<
           </Table.Row>
         </Table.Head>
         <Table.Body>
-          {(data?.data || []).map((row) => (
-            <Table.Row key={row.id}>
-              {columns.map((column) => (
-                <Table.Cell key={column.id}>
-                  {extractData(column.id, row)}
+          {loading || error ? (
+            loading ? (
+              <Table.Row>
+                <Table.Cell colSpan={columns.length}>
+                  <div className="flex align-middle justify-center text-gray-600">
+                    <Spinner />
+                    <span className="ml-4">Chargement en cours...</span>
+                  </div>
                 </Table.Cell>
-              ))}
-            </Table.Row>
-          ))}
+              </Table.Row>
+            ) : (
+              <Table.Row>
+                <Table.Cell colSpan={columns.length}>
+                  <div className="text-center text-red-600">
+                    Une erreur est survenue pendant le chargement des
+                    utilisateurs
+                  </div>
+                </Table.Cell>
+              </Table.Row>
+            )
+          ) : (
+            (data?.data || []).map((row) => (
+              <Table.Row key={row.id}>
+                {columns.map((column) => (
+                  <Table.Cell key={column.id}>
+                    {extractData(column.id, row)}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            ))
+          )}
         </Table.Body>
       </Table>
     </div>

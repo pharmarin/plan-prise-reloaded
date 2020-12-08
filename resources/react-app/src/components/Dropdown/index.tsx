@@ -23,7 +23,7 @@ const Dropdown: React.FC<{
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="origin-top-right right-0 absolute mt-2 w-full rounded-md shadow-lg bg-white z-10">
+            <Menu.Items className="origin-top-right right-0 absolute mt-2 w-full rounded-md shadow-lg bg-white z-10 divide-y-1 divide-gray-300">
               {(items || []).map((item, index) => (
                 <Menu.Item key={index}>
                   {({ active }) =>
@@ -40,7 +40,7 @@ const Dropdown: React.FC<{
                     ) : 'action' in item ? (
                       <Button
                         className={classNames(
-                          'block text-sm normal-case! font-medium! tracking-normal! text-gray-700 hover:bg-gray-100 w-full',
+                          'block text-sm normal-case font-medium tracking-normal text-left text-gray-700 hover:bg-gray-100 w-full border-0 rounded-none',
                           { 'bg-green-200': active }
                         )}
                         color="link"

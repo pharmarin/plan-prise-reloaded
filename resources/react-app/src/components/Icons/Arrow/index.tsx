@@ -1,5 +1,5 @@
-import classNames from 'classnames';
 import React from 'react';
+import Icon from '..';
 
 const Arrow = ({
   chevron,
@@ -7,7 +7,7 @@ const Arrow = ({
   down,
   left,
   right,
-  strokeWidth = 2,
+  strokeWidth = 3,
   up,
 }: {
   chevron?: boolean;
@@ -33,8 +33,8 @@ const Arrow = ({
   };
 
   return (
-    <svg
-      className={classNames('h-5 w-5', className)}
+    <Icon
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -46,7 +46,7 @@ const Arrow = ({
         strokeWidth={strokeWidth}
         d={path()}
       />
-    </svg>
+    </Icon>
   );
 };
 

@@ -11,6 +11,8 @@
 |
 */
 
+Route::get('test', 'Api\v1\DashboardController@stats');
+
 Route::get('/{any?}', function () {
   return view('app');
 })->name('home');

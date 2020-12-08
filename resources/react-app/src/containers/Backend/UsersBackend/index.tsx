@@ -65,7 +65,6 @@ const UsersBackend: React.FC = () => {
           }
         }}
         filters={{
-          all: { label: 'Tous les utilisateurs', filter: undefined },
           pending: {
             label: 'Utilisateurs à approuver',
             filter: {
@@ -73,6 +72,7 @@ const UsersBackend: React.FC = () => {
               value: '',
             },
           },
+          all: { label: 'Tous les utilisateurs', filter: undefined },
         }}
         type="users"
       />

@@ -1,4 +1,4 @@
-import SplashScreen from 'containers/App/SplashScreen';
+import SplashScreen from 'components/SplashScreen';
 import Card from 'containers/PlanPrise/Interface/Card';
 import Select from 'containers/PlanPrise/Interface/Select';
 import React from 'react';

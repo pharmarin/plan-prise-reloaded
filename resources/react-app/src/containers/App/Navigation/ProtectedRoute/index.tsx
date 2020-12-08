@@ -1,4 +1,4 @@
-import SplashScreen from 'containers/App/SplashScreen';
+import SplashScreen from 'components/SplashScreen';
 import React, { useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';

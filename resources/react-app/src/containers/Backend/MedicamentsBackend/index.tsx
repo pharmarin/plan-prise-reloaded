@@ -1,5 +1,5 @@
 import useAxios from 'axios-hooks';
-import SplashScreen from 'containers/App/SplashScreen';
+import SplashScreen from 'components/SplashScreen';
 import useJsonApi from 'helpers/hooks/use-json-api';
 import { get, merge } from 'lodash-es';
 import React, { useEffect, useState } from 'react';

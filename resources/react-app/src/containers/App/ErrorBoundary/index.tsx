@@ -1,4 +1,4 @@
-import SplashScreen from 'containers/App/SplashScreen';
+import SplashScreen from 'components/SplashScreen';
 import React from 'react';
 
 export default class ErrorBoundary extends React.Component<

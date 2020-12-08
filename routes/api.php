@@ -37,5 +37,6 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
       $api->resource('precautions')->only('read', 'update');
       $api->resource('users')->only('index', 'read', 'update', 'delete');
     });
+    Route::get('dashboard', 'Api\v1\DashboardController@stats');
   });
 });

@@ -1,32 +1,47 @@
-import classNames from 'classnames';
 import React from 'react';
+import joinClassNames from 'utility/class-names';
 
 const TableBody: React.FC = ({ children }) => {
   return <tbody>{children}</tbody>;
 };
 
-const TableCell: React.FC = ({ children }) => {
+const TableCell: React.FC<React.ComponentPropsWithoutRef<'td'>> = ({
+  children,
+  className,
+  ...props
+}) => {
   return (
-    <td className="border-dashed border-t border-gray-200 text-gray-700 px-6 py-3">
+    <td
+      className={joinClassNames(
+        'border-dashed border-t border-gray-200 text-gray-700 px-6 py-3',
+        className
+      )}
+      {...props}
+    >
       {children}
     </td>
   );
 };
 
-const TableHead: React.FC = ({ children }) => {
-  return <thead>{children}</thead>;
+const TableHead: React.FC<React.ComponentPropsWithoutRef<'thead'>> = ({
+  children,
+  ...props
+}) => {
+  return <thead {...props}>{children}</thead>;
 };
 
-const TableHeadCell: React.FC<{ className?: string }> = ({
+const TableHeadCell: React.FC<React.ComponentPropsWithoutRef<'th'>> = ({
   children,
   className,
+  ...props
 }) => {
   return (
     <th
-      className={classNames(
+      className={joinClassNames(
         'bg-gray-200 sticky top-0 border-b border-gray-300 px-6 py-3 text-gray-600 font-bold tracking-wider uppercase text-xs first:rounded-tl-lg last:rounded-tr-lg',
         className
       )}
+      {...props}
     >
       {children}
     </th>
@@ -46,7 +61,7 @@ const Table: React.FC<{ stripped?: boolean }> & {
 } = ({ children, stripped }) => {
   return (
     <table
-      className={classNames(
+      className={joinClassNames(
         'bg-white rounded-lg shadow-md overflow-y-auto border-collapse table-auto w-full whitespace-no-wrap relative',
         { 'table-striped': stripped }
       )}
