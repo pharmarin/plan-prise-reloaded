@@ -17,14 +17,14 @@ const ConnectionForm = ({ message }: Props.Frontend.App.ConnectionForm) => {
   if (!signIn) throw new Error('Sanctum props are missing');
 
   return (
-    <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+    <div className="w-full space-y-6 flex flex-col justify-center">
       <Logo />
       {message && (
-        <div className="w-full sm:max-w-md mt-6 p-4 bg-yellow-100 text-yellow-700 shadow-inner sm:rounded-lg">
+        <div className="w-full sm:max-w-md p-4 bg-yellow-100 text-yellow-700 shadow-inner sm:rounded-lg">
           {message}
         </div>
       )}
-      <Card className="mt-6">
+      <Card>
         <Formik
           initialValues={{ email: '', password: '' }}
           onSubmit={({ email, password }, { setSubmitting }) => {

@@ -37,7 +37,7 @@ const InscriptionForm = () => {
 
   if (data === 'success') {
     return (
-      <Card className="border border-green-300">
+      <Card className=" w-full border border-green-300">
         <h4>Demande d'inscription terminée</h4>
         <p>
           Votre demande d'inscription sur plandeprise.fr est maintenant
@@ -56,9 +56,9 @@ const InscriptionForm = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+    <div className="w-full space-y-6 flex flex-col justify-center">
       <Logo />
-      <Card className="mt-6">
+      <Card>
         <Formik
           initialValues={{
             certificate: undefined,

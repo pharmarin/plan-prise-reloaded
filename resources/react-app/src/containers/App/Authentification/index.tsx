@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
 import { updateAppNav } from 'store/app';
+import joinClassNames from 'utility/class-names';
 import ConnectionForm from './ConnectionForm';
 import InscriptionForm from './InscriptionForm';
 
@@ -67,7 +68,13 @@ const Authentification = ({ role }: AuthentificationProps) => {
   }
 
   return (
-    <div className="w-full max-w-sm mx-auto">
+    <div
+      className={joinClassNames(
+        'w-full max-w-sm min-h-screen',
+        'mx-auto -my-24 py-24',
+        'flex sm:justify-center'
+      )}
+    >
       {role === Role.signin && <ConnectionForm message={state?.message} />}
       {role === Role.register && <InscriptionForm />}
       {role === Role.signout && (
