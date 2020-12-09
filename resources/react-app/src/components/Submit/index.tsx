@@ -32,8 +32,8 @@ const Submit: React.FC<{
       type="submit"
       {...props}
     >
-      {withSpinner && isSubmitting && <Spinner className="mr-3" />}
-      {children}
+      {withSpinner && isSubmitting && <Spinner />}
+      <div>{children}</div>
     </Button>
   );
 };

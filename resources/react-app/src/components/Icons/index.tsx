@@ -9,7 +9,7 @@ const Icon: React.FC<React.ComponentPropsWithoutRef<'svg'>> = ({
 }) => {
   return (
     <svg
-      className={joinClassNames('h-5 w-5', className)}
+      className={joinClassNames('h-5 w-5 inline-block', className)}
       strokeWidth={strokeWidth}
       {...props}
     >

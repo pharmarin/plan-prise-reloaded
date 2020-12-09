@@ -24,12 +24,12 @@ const Button: React.FC<{
   return (
     <button
       className={joinClassNames(
-        'inline-flex items-center justify-center',
+        'flex flex-row items-center justify-center space-x-4',
         'border border-transparent rounded-md',
         'font-semibold text-xs text-white uppercase tracking-widest',
         'focus:outline-none focus:shadow-outline-gray disabled:opacity-25 transition ease-in-out duration-150',
         {
-          'block w-full': block,
+          'w-full': block,
           'shadow-md': shadow,
           'px-6 py-3': size !== 'sm' && size !== 'lg',
           'px-4 py-2': size === 'sm',
