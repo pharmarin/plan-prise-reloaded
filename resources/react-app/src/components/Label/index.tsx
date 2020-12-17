@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import joinClassNames from 'utility/class-names';
 
 const Label: React.FC<{
   check?: boolean;
@@ -8,7 +8,7 @@ const Label: React.FC<{
 }> = ({ check, children, className, for: htmlFor }) => {
   return (
     <label
-      className={classNames(
+      className={joinClassNames(
         'block font-medium text-sm text-gray-700',
         {
           'ml-3': check,

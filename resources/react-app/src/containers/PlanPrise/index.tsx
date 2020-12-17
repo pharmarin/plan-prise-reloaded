@@ -80,7 +80,7 @@ const PlanPrise = ({
       returnTo: isNumber(Number(id))
         ? {
             path: '/plan-prise',
-            label: 'arrow-left',
+            component: { name: 'arrowLeft' },
           }
         : undefined,
       options:

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const NavbarBrandName: React.FC = ({ children }) => (
-  <span className="ml-4 text-2xl font-bold text-green-600">{children}</span>
+  <span className="ml-4 text-2xl font-bold text-green-300">{children}</span>
 );
 
 const NavBarLeft: React.FC = ({ children }) => (
@@ -27,7 +27,7 @@ const NavbarContent: React.FC = ({ children }) => (
 );
 
 const NavbarTitle: React.FC = ({ children }) => (
-  <span className="ml-4 text-2xl font-semibold text-green-800">{children}</span>
+  <span className="ml-4 text-2xl font-semibold text-green-100">{children}</span>
 );
 
 const Navbar: React.FC & {
@@ -39,7 +39,7 @@ const Navbar: React.FC & {
   Title: typeof NavbarTitle;
 } = ({ children }) => {
   return (
-    <nav className="bg-green-100">
+    <nav className="bg-gradient-to-r from-green-800 to-green-600">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         <div className="relative flex items-center justify-between h-16">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
