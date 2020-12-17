@@ -3,19 +3,19 @@ import Spinner from 'components/Spinner';
 import { useFormikContext } from 'formik';
 import React from 'react';
 
-const Submit: React.FC<{
-  block?: boolean;
-  className?: string;
-  color?: Colors;
-  disabled?: boolean;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  withLoading?: boolean;
-  withSpinner?: boolean;
-}> = ({
+const Submit: React.FC<
+  {
+    block?: boolean;
+    color?: Colors;
+    size?: 'sm' | 'lg';
+    withLoading?: boolean;
+    withSpinner?: boolean;
+  } & React.ComponentPropsWithoutRef<'button'>
+> = ({
   children,
-  className,
   color = 'gray',
   disabled,
+  size,
   withLoading,
   withSpinner,
   ...props
@@ -26,9 +26,9 @@ const Submit: React.FC<{
 
   return (
     <Button
-      className={className}
       color={color}
       disabled={disabled ? disabled : withLoading ? isSubmitting : false}
+      size={size}
       type="submit"
       {...props}
     >

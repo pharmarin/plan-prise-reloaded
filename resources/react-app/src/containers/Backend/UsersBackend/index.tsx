@@ -89,7 +89,7 @@ const UsersBackend: React.FC = () => {
       updateAppNav({
         title: 'Utilisateurs',
         returnTo: {
-          component: { name: 'arrow', props: { left: true, strokeWidth: 3 } },
+          component: { name: 'arrowLeft' },
           path: '/admin',
         },
       })

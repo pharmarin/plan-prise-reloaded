@@ -7,7 +7,7 @@ import { Route, Switch } from 'react-router-dom';
 const Backend = () => {
   return (
     <Switch>
-      <Route path="/admin/medicaments/:id?/:edit?">
+      <Route path="/admin/medicaments/:id?">
         <MedicamentsBackend />
       </Route>
       <Route path="/admin/utilisateurs">

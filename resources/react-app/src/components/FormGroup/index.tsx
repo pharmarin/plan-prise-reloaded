@@ -1,7 +1,10 @@
 import React from 'react';
 
-const FormGroup: React.FC = ({ children }) => {
-  return <div className="mb-4">{children}</div>;
+const FormGroup: React.FC<React.ComponentPropsWithoutRef<'div'>> = ({
+  children,
+  ...props
+}) => {
+  return <div {...props}>{children}</div>;
 };
 
 export default FormGroup;

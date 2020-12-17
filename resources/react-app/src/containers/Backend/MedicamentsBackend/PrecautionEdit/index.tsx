@@ -1,20 +1,15 @@
 import useAxios from 'axios-hooks';
 import classNames from 'classnames';
-import { Field, Form, Formik } from 'formik';
-import { Input, Submit } from 'formstrap';
+import Button from 'components/Button';
+import Card from 'components/Card';
+import Form from 'components/Form';
+import FormGroup from 'components/FormGroup';
+import Input, { Select, Textarea } from 'components/Input';
+import Submit from 'components/Submit';
+import { Field, Formik } from 'formik';
 import useConfig from 'helpers/hooks/use-config';
 import useJsonApi from 'helpers/hooks/use-json-api';
 import React from 'react';
-import TextareaAutosize from 'react-textarea-autosize';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardImgOverlay,
-  FormFeedback,
-  FormGroup,
-  Spinner,
-} from 'reactstrap';
 import * as yup from 'yup';
 
 const PrecautionEdit = ({
@@ -72,132 +67,136 @@ const PrecautionEdit = ({
   );
 
   const handleDelete = () => {
-    deletePrec().then(() => remove(precautionID.id));
+    //deletePrec().then(() => remove(precaution.getApiId()));
   };
 
   return (
-    <Card>
-      <CardBody>
-        <Formik
-          initialValues={precaution}
-          onSubmit={(values, { setSubmitting }) => {
-            setSubmitting(true);
-            console.log(values);
-            save({
+    <Card className="mb-4" style={{ breakInside: 'avoid' }}>
+      <Formik
+        initialValues={{
+          commentaire: precaution.commentaire || '',
+          population: precaution.population || '',
+          cible: precaution.cible || cibles[0].id,
+          voie_administration: precaution.voie_administration || 0,
+        }}
+        onSubmit={(values, { setSubmitting }) => {
+          setSubmitting(true);
+          console.log(values);
+          save({
+            data: {
               data: {
-                data: {
-                  id: precaution.id,
-                  type: precaution.type,
-                  attributes: {
-                    commentaire: values.commentaire,
-                    population: values.population,
-                    voie_administration: values.cible.startsWith(
-                      'principe-actifs'
-                    )
-                      ? values.voie_administration
-                      : 0,
-                  },
-                  relationships: {
-                    precaution_cible: {
-                      data: {
-                        type: (values.cible as string).split('_')[0],
-                        id: (values.cible as string).split('_')[1],
-                      },
+                id: precaution.id,
+                type: precaution.type,
+                attributes: {
+                  commentaire: values.commentaire,
+                  population: values.population,
+                  voie_administration: values.cible.startsWith(
+                    'principe-actifs'
+                  )
+                    ? values.voie_administration
+                    : 0,
+                },
+                relationships: {
+                  precaution_cible: {
+                    data: {
+                      type: (values.cible as string).split('_')[0],
+                      id: (values.cible as string).split('_')[1],
                     },
                   },
                 },
               },
-            }).finally(() => setSubmitting(false));
-          }}
-          validationSchema={yup.object().shape({
-            cible: yup.string().required(),
-            voie_administration: yup.number().when('cible', {
-              is: (cible) => cible.startsWith('principe-actifs'),
-              then: yup.number().min(0).max(12),
-              otherwise: yup.number().min(0).max(0),
-            }),
-            population: yup.string().notRequired(),
-            commentaire: yup
-              .string()
-              .required('Un commentaire est obligatoire'),
-          })}
-        >
-          {({ errors, handleSubmit, isSubmitting, isValid, values }) => (
-            <Form onSubmit={handleSubmit}>
+            },
+          }).finally(() => setSubmitting(false));
+        }}
+        validationSchema={yup.object().shape({
+          cible: yup.string().required(),
+          voie_administration: yup.number().when('cible', {
+            is: (cible) => cible.startsWith('principe-actifs'),
+            then: yup.number().min(0).max(12),
+            otherwise: yup.number().min(0).max(0),
+          }),
+          population: yup.string().notRequired(),
+          commentaire: yup.string().required('Un commentaire est obligatoire'),
+        })}
+      >
+        {({ errors, handleSubmit, isSubmitting, isValid, values }) => (
+          <Form onSubmit={handleSubmit}>
+            <FormGroup>
+              <Select
+                name="cible"
+                options={cibles.map((cible) => ({
+                  default: cible.id === cibles[0].id,
+                  value: cible.id,
+                  label: cible.label,
+                }))}
+                withFeedback
+                withLoading
+              />
+            </FormGroup>
+            {values.cible.startsWith('principe-actifs') && (
               <FormGroup>
-                <Input name="cible" type="select" withFeedback withLoading>
-                  {cibles.map((cible) => (
-                    <option key={cible.id} value={cible.id}>
-                      {cible.label}
-                    </option>
-                  ))}
-                </Input>
-              </FormGroup>
-              {values.cible.startsWith('principe-actifs') && (
-                <FormGroup>
-                  <Input
-                    className="mt-1"
-                    name="voie_administration"
-                    type="select"
-                    withFeedback
-                    withLoading
-                  >
-                    <option key={0} value={0}>
-                      Toutes les voies d'administration
-                    </option>
-                    {Object.keys(voiesAdministration).map((id) => (
-                      <option key={id} value={id}>
-                        {voiesAdministration[id]}
-                      </option>
-                    ))}
-                  </Input>
-                </FormGroup>
-              )}
-              <FormGroup>
-                <Input
+                <Select
                   className="mt-1"
-                  name="population"
-                  placeholder="Population visée (optionnel)"
+                  name="voie_administration"
+                  options={[
+                    { value: '0', label: "Toutes les voies d'administration" },
+                    ...Object.keys(voiesAdministration).map((id) => ({
+                      value: id,
+                      label: voiesAdministration[id],
+                    })),
+                  ]}
                   withFeedback
                   withLoading
                 />
               </FormGroup>
-              <FormGroup>
-                <Field
-                  as={TextareaAutosize}
-                  className={classNames({
-                    'form-control mt-1': true,
-                    'is-invalid': errors.commentaire !== undefined,
-                  })}
-                  disabled={isSubmitting}
-                  name="commentaire"
-                  placeholder="Commentaire"
-                />
-                <FormFeedback>{errors.commentaire}</FormFeedback>
-              </FormGroup>
-              <div className="text-center mt-2">
-                <Submit
-                  color="success"
-                  disabled={!isValid || isSubmitting}
-                  size="sm"
-                  withLoading
-                >
-                  Enregistrer
-                </Submit>
-                <Button
-                  color="danger"
-                  disabled={!isValid || isSubmitting}
-                  onClick={handleDelete}
-                  size="sm"
-                  type="button"
-                >
-                  Supprimer
-                </Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-        {(deleting || deleteError || saving || savingError) && (
+            )}
+            <FormGroup>
+              <Input
+                className="mt-1"
+                name="population"
+                placeholder="Population visée (optionnel)"
+                withFeedback
+                withLoading
+              />
+            </FormGroup>
+            <FormGroup>
+              <Field
+                as={Textarea}
+                autoSize
+                className={classNames({
+                  'form-control mt-1': true,
+                  'is-invalid': errors.commentaire !== undefined,
+                })}
+                disabled={isSubmitting}
+                name="commentaire"
+                placeholder="Commentaire"
+                withFeedback
+                withLoading
+              />
+            </FormGroup>
+            <div className="flex flex-row justify-center space-x-4">
+              <Submit
+                color="green"
+                disabled={!isValid || isSubmitting}
+                size="sm"
+                withLoading
+              >
+                Enregistrer
+              </Submit>
+              <Button
+                color="red"
+                disabled={isSubmitting}
+                onClick={handleDelete}
+                size="sm"
+                type="button"
+              >
+                Supprimer
+              </Button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+      {/* (deleting || deleteError || saving || savingError) && (
           <CardImgOverlay className="d-flex justify-content-center align-items-center bg-light">
             {saving && (
               <React.Fragment>
@@ -231,8 +230,7 @@ const PrecautionEdit = ({
               </React.Fragment>
             )}
           </CardImgOverlay>
-        )}
-      </CardBody>
+        ) */}
     </Card>
   );
 };

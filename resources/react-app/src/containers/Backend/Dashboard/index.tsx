@@ -17,7 +17,7 @@ const Dashboard = () => {
       updateAppNav({
         title: 'Administration',
         returnTo: {
-          component: { name: 'arrow', props: { left: true, strokeWidth: 3 } },
+          component: { name: 'arrowLeft' },
           path: '/',
         },
       })

@@ -1,5 +1,4 @@
 import Content from 'containers/PlanPrise/Interface/Card/Content';
-import switchVoiesAdministration from 'helpers/switch-voie-administration';
 import { get } from 'lodash-es';
 import React, { useEffect } from 'react';
 import { FaTrash } from 'react-icons/fa';
@@ -7,6 +6,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Button, Card, CardBody, CardHeader, Input, Spinner } from 'reactstrap';
 import { addNotification } from 'store/app';
 import { loadItem, removeItem, setLoading } from 'store/plan-prise';
+import switchVoiesAdministration from 'utility/switch-voie-administration';
 
 const mapState = (state: Redux.State) => ({
   storedMedicaments: state.cache.medicaments,

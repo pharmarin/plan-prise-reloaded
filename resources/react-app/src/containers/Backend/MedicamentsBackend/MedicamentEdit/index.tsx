@@ -1,28 +1,17 @@
 import useAxios from 'axios-hooks';
+import Button from 'components/Button';
 import SplashScreen from 'components/SplashScreen';
-import AttributesEdit from 'containers/Backend/MedicamentsBackend/AttributesEdit';
-import PrecautionEdit from 'containers/Backend/MedicamentsBackend/PrecautionEdit';
-import ConditionalWrapper from 'containers/Utility/ConditionalWrapper';
 import useJsonApi from 'helpers/hooks/use-json-api';
-import { remove, uniqueId } from 'lodash-es';
+import { uniqueId } from 'lodash-es';
 import React, { useEffect, useState } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { Button, CardColumns } from 'reactstrap';
+import { useDispatch } from 'react-redux';
 import { updateAppNav } from 'store/app';
+import AttributesEdit from '../AttributesEdit';
+import PrecautionEdit from '../PrecautionEdit';
 
-const mapDispatch = {
-  updateAppNav,
-};
+const MedicamentEdit = ({ id }: Props.Backend.MedicamentEdit) => {
+  const dispatch = useDispatch();
 
-const connector = connect(null, mapDispatch);
-
-type MedicamentEditProps = ConnectedProps<typeof connector> &
-  Props.Backend.MedicamentEdit;
-
-const MedicamentEdit = ({
-  medicament: medicamentID,
-  updateAppNav,
-}: MedicamentEditProps) => {
   const { normalizeOne, requestUrl } = useJsonApi();
 
   const [precautions, setPrecautions] = useState<
@@ -35,21 +24,24 @@ const MedicamentEdit = ({
     IServerResponse<Models.Medicament.Entity>
   >({
     url: requestUrl('medicaments', {
-      id: medicamentID.id,
+      id,
       include: ['bdpm', 'composition', 'precautions'],
       fields: { precautions: ['id'] },
     }).url,
   });
 
   useEffect(() => {
-    updateAppNav({
-      title: `Modification de ${medicamentID.denomination}`,
-      returnTo: {
-        path: '/admin',
-        label: 'arrow-left',
-      },
-    });
-  });
+    dispatch(
+      updateAppNav({
+        title: `Modification de ${medicament?.denomination}`,
+        returnTo: {
+          path: '/admin/medicaments',
+          component: { name: 'arrowLeft' },
+        },
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [medicament]);
 
   useEffect(() => {
     if (medicament) {
@@ -59,32 +51,63 @@ const MedicamentEdit = ({
 
   if (loading) {
     return (
-      <SplashScreen
-        type="load"
-        message={`Chargement des données pour ${medicamentID.denomination}`}
-      />
-    );
-  }
-
-  if (error || !data) {
-    throw new Error(
-      `Impossible de charger les données pour ${medicamentID.denomination}`
+      <SplashScreen type="load" message={`Chargement des données en cours`} />
     );
   }
 
   medicament = normalizeOne(
     {
-      id: medicamentID.id,
-      type: medicamentID.type,
+      id: id,
+      type: 'medicaments',
     },
     data
   ) as Models.Medicament.Extracted;
 
+  if (error || !medicament) {
+    throw new Error('Impossible de charger les données du médicament');
+  }
+
   return (
-    <React.Fragment>
+    <div className="space-y-4">
       <AttributesEdit medicament={medicament} />
-      <ConditionalWrapper
-        condition={(precautions || []).length > 0}
+      {(precautions || []).length > 0 && (
+        <div style={{ columnCount: 3 }}>
+          {(precautions || []).map((precaution) => (
+            <PrecautionEdit
+              key={precaution.id || uniqueId('precaution_')}
+              cibles={[
+                {
+                  id: `medicaments_${medicament?.id}`,
+                  label: medicament?.denomination || '',
+                },
+                ...(medicament?.composition || []).map((principeActif) => ({
+                  id: `principe-actifs_${principeActif.id}`,
+                  label: principeActif.denomination,
+                })),
+              ]}
+              precaution={precaution}
+              remove={(id: string) =>
+                //remove(medicament?.precautions || [], { id })
+                undefined
+              }
+            />
+          ))}
+          <Button
+            block
+            className="h-40 border-0 shadow-md"
+            color="white"
+            size="sm"
+            onClick={() =>
+              //actions.addToRelation('precautions', new Precaution())
+              undefined
+            }
+          >
+            Ajouter une précaution
+          </Button>
+        </div>
+      )}
+      {/* <ConditionalWrapper
+        condition={(precautions).length > 0}
         wrapper={CardColumns}
       >
         <React.Fragment>
@@ -127,9 +150,9 @@ const MedicamentEdit = ({
             Ajouter une précaution
           </Button>
         </React.Fragment>
-      </ConditionalWrapper>
-    </React.Fragment>
+      </ConditionalWrapper> */}
+    </div>
   );
 };
 
-export default connector(MedicamentEdit);
+export default MedicamentEdit;

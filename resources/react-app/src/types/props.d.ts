@@ -16,8 +16,7 @@ declare namespace Props {
       medicament: Models.Medicament.Extracted;
     }
     interface MedicamentEdit {
-      medicament: ExtractID<Models.Medicament.Entity> &
-        Pick<Models.Medicament.Extracted, 'denomination' | 'precautions'>;
+      id: Models.Medicament.Entity['id'];
     }
     interface MedicamentPagination {
       last: number | null;

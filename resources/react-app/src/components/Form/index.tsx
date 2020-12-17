@@ -1,5 +1,6 @@
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
+import joinClassNames from 'utility/class-names';
 
 const FormText: React.FC<{ className?: string }> = ({
   children,
@@ -10,12 +11,14 @@ const FormText: React.FC<{ className?: string }> = ({
   </div>
 );
 
-const Form: React.FC<{
-  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
-}> & {
+const Form: React.FC<React.ComponentPropsWithoutRef<'form'>> & {
   Text: typeof FormText;
-} = ({ children, onSubmit }) => {
-  return <form onSubmit={onSubmit}>{children}</form>;
+} = ({ children, className, ...props }) => {
+  return (
+    <form className={joinClassNames('space-y-4', className)} {...props}>
+      {children}
+    </form>
+  );
 };
 
 Form.Text = FormText;
