@@ -12,12 +12,6 @@ type Colors =
 
 declare namespace Props {
   declare namespace Backend {
-    interface AttributesEdit {
-      medicament: Models.Medicament.Extracted;
-    }
-    interface MedicamentEdit {
-      id: Models.Medicament.Entity['id'];
-    }
     interface MedicamentPagination {
       last: number | null;
       loading: boolean;

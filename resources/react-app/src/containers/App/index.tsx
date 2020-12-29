@@ -19,6 +19,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Sanctum } from 'react-sanctum';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import { persistor, store } from 'store/store';
+import ContextProvider from './ContextProvider';
 
 const sanctumConfig = {
   api_url: '',
@@ -68,69 +69,71 @@ const App = () => {
         loading={<SplashScreen type="load" message="Chargement en cours..." />}
         persistor={persistor}
       >
-        <NotificationStack />
-        <Sanctum config={sanctumConfig}>
-          <Router basename="/">
-            {needUpdate && (
-              <SplashScreen
-                type="info"
-                message="Une mise à jour est disponible"
-                button={{ label: 'Recharger', path: 'refresh' }}
-              />
-            )}
-            <NavigationBar />
-            <Container>
-              <Switch>
-                <Route exact path="/">
-                  <Accueil />
-                </Route>
-                <Route path="/inscription">
-                  <Authentification role={Role.register} />
-                </Route>
-                <Route path="/connexion">
-                  <Authentification role={Role.signin} />
-                </Route>
-                <Route path="/deconnexion">
-                  <ProtectedRoute>
-                    <ErrorBoundary returnTo="/">
-                      <Authentification role={Role.signout} />
-                    </ErrorBoundary>
-                  </ProtectedRoute>
-                </Route>
-                <Route path="/profil">
-                  <ProtectedRoute>
-                    <ErrorBoundary returnTo="/">
-                      <Profil />
-                    </ErrorBoundary>
-                  </ProtectedRoute>
-                </Route>
-                <Route path="/plan-prise/:id?/:action?">
-                  <ProtectedRoute>
-                    <ErrorBoundary returnTo="/">
-                      <PlanPrise />
-                    </ErrorBoundary>
-                  </ProtectedRoute>
-                </Route>
-                <Route path="/admin">
-                  <ProtectedRoute admin>
-                    <ErrorBoundary returnTo="/">
-                      <Suspense
-                        fallback={
-                          <SplashScreen
-                            type="load"
-                            message="Chargement du module"
-                          />
-                        }
-                      >
-                        <Backend />
-                      </Suspense>
-                    </ErrorBoundary>
-                  </ProtectedRoute>
-                </Route>
-              </Switch>
-            </Container>
-          </Router>
-        </Sanctum>
+        <ContextProvider>
+          <NotificationStack />
+          <Sanctum config={sanctumConfig}>
+            <Router basename="/">
+              {needUpdate && (
+                <SplashScreen
+                  type="info"
+                  message="Une mise à jour est disponible"
+                  button={{ label: 'Recharger', path: 'refresh' }}
+                />
+              )}
+              <NavigationBar />
+              <Container>
+                <Switch>
+                  <Route exact path="/">
+                    <Accueil />
+                  </Route>
+                  <Route path="/inscription">
+                    <Authentification role={Role.register} />
+                  </Route>
+                  <Route path="/connexion">
+                    <Authentification role={Role.signin} />
+                  </Route>
+                  <Route path="/deconnexion">
+                    <ProtectedRoute>
+                      <ErrorBoundary returnTo="/">
+                        <Authentification role={Role.signout} />
+                      </ErrorBoundary>
+                    </ProtectedRoute>
+                  </Route>
+                  <Route path="/profil">
+                    <ProtectedRoute>
+                      <ErrorBoundary returnTo="/">
+                        <Profil />
+                      </ErrorBoundary>
+                    </ProtectedRoute>
+                  </Route>
+                  <Route path="/plan-prise/:id?/:action?">
+                    <ProtectedRoute>
+                      <ErrorBoundary returnTo="/">
+                        <PlanPrise />
+                      </ErrorBoundary>
+                    </ProtectedRoute>
+                  </Route>
+                  <Route path="/admin">
+                    <ProtectedRoute admin>
+                      <ErrorBoundary returnTo="/">
+                        <Suspense
+                          fallback={
+                            <SplashScreen
+                              type="load"
+                              message="Chargement du module"
+                            />
+                          }
+                        >
+                          <Backend />
+                        </Suspense>
+                      </ErrorBoundary>
+                    </ProtectedRoute>
+                  </Route>
+                </Switch>
+              </Container>
+            </Router>
+          </Sanctum>
+        </ContextProvider>
       </PersistGate>
     </Provider>
   );

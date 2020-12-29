@@ -211,7 +211,7 @@ const Input = React.forwardRef<
             placeholder={placeholder}
             ref={ref}
             type={type || 'text'}
-            value={value}
+            value={isFormikInput ? value || '' : value} // Si l'input est controllé par Formik, la valeur ne doit jamais être undefined
             {...props}
           />
         )}

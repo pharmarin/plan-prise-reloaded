@@ -1,4 +1,3 @@
-import useAxios from 'axios-hooks';
 import classNames from 'classnames';
 import Button from 'components/Button';
 import Card from 'components/Card';
@@ -8,67 +7,23 @@ import Input, { Select, Textarea } from 'components/Input';
 import Submit from 'components/Submit';
 import { Field, Formik } from 'formik';
 import useConfig from 'helpers/hooks/use-config';
-import useJsonApi from 'helpers/hooks/use-json-api';
+import { useStore } from 'hooks/use-store';
+import Precaution from 'models/Precaution';
 import React from 'react';
 import * as yup from 'yup';
 
-const PrecautionEdit = ({
+const EditPrecaution = ({
   cibles,
-  precaution: precautionID,
-  remove,
-}: Props.Backend.PrecautionEdit) => {
+  precaution,
+  save,
+}: {
+  cibles: { id: string; label: string }[];
+  precaution: Precaution;
+  save: any;
+}) => {
   const voiesAdministration = useConfig('default.voies_administration');
 
-  const { normalizeOne, requestUrl } = useJsonApi();
-
-  const [{ data, loading, error }] = useAxios<
-    IServerResponse<Models.Medicament.Entity>
-  >({
-    url: requestUrl('precautions', {
-      id: precautionID.id,
-    }).url,
-  });
-
-  const [{ loading: saving, error: savingError }, save] = useAxios(
-    {
-      url: requestUrl('precautions', {
-        id: precautionID.id,
-      }).url,
-      method: 'PATCH',
-    },
-    {
-      manual: true,
-    }
-  );
-
-  const [{ loading: deleting, error: deleteError }, deletePrec] = useAxios(
-    {
-      url: requestUrl('precautions', {
-        id: precautionID.id,
-      }).url,
-      method: 'DELETE',
-    },
-    {
-      manual: true,
-    }
-  );
-
-  if (loading) {
-    return <div>Loading</div>;
-  }
-
-  if (error) {
-    return <div>Error</div>;
-  }
-
-  const precaution = normalizeOne(
-    { id: precautionID.id, type: precautionID.type },
-    data
-  );
-
-  const handleDelete = () => {
-    //deletePrec().then(() => remove(precaution.getApiId()));
-  };
+  const api = useStore();
 
   return (
     <Card className="mb-4" style={{ breakInside: 'avoid' }}>
@@ -82,31 +37,7 @@ const PrecautionEdit = ({
         onSubmit={(values, { setSubmitting }) => {
           setSubmitting(true);
           console.log(values);
-          save({
-            data: {
-              data: {
-                id: precaution.id,
-                type: precaution.type,
-                attributes: {
-                  commentaire: values.commentaire,
-                  population: values.population,
-                  voie_administration: values.cible.startsWith(
-                    'principe-actifs'
-                  )
-                    ? values.voie_administration
-                    : 0,
-                },
-                relationships: {
-                  precaution_cible: {
-                    data: {
-                      type: (values.cible as string).split('_')[0],
-                      id: (values.cible as string).split('_')[1],
-                    },
-                  },
-                },
-              },
-            },
-          }).finally(() => setSubmitting(false));
+          save().finally(() => setSubmitting(false));
         }}
         validationSchema={yup.object().shape({
           cible: yup.string().required(),
@@ -186,7 +117,7 @@ const PrecautionEdit = ({
               <Button
                 color="red"
                 disabled={isSubmitting}
-                onClick={handleDelete}
+                onClick={() => api.removeOne(precaution)}
                 size="sm"
                 type="button"
               >
@@ -235,4 +166,4 @@ const PrecautionEdit = ({
   );
 };
 
-export default PrecautionEdit;
+export default EditPrecaution;

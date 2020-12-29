@@ -1,12 +1,12 @@
 import AsyncTable from 'components/AsyncTable';
 import Chevron from 'components/Icons/Chevron';
+import Edit from 'containers/Backend/Medicaments/Edit';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { updateAppNav } from 'store/app';
-import MedicamentEdit from './MedicamentEdit';
 
-const MedicamentsBackend = () => {
+const Medicaments = () => {
   const dispatch = useDispatch();
 
   const { id } = useParams<{ id?: string }>();
@@ -24,7 +24,7 @@ const MedicamentsBackend = () => {
   });
 
   if (id) {
-    return <MedicamentEdit id={id} />;
+    return <Edit id={id} />;
   }
 
   return (
@@ -64,4 +64,4 @@ const MedicamentsBackend = () => {
   );
 };
 
-export default MedicamentsBackend;
+export default Medicaments;

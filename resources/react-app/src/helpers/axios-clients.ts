@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axiosStatic, { AxiosRequestConfig } from 'axios';
 
 const BASE_URL = `${process.env.REACT_APP_API_PATH}`;
 
@@ -11,6 +11,6 @@ const config: AxiosRequestConfig = {
   withCredentials: true,
 };
 
-const client = axios.create(config);
+const axios = axiosStatic.create(config);
 
-export default client;
+export default axios;
