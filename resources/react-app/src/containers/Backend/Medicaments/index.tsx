@@ -1,27 +1,24 @@
 import AsyncTable from 'components/AsyncTable';
 import Chevron from 'components/Icons/Chevron';
 import Edit from 'containers/Backend/Medicaments/Edit';
+import { useNavigation } from 'hooks/use-store';
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { updateAppNav } from 'store/app';
 
 const Medicaments = () => {
-  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const { id } = useParams<{ id?: string }>();
 
   useEffect(() => {
-    dispatch(
-      updateAppNav({
-        title: `Médicaments`,
-        returnTo: {
-          path: '/admin',
-          component: { name: 'arrowLeft' },
-        },
-      })
-    );
-  });
+    // Si id !=== undefined, le titre est affiché par <Edit/>
+    if (!id) {
+      navigation.setNavigation('Médicaments', {
+        path: '/admin',
+        component: { name: 'arrowLeft' },
+      });
+    }
+  }, [id, navigation]);
 
   if (id) {
     return <Edit id={id} />;

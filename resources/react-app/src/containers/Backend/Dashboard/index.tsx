@@ -4,24 +4,18 @@ import Chart from 'components/Chart';
 import SplashScreen from 'components/SplashScreen';
 import Title from 'components/Title';
 import { requestUrl } from 'helpers/hooks/use-json-api';
+import { useNavigation } from 'hooks/use-store';
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { updateAppNav } from 'store/app';
 
 const Dashboard = () => {
-  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   useEffect(() => {
-    dispatch(
-      updateAppNav({
-        title: 'Administration',
-        returnTo: {
-          component: { name: 'arrowLeft' },
-          path: '/',
-        },
-      })
-    );
+    navigation.setNavigation('Administration', {
+      component: { name: 'arrowLeft' },
+      path: '/',
+    });
   });
 
   const [{ loading, error, data }] = useAxios(requestUrl('dashboard').url);

@@ -3,30 +3,23 @@ import Dropdown from 'components/Dropdown';
 import Navbar from 'components/Navbar';
 import Spinner from 'components/Spinner';
 import Logo from 'containers/App/Logo';
+import { useNavigation } from 'hooks/use-store';
+import { observer } from 'mobx-react-lite';
 import React, { useContext } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import { SanctumContext } from 'react-sanctum';
 import { ContextProps } from 'react-sanctum/build/SanctumContext';
 import NavbarLink from '../NavbarLink';
 
 const NAVBAR_TITLE = 'plandeprise.fr';
 
-const mapState = (state: Redux.State) => ({
-  options: state.app.navigation.options,
-  returnTo: state.app.navigation.returnTo,
-  title: state.app.navigation.title,
-});
-
-const connector = connect(mapState);
-
-type NavigationBarProps = ConnectedProps<typeof connector>;
-
 interface SanctumProps extends Partial<ContextProps> {
   user?: IServerResponse<Models.App.User>;
 }
 
-const NavigationBar = ({ options, returnTo, title }: NavigationBarProps) => {
+const NavigationBar = observer(() => {
   const { authenticated, user } = useContext<SanctumProps>(SanctumContext);
+
+  const navigation = useNavigation();
 
   return (
     <Navbar>
@@ -35,11 +28,11 @@ const NavigationBar = ({ options, returnTo, title }: NavigationBarProps) => {
           <Logo /> <Navbar.BrandName>{NAVBAR_TITLE}</Navbar.BrandName>
         </Navbar.Brand>
         <Navbar.Content>
-          {returnTo && <NavbarLink {...returnTo} />}
+          {navigation.returnTo && <NavbarLink {...navigation.returnTo} />}
           <div className="flex flex-grow justify-center">
-            <Navbar.Title>{title}</Navbar.Title>
-            {options &&
-              options.map((option) => (
+            <Navbar.Title>{navigation.title}</Navbar.Title>
+            {navigation.options &&
+              navigation.options.map((option) => (
                 <NavbarLink key={option.path} {...option} />
               ))}
           </div>
@@ -84,6 +77,6 @@ const NavigationBar = ({ options, returnTo, title }: NavigationBarProps) => {
       </Navbar.Right>
     </Navbar>
   );
-};
+});
 
-export default connector(NavigationBar);
+export default NavigationBar;

@@ -2,35 +2,26 @@ import Card from 'components/Card';
 import DeleteUser from 'containers/Profil/DeleteUser';
 import EditInformations from 'containers/Profil/EditInformations';
 import EditPassword from 'containers/Profil/EditPassword';
+import { useNavigation } from 'hooks/use-store';
 import React, { useContext, useEffect } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import { SanctumContext } from 'react-sanctum';
 import { ContextProps } from 'react-sanctum/build/SanctumContext';
-import { updateAppNav } from 'store/app';
-
-const mapDispatch = {
-  updateAppNav,
-};
-
-const connector = connect(null, mapDispatch);
-
-type ProfilProps = ConnectedProps<typeof connector>;
 
 interface SanctumProps extends Partial<ContextProps> {
   user?: IServerResponse<Models.App.User>;
 }
 
-const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
+const Profil = () => {
   const { setUser, user } = useContext<SanctumProps>(SanctumContext);
+
+  const navigation = useNavigation();
 
   if (!user || !setUser)
     throw new Error("L'utilisateur n'a pas pu être chargé");
 
   useEffect(() => {
-    updateAppNav({
-      title: 'Profil',
-    });
-  }, [updateAppNav]);
+    navigation.setNavigation('Profil');
+  }, [navigation]);
 
   return (
     <div>
@@ -110,4 +101,4 @@ const Profil: React.FunctionComponent<ProfilProps> = ({ updateAppNav }) => {
   );
 };
 
-export default connector(Profil);
+export default Profil;

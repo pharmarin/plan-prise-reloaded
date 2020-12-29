@@ -7,7 +7,7 @@ import Input, { Select, Textarea } from 'components/Input';
 import Submit from 'components/Submit';
 import { Field, Formik } from 'formik';
 import useConfig from 'helpers/hooks/use-config';
-import { useStore } from 'hooks/use-store';
+import { useApi } from 'hooks/use-store';
 import Precaution from 'models/Precaution';
 import React from 'react';
 import * as yup from 'yup';
@@ -23,7 +23,7 @@ const EditPrecaution = ({
 }) => {
   const voiesAdministration = useConfig('default.voies_administration');
 
-  const api = useStore();
+  const api = useApi();
 
   return (
     <Card className="mb-4" style={{ breakInside: 'avoid' }}>

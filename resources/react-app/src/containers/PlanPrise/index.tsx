@@ -4,12 +4,12 @@ import Interface from 'containers/PlanPrise/Interface';
 import Selection from 'containers/PlanPrise/Selection';
 import Settings from 'containers/PlanPrise/Settings';
 import { fromPlanPrise, generate } from 'helpers/make-pdf';
+import { useNavigation } from 'hooks/use-store';
 import { get, isNumber } from 'lodash-es';
 import React, { useContext, useEffect } from 'react';
 import { connect, ConnectedProps, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
-import { updateAppNav } from 'store/app';
 import { loadContent, loadList, setShowSettings } from 'store/plan-prise';
 import {
   selectPlanPriseID,
@@ -27,7 +27,6 @@ const mapDispatch = {
   loadContent,
   loadList,
   setShowSettings,
-  updateAppNav,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -50,9 +49,10 @@ const PlanPrise = ({
     isNew,
     isNotLoaded,
   },
-  updateAppNav,
 }: PlanPriseProps) => {
   const { user } = useContext(SanctumContext);
+
+  const navigation = useNavigation();
 
   const state = useSelector((state: Redux.State) => state);
 
@@ -75,40 +75,39 @@ const PlanPrise = ({
   };
 
   useEffect(() => {
-    updateAppNav({
-      title: getTitle(id),
-      returnTo: isNumber(Number(id))
+    navigation.setNavigation(
+      getTitle(id),
+      isNumber(Number(id))
         ? {
             path: '/plan-prise',
             component: { name: 'arrowLeft' },
           }
         : undefined,
-      options:
-        isNumber(Number(id)) && isLoaded
-          ? [
-              {
-                path: 'settings',
-                label: 'cog',
+      isNumber(Number(id)) && isLoaded
+        ? [
+            {
+              path: 'settings',
+              label: 'cog',
+            },
+            {
+              path: 'pp-delete',
+              label: 'trash',
+              args: {
+                id,
               },
-              {
-                path: 'pp-delete',
-                label: 'trash',
-                args: {
-                  id,
-                },
-              },
-              ...(!isEmpty
-                ? [
-                    {
-                      path: `/plan-prise/${id}/export`,
-                      label: 'pdf',
-                    },
-                  ]
-                : []),
-            ]
-          : undefined,
-    });
-  }, [id, isEmpty, isLoaded, updateAppNav]);
+            },
+            ...(!isEmpty
+              ? [
+                  {
+                    path: `/plan-prise/${id}/export`,
+                    label: 'pdf',
+                  },
+                ]
+              : []),
+          ]
+        : undefined
+    );
+  }, [id, isEmpty, isLoaded, navigation]);
 
   useEffect(() => {
     if (!routeIdParam) {

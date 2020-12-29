@@ -1,24 +1,15 @@
 import Card from 'components/Card';
+import { useNavigation } from 'hooks/use-store';
+import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { updateAppNav } from 'store/app';
 
-const mapDispatch = {
-  updateAppNav,
-};
-
-const connector = connect(null, mapDispatch);
-type AccueilProps = ConnectedProps<typeof connector>;
-
-const Accueil = (props: AccueilProps) => {
-  const { updateAppNav } = props;
+const Accueil = observer(() => {
+  const navigation = useNavigation();
 
   useEffect(() => {
-    updateAppNav({
-      title: 'Bienvenue',
-    });
-  }, [updateAppNav]);
+    navigation.setNavigation('Bienvenue');
+  }, [navigation]);
 
   return (
     <Card>
@@ -27,6 +18,6 @@ const Accueil = (props: AccueilProps) => {
       <Link to="/admin">Administration</Link>
     </Card>
   );
-};
+});
 
-export default connector(Accueil);
+export default Accueil;

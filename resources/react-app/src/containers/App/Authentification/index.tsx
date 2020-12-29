@@ -1,9 +1,8 @@
 import Spinner from 'components/Spinner';
+import { useNavigation } from 'hooks/use-store';
 import React, { useContext, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
-import { updateAppNav } from 'store/app';
 import joinClassNames from 'utility/class-names';
 import ConnectionForm from './ConnectionForm';
 import InscriptionForm from './InscriptionForm';
@@ -23,7 +22,7 @@ type AuthentificationProps = {
 const Authentification = ({ role }: AuthentificationProps) => {
   const { authenticated, signOut } = useContext(SanctumContext);
 
-  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const { state } = useLocation<{
     message: string;
@@ -33,18 +32,12 @@ const Authentification = ({ role }: AuthentificationProps) => {
   if (!signOut) throw new Error('Sanctum props are missing');
 
   useEffect(() => {
-    dispatch(
-      updateAppNav({
-        title: getTitle(role),
-      })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [role]);
+    navigation.setNavigation(getTitle(role));
+  }, [navigation, role]);
 
   useEffect(() => {
     if (role === Role.signout) signOut();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [role]);
+  }, [role, signOut]);
 
   const getTitle = (role: Role) => {
     switch (role) {

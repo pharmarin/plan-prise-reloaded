@@ -7,9 +7,8 @@ import Trash from 'components/Icons/Trash';
 import Pill from 'components/Pill';
 import Spinner from 'components/Spinner';
 import { requestUrl } from 'helpers/hooks/use-json-api';
+import { useNavigation } from 'hooks/use-store';
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { updateAppNav } from 'store/app';
 
 const ApproveButton: React.FC<{
   id: Models.App.User['id'];
@@ -82,18 +81,13 @@ const DeleteButton: React.FC<{
 };
 
 const UsersBackend: React.FC = () => {
-  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   useEffect(() => {
-    dispatch(
-      updateAppNav({
-        title: 'Utilisateurs',
-        returnTo: {
-          component: { name: 'arrowLeft' },
-          path: '/admin',
-        },
-      })
-    );
+    navigation.setNavigation('Utilisateurs', {
+      component: { name: 'arrowLeft' },
+      path: '/admin',
+    });
   });
 
   return (

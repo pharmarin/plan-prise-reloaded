@@ -1,16 +1,18 @@
 import { useAsyncEffect } from '@react-hook/async';
 import Button from 'components/Button';
 import SplashScreen from 'components/SplashScreen';
-import { useStore } from 'hooks/use-store';
+import { useApi, useNavigation } from 'hooks/use-store';
 import { observer } from 'mobx-react-lite';
 import Medicament from 'models/Medicament';
 import Precaution from 'models/Precaution';
-import React from 'react';
+import React, { useEffect } from 'react';
 import EditAttributes from './Attributes';
 import EditPrecaution from './Precaution';
 
 const Edit = observer(({ id }: { id: string }) => {
-  const api = useStore();
+  const api = useApi();
+
+  const navigation = useNavigation();
 
   const { status, error, value: medicament } = useAsyncEffect(
     () =>
@@ -21,6 +23,18 @@ const Edit = observer(({ id }: { id: string }) => {
         .then((medicament) => medicament.data as Medicament),
     []
   );
+
+  useEffect(() => {
+    navigation.setNavigation(
+      medicament
+        ? `Modification de ${medicament?.denomination}`
+        : "Modification d'un médicament",
+      {
+        component: { name: 'arrowLeft' },
+        path: '/admin/medicaments',
+      }
+    );
+  }, [medicament, navigation]);
 
   if (status === 'loading') {
     return <p>Chargement en cours</p>;
