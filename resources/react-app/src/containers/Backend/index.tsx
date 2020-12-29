@@ -1,6 +1,6 @@
 import Dashboard from 'containers/Backend/Dashboard';
 import Medicaments from 'containers/Backend/Medicaments';
-import UsersBackend from 'containers/Backend/UsersBackend';
+import Users from 'containers/Backend/Users';
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
@@ -11,7 +11,7 @@ const Backend = () => {
         <Medicaments />
       </Route>
       <Route path="/admin/utilisateurs">
-        <UsersBackend />
+        <Users />
       </Route>
       <Route path="/admin" exact>
         <Dashboard />

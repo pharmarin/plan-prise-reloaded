@@ -1,3 +1,4 @@
+import { useAsync } from '@react-hook/async';
 import useAxios from 'axios-hooks';
 import AsyncTable from 'components/AsyncTable';
 import Avatar from 'components/Avatar';
@@ -53,18 +54,15 @@ const ApproveButton: React.FC<{
 };
 
 const DeleteButton: React.FC<{
-  id: Models.App.User['id'];
+  user: User;
   onSuccess: () => void;
-}> = ({ id, onSuccess }) => {
-  const [{ loading }, deleteUser] = useAxios(
-    { url: requestUrl('users', { id }).url, method: 'DELETE' },
-    { manual: true }
-  );
+}> = ({ user, onSuccess }) => {
+  const [{ status }, deleteUser] = useAsync(() => user.destroy());
 
   return (
     <Button
       color="red"
-      disabled={loading}
+      disabled={status === 'loading'}
       size="sm"
       onClick={async () => {
         try {
@@ -77,12 +75,12 @@ const DeleteButton: React.FC<{
         }
       }}
     >
-      {loading ? <Spinner /> : <Trash />}
+      {status === 'loading' ? <Spinner /> : <Trash />}
     </Button>
   );
 };
 
-const UsersBackend: React.FC = () => {
+const Users: React.FC = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -135,10 +133,7 @@ const UsersBackend: React.FC = () => {
                       onSuccess={forceReload}
                     />
                   )}
-                  <DeleteButton
-                    id={String(user.meta.id)}
-                    onSuccess={forceReload}
-                  />
+                  <DeleteButton user={user} onSuccess={forceReload} />
                 </div>
               );
             default:
@@ -162,4 +157,4 @@ const UsersBackend: React.FC = () => {
   );
 };
 
-export default UsersBackend;
+export default Users;
