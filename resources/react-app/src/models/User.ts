@@ -23,6 +23,9 @@ class User extends jsonapi(Model) {
   status!: 'student' | 'pharmacist';
 
   @Attribute()
+  rpps?: number;
+
+  @Attribute()
   created_at!: string;
 }
 
