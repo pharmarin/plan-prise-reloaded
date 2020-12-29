@@ -11,6 +11,7 @@ import React from 'react';
 import * as yup from 'yup';
 
 const EditPassword = ({ id, email }: Props.Frontend.App.EditPassword) => {
+  //TODO: Utiliser datx pour mettre à jour le mot de passe
   const [{ error }, update] = useAxios(
     {
       method: 'PATCH',

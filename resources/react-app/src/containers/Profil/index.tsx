@@ -2,7 +2,8 @@ import Card from 'components/Card';
 import DeleteUser from 'containers/Profil/DeleteUser';
 import EditInformations from 'containers/Profil/EditInformations';
 import EditPassword from 'containers/Profil/EditPassword';
-import { useNavigation } from 'hooks/use-store';
+import { useApi, useNavigation } from 'hooks/use-store';
+import User from 'models/User';
 import React, { useContext, useEffect } from 'react';
 import { SanctumContext } from 'react-sanctum';
 import { ContextProps } from 'react-sanctum/build/SanctumContext';
@@ -12,9 +13,12 @@ interface SanctumProps extends Partial<ContextProps> {
 }
 
 const Profil = () => {
-  const { setUser, user } = useContext<SanctumProps>(SanctumContext);
+  const { setUser, user: rawUser } = useContext<SanctumProps>(SanctumContext);
 
+  const api = useApi();
   const navigation = useNavigation();
+
+  const user = api.sync(rawUser) as User;
 
   if (!user || !setUser)
     throw new Error("L'utilisateur n'a pas pu être chargé");
@@ -66,10 +70,7 @@ const Profil = () => {
           </div>
           <div className="mt-5 md:mt-0 md:col-span-2">
             <Card>
-              <EditPassword
-                id={user.data.id}
-                email={user.data.attributes.email}
-              />
+              <EditPassword id={String(user.meta.id)} email={user.email} />
             </Card>
           </div>
         </div>
@@ -92,7 +93,7 @@ const Profil = () => {
           </div>
           <div className="mt-5 md:mt-0 md:col-span-2">
             <Card>
-              <DeleteUser id={user.data.id} setUser={setUser} />
+              <DeleteUser id={String(user.meta.id)} setUser={setUser} />
             </Card>
           </div>
         </div>

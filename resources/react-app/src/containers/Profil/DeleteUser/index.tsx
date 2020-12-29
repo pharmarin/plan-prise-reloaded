@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 const DeleteUser = ({ id, setUser }: Props.Frontend.App.DeleteUser) => {
   const [showForm, setShowForm] = useState(false);
 
+  //TODO: Utiliser datx pour supprimer l'utilisateur
   const [{ error }, deleteUser] = useAxios(
     {
       url: requestUrl('users', {

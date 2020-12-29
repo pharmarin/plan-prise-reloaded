@@ -8,18 +8,23 @@ import Submit from 'components/Submit';
 import { Formik } from 'formik';
 import errors from 'helpers/error-messages.json';
 import { requestUrl } from 'helpers/hooks/use-json-api';
+import User from 'models/User';
 import React from 'react';
 import * as yup from 'yup';
 
 const EditInformations = ({
   user,
   setUser,
-}: Props.Frontend.App.EditInformations) => {
+}: {
+  user: User;
+  setUser: (user: object, authenticated?: boolean) => void;
+}) => {
+  //TODO: Utiliser datx pour mettre à jour l'utilisateur
   const [{ error }, update] = useAxios(
     {
       method: 'PATCH',
       url: requestUrl('users', {
-        id: user.data.id,
+        id: String(user.meta.id),
       }).url,
     },
     { manual: true }
@@ -36,12 +41,12 @@ const EditInformations = ({
     }, {});
 
   const initialValues = {
-    display_name: user.data.attributes.display_name,
-    email: user.data.attributes.email,
-    first_name: user.data.attributes.first_name,
-    last_name: user.data.attributes.last_name,
-    rpps: user.data.attributes.rpps,
-    status: user.data.attributes.status,
+    display_name: user.display_name,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    rpps: user.rpps,
+    status: user.status,
   };
 
   return (
@@ -58,7 +63,7 @@ const EditInformations = ({
             const response = await update({
               data: {
                 data: {
-                  id: user.data.id,
+                  id: user.meta.id,
                   type: 'users',
                   attributes: difference,
                 },

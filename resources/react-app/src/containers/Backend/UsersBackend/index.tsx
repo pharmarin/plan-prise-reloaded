@@ -15,6 +15,7 @@ const ApproveButton: React.FC<{
   id: Models.App.User['id'];
   onSuccess: () => void;
 }> = ({ id, onSuccess }) => {
+  //TODO: Utiliser datx pour approuver l'utilisateur
   const [{ loading }, approveUser] = useAxios(
     { url: requestUrl('users', { id }).url, method: 'PATCH' },
     { manual: true }
