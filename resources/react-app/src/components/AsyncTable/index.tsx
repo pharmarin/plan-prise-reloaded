@@ -1,4 +1,4 @@
-import useAxios from 'axios-hooks';
+import { useAsync } from '@react-hook/async';
 import Dropdown from 'components/Dropdown';
 import Chevron from 'components/Icons/Chevron';
 import Search from 'components/Icons/Search';
@@ -6,36 +6,13 @@ import Input from 'components/Input';
 import Pagination from 'components/Pagination';
 import Spinner from 'components/Spinner';
 import Table from 'components/Table';
-import { requestUrl } from 'helpers/hooks/use-json-api';
+import { IMetaMixin, IModelConstructor } from 'datx';
+import { IJsonapiModel } from 'datx-jsonapi';
+import { useApi } from 'hooks/use-store';
 import { debounce } from 'lodash';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const AsyncTable: React.FC<
-  {
-    columns: { id: string; label: string }[];
-    extractData: (
-      filter: React.ReactText,
-      columnId: string,
-      data: any,
-      forceReload?: any
-    ) => string | React.ReactElement;
-    filters?: {
-      [key: string]: {
-        label: string;
-        filter?: { field: string; value: string };
-      };
-    };
-    include?: string[];
-    /**
-     * URL of the link wrapping table cell
-     * Must contain "ID" which will be replaced by the id of the row element
-     */
-    linkTo?: string;
-    sortBy?: string;
-    searchKey?: string;
-    type: string;
-  } & React.ComponentPropsWithoutRef<'div'>
-> = ({
+const AsyncTable = <T extends IJsonapiModel & IMetaMixin>({
   columns,
   extractData,
   filters = {},
@@ -45,34 +22,67 @@ const AsyncTable: React.FC<
   sortBy,
   type,
   ...props
-}) => {
+}: {
+  columns: { id: string; label: string }[];
+  extractData: (
+    filter: React.ReactText,
+    columnId: string,
+    data: any,
+    forceReload?: any
+  ) => string | React.ReactElement;
+  filters?: {
+    [key: string]: {
+      label: string;
+      filter?: { field: string; value: string };
+    };
+  };
+  include?: string[];
+  /**
+   * URL of the link wrapping table cell
+   * Must contain "ID" which will be replaced by the id of the row element
+   */
+  linkTo?: string;
+  sortBy?: string;
+  searchKey?: string;
+  type: IModelConstructor<T>;
+} & React.ComponentPropsWithoutRef<'div'>) => {
+  const api = useApi();
+
   const [filter, setFilter] = useState<keyof typeof filters>(
     Object.keys(filters)[0]
   );
-
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
 
-  const setSearchDebounced = debounce(
-    (query: string) => setSearch(query),
-    1000
+  const setSearchDebounced = debounce((query: string) => {
+    setSearch(query);
+  }, 1000);
+
+  const [{ status, value }, reload] = useAsync(() =>
+    api.getMany(type, {
+      queryParams: {
+        custom: [{ key: 'page[number]', value: String(page) }],
+        filter: {
+          ...(searchKey && search.length > 0
+            ? {
+                [searchKey]: search,
+              }
+            : {}),
+          ...(filters[filter]?.filter !== undefined
+            ? {
+                [filters[filter].filter!.field]: filters[filter].filter!.value,
+              }
+            : {}),
+        },
+        include,
+        sort: sortBy,
+      },
+    })
   );
 
-  const [{ data, error, loading }, reload] = useAxios<
-    IServerResponse<Models.App.User[]>
-  >({
-    url: requestUrl(type, {
-      filter:
-        searchKey && search.length > 0
-          ? {
-              field: searchKey,
-              value: `${search}`,
-            }
-          : filters[filter]?.filter,
-      page,
-      sort: sortBy,
-    }).url,
-  });
+  useEffect(() => {
+    reload();
+  }, [filter, reload, page, search]); // Reload au chargement + quand search est modifié
 
   return (
     <div {...props}>
@@ -129,8 +139,8 @@ const AsyncTable: React.FC<
           </Table.Row>
         </Table.Head>
         <Table.Body>
-          {loading || error ? (
-            loading ? (
+          {status === 'loading' || status === 'error' ? (
+            status === 'loading' ? (
               <Table.Row>
                 <Table.Cell colSpan={columns.length}>
                   <div className="flex align-middle justify-center text-gray-600">
@@ -149,13 +159,13 @@ const AsyncTable: React.FC<
               </Table.Row>
             )
           ) : (
-            (data?.data || []).map((row) => (
-              <Table.Row key={row.id || ''} hover={linkTo !== undefined}>
+            ((value?.data as T[]) || []).map((row) => (
+              <Table.Row key={row.meta.id || ''} hover={linkTo !== undefined}>
                 {columns.map((column) =>
                   linkTo ? (
                     <Table.CellWithLink
                       key={column.id}
-                      to={linkTo.replace('ID', row.id || '')}
+                      to={linkTo.replace('ID', String(row.meta.id) || '')}
                     >
                       {extractData(filter, column.id, row, reload)}
                     </Table.CellWithLink>
@@ -169,13 +179,13 @@ const AsyncTable: React.FC<
             ))
           )}
         </Table.Body>
-        {data && (
+        {value && (
           <Table.Footer>
             <Table.Row>
               <Table.Cell colSpan={columns.length}>
                 <Pagination
                   setPage={(pageNumber) => setPage(pageNumber)}
-                  //{...model.getPagination(data)}
+                  data={(value.meta as any)?.page || {}}
                 />
               </Table.Cell>
             </Table.Row>

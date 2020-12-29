@@ -8,6 +8,7 @@ import Pill from 'components/Pill';
 import Spinner from 'components/Spinner';
 import { requestUrl } from 'helpers/hooks/use-json-api';
 import { useNavigation } from 'hooks/use-store';
+import User from 'models/User';
 import React, { useEffect } from 'react';
 
 const ApproveButton: React.FC<{
@@ -102,42 +103,41 @@ const UsersBackend: React.FC = () => {
           { id: 'signup_date', label: "Date d'inscription" },
           { id: 'actions', label: '' },
         ]}
-        extractData={(filter, columnId, user: Models.App.User, forceReload) => {
+        extractData={(filter, columnId, user: User, forceReload) => {
           switch (columnId) {
             case 'avatar':
               return (
-                <Avatar
-                  lastName={user.attributes.last_name}
-                  firstName={user.attributes.first_name}
-                />
+                <Avatar lastName={user.last_name} firstName={user.first_name} />
               );
             case 'last_name':
-              return user.attributes.last_name;
+              return user.last_name;
             case 'first_name':
-              return user.attributes.first_name;
+              return user.first_name;
             case 'email':
-              return user.attributes.email;
+              return user.email;
             case 'status':
-              return user.attributes.admin ? (
+              return user.admin ? (
                 <Pill color="red">Administrateur</Pill>
               ) : (
                 <Pill color="green">
-                  {user.attributes.status === 'pharmacist'
-                    ? 'Pharmacien'
-                    : 'Étudiant'}
+                  {user.status === 'pharmacist' ? 'Pharmacien' : 'Étudiant'}
                 </Pill>
               );
             case 'signup_date':
-              return new Date(user.attributes.created_at).toLocaleDateString(
-                'fr-FR'
-              );
+              return new Date(user.created_at).toLocaleDateString('fr-FR');
             case 'actions':
               return (
                 <div className="flex flex-row justify-end space-x-2">
                   {filter === 'pending' && (
-                    <ApproveButton id={user.id} onSuccess={forceReload} />
+                    <ApproveButton
+                      id={String(user.meta.id)}
+                      onSuccess={forceReload}
+                    />
                   )}
-                  <DeleteButton id={user.id} onSuccess={forceReload} />
+                  <DeleteButton
+                    id={String(user.meta.id)}
+                    onSuccess={forceReload}
+                  />
                 </div>
               );
             default:
@@ -155,7 +155,7 @@ const UsersBackend: React.FC = () => {
           all: { label: 'Tous les utilisateurs', filter: undefined },
         }}
         searchKey="name"
-        type="users"
+        type={User}
       />
     </div>
   );

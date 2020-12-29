@@ -3,14 +3,24 @@ import Chevron from 'components/Icons/Chevron';
 import React from 'react';
 
 const Pagination: React.FC<{
-  currentPage?: number;
-  from?: number;
-  lastPage?: number;
-  perPage?: number;
+  data: {
+    'current-page'?: number;
+    from?: number;
+    'last-page'?: number;
+    'per-page'?: number;
+    to?: number;
+    total?: number;
+  };
   setPage: (pageNumber: number) => void;
-  to?: number;
-  total?: number;
-}> = ({ currentPage, from, lastPage, perPage, setPage, to, total }) => {
+}> = ({ data, setPage }) => {
+  const {
+    'current-page': currentPage,
+    from,
+    'last-page': lastPage,
+    to,
+    total,
+  } = data;
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex-1 flex justify-between sm:hidden">
@@ -64,9 +74,9 @@ const Pagination: React.FC<{
                 <Chevron.Double.Left.Small />
               </Button>
               {[3, 2, 1].map((key) =>
-                currentPage - key > 1 && currentPage - key < lastPage ? (
+                currentPage - key > 0 && currentPage - key < lastPage ? (
                   <Button
-                    key={`end_${key}`}
+                    key={`end_${currentPage - key}`}
                     color="link"
                     className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
                     onClick={() => setPage(currentPage - key)}
@@ -88,15 +98,19 @@ const Pagination: React.FC<{
                 ]
                   .sort((a, b) => a - b)
                   .map((page) => (
-                    <option selected={page === currentPage} value={page}>
+                    <option
+                      key={page}
+                      selected={page === currentPage}
+                      value={page}
+                    >
                       {page}
                     </option>
                   ))}
               </select>
               {[1, 2, 3].map((key) =>
-                currentPage + key > 1 && currentPage + key < lastPage ? (
+                currentPage + key > 0 && currentPage + key <= lastPage ? (
                   <Button
-                    key={`start_${key}`}
+                    key={`start_${currentPage + key}`}
                     color="link"
                     className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
                     onClick={() => setPage(currentPage + key)}

@@ -2,6 +2,7 @@ import AsyncTable from 'components/AsyncTable';
 import Chevron from 'components/Icons/Chevron';
 import Edit from 'containers/Backend/Medicaments/Edit';
 import { useNavigation } from 'hooks/use-store';
+import Medicament from 'models/Medicament';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -31,16 +32,13 @@ const Medicaments = () => {
         { id: 'composition', label: 'Composition' },
         { id: 'chevron', label: '' },
       ]}
-      extractData={(_, columnId, data) => {
+      extractData={(_, columnId, data: Medicament) => {
         switch (columnId) {
           case 'denomination':
-            return data.attributes.denomination;
+            return data.denomination;
           case 'composition':
-            return (data.attributes.composition || [])
-              .map(
-                (principeActif: Models.PrincipeActif.Entity) =>
-                  principeActif.attributes.denomination
-              )
+            return (data.composition || [])
+              .map((principeActif) => principeActif.denomination)
               .join(' + ');
           case 'chevron':
             return (
@@ -56,7 +54,7 @@ const Medicaments = () => {
       linkTo="/admin/medicaments/ID"
       searchKey="denomination"
       sortBy="denomination"
-      type="medicaments"
+      type={Medicament}
     />
   );
 };
