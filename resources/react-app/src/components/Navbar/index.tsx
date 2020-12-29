@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const NavbarBrandName: React.FC = ({ children }) => (
   <span className="ml-4 text-2xl font-bold text-green-300">{children}</span>
@@ -17,7 +18,9 @@ const NavbarRight: React.FC = ({ children }) => (
 );
 
 const NavbarBrand: React.FC = ({ children }) => (
-  <div className="flex-shrink-0 flex items-center">{children}</div>
+  <Link to="/">
+    <div className="flex-shrink-0 flex items-center">{children}</div>
+  </Link>
 );
 
 const NavbarContent: React.FC = ({ children }) => (
