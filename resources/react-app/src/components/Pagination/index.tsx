@@ -89,6 +89,7 @@ const Pagination: React.FC<{
               <select
                 className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
                 onChange={(e) => setPage(Number(e.target.value))}
+                value={currentPage}
               >
                 {[
                   ...Array(Math.floor((lastPage - 10) / 10) + 1)
@@ -98,11 +99,7 @@ const Pagination: React.FC<{
                 ]
                   .sort((a, b) => a - b)
                   .map((page) => (
-                    <option
-                      key={page}
-                      selected={page === currentPage}
-                      value={page}
-                    >
+                    <option key={page} value={page}>
                       {page}
                     </option>
                   ))}
