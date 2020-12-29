@@ -29,7 +29,6 @@ yup.setLocale({
 
 const EditAttributes = observer(
   ({ medicament }: { medicament: Medicament }) => {
-    console.log('medicament: ', medicament);
     const { requestUrl } = useJsonApi();
 
     const [CISInputValue, setCISInputValue] = useState(medicament.denomination);
@@ -39,6 +38,7 @@ const EditAttributes = observer(
     const [isCreatingOption, setCreatingOption] = useState(false);
 
     const loadPrincipeActifs = debounce(async (query) => {
+      //TODO: Utiliser datx pour charger les principes actifs
       const url = requestUrl('principe-actifs', {
         page: 1,
         filter: { field: 'denomination', value: query },
