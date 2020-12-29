@@ -1,5 +1,4 @@
 import { useAsync } from '@react-hook/async';
-import useAxios from 'axios-hooks';
 import AsyncTable from 'components/AsyncTable';
 import Avatar from 'components/Avatar';
 import Button from 'components/Button';
@@ -7,39 +6,27 @@ import Check from 'components/Icons/Check';
 import Trash from 'components/Icons/Trash';
 import Pill from 'components/Pill';
 import Spinner from 'components/Spinner';
-import { requestUrl } from 'helpers/hooks/use-json-api';
 import { useNavigation } from 'hooks/use-store';
 import User from 'models/User';
 import React, { useEffect } from 'react';
 
 const ApproveButton: React.FC<{
-  id: Models.App.User['id'];
+  user: User;
   onSuccess: () => void;
-}> = ({ id, onSuccess }) => {
-  //TODO: Utiliser datx pour approuver l'utilisateur
-  const [{ loading }, approveUser] = useAxios(
-    { url: requestUrl('users', { id }).url, method: 'PATCH' },
-    { manual: true }
-  );
+}> = ({ user, onSuccess }) => {
+  const [{ status }, approveUser] = useAsync(() => {
+    user.assign('approved_at', new Date().toISOString());
+    return user.save();
+  });
 
   return (
     <Button
       color="green"
-      disabled={loading}
+      disabled={status === 'loading'}
       size="sm"
       onClick={async () => {
         try {
-          await approveUser({
-            data: {
-              data: {
-                id,
-                type: 'users',
-                attributes: {
-                  approved_at: new Date(),
-                },
-              },
-            },
-          });
+          await approveUser();
           onSuccess();
         } catch {
           console.error(
@@ -48,7 +35,7 @@ const ApproveButton: React.FC<{
         }
       }}
     >
-      {loading ? <Spinner /> : <Check />}
+      {status === 'loading' ? <Spinner /> : <Check />}
     </Button>
   );
 };
@@ -80,7 +67,7 @@ const DeleteButton: React.FC<{
   );
 };
 
-const Users: React.FC = () => {
+const Users = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -128,10 +115,7 @@ const Users: React.FC = () => {
               return (
                 <div className="flex flex-row justify-end space-x-2">
                   {filter === 'pending' && (
-                    <ApproveButton
-                      id={String(user.meta.id)}
-                      onSuccess={forceReload}
-                    />
+                    <ApproveButton user={user} onSuccess={forceReload} />
                   )}
                   <DeleteButton user={user} onSuccess={forceReload} />
                 </div>
