@@ -11,6 +11,7 @@ import User from 'models/User';
 config.baseFetch = (method, url, body, requestHeaders, fetchOptions) =>
   axios
     .request({
+      headers: requestHeaders,
       method: method as AxiosRequestConfig['method'],
       url,
       data: body,

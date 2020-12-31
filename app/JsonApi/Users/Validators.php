@@ -133,14 +133,15 @@ class Validators extends AbstractValidators
    */
   protected function queryRules(): array
   {
-    if (!request()->isMethod('PATCH') && !Auth::user()->admin) {
+    $isAuthorizedMethod =
+      request()->isMethod('PATCH') || request()->isMethod('DELETE');
+
+    if (!$isAuthorizedMethod && !Auth::user()->admin) {
       throw new JsonApiException(
         Error::fromArray([
           'status' => 403,
           'code' => 'not-admin',
-          'title' => 'Vous ne pouvez pas effectuer cette action',
-          'detail' =>
-            'Seuls les administrateurs peuvent accéder à cette requête',
+          'title' => "Vous n'êtes pas habilité à  effectuer cette action",
         ])
       );
     }

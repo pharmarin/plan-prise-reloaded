@@ -33,10 +33,6 @@ declare namespace Props {
       interface ConnectionForm {
         message?: string;
       }
-      interface DeleteUser {
-        id: Models.App.User['id'];
-        setUser: (user: object, authenticated?: boolean | undefined) => void;
-      }
       type NavbarLink = {
         args?: { id: number };
         className?: string;

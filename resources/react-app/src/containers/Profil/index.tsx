@@ -93,7 +93,7 @@ const Profil = () => {
           </div>
           <div className="mt-5 md:mt-0 md:col-span-2">
             <Card>
-              <DeleteUser id={String(user.meta.id)} setUser={setUser} />
+              <DeleteUser user={user} />
             </Card>
           </div>
         </div>
