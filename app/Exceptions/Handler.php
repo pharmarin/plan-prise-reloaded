@@ -2,9 +2,8 @@
 
 namespace App\Exceptions;
 
-use CloudCreativity\LaravelJsonApi\Document\Error\Error;
 use CloudCreativity\LaravelJsonApi\Exceptions\HandlesErrors;
-use CloudCreativity\LaravelJsonApi\Exceptions\JsonApiException;
+use Neomerx\JsonApi\Exceptions\JsonApiException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -51,23 +50,6 @@ class Handler extends ExceptionHandler
   public function render($request, Throwable $exception)
   {
     if ($this->isJsonApi($request, $exception) && !$request->has('raw')) {
-      if (!($exception instanceof JsonApiException)) {
-        return $this->renderJsonApi(
-          $request,
-          new JsonApiException(
-            Error::fromArray([
-              'title' => $exception->getMessage(),
-              'detail' => $exception->getTraceAsString(),
-              'status' => $exception->getCode(),
-              'meta' => [
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'previous' => $exception->getPrevious(),
-              ],
-            ])
-          )
-        );
-      }
       return $this->renderJsonApi($request, $exception);
     }
     return parent::render($request, $exception);
@@ -75,9 +57,9 @@ class Handler extends ExceptionHandler
 
   protected function prepareException(Throwable $exception)
   {
-    /* if ($exception instanceof JsonApiException) {
+    if ($exception instanceof JsonApiException) {
       return $this->prepareJsonApiException($exception);
-    } */
+    }
 
     return parent::prepareException($exception);
   }

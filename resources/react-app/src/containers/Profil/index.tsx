@@ -70,7 +70,7 @@ const Profil = () => {
           </div>
           <div className="mt-5 md:mt-0 md:col-span-2">
             <Card>
-              <EditPassword id={String(user.meta.id)} email={user.email} />
+              <EditPassword user={user} />
             </Card>
           </div>
         </div>

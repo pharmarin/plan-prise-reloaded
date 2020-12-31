@@ -7,29 +7,34 @@ use CloudCreativity\LaravelJsonApi\Exceptions\JsonApiException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-function verifyPassword()
+function verifyPassword($update = false)
 {
-  if (!request()->has('meta.password')) {
+  $requestHasPassword = $update
+    ? request()->has('data.attributes.current_password')
+    : request()->has('meta.password');
+
+  $requestPassword = $update
+    ? request()->input('data.attributes.current_password')
+    : request()->input('meta.password');
+
+  if (!$requestHasPassword) {
     throw new JsonApiException(
       Error::fromArray([
         'status' => 401,
         'code' => 'password-needed',
-        'title' => 'Password needed',
-        'detail' =>
-          'La confirmation du mot de passe est obligatoire lors de la suppression du compte',
+        'title' => 'Veuillez indiquer le mot de passe enregistré',
       ])
     );
   }
 
   $user = Auth::user();
 
-  if (!Hash::check(request()->input('meta.password'), $user->password)) {
+  if (!Hash::check($requestPassword, $user->password)) {
     throw new JsonApiException(
       Error::fromArray([
         'status' => 401,
         'code' => 'password-mismatch',
-        'title' => 'Password mismatch',
-        'detail' =>
+        'title' =>
           'Le mot de passe ne correspond pas au mot de passe enregistré',
       ])
     );

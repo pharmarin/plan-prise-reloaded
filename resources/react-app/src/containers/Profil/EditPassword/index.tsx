@@ -1,4 +1,4 @@
-import useAxios from 'axios-hooks';
+import { AxiosError } from 'axios';
 import Form from 'components/Form';
 import FormGroup from 'components/FormGroup';
 import Input from 'components/Input';
@@ -6,21 +6,13 @@ import Label from 'components/Label';
 import Submit from 'components/Submit';
 import { Formik } from 'formik';
 import errors from 'helpers/error-messages.json';
-import { requestUrl } from 'helpers/hooks/use-json-api';
-import React from 'react';
+import { observer } from 'mobx-react-lite';
+import User from 'models/User';
+import React, { useState } from 'react';
 import * as yup from 'yup';
 
-const EditPassword = ({ id, email }: Props.Frontend.App.EditPassword) => {
-  //TODO: Utiliser datx pour mettre à jour le mot de passe
-  const [{ error }, update] = useAxios(
-    {
-      method: 'PATCH',
-      url: requestUrl('users', {
-        id,
-      }).url,
-    },
-    { manual: true }
-  );
+const EditPassword = observer(({ user }: { user: User }) => {
+  const [error, setError] = useState<AxiosError | undefined>(undefined);
 
   return (
     <Formik
@@ -30,18 +22,12 @@ const EditPassword = ({ id, email }: Props.Frontend.App.EditPassword) => {
         password_confirmation: undefined,
       }}
       onSubmit={async (values, { setSubmitting }) => {
+        setError(undefined);
         setSubmitting(true);
-        try {
-          await update({
-            data: {
-              data: {
-                id,
-                type: 'users',
-                attributes: values,
-              },
-            },
-          });
-        } catch {}
+        user.update(values);
+        await user.save().catch((error: AxiosError) => {
+          setError(error);
+        });
       }}
       validationSchema={yup.object().shape({
         current_password: yup
@@ -63,7 +49,12 @@ const EditPassword = ({ id, email }: Props.Frontend.App.EditPassword) => {
     >
       {({ handleSubmit }) => (
         <Form onSubmit={handleSubmit}>
-          <input autoComplete="off" name="email" type="hidden" value={email} />
+          <input
+            autoComplete="off"
+            name="email"
+            type="hidden"
+            value={user.email}
+          />
           <FormGroup>
             <Label>Mot de passe actuel</Label>
             <div>
@@ -76,13 +67,9 @@ const EditPassword = ({ id, email }: Props.Frontend.App.EditPassword) => {
                 withLoading
               />
               {error &&
-              (error.response?.data.errors || []).filter(
-                (error: any) => error.code === 'password-mismatch'
-              ).length > 0 ? (
-                <Form.Text className="text-red-600">
-                  {errors.update_profile.current_password.required}
-                </Form.Text>
-              ) : null}
+                (error.response?.data.errors || []).map((error: any) => (
+                  <Form.Text className="text-red-600">{error.title}</Form.Text>
+                ))}
             </div>
           </FormGroup>
           <FormGroup>
@@ -120,6 +107,6 @@ const EditPassword = ({ id, email }: Props.Frontend.App.EditPassword) => {
       )}
     </Formik>
   );
-};
+});
 
 export default EditPassword;

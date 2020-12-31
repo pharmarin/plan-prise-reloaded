@@ -105,7 +105,7 @@ class Validators extends AbstractValidators
     $validator = parent::update($record, $document);
 
     if (!Auth::user()->admin) {
-      verifyPassword();
+      verifyPassword(true);
     }
 
     return $validator;

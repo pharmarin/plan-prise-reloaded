@@ -37,10 +37,6 @@ declare namespace Props {
         id: Models.App.User['id'];
         setUser: (user: object, authenticated?: boolean | undefined) => void;
       }
-      interface EditPassword {
-        id: Models.App.User['id'];
-        email: Models.App.User['attributes']['email'];
-      }
       type NavbarLink = {
         args?: { id: number };
         className?: string;
