@@ -5,9 +5,11 @@ const BASE_URL = `${process.env.REACT_APP_API_PATH}`;
 const config: AxiosRequestConfig = {
   baseURL: BASE_URL,
   headers: {
+    Accept: 'application/vnd.api+json',
+    'Content-Type': 'application/vnd.api+json',
     'X-Requested-With': 'XMLHttpRequest',
   },
-  responseType: 'json',
+  responseType: undefined,
   withCredentials: true,
 };
 
