@@ -23,7 +23,7 @@ const Dropdown: React.FC<{
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="origin-top-right right-0 absolute mt-2 w-full rounded-md shadow-lg bg-white z-10 divide-y-1 divide-gray-300">
+            <Menu.Items className="origin-top-right right-0 absolute mt-2 w-full min-w-40 rounded-md shadow-lg bg-white z-10 divide-y-1 divide-gray-300">
               {(items || []).map((item, index) => (
                 <Menu.Item key={index}>
                   {({ active }) =>

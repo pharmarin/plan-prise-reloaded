@@ -1,6 +1,8 @@
 module.exports = {
   theme: {
-    extend: {},
+    extend: {
+      minWidth: (theme) => theme('width'),
+    },
   },
   variants: {
     extend: {
