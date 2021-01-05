@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "workspaces": [
+    "resources/react-app"
+  ]
+}
