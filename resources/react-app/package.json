@@ -89,6 +89,8 @@
     "laravel:queue": "cd ../.. && php artisan queue:work",
     "laravel:schedule": "cd ../.. && php artisan schedule:run >> /dev/null 2>&1",
     "postinstall": "patch-package",
+    "postbuild": "rm -rf ../../public/* && mv ./build/index.html ../views/react-app.blade.php && mv build/* ../../public",
+    "preinstall": "if [${PWD##*/} !== 'react-app']; then cd resources/react-app;fi;",
     "start": "run-p react:start laravel:*"
   },
   "eslintConfig": {

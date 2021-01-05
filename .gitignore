@@ -8,6 +8,7 @@ composer.lock
 **/._*
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+public
 vendor
 storage
 
@@ -21,6 +22,5 @@ storage
 _ide_helper.php
 
 # build generated files
-resources/views/app.blade.php
-resources/react-app/build/static
-resources/react-app/build/asset-manifest.json
+resources/react-app/build
+resources/views/react-app.blade.php
