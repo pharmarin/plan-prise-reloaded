@@ -10,9 +10,11 @@ import debounce from 'debounce-promise';
 import { Field, FieldArray, Formik } from 'formik';
 import axios from 'helpers/axios-clients';
 import useConfig from 'helpers/hooks/use-config';
-import useJsonApi from 'helpers/hooks/use-json-api';
+import { useApi } from 'hooks/use-store';
 import { observer } from 'mobx-react-lite';
+import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
+import PrincipeActif from 'models/PrincipeActif';
 import React, { useState } from 'react';
 import Select, { InputActionTypes } from 'react-select';
 import { AsyncPaginate } from 'react-select-async-paginate';
@@ -29,29 +31,27 @@ yup.setLocale({
 
 const EditAttributes = observer(
   ({ medicament }: { medicament: Medicament }) => {
-    const { requestUrl } = useJsonApi();
+    const api = useApi();
 
     const [CISInputValue, setCISInputValue] = useState(medicament.denomination);
+    const [isCreatingOption, setCreatingOption] = useState(false);
 
     const voiesAdministration = useConfig('default.voies_administration');
 
-    const [isCreatingOption, setCreatingOption] = useState(false);
-
     const loadPrincipeActifs = debounce(async (query) => {
-      //TODO: Utiliser datx pour charger les principes actifs
-      const url = requestUrl('principe-actifs', {
-        page: 1,
-        filter: { field: 'denomination', value: query },
-        sort: 'denomination',
-      });
-      const res = await axios.get<
-        IServerResponse<Models.PrincipeActif.Entity[]>
-      >(url.url);
-      const data = res.data;
-      return data.data.map((composition) => ({
-        value: composition.id,
-        label: composition.attributes.denomination,
-      }));
+      return await api
+        .getMany(PrincipeActif, {
+          queryParams: {
+            filter: { denomination: query },
+            sort: 'denomination',
+          },
+        })
+        .then((response) => {
+          return (response.data as PrincipeActif[]).map((principeActif) => ({
+            value: principeActif.meta.id,
+            label: principeActif.denomination,
+          }));
+        });
     }, 500);
 
     return (
@@ -191,25 +191,17 @@ const EditAttributes = observer(
                   }
                   onCreateOption={(value: string) => {
                     setCreatingOption(true);
-                    const url = requestUrl('principe-actifs');
-                    axios
-                      .post(url.url, {
-                        data: {
-                          type: 'principe-actifs',
-                          attributes: {
-                            denomination: value,
-                          },
-                        },
-                      })
-                      .then((res) => res.data)
-                      .then((res) => {
-                        const id = res.data.id;
-                        const denomination = res.data.attributes.denomination;
+                    const principeActif = new PrincipeActif({
+                      denomination: value,
+                    });
+                    principeActif
+                      .save()
+                      .then((response) => {
                         setFieldValue('composition', [
                           ...values.composition,
                           {
-                            value: id,
-                            label: denomination,
+                            value: (response as PrincipeActif).meta.id,
+                            label: (response as PrincipeActif).denomination,
                           },
                         ]);
                         setCreatingOption(false);
@@ -240,19 +232,18 @@ const EditAttributes = observer(
                   isDisabled={isSubmitting}
                   isMulti
                   loadOptions={async (query: string) => {
-                    const response = await axios.get<
-                      IServerResponse<Models.ApiMedicament.Entity[]>
-                    >(
-                      requestUrl('api-medicaments', {
-                        fields: {
-                          denomination: [query],
+                    const apiMedicaments = await api
+                      .getMany(ApiMedicament, {
+                        queryParams: {
+                          filter: { denomination: [query] },
                         },
-                      }).url
-                    );
+                      })
+                      .then((response) => response.data as ApiMedicament[]);
+
                     return {
-                      options: response.data.data.map((bdpm) => ({
-                        value: bdpm.id,
-                        label: bdpm.attributes.denomination,
+                      options: apiMedicaments.map((apiMedicament) => ({
+                        value: apiMedicament.meta.id,
+                        label: apiMedicament.denomination,
                       })),
                       hasMore: false,
                     };
