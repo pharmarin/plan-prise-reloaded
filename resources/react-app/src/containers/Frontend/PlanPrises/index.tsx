@@ -1,23 +1,20 @@
+import { useAsyncEffect } from '@react-hook/async';
 import SplashScreen from 'components/SplashScreen';
 import Interface from 'containers/Frontend/PlanPrises/Interface';
 import Selection from 'containers/Frontend/PlanPrises/Selection';
 import Settings from 'containers/Frontend/PlanPrises/Settings';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import { useApi, useNavigation } from 'hooks/use-store';
-import { get, isNumber } from 'lodash-es';
+import { isNumber } from 'lodash-es';
 import PlanPrise from 'models/PlanPrise';
 import React, { useContext, useEffect } from 'react';
 import { connect, ConnectedProps, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
 import { loadContent, loadList, setShowSettings } from 'store/plan-prise';
-import {
-  selectPlanPriseID,
-  selectPlanPriseState,
-} from 'store/plan-prise/selectors/plan-prise';
+import { selectPlanPriseState } from 'store/plan-prise/selectors/plan-prise';
 
 const mapState = (state: Redux.State) => ({
-  id: selectPlanPriseID(state),
   list: state.planPrise.list,
   showSettings: state.planPrise.options.showSettings,
   status: selectPlanPriseState(state),
@@ -34,10 +31,8 @@ const connector = connect(mapState, mapDispatch);
 type PlanPriseProps = ConnectedProps<typeof connector>;
 
 const PlanPrises = ({
-  list,
   loadContent,
   loadList,
-  id,
   setShowSettings,
   showSettings,
   status: {
@@ -54,15 +49,33 @@ const PlanPrises = ({
 
   const navigation = useNavigation();
 
+  const api = useApi();
+
   const state = useSelector((state: Redux.State) => state);
 
-  const routerParams = useParams();
+  const { action, id } = useParams<{ action?: string; id?: string }>();
 
   const history = useHistory();
 
-  const routeIdParam = get(routerParams, 'id') as string | undefined;
+  const isPdfRoute = action === 'export';
 
-  const isPdfRoute = get(routerParams, 'action') === 'export';
+  const { status, error, value: planPrise } = useAsyncEffect(async () => {
+    if (id) {
+      const planPrise = await api.getOne(PlanPrise, id || '');
+      return planPrise.data as PlanPrise;
+    } else {
+      return new Promise(() => undefined);
+    }
+  }, [id]);
+
+  const list = useAsyncEffect(async () => {
+    const planPrises = await api.getMany(PlanPrise, {
+      queryParams: {
+        filter: { user: user.data.id },
+      },
+    });
+    return planPrises.data as PlanPrise[];
+  }, []);
 
   const getTitle = (id: string | undefined) => {
     if (id === 'new') {
@@ -110,6 +123,7 @@ const PlanPrises = ({
   }, [id, isEmpty, isLoaded, navigation]);
 
   useEffect(() => {
+    /* if (!routeIdParam) {
       if (id !== undefined) loadContent();
       if (list.status === 'not-loaded') loadList();
     } else if (routeIdParam === 'nouveau') {
@@ -132,11 +146,11 @@ const PlanPrises = ({
     } else {
       loadContent();
       throw new Error("La page à laquelle vous tentez d'accéder n'existe pas.");
+    } */
   }, [
     isPdfRoute,
     list,
     id,
-    routeIdParam,
     loadContent,
     loadList,
     isNotLoaded,
@@ -147,8 +161,8 @@ const PlanPrises = ({
     user,
   ]);
 
-  if (!routeIdParam) {
-    return <Selection />;
+  if (!id) {
+    return <Selection list={list.value} status={list.status} />;
   }
 
   if (isDeleting)

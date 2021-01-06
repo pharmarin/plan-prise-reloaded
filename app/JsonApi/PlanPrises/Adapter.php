@@ -26,7 +26,9 @@ class Adapter extends AbstractAdapter
    *
    * @var array
    */
-  protected $filterScopes = [];
+  protected $filterScopes = [
+    'user' => 'user_id'
+  ];
 
   protected $relationships = ['medicaments'];
 
@@ -49,7 +51,11 @@ class Adapter extends AbstractAdapter
    */
   protected function filter($query, Collection $filters)
   {
-    $this->filterWithScopes($query, $filters);
+    $this->filterWithScopes($query, $filters->except('user'));
+
+    if ($user = $filters->get('user')) {
+      $query->where('user_id', '=', $user);
+    }
   }
 
   public function medicaments()
