@@ -2,6 +2,7 @@
 .phpunit.result.cache
 composer.lock
 yarn.lock
+yarn-error.log
 **/.DS_Store
 **/._*
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
