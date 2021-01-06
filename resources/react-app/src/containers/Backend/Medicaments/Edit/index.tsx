@@ -57,7 +57,7 @@ const Edit = observer(({ id }: { id: string }) => {
   return (
     <React.Fragment>
       <EditAttributes medicament={medicament} />
-      <div style={{ columnCount: 3 }}>
+      <div className="sm:col-count-2 lg:col-count-3">
         {medicament.precautions.map((precaution) => (
           <EditPrecaution
             key={precaution.meta.id}
