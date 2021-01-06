@@ -37,7 +37,7 @@ class RegisterController extends Controller
 
   public function showRegistrationForm()
   {
-    return view('app');
+    return view('react-app');
   }
 
   /**

@@ -30,7 +30,7 @@ class LoginController extends Controller
 
   public function showLoginForm()
   {
-    return view('app');
+    return view('react-app');
   }
 
   /**
