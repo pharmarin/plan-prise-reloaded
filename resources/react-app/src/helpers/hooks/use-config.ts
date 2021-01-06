@@ -15,7 +15,7 @@ export const storeConfig = (config: Models.App.Config) => {
   return localStorage.setItem(STORAGE_KEY, string);
 };
 
-export default (key: string | undefined = undefined) => {
+const useConfig = (key: string | undefined = undefined) => {
   const localStorage = getLocalStorage();
   if (!localStorage) {
     return null;
@@ -23,3 +23,5 @@ export default (key: string | undefined = undefined) => {
   if (key) return get(localStorage, key);
   return localStorage;
 };
+
+export default useConfig;

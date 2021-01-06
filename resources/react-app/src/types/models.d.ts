@@ -57,11 +57,19 @@ declare namespace Models {
       timer?: number;
     }
     interface User {
-      [key: string]: string | undefined;
-      admin: boolean;
-      name: string;
-      display_name?: string;
-      email: string;
+      id: string;
+      type: 'users';
+      attributes: {
+        admin: boolean;
+        first_name: string;
+        last_name: string;
+        name: string;
+        display_name?: string;
+        email: string;
+        rpps?: string;
+        status: 'student' | 'pharmacist';
+        created_at: string;
+      };
     }
   }
   namespace ApiMedicament {
@@ -91,7 +99,7 @@ declare namespace Models {
     }
     type Extracted = ExtractModel<Medicament.Entity>;
   }
-  interface MedicamentIdentity extends ResourceObject {
+  interface MedicamentIdentity {
     id: string;
     type: ApiMedicament['type'] | Medicament['type'];
   }

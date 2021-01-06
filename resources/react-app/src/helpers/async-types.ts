@@ -1,6 +1,6 @@
 export type ValueOf<T> = T[keyof T];
 
-export default (action: string): AsyncObjectType => ({
+const asyncTypes = (action: string): AsyncObjectType => ({
   start: `${action}`,
   success: `${action}_SUCCESS`,
   error: `${action}_FAIL`,
@@ -49,3 +49,5 @@ export interface AxiosError {
 }
 
 export type AxiosResponse = AxiosSuccess | AxiosError;
+
+export default asyncTypes;

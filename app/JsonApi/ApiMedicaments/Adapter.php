@@ -83,7 +83,7 @@ class Adapter extends AbstractAdapter
    */
   public function query(EncodingParametersInterface $parameters)
   {
-    $query = $parameters->getFieldsParameter();
+    $query = $parameters->getFilteringParameters();
     $field = array_keys($query)[0];
     return ApiMedicament::where($field, $query[$field]);
   }

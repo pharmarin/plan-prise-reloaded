@@ -1,17 +1,5 @@
 declare namespace Redux {
   interface App {
-    navigation: {
-      options?: {
-        args?: any;
-        label: string;
-        path: string;
-      }[];
-      returnTo?: {
-        label: string;
-        path: string;
-      };
-      title: string;
-    };
     notifications: Models.App.Notification[];
   }
   interface Cache {

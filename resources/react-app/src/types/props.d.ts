@@ -1,12 +1,17 @@
+type Colors =
+  | 'blue'
+  | 'gray'
+  | 'green'
+  | 'light'
+  | 'pink'
+  | 'purple'
+  | 'red'
+  | 'link'
+  | 'white'
+  | 'yellow';
+
 declare namespace Props {
   declare namespace Backend {
-    interface AttributesEdit {
-      medicament: Models.Medicament.Extracted;
-    }
-    interface MedicamentEdit {
-      medicament: ExtractID<Models.Medicament.Entity> &
-        Pick<Models.Medicament.Extracted, 'denomination' | 'precautions'>;
-    }
     interface MedicamentPagination {
       last: number | null;
       loading: boolean;
@@ -23,48 +28,49 @@ declare namespace Props {
       remove: (id: string) => void;
     }
   }
-  interface Card {
-    identifier: Models.MedicamentIdentityWithLoading;
-  }
-  interface Content {
-    identifier: Models.MedicamentIdentityWithLoading;
-  }
-  interface CustomInput {
-    onChange: (value: string) => function;
-    readOnly?: boolean;
-    value: string;
-  }
-  interface InputGroup {
-    input: {
-      id: string;
-      default: boolean;
-      display?: string;
-      help?: string;
-      join?: string;
-      label: string;
-      multiple?: boolean;
-      readOnly?: boolean;
-    };
-    medicament: Models.MedicamentIdentity;
-  }
-  interface Interface {}
-  interface NavbarLinkProps {
-    args?: { id: number };
-    className?: string;
-    label: string;
-    light?: boolean;
-    path: string;
-  }
-  interface ProtectedRoute {
-    admin?: boolean;
-    children: JSX.Element;
-  }
-  interface SplashScreen {
-    type: 'load' | 'info' | 'danger' | 'warning';
-    message: string;
-    button?: {
-      label: string;
-      path: string;
-    };
+  namespace Frontend {
+    namespace App {
+      interface ConnectionForm {
+        message?: string;
+      }
+      type NavbarLink = {
+        args?: { id: number };
+        className?: string;
+      } & Redux.App['navigation']['returnTo'];
+      interface ProtectedRoute {
+        admin?: boolean;
+        children: JSX.Element;
+      }
+      interface SplashScreen {
+        type: 'load' | 'info' | 'danger' | 'warning';
+        message: string;
+        button?: {
+          label: string;
+          path: string;
+        };
+      }
+      interface UpdatePasswordForm {
+        isOpen: boolean;
+        toggle: () => void;
+        user: IServerResponse<Models.App.User>;
+      }
+    }
+    namespace PlanPrise {
+      interface Card {
+        identifier: Models.MedicamentIdentityWithLoading;
+      }
+      interface Content {
+        identifier: Models.MedicamentIdentityWithLoading;
+      }
+      interface CustomInput {
+        onChange: (value: string) => function;
+        readOnly?: boolean;
+        value: string;
+      }
+      interface Settings {
+        show: boolean;
+        toggle?: (e: React.MouseEvent) => void;
+      }
+    }
   }
 }

@@ -1,9 +1,0 @@
-// Neutralise le mouvement vers le haut des boutons lors du survol
-.btn:hover {
-  transform: none;
-}
-
-.input-group-prepend .btn,
-.input-group-append .btn {
-  z-index: auto;
-}

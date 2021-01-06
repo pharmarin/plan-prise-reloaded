@@ -11,16 +11,8 @@
 |
 */
 
-/* Route::middleware(['auth'])->group(function () {
-    Route::get('/approval', 'HomeController@approval')->name('approval');
-
-    Route::middleware(['approved'])->group(function () {
-        
-    });
-});*/
-
-Auth::routes();
+Route::get('test', 'Api\v1\DashboardController@stats');
 
 Route::get('/{any?}', function () {
-  return view('app');
+  return view('react-app');
 })->name('home');

@@ -57,7 +57,11 @@ class Adapter extends AbstractAdapter
    */
   protected function filter($query, Collection $filters)
   {
-    $this->filterWithScopes($query, $filters);
+    if ($denomination = $filters->get('denomination')) {
+      $query->where('medicaments.denomination', 'like', "{$denomination}%");
+    } else {
+      $this->filterWithScopes($query, $filters);
+    }
   }
 
   public function bdpm()

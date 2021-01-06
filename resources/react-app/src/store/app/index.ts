@@ -2,14 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { uniqueId } from 'lodash-es';
 
 const initialState: Redux.App = {
-  navigation: {
-    options: undefined,
-    returnTo: {
-      path: '/',
-      label: '',
-    },
-    title: '',
-  },
   notifications: [],
 };
 
@@ -17,18 +9,6 @@ const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    updateAppNav: (
-      state,
-      {
-        payload: { options, returnTo, title },
-      }: PayloadAction<
-        Pick<Redux.App['navigation'], 'title' | 'returnTo' | 'options'>
-      >
-    ) => {
-      state.navigation.title = title;
-      state.navigation.returnTo = returnTo;
-      state.navigation.options = options;
-    },
     addNotification: (
       state,
       action: PayloadAction<Partial<Models.App.Notification>>
@@ -63,9 +43,5 @@ const appSlice = createSlice({
   },
 });
 
-export const {
-  addNotification,
-  removeNotification,
-  updateAppNav,
-} = appSlice.actions;
+export const { addNotification, removeNotification } = appSlice.actions;
 export default appSlice.reducer;

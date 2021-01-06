@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-100;
+  }
+  p {
+    @apply mb-2;
+  }
+  a {
+    @apply text-green-800;
+  }
+  *:disabled {
+    @apply cursor-not-allowed bg-gray-300 hover:bg-gray-200  focus:border-gray-400;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .react-select__input input:focus {
+    @apply ring-0;
+  }
+
+  .react-select__control .react-select__input {
+    @apply text-gray-300;
+  }
+
+  .react-select__control--is-focused .react-select__input {
+    @apply text-black;
+  }
+
+  .react-select__control {
+    @apply focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50;
+  }
+}

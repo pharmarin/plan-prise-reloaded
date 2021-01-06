@@ -1,0 +1,6 @@
+{
+  "todo-tree.tree.showBadges": true,
+  "todo-tree.tree.showCountsInTree": true,
+  "prettier.configPath": "resources/react-app/.prettierrc.json",
+  "prettier.prettierPath": "resources/react-app/node_modules/prettier"
+}

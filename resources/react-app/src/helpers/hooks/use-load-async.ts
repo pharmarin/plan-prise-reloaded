@@ -1,6 +1,6 @@
+import debounce from 'debounce-promise';
 import axios from 'helpers/axios-clients';
 import { groupBy, toString } from 'lodash-es';
-import debounce from 'debounce-promise';
 
 const loadGeneric = async (query: string) => {
   try {
@@ -38,6 +38,8 @@ const loadGeneric = async (query: string) => {
   }
 };
 
-export default () => ({
+const useLoadAsync = () => ({
   loadGeneric: debounce(loadGeneric, 1000),
 });
+
+export default useLoadAsync;

@@ -17,7 +17,17 @@ class User extends Authenticatable
    *
    * @var array
    */
-  protected $fillable = ['name', 'email', 'password', 'admin', 'approved_at'];
+  protected $fillable = [
+    'last_name',
+    'first_name',
+    'display_name',
+    'email',
+    'password',
+    'admin',
+    'status',
+    'rpps',
+    'approved_at',
+  ];
 
   /**
    * The attributes that should be hidden for arrays.
@@ -27,10 +37,10 @@ class User extends Authenticatable
   protected $hidden = [
     'password',
     'remember_token',
-    'approved_at',
     'created_at',
-    'email_verified_at',
     'updated_at',
+    'approved_at',
+    'email_verified_at',
   ];
 
   /**
@@ -41,7 +51,13 @@ class User extends Authenticatable
   protected $casts = [
     'admin' => 'boolean',
     'email_verified_at' => 'datetime',
+    'rpps' => 'string',
   ];
+
+  public function getNameAttribute()
+  {
+    return $this->first_name . ' ' . $this->last_name;
+  }
 
   public function plans_prise()
   {

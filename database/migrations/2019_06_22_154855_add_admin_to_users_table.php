@@ -6,28 +6,35 @@ use Illuminate\Database\Migrations\Migration;
 
 class AddAdminToUsersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('admin')->default(false);
-            $table->timestamp('approved_at')->nullable();
-        });
-    }
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::table('users', function (Blueprint $table) {
+      $table
+        ->boolean('admin')
+        ->default(false)
+        ->after('email');
+      $table
+        ->timestamp('approved_at')
+        ->nullable()
+        ->after('email_verified_at');
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::table('users', function (Blueprint $table) {
+      $table->dropColumn('admin');
+      $table->dropColumn('approved_at');
+    });
+  }
 }
