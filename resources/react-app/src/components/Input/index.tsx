@@ -114,7 +114,10 @@ export const Textarea: React.FC<
   return (
     <React.Fragment>
       {autoSize ? (
-        <TextareaAutoSize inputRef={ref || undefined} {...componentProps} />
+        <TextareaAutoSize
+          ref={(input: any) => (input = ref)}
+          {...componentProps}
+        />
       ) : (
         <textarea {...componentProps} />
       )}
