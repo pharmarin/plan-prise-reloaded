@@ -7,9 +7,14 @@
     "laravel:queue": "php artisan queue:work",
     "laravel:schedule": "php artisan schedule:run >> /dev/null 2>&1",
     "react:start": "yarn workspace plan-prise-cra start",
-    "start": "run-p react:start laravel:*"
+    "start": "run-p react:start laravel:*",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "npm-run-all": "^4.1.5"
+  },
+  "devDependencies": {
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0"
   }
 }

@@ -42,7 +42,8 @@ const EditPrecaution = ({
         validationSchema={yup.object().shape({
           cible: yup.string().required(),
           voie_administration: yup.number().when('cible', {
-            is: (cible) => cible.startsWith('principe-actifs'),
+            is: (cible: Precaution['cible']) =>
+              cible.startsWith('principe-actifs'),
             then: yup.number().min(0).max(12),
             otherwise: yup.number().min(0).max(0),
           }),

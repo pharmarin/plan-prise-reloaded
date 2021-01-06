@@ -81,6 +81,7 @@ export const Textarea: React.FC<
   name,
   onBlur,
   onChange,
+  ref,
   value: propsValue,
   withFeedback,
   withLoading,
@@ -113,7 +114,7 @@ export const Textarea: React.FC<
   return (
     <React.Fragment>
       {autoSize ? (
-        <TextareaAutoSize {...componentProps} />
+        <TextareaAutoSize inputRef={ref || undefined} {...componentProps} />
       ) : (
         <textarea {...componentProps} />
       )}
