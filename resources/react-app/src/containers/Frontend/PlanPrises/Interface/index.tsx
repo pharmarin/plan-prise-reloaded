@@ -1,6 +1,6 @@
 import SplashScreen from 'components/SplashScreen';
-import Card from 'containers/PlanPrise/Interface/Card';
-import Select from 'containers/PlanPrise/Interface/Select';
+import Card from 'containers/Frontend/PlanPrises/Interface/Card';
+import Select from 'containers/Frontend/PlanPrises/Interface/Select';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { selectPlanPriseState } from 'store/plan-prise/selectors/plan-prise';

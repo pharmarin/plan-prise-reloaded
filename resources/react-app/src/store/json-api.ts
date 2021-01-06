@@ -4,6 +4,7 @@ import { config, jsonapi } from 'datx-jsonapi';
 import axios from 'helpers/axios-clients';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
+import PlanPrise from 'models/PlanPrise';
 import Precaution from 'models/Precaution';
 import PrincipeActif from 'models/PrincipeActif';
 import User from 'models/User';
@@ -24,7 +25,14 @@ config.baseFetch = (method, url, body, requestHeaders, fetchOptions) =>
     }));
 
 class JsonApiStore extends jsonapi(Collection) {
-  static types = [ApiMedicament, Medicament, Precaution, PrincipeActif, User];
+  static types = [
+    ApiMedicament,
+    Medicament,
+    PlanPrise,
+    Precaution,
+    PrincipeActif,
+    User,
+  ];
 }
 
 export default JsonApiStore;

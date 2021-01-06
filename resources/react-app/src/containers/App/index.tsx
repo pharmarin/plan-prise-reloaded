@@ -1,15 +1,12 @@
 import useAxios, { configure } from 'axios-hooks';
 import Container from 'components/Container';
 import SplashScreen from 'components/SplashScreen';
-import Accueil from 'containers/Accueil';
-import Authentification, { Role } from 'containers/App/Authentification';
-import ErrorBoundary from 'containers/App/ErrorBoundary';
 import NavigationBar from 'containers/App/Navigation/NavigationBar';
-import ProtectedRoute from 'containers/App/Navigation/ProtectedRoute';
 import NotificationStack from 'containers/App/NotificationStack';
 import Backend from 'containers/Backend';
-import PlanPrise from 'containers/PlanPrise';
-import Profil from 'containers/Profil';
+import Frontend from 'containers/Frontend';
+import ErrorBoundary from 'containers/Utility/ErrorBoundary';
+import ProtectedRoute from 'containers/Utility/ProtectedRoute';
 import axios from 'helpers/axios-clients';
 import useConfig, { storeConfig } from 'helpers/hooks/use-config';
 import LRU from 'lru-cache';
@@ -83,35 +80,10 @@ const App = () => {
               <NavigationBar />
               <Container>
                 <Switch>
-                  <Route exact path="/">
-                    <Accueil />
-                  </Route>
-                  <Route path="/inscription">
-                    <Authentification role={Role.register} />
-                  </Route>
-                  <Route path="/connexion">
-                    <Authentification role={Role.signin} />
-                  </Route>
-                  <Route path="/deconnexion">
-                    <ProtectedRoute>
-                      <ErrorBoundary returnTo="/">
-                        <Authentification role={Role.signout} />
-                      </ErrorBoundary>
-                    </ProtectedRoute>
-                  </Route>
-                  <Route path="/profil">
-                    <ProtectedRoute>
-                      <ErrorBoundary returnTo="/">
-                        <Profil />
-                      </ErrorBoundary>
-                    </ProtectedRoute>
-                  </Route>
-                  <Route path="/plan-prise/:id?/:action?">
-                    <ProtectedRoute>
-                      <ErrorBoundary returnTo="/">
-                        <PlanPrise />
-                      </ErrorBoundary>
-                    </ProtectedRoute>
+                  <Route path="/">
+                    <ErrorBoundary returnTo="/">
+                      <Frontend />
+                    </ErrorBoundary>
                   </Route>
                   <Route path="/admin">
                     <ProtectedRoute admin>

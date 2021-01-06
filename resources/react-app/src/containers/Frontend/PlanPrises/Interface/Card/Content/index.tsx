@@ -1,4 +1,4 @@
-import CustomInput from 'containers/PlanPrise/Interface/Card/CustomInput';
+import CustomInput from 'containers/Frontend/PlanPrises/Interface/Card/CustomInput';
 import { has, uniqueId } from 'lodash-es';
 import React from 'react';
 import { BsPlusCircle, BsXCircle } from 'react-icons/bs';

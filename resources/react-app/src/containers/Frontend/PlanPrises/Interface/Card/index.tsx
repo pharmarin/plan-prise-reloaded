@@ -1,4 +1,4 @@
-import Content from 'containers/PlanPrise/Interface/Card/Content';
+import Content from 'containers/Frontend/PlanPrises/Interface/Card/Content';
 import { get } from 'lodash-es';
 import React, { useEffect } from 'react';
 import { FaTrash } from 'react-icons/fa';

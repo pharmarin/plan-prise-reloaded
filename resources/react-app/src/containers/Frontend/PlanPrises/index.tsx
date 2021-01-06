@@ -1,11 +1,11 @@
 import SplashScreen from 'components/SplashScreen';
-import ErrorBoundary from 'containers/App/ErrorBoundary';
-import Interface from 'containers/PlanPrise/Interface';
-import Selection from 'containers/PlanPrise/Selection';
-import Settings from 'containers/PlanPrise/Settings';
-import { fromPlanPrise, generate } from 'helpers/make-pdf';
-import { useNavigation } from 'hooks/use-store';
+import Interface from 'containers/Frontend/PlanPrises/Interface';
+import Selection from 'containers/Frontend/PlanPrises/Selection';
+import Settings from 'containers/Frontend/PlanPrises/Settings';
+import ErrorBoundary from 'containers/Utility/ErrorBoundary';
+import { useApi, useNavigation } from 'hooks/use-store';
 import { get, isNumber } from 'lodash-es';
+import PlanPrise from 'models/PlanPrise';
 import React, { useContext, useEffect } from 'react';
 import { connect, ConnectedProps, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
@@ -33,7 +33,7 @@ const connector = connect(mapState, mapDispatch);
 
 type PlanPriseProps = ConnectedProps<typeof connector>;
 
-const PlanPrise = ({
+const PlanPrises = ({
   list,
   loadContent,
   loadList,
@@ -110,7 +110,6 @@ const PlanPrise = ({
   }, [id, isEmpty, isLoaded, navigation]);
 
   useEffect(() => {
-    if (!routeIdParam) {
       if (id !== undefined) loadContent();
       if (list.status === 'not-loaded') loadList();
     } else if (routeIdParam === 'nouveau') {
@@ -133,7 +132,6 @@ const PlanPrise = ({
     } else {
       loadContent();
       throw new Error("La page à laquelle vous tentez d'accéder n'existe pas.");
-    }
   }, [
     isPdfRoute,
     list,
@@ -170,4 +168,4 @@ const PlanPrise = ({
   return null;
 };
 
-export default connector(PlanPrise);
+export default connector(PlanPrises);
