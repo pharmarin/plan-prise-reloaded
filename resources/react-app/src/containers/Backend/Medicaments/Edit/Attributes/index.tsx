@@ -20,6 +20,7 @@ import Select, { InputActionTypes } from 'react-select';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 import { Option } from 'react-select/src/filters';
+import reactSelectOptions from 'utility/react-select-options';
 import * as yup from 'yup';
 
 yup.setLocale({
@@ -180,7 +181,6 @@ const EditAttributes = observer(
                 <Label>Composition</Label>
                 <Field
                   as={AsyncCreatableSelect}
-                  classNamePrefix="react-select" // TODO: Change theme (https://react-select.com/styles#overriding-the-theme)
                   name="composition"
                   isDisabled={isCreatingOption || isSubmitting}
                   isMulti
@@ -211,6 +211,7 @@ const EditAttributes = observer(
                         setCreatingOption(false);
                       });
                   }}
+                  {...reactSelectOptions}
                 />
               </FormGroup>
               <FormGroup>
@@ -218,7 +219,6 @@ const EditAttributes = observer(
                 <Field
                   as={AsyncPaginate}
                   name="bdpm"
-                  classNamePrefix="react-select"
                   closeMenuOnSelect={false}
                   debounceTimeout={500}
                   get={async (url: string, params: any) => {
@@ -261,6 +261,7 @@ const EditAttributes = observer(
                     }
                     return query;
                   }}
+                  {...reactSelectOptions}
                 />
               </FormGroup>
               <FormGroup>
@@ -268,7 +269,6 @@ const EditAttributes = observer(
                 <Field
                   as={Select}
                   name="voies_administration"
-                  classNamePrefix="react-select"
                   isDisabled={isSubmitting}
                   isMulti
                   onChange={(options: Option[]) =>
@@ -278,6 +278,7 @@ const EditAttributes = observer(
                     value: String(i),
                     label: voiesAdministration[i],
                   }))}
+                  {...reactSelectOptions}
                 />
               </FormGroup>
               <FormGroup>
