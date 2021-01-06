@@ -1,50 +1,56 @@
-import SplashScreen from 'components/SplashScreen';
-import Card from 'containers/Frontend/PlanPrises/Interface/Card';
+import { AsyncStatus } from '@react-hook/async';
+import Information from 'components/Information';
 import Select from 'containers/Frontend/PlanPrises/Interface/Select';
-import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { selectPlanPriseState } from 'store/plan-prise/selectors/plan-prise';
+import { useNavigation } from 'hooks/use-store';
+import { observer } from 'mobx-react-lite';
+import PlanPrise from 'models/PlanPrise';
+import React, { useEffect } from 'react';
 
-const mapState = (state: Redux.State) => ({
-  ...selectPlanPriseState(state),
-  medicaments: (state.planPrise.content.data?.medicaments || []).map((m) => ({
-    id: m.id,
-    type: m.type,
-    loading: m.loading,
-  })),
-});
+const Interface = observer(
+  ({ planPrise, status }: { planPrise?: PlanPrise; status: AsyncStatus }) => {
+    const navigation = useNavigation();
 
-const connector = connect(mapState);
+    useEffect(() => {
+      navigation.setNavigation(
+        planPrise === undefined
+          ? 'Chargement en cours'
+          : planPrise.meta.id > 0
+          ? `Plan de prise n°${planPrise.meta.id}`
+          : 'Nouveau plan de prise',
+        {
+          component: {
+            name: 'arrowLeft',
+          },
+          path: '/plan-prise',
+        }
+      );
+    }, [navigation, planPrise, planPrise?.meta.id]);
 
-type InterfaceProps = ConnectedProps<typeof connector>;
+    if (status === 'loading' || status === 'idle') {
+      return (
+        <Information
+          type="loading"
+          title="Chargement du plan de prise en cours"
+        />
+      );
+    }
 
-const Interface = ({
-  isLoaded,
-  isLoading,
-  medicaments,
-  isNew,
-}: InterfaceProps) => {
-  if (isLoading)
+    if (status !== 'success') {
+      console.log('status: ', status);
+      throw new Error(
+        "Une erreur est survenue lors de l'affichage de ce plan de prise. "
+      );
+    }
+
     return (
-      <SplashScreen
-        type="load"
-        message="Chargement du plan de prise en cours"
-      />
-    );
-
-  if (!isLoaded && !isNew)
-    throw new Error(
-      "Une erreur est survenue lors de l'affichage de ce plan de prise. "
-    );
-
-  return (
-    <React.Fragment>
-      {medicaments.map((medicament) => (
+      <React.Fragment>
+        {/* planPrise.map((medicament) => (
         <Card key={medicament.id} identifier={medicament} />
-      ))}
-      <Select />
-    </React.Fragment>
-  );
-};
+      )) */}
+        <Select />
+      </React.Fragment>
+    );
+  }
+);
 
-export default connector(Interface);
+export default Interface;

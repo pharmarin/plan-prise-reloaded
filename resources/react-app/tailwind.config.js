@@ -15,6 +15,13 @@ const addColumnCount = plugin(function ({ addUtilities }) {
 module.exports = {
   theme: {
     extend: {
+      height: {
+        'view-50': '50vh',
+        'view-75': '75vh',
+        'view-80': '80vh',
+        'view-90': '90vh',
+        'view-95': '95vh',
+      },
       minWidth: (theme) => theme('width'),
     },
   },

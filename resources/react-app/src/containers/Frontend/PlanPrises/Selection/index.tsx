@@ -3,9 +3,10 @@ import Card from 'components/Card';
 import Form from 'components/Form';
 import FormGroup from 'components/FormGroup';
 import { RawInput } from 'components/Input';
+import { useNavigation } from 'hooks/use-store';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactPlaceholder from 'react-placeholder';
 import { Link, Redirect } from 'react-router-dom';
 import joinClassNames from 'utility/class-names';
@@ -67,8 +68,24 @@ const TextFit: React.FC<{ text: string }> = observer(({ text }) => {
 
 const Selection = observer(
   ({ list, status }: { list?: PlanPrise[]; status: AsyncStatus }) => {
+    const navigation = useNavigation();
+
     const [search, setSearch] = useState<string | undefined>(undefined);
     const [redirect, setRedirect] = useState(false);
+
+    useEffect(() => {
+      navigation.setNavigation(
+        status === 'success'
+          ? 'Que voulez-vous faire ?'
+          : 'Chargement en cours',
+        {
+          component: {
+            name: 'arrowLeft',
+          },
+          path: '/',
+        }
+      );
+    }, [navigation, status]);
 
     const searchSuccess =
       search &&

@@ -5,7 +5,6 @@ import Selection from 'containers/Frontend/PlanPrises/Selection';
 import Settings from 'containers/Frontend/PlanPrises/Settings';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import { useApi, useNavigation } from 'hooks/use-store';
-import { isNumber } from 'lodash-es';
 import PlanPrise from 'models/PlanPrise';
 import React, { useContext, useEffect } from 'react';
 import { connect, ConnectedProps, useSelector } from 'react-redux';
@@ -59,12 +58,12 @@ const PlanPrises = ({
 
   const isPdfRoute = action === 'export';
 
-  const { status, error, value: planPrise } = useAsyncEffect(async () => {
+  const planPrise = useAsyncEffect(async () => {
     if (id) {
       const planPrise = await api.getOne(PlanPrise, id || '');
       return planPrise.data as PlanPrise;
     } else {
-      return new Promise(() => undefined);
+      return undefined;
     }
   }, [id]);
 
@@ -77,18 +76,8 @@ const PlanPrises = ({
     return planPrises.data as PlanPrise[];
   }, []);
 
-  const getTitle = (id: string | undefined) => {
-    if (id === 'new') {
-      return 'Nouveau Plan de Prise';
-    }
-    if (isNumber(Number(id)) && Number(id) > 0) {
-      return `Plan de prise n°${id}`;
-    }
-    return 'Que voulez-vous faire ? ';
-  };
-
   useEffect(() => {
-    navigation.setNavigation(
+    /* navigation.setNavigation(
       getTitle(id),
       isNumber(Number(id))
         ? {
@@ -119,7 +108,7 @@ const PlanPrises = ({
               : []),
           ]
         : undefined
-    );
+    ); */
   }, [id, isEmpty, isLoaded, navigation]);
 
   useEffect(() => {
@@ -168,18 +157,15 @@ const PlanPrises = ({
   if (isDeleting)
     return <SplashScreen type="warning" message="Suppression en cours" />;
 
-  if (isLoaded || isLoading || isNew)
-    return (
-      <ErrorBoundary returnTo="/plan-prise">
-        <Interface />
-        <Settings
-          show={isLoaded && showSettings}
-          toggle={() => setShowSettings(!showSettings)}
-        />
-      </ErrorBoundary>
-    );
-
-  return null;
+  return (
+    <ErrorBoundary returnTo="/plan-prise">
+      <Interface planPrise={planPrise.value} status={planPrise.status} />
+      <Settings
+        show={isLoaded && showSettings}
+        toggle={() => setShowSettings(!showSettings)}
+      />
+    </ErrorBoundary>
+  );
 };
 
 export default connector(PlanPrises);

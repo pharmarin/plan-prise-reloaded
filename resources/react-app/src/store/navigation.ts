@@ -9,7 +9,7 @@ interface NavigationInterface {
   returnTo?: {
     label?: string;
     component?: {
-      name: string;
+      name: 'arrowLeft';
       props?: any;
     };
     path?: string;
