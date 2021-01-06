@@ -6,13 +6,13 @@ const NavbarBrandName: React.FC = ({ children }) => (
 );
 
 const NavBarLeft: React.FC = ({ children }) => (
-  <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+  <div className="flex flex-1 min-w-0 items-center justify-center sm:items-stretch sm:justify-start">
     {children}
   </div>
 );
 
 const NavbarRight: React.FC = ({ children }) => (
-  <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+  <div className="absolute inset-y-0 right-0 flex flex-shrink-0 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
     {children}
   </div>
 );
@@ -24,13 +24,15 @@ const NavbarBrand: React.FC = ({ children }) => (
 );
 
 const NavbarContent: React.FC = ({ children }) => (
-  <div className="hidden flex-grow sm:block sm:ml-6">
-    <div className="flex">{children}</div>
+  <div className="hidden flex-grow min-w-0 sm:block sm:ml-6">
+    <div className="flex min-w-0">{children}</div>
   </div>
 );
 
 const NavbarTitle: React.FC = ({ children }) => (
-  <span className="ml-4 text-2xl font-semibold text-green-100">{children}</span>
+  <span className="ml-4 text-2xl font-semibold text-green-100 truncate">
+    {children}
+  </span>
 );
 
 const Navbar: React.FC & {

@@ -29,7 +29,7 @@ const NavigationBar = observer(() => {
         </Navbar.Brand>
         <Navbar.Content>
           {navigation.returnTo && <NavbarLink {...navigation.returnTo} />}
-          <div className="flex flex-grow justify-center">
+          <div className="flex flex-grow min-w-0 justify-center">
             <Navbar.Title>{navigation.title}</Navbar.Title>
             {navigation.options &&
               navigation.options.map((option) => (
