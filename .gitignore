@@ -1,7 +1,5 @@
 .env
 .phpunit.result.cache
-composer.lock
-yarn.lock
 yarn-error.log
 **/.DS_Store
 **/._*
