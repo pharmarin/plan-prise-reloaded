@@ -35,7 +35,7 @@
     "react-promise-suspense": "^0.3.3",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
-    "react-sanctum": "^1.0.1",
+    "react-sanctum": "https://github.com/pharmarin/react-sanctum.git",
     "react-scripts": "^4.0.0",
     "react-select": "^3.1.0",
     "react-select-async-paginate": "^0.5.1",
