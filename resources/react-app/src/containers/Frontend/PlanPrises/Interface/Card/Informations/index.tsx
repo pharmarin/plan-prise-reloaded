@@ -17,7 +17,7 @@ const Informations = ({
   const conservation_duree = planPrise.getConservationDuree(medicament);
 
   return (
-    <div className="col-md-3">
+    <div className="space-y-2">
       <div>
         <Label>Indication</Label>
         <FormGroup>
