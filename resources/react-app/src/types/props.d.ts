@@ -56,9 +56,6 @@ declare namespace Props {
       }
     }
     namespace PlanPrise {
-      interface Card {
-        identifier: Models.MedicamentIdentityWithLoading;
-      }
       interface Content {
         identifier: Models.MedicamentIdentityWithLoading;
       }

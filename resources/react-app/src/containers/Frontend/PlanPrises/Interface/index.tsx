@@ -5,9 +5,18 @@ import { useNavigation } from 'hooks/use-store';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
 import React, { useEffect } from 'react';
+import Card from './Card';
 
 const Interface = observer(
-  ({ planPrise, status }: { planPrise?: PlanPrise; status: AsyncStatus }) => {
+  ({
+    error,
+    planPrise,
+    status,
+  }: {
+    error?: Error;
+    planPrise?: PlanPrise;
+    status: AsyncStatus;
+  }) => {
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -36,18 +45,24 @@ const Interface = observer(
     }
 
     if (status !== 'success') {
-      console.log('status: ', status);
+      console.log('status: ', status, error);
       throw new Error(
-        "Une erreur est survenue lors de l'affichage de ce plan de prise. "
+        "Une erreur est survenue lors de l'affichage de ce plan de prise. <br/>" +
+          error?.message
       );
     }
 
     return (
       <React.Fragment>
-        {/* planPrise.map((medicament) => (
-        <Card key={medicament.id} identifier={medicament} />
-      )) */}
-        <Select />
+        {planPrise &&
+          (planPrise?.medicaments || []).map((medicament) => (
+            <Card
+              key={medicament.uid}
+              medicament={medicament}
+              planPrise={planPrise}
+            />
+          ))}
+        <Select planPrise={planPrise} />
       </React.Fragment>
     );
   }

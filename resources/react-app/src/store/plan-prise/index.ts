@@ -8,7 +8,7 @@ import {
   isString,
   remove,
   setWith,
-  unset
+  unset,
 } from 'lodash-es';
 import { cache, inCache } from 'store/cache';
 
@@ -185,7 +185,7 @@ const ppSlice = createSlice({
   initialState,
   reducers: {
     addItem: (state, { payload }: PayloadAction<Models.MedicamentIdentity>) => {
-      if (state.content.status !== 'loaded')
+      /*if (state.content.status !== 'loaded')
         throw new Error(
           "Impossible d'ajouter un médicament à un plan de prise non chargé"
         );
@@ -196,12 +196,12 @@ const ppSlice = createSlice({
         !state.content.data?.medicaments.find(
           (i) => i.type === payload.type && i.id === payload.id
         )
-      )
-        state.content.data?.medicaments.push({
-          id: payload.id,
-          type: payload.type,
-          relationshipNames: [],
-        });
+      )*/
+      state.content.data?.medicaments.push({
+        id: payload.id,
+        type: payload.type,
+        relationshipNames: [],
+      });
     },
     removeItem: (
       state,

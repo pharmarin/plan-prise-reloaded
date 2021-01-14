@@ -7,50 +7,15 @@ import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import { useApi, useNavigation } from 'hooks/use-store';
 import PlanPrise from 'models/PlanPrise';
 import React, { useContext, useEffect } from 'react';
-import { connect, ConnectedProps, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
-import { loadContent, loadList, setShowSettings } from 'store/plan-prise';
-import { selectPlanPriseState } from 'store/plan-prise/selectors/plan-prise';
 
-const mapState = (state: Redux.State) => ({
-  list: state.planPrise.list,
-  showSettings: state.planPrise.options.showSettings,
-  status: selectPlanPriseState(state),
-});
-
-const mapDispatch = {
-  loadContent,
-  loadList,
-  setShowSettings,
-};
-
-const connector = connect(mapState, mapDispatch);
-
-type PlanPriseProps = ConnectedProps<typeof connector>;
-
-const PlanPrises = ({
-  loadContent,
-  loadList,
-  setShowSettings,
-  showSettings,
-  status: {
-    isDeleted,
-    isDeleting,
-    isEmpty,
-    isLoaded,
-    isLoading,
-    isNew,
-    isNotLoaded,
-  },
-}: PlanPriseProps) => {
+const PlanPrises = () => {
   const { user } = useContext(SanctumContext);
 
   const navigation = useNavigation();
 
   const api = useApi();
-
-  const state = useSelector((state: Redux.State) => state);
 
   const { action, id } = useParams<{ action?: string; id?: string }>();
 
@@ -60,7 +25,16 @@ const PlanPrises = ({
 
   const planPrise = useAsyncEffect(async () => {
     if (id) {
-      const planPrise = await api.getOne(PlanPrise, id || '');
+      const planPrise = await api.getOne(PlanPrise, id || '', {
+        queryParams: {
+          include: [
+            'medicaments',
+            'medicaments.bdpm',
+            'medicaments.composition',
+            'medicaments.precautions',
+          ],
+        },
+      });
       return planPrise.data as PlanPrise;
     } else {
       return undefined;
@@ -109,7 +83,7 @@ const PlanPrises = ({
           ]
         : undefined
     ); */
-  }, [id, isEmpty, isLoaded, navigation]);
+  }, []);
 
   useEffect(() => {
     /* if (!routeIdParam) {
@@ -136,36 +110,31 @@ const PlanPrises = ({
       loadContent();
       throw new Error("La page à laquelle vous tentez d'accéder n'existe pas.");
     } */
-  }, [
-    isPdfRoute,
-    list,
-    id,
-    loadContent,
-    loadList,
-    isNotLoaded,
-    isLoaded,
-    history,
-    isDeleted,
-    state,
-    user,
-  ]);
+  }, []);
 
   if (!id) {
     return <Selection list={list.value} status={list.status} />;
   }
 
-  if (isDeleting)
+  if (false)
+    //isDeleting
     return <SplashScreen type="warning" message="Suppression en cours" />;
 
   return (
     <ErrorBoundary returnTo="/plan-prise">
-      <Interface planPrise={planPrise.value} status={planPrise.status} />
+      <Interface
+        error={planPrise.error}
+        planPrise={planPrise.value}
+        status={planPrise.status}
+      />
       <Settings
-        show={isLoaded && showSettings}
-        toggle={() => setShowSettings(!showSettings)}
+        show={planPrise.status === 'success' && false} // && showSettings
+        toggle={() => {
+          console.log('show settings');
+        }}
       />
     </ErrorBoundary>
   );
 };
 
-export default connector(PlanPrises);
+export default PlanPrises;

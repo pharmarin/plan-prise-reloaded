@@ -15,6 +15,8 @@ class Precaution extends jsonapi(Model) {
 
   @Attribute()
   voie_administration!: number[];
+
+  checked: boolean = false;
 }
 
 export default Precaution;
