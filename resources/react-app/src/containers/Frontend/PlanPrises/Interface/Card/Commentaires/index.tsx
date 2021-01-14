@@ -2,6 +2,7 @@ import Button from 'components/Button';
 import FormGroup from 'components/FormGroup';
 import { RawInput } from 'components/Input';
 import Label from 'components/Label';
+import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
@@ -35,9 +36,9 @@ const Commentaires = observer(
                   name="precaution_check"
                   type="checkbox"
                   checked={precaution.checked}
-                  onChange={() => {
-                    precaution.assign('checked', !precaution.checked);
-                  }}
+                  onChange={action('setPrecautionsCheck', () => {
+                    precaution.checked = !precaution.checked;
+                  })}
                 />
                 <RawInput
                   name="precaution"
