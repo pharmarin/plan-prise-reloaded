@@ -22,13 +22,13 @@ const Commentaires = ({
       <Label>Commentaires</Label>
       <FormGroup>
         {precautions.map((precaution) => (
-          <React.Fragment key={precaution.meta.id}>
+          <div key={precaution.meta.id} className="flex flex-col">
             {precaution.population && (
               <Label className="mb-0 font-italic">
                 {precaution.population}
               </Label>
             )}
-            <div className="mb-1">
+            <div className="flex flex-row items-center space-x-4">
               <RawInput
                 name="precaution_check"
                 type="checkbox"
@@ -41,7 +41,7 @@ const Commentaires = ({
                 value={precaution.commentaire}
               />
             </div>
-          </React.Fragment>
+          </div>
         ))}
         {(customPrecautions || []).map((custom: any) => (
           <div key={custom.id} className="mb-1">
