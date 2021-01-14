@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { getIn, useFormikContext } from 'formik';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 import TextareaAutoSize from 'react-textarea-autosize';
 import joinClassNames from 'utility/class-names';
@@ -126,30 +127,24 @@ export const Textarea: React.FC<
   );
 };
 
-export const RawInput = React.forwardRef<
-  HTMLInputElement,
-  {
+export const RawInput = observer(
+  ({
+    className,
+    disabled,
+    name,
+    options,
+    placeholder,
+    type,
+    value,
+    withFeedback,
+    withLoading,
+    ...props
+  }: {
     name: string;
     options?: { value: string; label: string }[];
     withFeedback?: boolean;
     withLoading?: boolean;
-  } & React.ComponentPropsWithRef<'input'>
->(
-  (
-    {
-      className,
-      disabled,
-      name,
-      options,
-      placeholder,
-      type,
-      value,
-      withFeedback,
-      withLoading,
-      ...props
-    },
-    ref
-  ) => {
+  } & React.ComponentPropsWithRef<'input'>) => {
     if (type === 'file') {
       return (
         <div className="relative">
@@ -176,6 +171,9 @@ export const RawInput = React.forwardRef<
         </div>
       );
     }
+
+    console.log(name, value);
+
     return (
       <input
         className={classNames(
@@ -187,7 +185,6 @@ export const RawInput = React.forwardRef<
         )}
         name={name}
         placeholder={placeholder}
-        ref={ref}
         type={type || 'text'} // Si l'input est controllé par Formik, la valeur ne doit jamais être undefined
         value={value}
         {...props}
