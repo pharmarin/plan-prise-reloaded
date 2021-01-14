@@ -1,11 +1,11 @@
 import { AsyncStatus } from '@react-hook/async';
 import Information from 'components/Information';
+import Card from 'containers/Frontend/PlanPrises/Interface/Card';
 import Select from 'containers/Frontend/PlanPrises/Interface/Select';
 import { useNavigation } from 'hooks/use-store';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
 import React, { useEffect } from 'react';
-import Card from './Card';
 
 const Interface = observer(
   ({
@@ -53,17 +53,19 @@ const Interface = observer(
     }
 
     return (
-      <React.Fragment>
-        {planPrise &&
-          (planPrise?.medicaments || []).map((medicament) => (
-            <Card
-              key={medicament.uid}
-              medicament={medicament}
-              planPrise={planPrise}
-            />
-          ))}
+      <div className="space-y-4">
+        <div className="space-y-4">
+          {planPrise &&
+            (planPrise.medicaments || []).map((medicament) => (
+              <Card
+                key={medicament.uid}
+                medicament={medicament}
+                planPrise={planPrise}
+              />
+            ))}
+        </div>
         <Select planPrise={planPrise} />
-      </React.Fragment>
+      </div>
     );
   }
 );
