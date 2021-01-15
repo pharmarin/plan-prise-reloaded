@@ -1,6 +1,6 @@
 import Accueil from 'containers/Accueil';
 import Authentification, { Role } from 'containers/App/Authentification';
-import PlanPrises from 'containers/Frontend/PlanPrises';
+import PlanPrises from 'containers/Frontend/PlanPriseContainer';
 import Profil from 'containers/Profil';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import ProtectedRoute from 'containers/Utility/ProtectedRoute';

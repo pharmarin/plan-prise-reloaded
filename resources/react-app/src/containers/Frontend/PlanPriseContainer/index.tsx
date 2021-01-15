@@ -1,8 +1,8 @@
 import { useAsyncEffect } from '@react-hook/async';
 import SplashScreen from 'components/SplashScreen';
-import Interface from 'containers/Frontend/PlanPrises/Interface';
-import Selection from 'containers/Frontend/PlanPrises/Selection';
-import Settings from 'containers/Frontend/PlanPrises/Settings';
+import Interface from 'containers/Frontend/PlanPriseContainer/Interface';
+import Selection from 'containers/Frontend/PlanPriseContainer/Selection';
+import Settings from 'containers/Frontend/PlanPriseContainer/Settings';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import { useApi } from 'hooks/use-store';
 import { runInAction } from 'mobx';
@@ -12,7 +12,7 @@ import React, { useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
 
-const PlanPrises = () => {
+const PlanPriseContainer = () => {
   const { user } = useContext(SanctumContext);
 
   //const navigation = useNavigation();
@@ -143,4 +143,4 @@ const PlanPrises = () => {
   );
 };
 
-export default observer(PlanPrises);
+export default observer(PlanPriseContainer);

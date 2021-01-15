@@ -1,7 +1,7 @@
 import { AsyncStatus } from '@react-hook/async';
 import Information from 'components/Information';
-import Card from 'containers/Frontend/PlanPrises/Interface/CardContainer';
-import Select from 'containers/Frontend/PlanPrises/Interface/Select';
+import Card from 'containers/Frontend/PlanPriseContainer/Interface/CardContainer';
+import Select from 'containers/Frontend/PlanPriseContainer/Interface/Select';
 import { useNavigation } from 'hooks/use-store';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
