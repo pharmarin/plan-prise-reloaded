@@ -1,7 +1,7 @@
 import Button from 'components/Button';
 import FormGroup from 'components/FormGroup';
-import { RawInput } from 'components/Input';
 import Label from 'components/Label';
+import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
@@ -31,31 +31,20 @@ const Commentaires = ({
             precaution={precaution}
           />
         ))}
-        {(customPrecautions || []).map((custom: any) => (
-          <div key={custom.id} className="mb-1">
-            <Button
-              className="form-check-input p-0"
-              color="link"
-              onClick={(e) => console.log(e.currentTarget.value)}
-              size="sm"
-              style={{ position: 'absolute' }}
-            >
-              X
-            </Button>
-            <RawInput
-              name="custom_precaution"
-              onChange={(e) => console.log(e.currentTarget.value)}
-              value={custom.commentaire}
-            />
-          </div>
+        {(customPrecautions || []).map((customPrecaution) => (
+          <PrecautionContainer
+            key={customPrecaution.id}
+            custom
+            medicament={medicament}
+            planPrise={planPrise}
+            precaution={customPrecaution}
+          />
         ))}
         <div className="mb-1">
           <Button
             className="form-check-input p-0"
             color="link"
-            onClick={(e) => {
-              console.log('Add custom_precaution');
-            }}
+            onClick={action(() => planPrise.addCustomPrecaution(medicament))}
             size="sm"
             style={{ position: 'relative' }}
           >

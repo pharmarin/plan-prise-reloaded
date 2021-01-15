@@ -1,3 +1,4 @@
+import Button from 'components/Button';
 import { RawInput } from 'components/Input';
 import Label from 'components/Label';
 import { IRawModel } from 'datx';
@@ -24,32 +25,52 @@ const PrecautionContainer = ({
         <Label className="mb-0 font-italic">{precaution.population}</Label>
       )}
       <div className="flex flex-row items-center space-x-4">
-        <RawInput
-          name="precaution_check"
-          type="checkbox"
-          checked={precaution.checked}
-          onChange={action('setPrecautionsChecked', () => {
-            if (!medicament.isMedicament()) return undefined;
+        {custom ? (
+          <Button
+            className="px-0 pl-1"
+            color="link"
+            onClick={action('removeCustomPrecaution', () => {
+              planPrise.removeCustomPrecaution(medicament, precaution);
+            })}
+          >
+            X
+          </Button>
+        ) : (
+          <RawInput
+            name="precaution_check"
+            type="checkbox"
+            checked={precaution.checked}
+            onChange={action('setPrecautionChecked', () => {
+              if (!medicament.isMedicament()) return;
 
-            planPrise.setPrecautionsChecked(
-              medicament,
-              precaution,
-              !precaution.checked
-            );
-          })}
-        />
+              planPrise.setPrecautionChecked(
+                medicament,
+                precaution,
+                !precaution.checked
+              );
+            })}
+          />
+        )}
         <RawInput
           name="precaution"
           onChange={action(
-            'setPrecautionsCommentaire',
+            'setPrecautionCommentaire',
             (event: React.ChangeEvent<HTMLInputElement>) => {
-              if (!medicament.isMedicament()) return undefined;
-
-              planPrise.setPrecautionsCommentaire(
-                medicament,
-                precaution,
-                event.currentTarget.value
-              );
+              if (custom) {
+                planPrise.setCustomPrecautionCommentaire(
+                  medicament,
+                  precaution,
+                  event.currentTarget.value
+                );
+              } else if (medicament.isMedicament()) {
+                planPrise.setPrecautionCommentaire(
+                  medicament,
+                  precaution,
+                  event.currentTarget.value
+                );
+              } else {
+                return;
+              }
             }
           )}
           value={precaution.commentaire}

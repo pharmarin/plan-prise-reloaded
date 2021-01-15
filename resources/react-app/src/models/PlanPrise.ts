@@ -1,6 +1,6 @@
 import { Attribute, IRawModel, Model } from 'datx';
 import { jsonapi } from 'datx-jsonapi';
-import { setWith } from 'lodash-es';
+import { setWith, uniqueId } from 'lodash-es';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import forceArray from 'utility/force-array';
@@ -11,6 +11,11 @@ interface ICustomData {
   precautions?: {
     [uid: string]: {
       checked?: boolean;
+      commentaire?: string;
+    };
+  };
+  custom_precautions?: {
+    [uid: string]: {
       commentaire?: string;
     };
   };
@@ -71,7 +76,7 @@ class PlanPrise extends jsonapi(Model) {
       : [];
   }
 
-  setPrecautionsChecked(
+  setPrecautionChecked(
     medicament: Medicament,
     precaution: IRawModel,
     checked: boolean
@@ -84,7 +89,7 @@ class PlanPrise extends jsonapi(Model) {
     );
   }
 
-  setPrecautionsCommentaire(
+  setPrecautionCommentaire(
     medicament: Medicament,
     precaution: IRawModel,
     value: string
@@ -98,7 +103,50 @@ class PlanPrise extends jsonapi(Model) {
   }
 
   getCustomPrecautions(medicament: Medicament | ApiMedicament) {
-    return [];
+    return Object.entries(
+      this.custom_data?.[medicament.uid]?.custom_precautions || {}
+    ).map(([id, customPrecaution]) => ({ ...customPrecaution, id }));
+  }
+
+  addCustomPrecaution(medicament: Medicament | ApiMedicament) {
+    setWith(
+      this.custom_data,
+      [
+        medicament.uid,
+        'custom_precautions',
+        uniqueId('custom_precaution_'),
+        'commentaire',
+      ],
+      '',
+      Object
+    );
+  }
+
+  removeCustomPrecaution(
+    medicament: Medicament | ApiMedicament,
+    customPrecaution: IRawModel
+  ) {
+    delete this.custom_data[medicament.uid]?.custom_precautions?.[
+      customPrecaution.id
+    ];
+  }
+
+  setCustomPrecautionCommentaire(
+    medicament: Medicament | ApiMedicament,
+    customPrecaution: IRawModel,
+    value: string
+  ) {
+    setWith(
+      this.custom_data,
+      [
+        medicament.uid,
+        'custom_precautions',
+        customPrecaution.id,
+        'commentaire',
+      ],
+      value,
+      Object
+    );
   }
 }
 
