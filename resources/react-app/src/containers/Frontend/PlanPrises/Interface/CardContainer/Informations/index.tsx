@@ -2,6 +2,7 @@ import Button from 'components/Button';
 import FormGroup from 'components/FormGroup';
 import { RawInput } from 'components/Input';
 import Label from 'components/Label';
+import { observer } from 'mobx-react-lite';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import React from 'react';
@@ -86,4 +87,4 @@ const Informations = ({
   );
 };
 
-export default Informations;
+export default observer(Informations);

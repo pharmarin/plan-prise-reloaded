@@ -1,5 +1,6 @@
 import Spinner from 'components/Spinner';
 import { useNavigation } from 'hooks/use-store';
+import { observer } from 'mobx-react-lite';
 import React, { useContext, useEffect } from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
@@ -80,4 +81,4 @@ const Authentification = ({ role }: AuthentificationProps) => {
   );
 };
 
-export default Authentification;
+export default observer(Authentification);

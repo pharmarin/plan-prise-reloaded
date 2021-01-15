@@ -1,6 +1,7 @@
 import FormGroup from 'components/FormGroup';
 import { RawInput } from 'components/Input';
 import Label from 'components/Label';
+import { observer } from 'mobx-react-lite';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
@@ -31,4 +32,4 @@ const Posologies = ({
   );
 };
 
-export default Posologies;
+export default observer(Posologies);

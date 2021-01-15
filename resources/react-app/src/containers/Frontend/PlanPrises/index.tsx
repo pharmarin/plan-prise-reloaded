@@ -4,50 +4,56 @@ import Interface from 'containers/Frontend/PlanPrises/Interface';
 import Selection from 'containers/Frontend/PlanPrises/Selection';
 import Settings from 'containers/Frontend/PlanPrises/Settings';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
-import { useApi, useNavigation } from 'hooks/use-store';
+import { useApi } from 'hooks/use-store';
+import { runInAction } from 'mobx';
+import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
 import React, { useContext, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
 
 const PlanPrises = () => {
   const { user } = useContext(SanctumContext);
 
-  const navigation = useNavigation();
+  //const navigation = useNavigation();
 
   const api = useApi();
 
-  const { action, id } = useParams<{ action?: string; id?: string }>();
+  const { id } = useParams<{ action?: string; id?: string }>();
 
-  const history = useHistory();
+  //const history = useHistory();
 
-  const isPdfRoute = action === 'export';
+  //const isPdfRoute = action === 'export';
 
   const planPrise = useAsyncEffect(async () => {
     if (id) {
-      const planPrise = await api.getOne(PlanPrise, id || '', {
-        queryParams: {
-          include: [
-            'medicaments',
-            'medicaments.bdpm',
-            'medicaments.composition',
-            'medicaments.precautions',
-          ],
-        },
-      });
-      return planPrise.data as PlanPrise;
+      const planPrise = await runInAction(() =>
+        api.getOne(PlanPrise, id || '', {
+          queryParams: {
+            include: [
+              'medicaments',
+              'medicaments.bdpm',
+              'medicaments.composition',
+              'medicaments.precautions',
+            ],
+          },
+        })
+      );
+      return runInAction(() => planPrise.data as PlanPrise);
     } else {
       return undefined;
     }
   }, [id]);
 
   const list = useAsyncEffect(async () => {
-    const planPrises = await api.getMany(PlanPrise, {
-      queryParams: {
-        filter: { user: user.data.id },
-      },
-    });
-    return planPrises.data as PlanPrise[];
+    const planPrises = await runInAction(() =>
+      api.getMany(PlanPrise, {
+        queryParams: {
+          filter: { user: user.data.id },
+        },
+      })
+    );
+    return runInAction(() => planPrises.data as PlanPrise[]);
   }, []);
 
   useEffect(() => {
@@ -137,4 +143,4 @@ const PlanPrises = () => {
   );
 };
 
-export default PlanPrises;
+export default observer(PlanPrises);

@@ -8,6 +8,7 @@ import Submit from 'components/Submit';
 import { Field, Formik } from 'formik';
 import useConfig from 'helpers/hooks/use-config';
 import { useApi } from 'hooks/use-store';
+import { observer } from 'mobx-react-lite';
 import Precaution from 'models/Precaution';
 import React from 'react';
 import * as yup from 'yup';
@@ -167,4 +168,4 @@ const EditPrecaution = ({
   );
 };
 
-export default EditPrecaution;
+export default observer(EditPrecaution);

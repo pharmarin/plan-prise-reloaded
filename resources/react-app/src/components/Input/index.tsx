@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { getIn, useFormikContext } from 'formik';
-import { observer } from 'mobx-react-lite';
 import React from 'react';
 import TextareaAutoSize from 'react-textarea-autosize';
 import joinClassNames from 'utility/class-names';
@@ -127,71 +126,69 @@ export const Textarea: React.FC<
   );
 };
 
-export const RawInput = observer(
-  ({
-    className,
-    disabled,
-    name,
-    options,
-    placeholder,
-    type,
-    value,
-    withFeedback,
-    withLoading,
-    ...props
-  }: {
-    name: string;
-    options?: { value: string; label: string }[];
-    withFeedback?: boolean;
-    withLoading?: boolean;
-  } & React.ComponentPropsWithRef<'input'>) => {
-    if (type === 'file') {
-      return (
-        <div className="relative">
-          <input
-            className={classNames(
-              'relative w-full h-10 m-0 opacity-0 z-10',
-              className
-            )}
-            name={name}
-            type={type}
-            {...props}
-          />
-          <div className="flex absolute top-0 right-0 left-0 hover:cursor-pointer">
-            <label className="inline-block flex-grow h-10 p-2 text-gray-500 bg-white-900 border-gray-300 border border-l-0 rounded-l-md">
-              {value
-                ? //value.name
-                  undefined
-                : placeholder}
-            </label>
-            <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-              Ouvrir
-            </span>
-          </div>
-        </div>
-      );
-    }
-
-    console.log(name, value);
-
+export const RawInput = ({
+  className,
+  disabled,
+  name,
+  options,
+  placeholder,
+  type,
+  value,
+  withFeedback,
+  withLoading,
+  ...props
+}: {
+  name: string;
+  options?: { value: string; label: string }[];
+  withFeedback?: boolean;
+  withLoading?: boolean;
+} & React.ComponentPropsWithRef<'input'>) => {
+  if (type === 'file') {
     return (
-      <input
-        className={classNames(
-          {
-            'w-full': type !== 'radio' && type !== 'checkbox',
-          },
-          INPUT_CLASSES,
-          className
-        )}
-        name={name}
-        placeholder={placeholder}
-        type={type || 'text'} // Si l'input est controllé par Formik, la valeur ne doit jamais être undefined
-        value={value}
-        {...props}
-      />
+      <div className="relative">
+        <input
+          className={classNames(
+            'relative w-full h-10 m-0 opacity-0 z-10',
+            className
+          )}
+          name={name}
+          type={type}
+          {...props}
+        />
+        <div className="flex absolute top-0 right-0 left-0 hover:cursor-pointer">
+          <label className="inline-block flex-grow h-10 p-2 text-gray-500 bg-white-900 border-gray-300 border border-l-0 rounded-l-md">
+            {value
+              ? //value.name
+                undefined
+              : placeholder}
+          </label>
+          <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+            Ouvrir
+          </span>
+        </div>
+      </div>
     );
   }
-);
+
+  console.log(name, value);
+
+  return (
+    <input
+      className={classNames(
+        {
+          'w-full': type !== 'radio' && type !== 'checkbox',
+        },
+        INPUT_CLASSES,
+        className
+      )}
+      name={name}
+      placeholder={placeholder}
+      type={type || 'text'} // Si l'input est controllé par Formik, la valeur ne doit jamais être undefined
+      value={value}
+      {...props}
+    />
+  );
+};
 
 const Input = React.forwardRef<
   HTMLInputElement,

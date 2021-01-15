@@ -1,5 +1,6 @@
 import Button from 'components/Button';
 import Input from 'components/Input';
+import { observer } from 'mobx-react-lite';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import React from 'react';
@@ -67,4 +68,4 @@ const Header = ({ medicament }: { medicament: Medicament | ApiMedicament }) => {
   );
 };
 
-export default Header;
+export default observer(Header);

@@ -2,12 +2,21 @@ import { AxiosRequestConfig } from 'axios';
 import { Collection } from 'datx';
 import { config, jsonapi } from 'datx-jsonapi';
 import axios from 'helpers/axios-clients';
+import { configure } from 'mobx';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import Precaution from 'models/Precaution';
 import PrincipeActif from 'models/PrincipeActif';
 import User from 'models/User';
+
+configure({
+  enforceActions: 'observed',
+  //computedRequiresReaction: true,
+  reactionRequiresObservable: true,
+  //observableRequiresReaction: true,
+  //disableErrorBoundaries: true,
+});
 
 config.baseFetch = (method, url, body, requestHeaders, fetchOptions) =>
   axios
