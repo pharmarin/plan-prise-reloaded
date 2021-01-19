@@ -197,7 +197,6 @@ export const RawTextarea = ({
 }: React.ComponentPropsWithRef<'textarea'>) => (
   <TextareaAutoSize
     className={joinClassNames('w-full', INPUT_CLASSES, className)}
-    inputRef={ref || undefined}
     style={{
       resize: 'none',
       ...style,
