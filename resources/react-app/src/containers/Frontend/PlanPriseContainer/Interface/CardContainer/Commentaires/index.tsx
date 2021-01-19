@@ -40,7 +40,7 @@ const Commentaires = ({
             precaution={customPrecaution}
           />
         ))}
-        <div className="mb-1">
+        <div className="mt-2 ml-8">
           <Button
             className="form-check-input p-0"
             color="link"
@@ -48,7 +48,7 @@ const Commentaires = ({
             size="sm"
             style={{ position: 'relative' }}
           >
-            +
+            + Ajouter un commentaire
           </Button>
         </div>
       </FormGroup>
