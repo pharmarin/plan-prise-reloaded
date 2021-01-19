@@ -2,10 +2,12 @@ import Button from 'components/Button';
 import FormGroup from 'components/FormGroup';
 import { RawInput } from 'components/Input';
 import Label from 'components/Label';
+import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import React from 'react';
+import forceArray from 'utility/force-array';
 
 const Informations = ({
   medicament,
@@ -14,8 +16,34 @@ const Informations = ({
   medicament: Medicament;
   planPrise: PlanPrise;
 }) => {
-  const indications = planPrise.getIndications(medicament);
-  const conservation_duree = planPrise.getConservationDuree(medicament);
+  const indications = forceArray(
+    planPrise.custom_data?.[medicament.uid]?.indications ||
+      medicament.indications
+  );
+
+  const conservationDureeSource = medicament.conservation_duree;
+  const conservationDureeCustom =
+    planPrise.custom_data?.[medicament.uid]?.conservation_duree;
+
+  const conservationDuree = {
+    custom:
+      conservationDureeCustom !== null && conservationDureeCustom !== undefined,
+    data:
+      conservationDureeSource.length === 1
+        ? [conservationDureeSource[0].duree]
+        : conservationDureeCustom
+        ? [
+            (
+              conservationDureeSource.find(
+                (i) => i.laboratoire === conservationDureeCustom
+              ) || conservationDureeSource[0]
+            ).duree,
+          ] || []
+        : conservationDureeSource.map((i) => i.laboratoire) || [],
+  } as {
+    custom: boolean;
+    data: string[];
+  };
 
   return (
     <div className="w-2/6 space-y-2">
@@ -45,39 +73,42 @@ const Informations = ({
           )}
         </FormGroup>
       </div>
-      {(conservation_duree?.data || []).length > 0 && (
+      {(conservationDuree?.data || []).length > 0 && (
         <div>
-          <Label>Conservation après ouverture</Label>
-          {conservation_duree.custom && (
-            <Button
-              className="float-right"
-              color="link"
-              onClick={(e) =>
-                console.log('Set conservation_duree', e.currentTarget.value)
-              }
-              size="sm"
-            >
-              X
-            </Button>
-          )}
+          <div className="flex flex-row">
+            <Label className="flex-grow">Conservation après ouverture</Label>
+            {conservationDuree.custom && (
+              <Button
+                className="flex-initial px-1 py-0"
+                color="link"
+                onClick={action(() =>
+                  planPrise.setConservationDuree(medicament, undefined)
+                )}
+              >
+                X
+              </Button>
+            )}
+          </div>
           <FormGroup>
-            {Array.isArray(conservation_duree.data) &&
-              (conservation_duree.data.length === 1 ? (
+            {Array.isArray(conservationDuree.data) &&
+              (conservationDuree.data.length === 1 ? (
                 <RawInput
                   name="conservation_duree"
                   onChange={() => null}
-                  value={conservation_duree.data[0] || ''}
+                  value={conservationDuree.data[0] || ''}
                   readOnly={true}
                 />
               ) : (
                 <div>
-                  {(conservation_duree.data || []).map((laboratoire) => (
+                  {(conservationDuree.data || []).map((laboratoire) => (
                     <Button
                       key={laboratoire}
                       block
                       className="rounded-none first:rounded-t-md last:rounded-b-md border-b-0 last:border-b"
                       color="white"
-                      onClick={(e) => console.log(e.currentTarget.value)}
+                      onClick={action('setConservationDuree', () =>
+                        planPrise.setConservationDuree(medicament, laboratoire)
+                      )}
                     >
                       {laboratoire}
                     </Button>

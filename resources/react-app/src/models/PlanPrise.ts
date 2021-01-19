@@ -3,7 +3,6 @@ import { jsonapi } from 'datx-jsonapi';
 import { setWith, uniqueId } from 'lodash-es';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
-import forceArray from 'utility/force-array';
 import getConfig from 'utility/get-config';
 
 interface ICustomData {
@@ -45,30 +44,21 @@ class PlanPrise extends jsonapi(Model) {
     this.save();
   }
 
-  getIndications(medicament: Medicament) {
-    const source = medicament.indications;
-    const custom = this.custom_data.indications;
+  setConservationDuree(
+    medicament: Medicament,
+    laboratoire: string | undefined
+  ) {
+    setWith(
+      this.custom_data,
+      [medicament.uid, 'conservation_duree'],
+      laboratoire,
+      Object
+    );
 
-    return forceArray(custom || source);
-  }
-
-  getConservationDuree(medicament: Medicament) {
-    const source = medicament.conservation_duree;
-    const custom = this.custom_data.conservation_duree;
-
-    const isCustomValue = custom !== null && custom !== undefined;
-
-    return {
-      custom: isCustomValue,
-      data:
-        source.length === 1
-          ? [source[0].duree]
-          : custom
-          ? [
-              (source.find((i) => i.laboratoire === custom) || source[0]).duree,
-            ] || []
-          : source.map((i) => i.laboratoire) || [],
-    };
+    console.log(
+      'laboratoire: ',
+      this.custom_data[medicament.uid].conservation_duree
+    );
   }
 
   getPosologies(medicament: Medicament | ApiMedicament) {
