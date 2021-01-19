@@ -7,6 +7,7 @@ import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import React from 'react';
+import joinClassNames from 'utility/class-names';
 
 const Posologies = ({
   medicament,
@@ -16,9 +17,18 @@ const Posologies = ({
   planPrise: PlanPrise;
 }) => {
   return (
-    <div className="space-y-2">
+    <div
+      className={joinClassNames('space-y-2 w-3/6', {
+        'w-1/6': medicament.isMedicament(),
+      })}
+    >
       {planPrise.getPosologies(medicament).map((posologie) => (
-        <div key={posologie.id}>
+        <div
+          key={posologie.id}
+          className={joinClassNames('w-1/2', {
+            'w-full': medicament.isMedicament(),
+          })}
+        >
           <Label>{posologie.label}</Label>
           <FormGroup>
             <RawInput

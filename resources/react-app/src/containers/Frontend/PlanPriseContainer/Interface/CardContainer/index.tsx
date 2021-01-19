@@ -6,7 +6,6 @@ import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import React from 'react';
-import joinClassNames from 'utility/class-names';
 import Posologies from './Posologies';
 
 const CardContainer = ({
@@ -19,12 +18,7 @@ const CardContainer = ({
   return (
     <Card className="space-y-2 divide-y">
       <Header medicament={medicament} />
-      <div
-        className={joinClassNames('grid grid-cols-1 gap-4 pt-2', {
-          'md:grid-cols-3': medicament.isMedicament(),
-          'md:grid-cols-2': !medicament.isMedicament(),
-        })}
-      >
+      <div className="flex flex-row space-x-4">
         {medicament.isMedicament() && (
           <Informations medicament={medicament} planPrise={planPrise} />
         )}
