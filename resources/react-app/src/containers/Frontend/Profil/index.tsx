@@ -1,7 +1,7 @@
 import Card from 'components/Card';
-import DeleteUser from 'containers/Profil/DeleteUser';
-import EditInformations from 'containers/Profil/EditInformations';
-import EditPassword from 'containers/Profil/EditPassword';
+import DeleteUser from 'containers/Frontend/Profil/DeleteUser';
+import EditInformations from 'containers/Frontend/Profil/EditInformations';
+import EditPassword from 'containers/Frontend/Profil/EditPassword';
 import { useApi, useNavigation } from 'hooks/use-store';
 import User from 'models/User';
 import React, { useContext, useEffect } from 'react';

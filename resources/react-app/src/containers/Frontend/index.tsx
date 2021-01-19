@@ -1,7 +1,7 @@
-import Accueil from 'containers/Accueil';
 import Authentification, { Role } from 'containers/App/Authentification';
+import Accueil from 'containers/Frontend/Accueil';
 import PlanPrises from 'containers/Frontend/PlanPriseContainer';
-import Profil from 'containers/Profil';
+import Profil from 'containers/Frontend/Profil';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import ProtectedRoute from 'containers/Utility/ProtectedRoute';
 import React from 'react';
