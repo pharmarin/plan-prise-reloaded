@@ -4,10 +4,14 @@ import { setWith, uniqueId } from 'lodash-es';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import forceArray from 'utility/force-array';
+import getConfig from 'utility/get-config';
 
 interface ICustomData {
   conservation_duree?: string;
   indications?: string[];
+  posologies?: {
+    [id: string]: string;
+  };
   precautions?: {
     [uid: string]: {
       checked?: boolean;
@@ -59,6 +63,28 @@ class PlanPrise extends jsonapi(Model) {
             ] || []
           : source.map((i) => i.laboratoire) || [],
     };
+  }
+
+  getPosologies(medicament: Medicament | ApiMedicament) {
+    const defaults = getConfig('default');
+
+    return (defaults?.posologies || []).map((posologie) => ({
+      ...posologie,
+      value: this.custom_data[medicament.uid]?.posologies?.[posologie.id] || '',
+    }));
+  }
+
+  setPosologieValue(
+    medicament: Medicament | ApiMedicament,
+    posologieId: string,
+    value: string
+  ) {
+    setWith(
+      this.custom_data,
+      [medicament.uid, 'posologies', posologieId],
+      value,
+      Object
+    );
   }
 
   getPrecautions(medicament: Medicament | ApiMedicament) {

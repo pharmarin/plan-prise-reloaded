@@ -1,6 +1,7 @@
 import FormGroup from 'components/FormGroup';
 import { RawInput } from 'components/Input';
 import Label from 'components/Label';
+import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
@@ -16,14 +17,20 @@ const Posologies = ({
 }) => {
   return (
     <div className="col-md-3">
-      {(false || []).map((p: any) => (
-        <div key={p.id}>
-          <Label>{p.label}</Label>
+      {planPrise.getPosologies(medicament).map((posologie) => (
+        <div key={posologie.id}>
+          <Label>{posologie.label}</Label>
           <FormGroup>
             <RawInput
-              name={p.id}
-              onChange={(e) => console.log(e.currentTarget.value)}
-              value={p.value}
+              name={posologie.id}
+              onChange={action((event: React.ChangeEvent<HTMLInputElement>) =>
+                planPrise.setPosologieValue(
+                  medicament,
+                  posologie.id,
+                  event.currentTarget.value
+                )
+              )}
+              value={posologie.value}
             />
           </FormGroup>
         </div>

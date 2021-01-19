@@ -33,22 +33,20 @@ type LoadingState = 'not-loaded' | 'loaded' | 'loading';
 
 declare namespace Models {
   namespace App {
-    type Config = {
+    interface Config {
       version: string;
       validation: {
         [key: string]: string;
       };
       default: {
-        posologies: [
-          {
-            id: string;
-            label: string;
-            default?: boolean;
-            color: string;
-          }
-        ];
+        posologies: {
+          id: string;
+          label: string;
+          default?: boolean;
+          color: string;
+        }[];
       };
-    } | null;
+    }
     interface Notification {
       id: string;
       header?: string;
