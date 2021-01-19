@@ -4,6 +4,7 @@ import Form from 'components/Form';
 import FormGroup from 'components/FormGroup';
 import { RawInput } from 'components/Input';
 import { useNavigation } from 'hooks/use-store';
+import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
 import React, { useEffect, useState } from 'react';
@@ -144,28 +145,29 @@ const Selection = observer(
               <TextFit text="new" />
             </Link>
           </Card>
-          {(list || Array.from({ length: 5 }, () => new PlanPrise())).map(
-            (planPrise, key) => (
-              <Card
-                key={planPrise.meta.id || key + '_'}
-                className="h-32 w-32 m-auto p-2"
+          {(
+            list ||
+            Array.from({ length: 4 }, () => runInAction(() => new PlanPrise()))
+          ).map((planPrise, key) => (
+            <Card
+              key={planPrise.meta.id || key + '_'}
+              className="h-32 w-32 m-auto p-2"
+            >
+              <ReactPlaceholder
+                type="rect"
+                showLoadingAnimation={true}
+                ready={status === 'success'}
+                className="m-0"
               >
-                <ReactPlaceholder
-                  type="rect"
-                  showLoadingAnimation={true}
-                  ready={status === 'success'}
-                  className="m-0"
+                <Link
+                  key={planPrise.meta.id}
+                  to={`/plan-prise/${planPrise.meta.id}`}
                 >
-                  <Link
-                    key={planPrise.meta.id}
-                    to={`/plan-prise/${planPrise.meta.id}`}
-                  >
-                    <TextFit text={`#${planPrise.meta.id}`} />
-                  </Link>
-                </ReactPlaceholder>
-              </Card>
-            )
-          )}
+                  <TextFit text={`#${planPrise.meta.id}`} />
+                </Link>
+              </ReactPlaceholder>
+            </Card>
+          ))}
         </div>
       </div>
     );
