@@ -7,6 +7,7 @@ import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import React from 'react';
 import joinClassNames from 'utility/class-names';
+import Posologies from './Posologies';
 
 const CardContainer = ({
   medicament,
@@ -27,7 +28,7 @@ const CardContainer = ({
         {medicament.isMedicament() && (
           <Informations medicament={medicament} planPrise={planPrise} />
         )}
-        {/* <Posologies medicament={medicament} planPrise={planPrise} /> */}
+        <Posologies medicament={medicament} planPrise={planPrise} />
         <Commentaires medicament={medicament} planPrise={planPrise} />
       </div>
     </Card>

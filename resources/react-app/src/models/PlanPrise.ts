@@ -68,10 +68,13 @@ class PlanPrise extends jsonapi(Model) {
   getPosologies(medicament: Medicament | ApiMedicament) {
     const defaults = getConfig('default');
 
-    return (defaults?.posologies || []).map((posologie) => ({
-      ...posologie,
-      value: this.custom_data[medicament.uid]?.posologies?.[posologie.id] || '',
-    }));
+    return (defaults?.posologies || [])
+      .filter((posologie) => posologie.default) //TODO : Add settings
+      .map((posologie) => ({
+        ...posologie,
+        value:
+          this.custom_data[medicament.uid]?.posologies?.[posologie.id] || '',
+      }));
   }
 
   setPosologieValue(

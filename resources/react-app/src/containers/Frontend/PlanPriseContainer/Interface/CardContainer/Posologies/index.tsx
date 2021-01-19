@@ -16,7 +16,7 @@ const Posologies = ({
   planPrise: PlanPrise;
 }) => {
   return (
-    <div className="col-md-3">
+    <div className="space-y-2">
       {planPrise.getPosologies(medicament).map((posologie) => (
         <div key={posologie.id}>
           <Label>{posologie.label}</Label>
