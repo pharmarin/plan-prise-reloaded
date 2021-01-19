@@ -1,117 +1,114 @@
+import useLoadAsync from 'helpers/hooks/use-load-async';
 import { useApi } from 'hooks/use-store';
+import { runInAction } from 'mobx';
+import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import { ActionMeta, ValueType } from 'react-select';
 import {
   AsyncPaginate,
   reduceGroupedOptions,
 } from 'react-select-async-paginate';
-import { addNotification } from 'store/app';
-import { cache } from 'store/cache';
-import { addItem, createContent } from 'store/plan-prise';
-import {
-  selectPlanPriseData,
-  selectPlanPriseState,
-} from 'store/plan-prise/selectors/plan-prise';
+import reactSelectOptions from 'utility/react-select-options';
 
-const mapState = (state: Redux.State) => ({
-  cacheContent: state.cache,
-  medicData: selectPlanPriseData(state)?.medicaments || [],
-  status: selectPlanPriseState(state),
-});
-
-const mapDispatch = {
-  addItem,
-  addNotification,
-  cache,
-  createContent,
-};
-
-const connector = connect(mapState, mapDispatch);
-
-type SelectProps = ConnectedProps<typeof connector>;
-
-const Select = ({
-  addItem,
-  addNotification,
-  cache,
-  cacheContent,
-  createContent,
-  planPrise,
-  medicData,
-  status,
-}: SelectProps & { planPrise?: PlanPrise }) => {
-  //const { loadGeneric } = useLoadAsync();
+const Select = ({ planPrise }: { planPrise?: PlanPrise }) => {
+  const { loadGeneric } = useLoadAsync();
 
   const api = useApi();
 
   if (!planPrise) return <p>Chargement en cours</p>;
-
-  const handleChange = (
-    value: ValueType<
-      {
-        label: string;
-        value: string;
-        type: Models.MedicamentIdentity['type'];
-      },
-      false
-    >,
-    { action }: ActionMeta<{ label: string; value: string; type: string }>
-  ) => {
-    if (
-      action === 'select-option' &&
-      value &&
-      'value' in value &&
-      'type' in value
-    ) {
-      /* if (Array.isArray(value)) {
-          throw new Error('Un seul médicament peut être ajouté à la fois');
-        }
-        if (
-          status.isLoaded &&
-          medicData.find((i) => i.type === value.type && i.id === value.value)
-        ) {
-          addNotification({
-            header: 'Action impossible',
-            content:
-              "Ce médicament est déjà dans le plan de prise, il est donc impossible de l'ajouter à nouveau. ",
-            icon: 'warning',
-            timer: 2000,
-          });
-          console.warn('Ce médicament est déjà dans le plan de prise');
-        } */
-
-      api.getOne(Medicament, value.value).then((response) => {
-        planPrise.medicaments.push(response.data as Medicament);
-        planPrise.save();
-      });
-    }
-  };
 
   return (
     <AsyncPaginate
       cacheOptions={true}
       className="mb-4"
       debounceTimeout={500}
-      loadOptions={(inputValue) => ({
-        options: [],
-        hasMore: false,
-      })}
       loadingMessage={() => 'Chargement des résultats en cours'}
+      loadOptionsOnMenuOpen={false}
+      loadOptions={async (inputValue) => {
+        return {
+          options: await loadGeneric(inputValue),
+          hasMore: false,
+        };
+      }}
       menuPlacement="auto"
       noOptionsMessage={(p) =>
         p.inputValue.length > 0
           ? 'Aucun résultat'
           : "Taper le nom d'un médicament pour commencer la recherche"
       }
-      onChange={handleChange}
+      onChange={(
+        value: ValueType<
+          {
+            label: string;
+            value: string;
+            type: Models.MedicamentIdentity['type'];
+          },
+          false
+        >,
+        { action }: ActionMeta<{ label: string; value: string; type: string }>
+      ) => {
+        if (
+          action === 'select-option' &&
+          value &&
+          'value' in value &&
+          'type' in value
+        ) {
+          if (Array.isArray(value)) {
+            throw new Error(
+              'Un seul médicament ne peut être ajouté à la fois (Erreur 301)'
+            );
+          }
+
+          const valueType = (() => {
+            switch (value.type) {
+              case 'medicaments':
+                return Medicament;
+              case 'api-medicaments':
+                return ApiMedicament;
+              default:
+                throw new Error(
+                  "Impossible d'ajouter un médicament de type inconnu au plan de prise (Erreur 300)"
+                );
+            }
+          })();
+
+          const model = new valueType();
+
+          if (
+            planPrise.medicaments.filter(
+              (medicament) =>
+                medicament.meta.type === value.type &&
+                medicament.meta.id === value.value
+            ).length > 0
+          ) {
+            throw new Error(
+              'Ce médicament est déjà dans le plan de prise (Erreur 302)'
+            );
+          }
+
+          runInAction(() =>
+            api
+              .getOne(valueType, value.value, {
+                queryParams: {
+                  include: ['bdpm', 'composition', 'precautions'],
+                },
+              })
+              .then((response) => {
+                runInAction(() =>
+                  planPrise.addMedicament(response.data as typeof model)
+                );
+              })
+          );
+        }
+      }}
       placeholder="Ajouter un médicament au plan de prise"
       reduceOptions={reduceGroupedOptions}
       value={null}
+      {...reactSelectOptions}
     />
   );
 };
 
-export default connector(Select);
+export default Select;
