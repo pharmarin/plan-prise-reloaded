@@ -170,8 +170,6 @@ export const RawInput = ({
     );
   }
 
-  console.log(name, value);
-
   return (
     <input
       className={classNames(
