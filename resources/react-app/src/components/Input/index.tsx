@@ -188,6 +188,25 @@ export const RawInput = ({
   );
 };
 
+export const RawTextarea = ({
+  className,
+  ref,
+  style,
+  value,
+  ...props
+}: React.ComponentPropsWithRef<'textarea'>) => (
+  <TextareaAutoSize
+    className={joinClassNames('w-full', INPUT_CLASSES, className)}
+    inputRef={ref || undefined}
+    style={{
+      resize: 'none',
+      ...style,
+    }}
+    value={value?.toString()}
+    {...props}
+  />
+);
+
 const Input = React.forwardRef<
   HTMLInputElement,
   {

@@ -1,5 +1,5 @@
 import FormGroup from 'components/FormGroup';
-import { RawInput } from 'components/Input';
+import { RawTextarea } from 'components/Input';
 import Label from 'components/Label';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -31,14 +31,15 @@ const Posologies = ({
         >
           <Label>{posologie.label}</Label>
           <FormGroup>
-            <RawInput
+            <RawTextarea
               name={posologie.id}
-              onChange={action((event: React.ChangeEvent<HTMLInputElement>) =>
-                planPrise.setPosologieValue(
-                  medicament,
-                  posologie.id,
-                  event.currentTarget.value
-                )
+              onChange={action(
+                (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  planPrise.setPosologieValue(
+                    medicament,
+                    posologie.id,
+                    event.currentTarget.value
+                  )
               )}
               value={posologie.value}
             />

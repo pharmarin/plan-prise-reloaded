@@ -1,5 +1,5 @@
 import Button from 'components/Button';
-import { RawInput } from 'components/Input';
+import { RawInput, RawTextarea } from 'components/Input';
 import Label from 'components/Label';
 import { IRawModel } from 'datx';
 import { action } from 'mobx';
@@ -51,11 +51,11 @@ const PrecautionContainer = ({
             })}
           />
         )}
-        <RawInput
+        <RawTextarea
           name="precaution"
           onChange={action(
             'setPrecautionCommentaire',
-            (event: React.ChangeEvent<HTMLInputElement>) => {
+            (event: React.ChangeEvent<HTMLTextAreaElement>) => {
               if (custom) {
                 planPrise.setCustomPrecautionCommentaire(
                   medicament,
