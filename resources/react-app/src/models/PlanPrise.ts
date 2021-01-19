@@ -39,6 +39,12 @@ class PlanPrise extends jsonapi(Model) {
     [uid: string]: ICustomData;
   };
 
+  addMedicament(medicament: Medicament | ApiMedicament) {
+    this.medicaments.push(medicament);
+
+    //this.save();
+  }
+
   getIndications(medicament: Medicament) {
     const source = medicament.indications;
     const custom = this.custom_data.indications;
