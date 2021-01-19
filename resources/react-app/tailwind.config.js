@@ -28,6 +28,7 @@ module.exports = {
   variants: {
     extend: {
       borderRadius: ['first', 'last'],
+      borderWidth: ['last'],
     },
   },
   plugins: [require('@tailwindcss/forms'), addColumnCount],

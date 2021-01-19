@@ -26,8 +26,10 @@ const Informations = ({
             <div>
               {indications.map((indication: string) => (
                 <Button
-                  color="light"
                   key={indication}
+                  block
+                  className="rounded-none first:rounded-t-md last:rounded-b-md border-b-0 last:border-b"
+                  color="white"
                   onClick={(e) => console.log(e.currentTarget.value)}
                 >
                   {indication}
@@ -72,7 +74,9 @@ const Informations = ({
                   {(conservation_duree.data || []).map((laboratoire) => (
                     <Button
                       key={laboratoire}
-                      color="light"
+                      block
+                      className="rounded-none first:rounded-t-md last:rounded-b-md border-b-0 last:border-b"
+                      color="white"
                       onClick={(e) => console.log(e.currentTarget.value)}
                     >
                       {laboratoire}
