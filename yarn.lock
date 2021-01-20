@@ -1468,10 +1468,9 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@mariusmarais/tailwind-cascade@^0.0.4":
+"@mariusmarais/tailwind-cascade@https://github.com/pharmarin/tailwind-cascade.git":
   version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@mariusmarais/tailwind-cascade/-/tailwind-cascade-0.0.4.tgz#0133262f0f6b81bfa0b6b44c83d04bf13cdf8c3c"
-  integrity sha512-NZTHjeiQcYgL8aSH6esg1ImbuIE0CjBSd7DlMJZGiHH8fEiZNrc+imrRJ5plbLrkrZOHuu82i8uuWhboqGeECg==
+  resolved "https://github.com/pharmarin/tailwind-cascade.git#46240fd39fbf100bb197631f3c6fa9ae7b49945b"
   dependencies:
     classnames "^2.2.6"
     escape-regex-string "^1.0.6"
