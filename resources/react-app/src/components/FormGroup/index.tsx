@@ -1,10 +1,19 @@
 import React from 'react';
+import joinClassNames from 'utility/class-names';
 
-const FormGroup: React.FC<React.ComponentPropsWithoutRef<'div'>> = ({
-  children,
-  ...props
-}) => {
-  return <div {...props}>{children}</div>;
+const FormGroup: React.FC<
+  React.ComponentPropsWithoutRef<'div'> & { check?: boolean }
+> = ({ check, children, className, ...props }) => {
+  return (
+    <div
+      className={joinClassNames('flex flex-col mb-2', {
+        'flex-row': check,
+      })}
+      {...props}
+    >
+      {children}
+    </div>
+  );
 };
 
 export default FormGroup;
