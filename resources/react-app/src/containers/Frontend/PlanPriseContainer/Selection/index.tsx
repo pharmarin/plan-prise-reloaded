@@ -2,7 +2,7 @@ import { AsyncStatus } from '@react-hook/async';
 import Card from 'components/Card';
 import Form from 'components/Form';
 import FormGroup from 'components/FormGroup';
-import { RawInput } from 'components/Input';
+import Input from 'components/Input';
 import { useNavigation } from 'hooks/use-store';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -124,7 +124,7 @@ const Selection = observer(
                 <div className="absolute mt-2 ml-2 text-gray-500">
                   Accès rapide au plan de prise #
                 </div>
-                <RawInput
+                <Input
                   autoFocus
                   className={joinClassNames('pl-60 text-center', {
                     'border-green-600 text-green-600': search && searchSuccess,

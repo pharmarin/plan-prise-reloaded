@@ -54,7 +54,6 @@ const Header = ({ medicament }: { medicament: Medicament | ApiMedicament }) => {
         <Button
           block={true}
           className="rounded-full text-red-600 py-0"
-          size="sm"
           tabIndex={-1}
           color="white"
           onClick={() => {

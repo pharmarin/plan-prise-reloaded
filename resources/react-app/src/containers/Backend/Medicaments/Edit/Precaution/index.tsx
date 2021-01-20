@@ -112,7 +112,6 @@ const EditPrecaution = ({
               <Submit
                 color="green"
                 disabled={!isValid || isSubmitting}
-                size="sm"
                 withLoading
               >
                 Enregistrer
@@ -121,7 +120,6 @@ const EditPrecaution = ({
                 color="red"
                 disabled={isSubmitting}
                 onClick={() => api.removeOne(precaution)}
-                size="sm"
                 type="button"
               >
                 Supprimer

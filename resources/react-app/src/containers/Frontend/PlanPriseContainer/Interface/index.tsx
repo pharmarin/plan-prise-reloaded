@@ -2,11 +2,13 @@ import { AsyncStatus } from '@react-hook/async';
 import Information from 'components/Information';
 import Card from 'containers/Frontend/PlanPriseContainer/Interface/CardContainer';
 import Select from 'containers/Frontend/PlanPriseContainer/Interface/Select';
+import useEventListener from 'hooks/use-event-listener';
 import { useNavigation } from 'hooks/use-store';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import Settings from '../Settings';
 
 const Interface = ({
   error,
@@ -17,6 +19,8 @@ const Interface = ({
   planPrise?: PlanPrise;
   status: AsyncStatus;
 }) => {
+  const [showSettings, setShowSettings] = useState(false);
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -32,10 +36,22 @@ const Interface = ({
             name: 'arrowLeft',
           },
           path: '/plan-prise',
-        }
+        },
+        [
+          ...(planPrise === undefined
+            ? []
+            : [
+                {
+                  label: 'Options',
+                  event: 'toggleSettings',
+                },
+              ]),
+        ]
       )
     );
   }, [navigation, planPrise, planPrise?.meta.id]);
+
+  useEventListener('toggleSettings', () => setShowSettings(!showSettings));
 
   if (status === 'loading' || status === 'idle') {
     return (
@@ -67,6 +83,13 @@ const Interface = ({
           ))}
       </div>
       <Select planPrise={planPrise} />
+      {planPrise && (
+        <Settings
+          planPrise={planPrise}
+          showSettings={showSettings}
+          toggleSettings={() => setShowSettings(!showSettings)}
+        />
+      )}
     </div>
   );
 };

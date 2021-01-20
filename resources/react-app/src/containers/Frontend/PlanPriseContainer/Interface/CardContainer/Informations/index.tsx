@@ -1,6 +1,6 @@
 import Button from 'components/Button';
 import FormGroup from 'components/FormGroup';
-import { RawTextarea } from 'components/Input';
+import { TextArea } from 'components/Input';
 import Label from 'components/Label';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -65,7 +65,7 @@ const Informations = ({
               ))}
             </div>
           ) : (
-            <RawTextarea
+            <TextArea
               name="indications"
               onChange={(e) => console.log(e.currentTarget.value)}
               value={indications?.[0] || ''}
@@ -92,7 +92,7 @@ const Informations = ({
           <FormGroup>
             {Array.isArray(conservationDuree.data) &&
               (conservationDuree.data.length === 1 ? (
-                <RawTextarea
+                <TextArea
                   name="conservation_duree"
                   onChange={() => null}
                   value={conservationDuree.data[0] || ''}

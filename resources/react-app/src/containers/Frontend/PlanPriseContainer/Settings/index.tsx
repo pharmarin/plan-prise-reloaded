@@ -1,75 +1,67 @@
-import useConfig from 'helpers/hooks/use-config';
-import { ceil, chunk, get } from 'lodash-es';
-import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import {
-  Col,
-  CustomInput,
-  FormGroup,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  Row,
-} from 'reactstrap';
-import { setSettings } from 'store/plan-prise';
+import Button from 'components/Button';
+import FormGroup from 'components/FormGroup';
+import Input from 'components/Input';
+import Label from 'components/Label';
+import Modal from 'components/Modal';
+import { ceil, chunk } from 'lodash-es';
+import PlanPrise from 'models/PlanPrise';
+import getConfig from 'utility/get-config';
 
-const mapState = (state: Redux.State) => ({
-  settings: state.planPrise.content.data?.custom_settings || {},
-});
-
-const mapDispatch = {
-  setSettings,
-};
-
-const connector = connect(mapState, mapDispatch);
-
-type SettingsProps = ConnectedProps<typeof connector> &
-  Props.Frontend.PlanPrise.Settings;
-
-const Settings = ({ settings, setSettings, show, toggle }: SettingsProps) => {
-  const posologies = useConfig('default.posologies');
+const Settings = ({
+  planPrise,
+  showSettings,
+  toggleSettings,
+}: {
+  planPrise: PlanPrise;
+  showSettings: boolean;
+  toggleSettings: () => void;
+}) => {
+  const defaults = getConfig('default');
 
   return (
-    <Modal centered={true} isOpen={show} toggle={toggle}>
-      <ModalHeader toggle={toggle}>Options</ModalHeader>
-      <ModalBody>
-        <h5>Colonnes à afficher</h5>
-        <Row>
-          {chunk(Object.keys(posologies), ceil(posologies.length / 2)).map(
-            (c, ckey) => (
-              <Col key={ckey} sm={6}>
-                {c.map((key) => {
-                  const input = posologies[key];
-                  return (
-                    <FormGroup key={key} className="mb-0" check>
-                      <CustomInput
-                        id={input.id}
-                        checked={get(
-                          settings,
-                          `inputs.${input.id}.checked`,
-                          input.default || false
-                        )}
-                        label={input.label}
-                        type="switch"
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>
-                        ) => {
-                          setSettings({
-                            id: `inputs.${input.id}.checked`,
-                            value: event.currentTarget.checked,
-                          });
-                        }}
-                      />
-                    </FormGroup>
-                  );
-                })}
-              </Col>
-            )
-          )}
-        </Row>
-      </ModalBody>
+    <Modal show={showSettings}>
+      <Modal.Content className="space-y-4">
+        <h4>Colonnes à afficher</h4>
+        <div className="flex flex-row space-x-10">
+          {chunk(
+            defaults?.posologies || [],
+            ceil((defaults?.posologies || []).length / 4)
+          ).map((chunkArray, chunkKey) => (
+            <div key={chunkKey} className="flex-1">
+              {chunkArray.map((posologie) => {
+                return (
+                  <FormGroup key={posologie.id} check>
+                    <Input
+                      checked={false}
+                      name={posologie.id}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        alert(event.currentTarget.name);
+                      }}
+                      toggleSize="sm"
+                      type="toggle"
+                    />
+                    <Label for={posologie.id} check>
+                      {posologie.label}
+                    </Label>
+                  </FormGroup>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-row justify-end space-x-4">
+          <Button color="green" onClick={() => {}}>
+            Enregistrer
+          </Button>
+          <Button color="red" onClick={toggleSettings}>
+            Annuler
+          </Button>
+        </div>
+      </Modal.Content>
     </Modal>
   );
 };
 
-export default connector(Settings);
+export default Settings;

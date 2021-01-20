@@ -22,6 +22,9 @@ module.exports = {
         'view-90': '90vh',
         'view-95': '95vh',
       },
+      inset: {
+        0.8: '0.2rem',
+      },
       minWidth: (theme) => theme('width'),
     },
   },

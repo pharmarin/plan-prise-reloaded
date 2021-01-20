@@ -1,5 +1,6 @@
 import Button from 'components/Button';
-import { RawInput, RawTextarea } from 'components/Input';
+import FormGroup from 'components/FormGroup';
+import Input, { TextArea } from 'components/Input';
 import Label from 'components/Label';
 import { IRawModel } from 'datx';
 import { action } from 'mobx';
@@ -20,7 +21,7 @@ const PrecautionContainer = ({
   precaution: IRawModel;
 }) => {
   return (
-    <div className="flex flex-col">
+    <FormGroup className="flex flex-col">
       {precaution.population && (
         <Label className="mb-0 font-italic">{precaution.population}</Label>
       )}
@@ -36,7 +37,7 @@ const PrecautionContainer = ({
             X
           </Button>
         ) : (
-          <RawInput
+          <Input
             name="precaution_check"
             type="checkbox"
             checked={precaution.checked}
@@ -51,7 +52,7 @@ const PrecautionContainer = ({
             })}
           />
         )}
-        <RawTextarea
+        <TextArea
           name="precaution"
           onChange={action(
             'setPrecautionCommentaire',
@@ -76,7 +77,7 @@ const PrecautionContainer = ({
           value={precaution.commentaire}
         />
       </div>
-    </div>
+    </FormGroup>
   );
 };
 

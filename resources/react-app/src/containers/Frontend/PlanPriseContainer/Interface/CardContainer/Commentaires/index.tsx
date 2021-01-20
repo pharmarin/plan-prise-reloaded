@@ -45,7 +45,6 @@ const Commentaires = ({
             className="form-check-input p-0"
             color="link"
             onClick={action(() => planPrise.addCustomPrecaution(medicament))}
-            size="sm"
             style={{ position: 'relative' }}
           >
             + Ajouter un commentaire

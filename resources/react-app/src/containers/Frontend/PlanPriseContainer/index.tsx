@@ -2,7 +2,6 @@ import { useAsyncEffect } from '@react-hook/async';
 import SplashScreen from 'components/SplashScreen';
 import Interface from 'containers/Frontend/PlanPriseContainer/Interface';
 import Selection from 'containers/Frontend/PlanPriseContainer/Selection';
-import Settings from 'containers/Frontend/PlanPriseContainer/Settings';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import { useApi } from 'hooks/use-store';
 import { runInAction } from 'mobx';
@@ -132,12 +131,6 @@ const PlanPriseContainer = () => {
         error={planPrise.error}
         planPrise={planPrise.value}
         status={planPrise.status}
-      />
-      <Settings
-        show={planPrise.status === 'success' && false} // && showSettings
-        toggle={() => {
-          console.log('show settings');
-        }}
       />
     </ErrorBoundary>
   );
