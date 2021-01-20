@@ -1,7 +1,12 @@
 import { Transition } from '@headlessui/react';
 import React from 'react';
+import joinClassNames from 'utility/class-names';
 
-const ModalContent: React.FC<{ icon?: string }> = ({ children, icon }) => {
+const ModalContent: React.FC<{ className?: string; icon?: string }> = ({
+  children,
+  className,
+  icon,
+}) => {
   return (
     <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
       <div className="sm:flex sm:items-start">
@@ -10,7 +15,12 @@ const ModalContent: React.FC<{ icon?: string }> = ({ children, icon }) => {
             <ModalIcon icon={icon} />
           </div>
         )}
-        <div className="mt-3 w-full text-center sm:mt-0 sm:mx-4 sm:text-left">
+        <div
+          className={joinClassNames(
+            'mt-3 w-full text-center sm:mt-0 sm:mx-4 sm:text-left',
+            className
+          )}
+        >
           {children}
         </div>
       </div>
