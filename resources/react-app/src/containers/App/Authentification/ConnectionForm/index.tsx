@@ -63,6 +63,7 @@ const ConnectionForm = ({ message }: Props.Frontend.App.ConnectionForm) => {
                   required
                   type="email"
                   withFeedback
+                  withFormik
                   withLoading
                 />
               </FormGroup>
@@ -75,6 +76,7 @@ const ConnectionForm = ({ message }: Props.Frontend.App.ConnectionForm) => {
                   required
                   type="password"
                   withFeedback
+                  withFormik
                   withLoading
                 />
               </FormGroup>

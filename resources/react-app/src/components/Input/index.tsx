@@ -20,7 +20,6 @@ const Feedback: React.FC = ({ children }) => (
 
 const FormikContext = ({
   children,
-  type,
   withFeedback,
   withLoading,
   ...props
@@ -40,7 +39,7 @@ const FormikContext = ({
         ...field,
         disabled: props.disabled || withLoading ? isSubmitting : false,
         onChange:
-          type === 'file'
+          props.type === 'file'
             ? (e: React.ChangeEvent<HTMLInputElement>) => {
                 const file = e.target.files ? e.target.files[0] : null;
                 console.log('file: ', file);
@@ -55,39 +54,39 @@ const FormikContext = ({
   );
 };
 
+const TextAreaComponent = (
+  props: React.ComponentPropsWithoutRef<'textarea'>
+) => (
+  <TextareaAutoSize
+    {...props}
+    className={joinClassNames('w-full', INPUT_CLASSES, props.className)}
+    style={{
+      resize: 'none',
+      ...props.style,
+    }}
+    value={props.value !== undefined ? String(props.value) : undefined}
+  />
+);
+
 export const TextArea = ({
-  className,
   style,
   withFormik,
   ...props
 }: React.ComponentPropsWithoutRef<'textarea'> & IWithFormik) => {
-  const TextArea = (props: React.ComponentPropsWithoutRef<'textarea'>) => (
-    <TextareaAutoSize
-      {...props}
-      className={joinClassNames('w-full', INPUT_CLASSES, props.className)}
-      style={{
-        resize: 'none',
-        ...props.style,
-      }}
-      value={props.value !== undefined ? String(props.value) : undefined}
-    />
-  );
-
   if (withFormik) {
     return (
       <FormikContext {...props}>
         {(formikProps: typeof props & FieldInputProps<any>) => (
-          <TextArea {...formikProps} />
+          <TextAreaComponent {...formikProps} />
         )}
       </FormikContext>
     );
   }
 
-  return <TextArea {...props} />;
+  return <TextAreaComponent {...props} />;
 };
 
 export const File = ({
-  className,
   withFormik,
   ...props
 }: React.ComponentPropsWithoutRef<'input'> & IWithFormik) => {
@@ -100,7 +99,7 @@ export const File = ({
           <input
             className={classNames(
               'relative w-full h-10 m-0 opacity-0 z-10',
-              className
+              props.className
             )}
             type="file"
             {...formikProps}
@@ -122,65 +121,64 @@ export const File = ({
   );
 };
 
+const SelectComponent = ({
+  children,
+  ...props
+}: React.ComponentPropsWithRef<'select'>) => (
+  <select
+    {...props}
+    className={joinClassNames('w-full', INPUT_CLASSES, props.className)}
+  >
+    {children}
+  </select>
+);
+
 export const Select = ({
-  className,
   withFormik,
   ...props
 }: React.ComponentPropsWithRef<'select'> & IWithFormik) => {
-  const Select = ({
-    children,
-    ...props
-  }: React.ComponentPropsWithRef<'select'>) => (
-    <select
-      {...props}
-      className={joinClassNames('w-full', INPUT_CLASSES, props.className)}
-    >
-      {children}
-    </select>
-  );
-
   if (withFormik) {
     return (
       <FormikContext {...props}>
         {(formikProps: typeof props & FieldInputProps<any>) => (
-          <Select {...formikProps} />
+          <SelectComponent {...formikProps} />
         )}
       </FormikContext>
     );
   }
 
-  return <Select {...props} />;
+  return <SelectComponent {...props} />;
 };
 
+const InputComponent = (props: React.ComponentPropsWithRef<'input'>) => (
+  <input
+    {...props}
+    className={classNames(
+      {
+        'w-full': props.type !== 'radio' && props.type !== 'checkbox',
+      },
+      INPUT_CLASSES,
+      props.className
+    )}
+    key={props.name}
+  />
+);
+
 const Input = ({
-  className,
   withFormik,
   ...props
 }: React.ComponentPropsWithRef<'input'> & IWithFormik) => {
-  const Input = (props: React.ComponentPropsWithRef<'input'>) => (
-    <input
-      {...props}
-      className={classNames(
-        {
-          'w-full': props.type !== 'radio' && props.type !== 'checkbox',
-        },
-        INPUT_CLASSES,
-        props.className
-      )}
-    />
-  );
-
   if (withFormik) {
     return (
       <FormikContext {...props}>
         {(formikProps: typeof props & FieldInputProps<any>) => (
-          <Input {...formikProps} />
+          <InputComponent {...formikProps} />
         )}
       </FormikContext>
     );
   }
 
-  return <Input {...props} />;
+  return <InputComponent {...props} />;
 };
 
 export default Input;
