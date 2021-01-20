@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { FieldInputProps, useField, useFormikContext } from 'formik';
+import { uniqueId } from 'lodash-es';
 import React from 'react';
 import TextareaAutoSize from 'react-textarea-autosize';
 import joinClassNames from 'utility/class-names';
@@ -150,24 +151,68 @@ export const Select = ({
   return <SelectComponent {...props} />;
 };
 
-const InputComponent = (props: React.ComponentPropsWithRef<'input'>) => (
-  <input
-    {...props}
-    className={classNames(
-      {
-        'w-full': props.type !== 'radio' && props.type !== 'checkbox',
-      },
-      INPUT_CLASSES,
-      props.className
-    )}
-    key={props.name}
-  />
-);
+const ToggleComponent = ({
+  toggleSize,
+  ...props
+}: React.ComponentPropsWithRef<'input'> & { toggleSize?: 'sm' }) => {
+  const uid = uniqueId('toggle_');
+
+  return (
+    <label htmlFor={uid} className="toggle relative">
+      <input id={uid} type="checkbox" className="hidden" />
+      <div
+        className={joinClassNames([
+          'toggle-path',
+          'bg-gray-200  shadow-inner',
+          'w-9 h-5',
+          'rounded-full',
+          'transition duration-300 ease-in-out',
+          { 'w-7 h-4': toggleSize === 'sm' },
+        ])}
+      ></div>
+      <div
+        className={joinClassNames([
+          'toggle-circle',
+          'absolute top-0.8 left-1',
+          'w-3.5 h-3.5',
+          'bg-white shadow',
+          'rounded-full',
+          'transition-all duration-300 ease-in-out',
+          { 'w-2.5 h-2.5': toggleSize === 'sm' },
+        ])}
+      ></div>
+    </label>
+  );
+};
+
+const InputComponent = ({
+  toggleSize,
+  ...props
+}: React.ComponentPropsWithRef<'input'> & { toggleSize?: 'sm' }) => {
+  if (props.type === 'toggle') {
+    return <ToggleComponent toggleSize={toggleSize} {...props} />;
+  }
+
+  return (
+    <input
+      {...props}
+      className={classNames(
+        {
+          'w-full': props.type !== 'radio' && props.type !== 'checkbox',
+        },
+        INPUT_CLASSES,
+        props.className
+      )}
+      key={props.name}
+    />
+  );
+};
 
 const Input = ({
   withFormik,
   ...props
-}: React.ComponentPropsWithRef<'input'> & IWithFormik) => {
+}: React.ComponentPropsWithRef<'input'> &
+  IWithFormik & { toggleSize?: 'sm' }) => {
   if (withFormik) {
     return (
       <FormikContext {...props}>
