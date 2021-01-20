@@ -10,7 +10,7 @@ const ModalContent: React.FC<{ icon?: string }> = ({ children, icon }) => {
             <ModalIcon icon={icon} />
           </div>
         )}
-        <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+        <div className="mt-3 w-full text-center sm:mt-0 sm:mx-4 sm:text-left">
           {children}
         </div>
       </div>
