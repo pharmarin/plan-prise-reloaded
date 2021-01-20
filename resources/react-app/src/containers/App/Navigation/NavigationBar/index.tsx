@@ -33,7 +33,7 @@ const NavigationBar = () => {
             <Navbar.Title>{navigation.title}</Navbar.Title>
             {navigation.options &&
               navigation.options.map((option) => (
-                <NavbarLink key={option.path} {...option} />
+                <NavbarLink key={option.path || option.event} {...option} />
               ))}
           </div>
           <div></div>
