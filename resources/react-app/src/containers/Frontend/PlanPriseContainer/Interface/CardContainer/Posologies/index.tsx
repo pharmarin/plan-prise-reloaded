@@ -16,13 +16,23 @@ const Posologies = ({
   medicament: Medicament | ApiMedicament;
   planPrise: PlanPrise;
 }) => {
+  const columns = planPrise.getColumns();
+
+  const posologies = Object.keys(columns)
+    .filter((posologieID) => columns[posologieID].display)
+    .map((posologieID) => ({
+      ...columns[posologieID],
+      value:
+        planPrise.custom_data[medicament.uid]?.posologies?.[posologieID] || '',
+    }));
+
   return (
     <div
       className={joinClassNames('space-y-2 w-3/6', {
         'w-1/6': medicament.isMedicament(),
       })}
     >
-      {planPrise.getPosologies(medicament).map((posologie) => (
+      {posologies.map((posologie) => (
         <div
           key={posologie.id}
           className={joinClassNames('w-1/2', {

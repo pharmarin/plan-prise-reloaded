@@ -7,6 +7,7 @@ import Modal from 'components/Modal';
 import Submit from 'components/Submit';
 import { Formik } from 'formik';
 import { ceil, chunk } from 'lodash-es';
+import { runInAction } from 'mobx';
 import PlanPrise from 'models/PlanPrise';
 import getConfig from 'utility/get-config';
 
@@ -47,7 +48,9 @@ const Settings = ({
                 )
                 .filter((posologie) => posologie[0] !== undefined)
             );
-            planPrise.setCustomSettings('posologies', changed);
+            runInAction(() =>
+              planPrise.setCustomSettings('posologies', changed)
+            );
             resetForm({
               values,
             });
