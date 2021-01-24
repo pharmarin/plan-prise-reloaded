@@ -30,7 +30,10 @@ const FormikContext = ({
   name: string;
   type?: string;
 } & Omit<IWithFormik, 'withFormik'>) => {
-  const [field, meta, helpers] = useField(props);
+  const [field, meta, helpers] = useField({
+    ...props,
+    type: props.type === 'toggle' ? 'checkbox' : props.type,
+  });
   const { isSubmitting } = useFormikContext();
 
   return (
@@ -159,7 +162,7 @@ const ToggleComponent = ({
 
   return (
     <label htmlFor={uid} className="toggle relative">
-      <input id={uid} type="checkbox" className="hidden" />
+      <input id={uid} {...props} type="checkbox" className="hidden" />
       <div
         className={joinClassNames([
           'toggle-path',
@@ -168,6 +171,7 @@ const ToggleComponent = ({
           'rounded-full',
           'transition duration-300 ease-in-out',
           { 'w-7 h-4': toggleSize === 'sm' },
+          { 'bg-gray-400': props.checked },
         ])}
       ></div>
       <div
@@ -179,6 +183,7 @@ const ToggleComponent = ({
           'rounded-full',
           'transition-all duration-300 ease-in-out',
           { 'w-2.5 h-2.5': toggleSize === 'sm' },
+          { 'transform translate-x-full': props.checked },
         ])}
       ></div>
     </label>

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { Form as FormikForm } from 'formik';
 import React from 'react';
 import joinClassNames from 'utility/class-names';
 
@@ -11,9 +12,20 @@ const FormText: React.FC<{ className?: string }> = ({
   </div>
 );
 
-const Form: React.FC<React.ComponentPropsWithoutRef<'form'>> & {
+const Form: React.FC<
+  React.ComponentPropsWithoutRef<'form'> & {
+    withFormik?: boolean;
+  }
+> & {
   Text: typeof FormText;
-} = ({ children, className, ...props }) => {
+} = ({ children, className, withFormik, ...props }) => {
+  if (withFormik) {
+    return (
+      <FormikForm className={joinClassNames('space-y-4', className)} {...props}>
+        {children}
+      </FormikForm>
+    );
+  }
   return (
     <form className={joinClassNames('space-y-4', className)} {...props}>
       {children}

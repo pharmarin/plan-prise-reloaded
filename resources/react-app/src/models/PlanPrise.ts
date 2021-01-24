@@ -24,6 +24,12 @@ interface ICustomData {
   };
 }
 
+interface ICustomSettings {
+  posologies: {
+    [id: string]: boolean;
+  };
+}
+
 class PlanPrise extends jsonapi(Model) {
   static type = 'plan-prises';
 
@@ -38,10 +44,33 @@ class PlanPrise extends jsonapi(Model) {
     [uid: string]: ICustomData;
   };
 
+  @Attribute()
+  custom_settings!: ICustomSettings;
+
   addMedicament(medicament: Medicament | ApiMedicament) {
     this.medicaments.push(medicament);
 
     this.save();
+  }
+
+  setCustomSettings(key: string, value: any) {
+    setWith(this.custom_settings, key, value);
+  }
+
+  getColumns() {
+    const defaults = getConfig('default');
+    const posologies = defaults?.posologies || [];
+
+    return posologies.reduce((result: any, posologie) => {
+      const custom = this.custom_settings.posologies?.[posologie.id];
+
+      result[posologie.id] = {
+        ...posologie,
+        display: custom === undefined ? posologie.default || false : custom,
+      };
+
+      return result;
+    }, {}) as { [id: string]: typeof posologies[0] & { display: boolean } };
   }
 
   setConservationDuree(

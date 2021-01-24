@@ -65,11 +65,4 @@
   .react-select__control {
     @apply focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50;
   }
-
-  .toggle > input:checked ~ .toggle-circle {
-    transform: translateX(100%);
-  }
-  .toggle > input:checked ~ .toggle-path {
-    @apply bg-gray-400;
-  }
 }
