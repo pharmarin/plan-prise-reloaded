@@ -1,28 +1,24 @@
-import Notification from 'containers/App/NotificationStack/Notification';
+import NotificationContainer from 'containers/App/NotificationStack/NotificationContainer';
+import { useNotifications } from 'hooks/use-store';
+import { action } from 'mobx';
+import { observer } from 'mobx-react-lite';
+import Notification from 'models/Notification';
 import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { Col } from 'reactstrap';
 
-const mapState = (state: Redux.State) => ({
-  notifications: state.app.notifications,
-});
+const NotificationStack = () => {
+  const notifications = useNotifications();
 
-const connector = connect(mapState);
-
-type NotificationStackProps = ConnectedProps<typeof connector>;
-
-const NotificationStack = ({ notifications }: NotificationStackProps) => {
   return (
-    <Col
-      className="p-2"
-      sm={5}
-      style={{ position: 'fixed', top: 0, right: 0, zIndex: 99999 }}
-    >
-      {notifications.map((notification) => (
-        <Notification key={notification.id} notification={notification} />
+    <div className="fixed top-0 right-0 z-10 p-2 space-y-2">
+      {notifications.findAll(Notification).map((notification) => (
+        <NotificationContainer
+          key={notification.meta.id}
+          notification={notification}
+          onDelete={action(() => notifications.removeOne(notification))}
+        />
       ))}
-    </Col>
+    </div>
   );
 };
 
-export default connector(NotificationStack);
+export default observer(NotificationStack);
