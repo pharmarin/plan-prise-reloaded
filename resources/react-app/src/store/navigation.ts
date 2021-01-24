@@ -1,39 +1,37 @@
 import { makeAutoObservable } from 'mobx';
 
-interface NavigationInterface {
-  options?: {
-    args?: any;
-    label: string;
-    path: string;
-  }[];
-  returnTo?: {
-    label?: string;
-    component?: {
-      name: string;
-      props?: any;
-    };
-    path?: string;
-    event?: string;
+interface INavigationItem {
+  label?: string;
+  component?: {
+    name: 'arrowLeft';
+    props?: any;
   };
+  path?: string;
+  event?: string;
+}
+
+interface INavigation {
+  options?: INavigationItem[];
+  returnTo?: INavigationItem;
   title: string;
 }
 
 class Navigation {
-  title: NavigationInterface['title'] = '';
-  returnTo: NavigationInterface['returnTo'] = {
+  title: INavigation['title'] = '';
+  returnTo: INavigation['returnTo'] = {
     path: '/',
     label: '',
   };
-  options: NavigationInterface['options'] = undefined;
+  options: INavigation['options'] = undefined;
 
   constructor() {
     makeAutoObservable(this);
   }
 
   setNavigation(
-    title: NavigationInterface['title'],
-    returnTo?: NavigationInterface['returnTo'],
-    options?: NavigationInterface['options']
+    title: INavigation['title'],
+    returnTo?: INavigation['returnTo'],
+    options?: INavigation['options']
   ) {
     this.title = title;
     this.returnTo = returnTo;

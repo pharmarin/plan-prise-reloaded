@@ -78,7 +78,7 @@ const saveToAPI = ({
 
     const parameters = switchAction(action.type);
 
-    const content = state.planPrise.content.data;
+    const content = { id: '8', type: 'plan-prises' };
 
     if (!content?.id)
       throw new Error(

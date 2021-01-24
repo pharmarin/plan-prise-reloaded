@@ -23,7 +23,6 @@ const ApproveButton: React.FC<{
     <Button
       color="green"
       disabled={status === 'loading'}
-      size="sm"
       onClick={async () => {
         try {
           await approveUser();
@@ -50,7 +49,6 @@ const DeleteButton: React.FC<{
     <Button
       color="red"
       disabled={status === 'loading'}
-      size="sm"
       onClick={async () => {
         try {
           await deleteUser();

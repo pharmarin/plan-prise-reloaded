@@ -15,12 +15,24 @@ const addColumnCount = plugin(function ({ addUtilities }) {
 module.exports = {
   theme: {
     extend: {
+      height: {
+        'view-50': '50vh',
+        'view-75': '75vh',
+        'view-80': '80vh',
+        'view-90': '90vh',
+        'view-95': '95vh',
+      },
+      inset: {
+        0.8: '0.2rem',
+      },
       minWidth: (theme) => theme('width'),
     },
   },
   variants: {
     extend: {
+      backgroundColor: ['checked'],
       borderRadius: ['first', 'last'],
+      borderWidth: ['last'],
     },
   },
   plugins: [require('@tailwindcss/forms'), addColumnCount],

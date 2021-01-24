@@ -1,25 +1,25 @@
 import Arrow from 'components/Icons/Arrow';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import { deleteContent, setShowSettings } from 'store/plan-prise';
 import joinClassNames from 'utility/class-names';
 
-const mapDispatch = { deleteContent, setShowSettings };
-
-const connector = connect(null, mapDispatch);
-
-type NavbarLinkProps = ConnectedProps<typeof connector> &
-  Props.Frontend.App.NavbarLink;
-
 const NavbarLink = ({
-  args,
   className,
   component,
   event,
   label,
   path,
-}: NavbarLinkProps) => {
+}: {
+  className?: string;
+  component?: {
+    name: string;
+    props?: any;
+  };
+  event?: string;
+  label?: string;
+  path?: string;
+}) => {
   const location = useLocation().pathname;
 
   const isActive = location === path;
@@ -64,4 +64,4 @@ const NavbarLink = ({
   );
 };
 
-export default connector(NavbarLink);
+export default observer(NavbarLink);

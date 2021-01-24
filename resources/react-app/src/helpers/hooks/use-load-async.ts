@@ -2,12 +2,12 @@ import debounce from 'debounce-promise';
 import axios from 'helpers/axios-clients';
 import { groupBy, toString } from 'lodash-es';
 
-const loadGeneric = async (query: string) => {
+export const loadGeneric = async (query: string) => {
   try {
+    //TODO: Utiliser Datx
     const response = await axios.get('/generic', {
-      //cancelToken: this.axiosSourceOptions.token,
       params: {
-        query: query,
+        query,
       },
     });
 
@@ -19,12 +19,18 @@ const loadGeneric = async (query: string) => {
           type: m.type,
         })),
         'type'
-      );
+      ) as {
+        [group: string]: {
+          value: string;
+          denomination: string;
+          type: string;
+        }[];
+      };
 
       return [
         {
           label: 'Médicaments de plandeprise.fr',
-          options: [...(grouped['medicaments'] || [])],
+          options: grouped['medicaments'],
         },
         {
           label: 'Médicaments issus de la base de données publique',
@@ -35,6 +41,7 @@ const loadGeneric = async (query: string) => {
     return [];
   } catch (thrown) {
     console.log(thrown);
+    return [];
   }
 };
 

@@ -32,9 +32,9 @@ const Button: React.FC<
               {
                 'w-full': block,
                 'shadow-md': shadow,
-                'px-6 py-3': size !== 'sm' && size !== 'lg',
-                'px-4 py-2': size === 'sm',
-                'px-8 py-3': size === 'lg',
+                'px-4 py-2': size !== 'sm' && size !== 'lg',
+                'px-2 py-1': size === 'sm',
+                'px-6 py-3': size === 'lg',
                 'bg-gray-300 hover:bg-gray-200 active:bg-gray-400  focus:border-gray-400':
                   color === 'light',
                 'bg-transparent text-green-600': color === 'link',

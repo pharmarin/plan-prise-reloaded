@@ -16,7 +16,7 @@ interface SanctumProps extends Partial<ContextProps> {
   user?: IServerResponse<Models.App.User>;
 }
 
-const NavigationBar = observer(() => {
+const NavigationBar = () => {
   const { authenticated, user } = useContext<SanctumProps>(SanctumContext);
 
   const navigation = useNavigation();
@@ -33,7 +33,7 @@ const NavigationBar = observer(() => {
             <Navbar.Title>{navigation.title}</Navbar.Title>
             {navigation.options &&
               navigation.options.map((option) => (
-                <NavbarLink key={option.path} {...option} />
+                <NavbarLink key={option.path || option.event} {...option} />
               ))}
           </div>
           <div></div>
@@ -77,6 +77,6 @@ const NavigationBar = observer(() => {
       </Navbar.Right>
     </Navbar>
   );
-});
+};
 
-export default NavigationBar;
+export default observer(NavigationBar);

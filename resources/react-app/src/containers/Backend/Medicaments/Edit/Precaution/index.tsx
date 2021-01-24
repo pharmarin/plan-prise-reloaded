@@ -3,11 +3,12 @@ import Button from 'components/Button';
 import Card from 'components/Card';
 import Form from 'components/Form';
 import FormGroup from 'components/FormGroup';
-import Input, { Select, Textarea } from 'components/Input';
+import Input, { Select, TextArea } from 'components/Input';
 import Submit from 'components/Submit';
-import { Field, Formik } from 'formik';
+import { Formik } from 'formik';
 import useConfig from 'helpers/hooks/use-config';
 import { useApi } from 'hooks/use-store';
+import { observer } from 'mobx-react-lite';
 import Precaution from 'models/Precaution';
 import React from 'react';
 import * as yup from 'yup';
@@ -54,32 +55,33 @@ const EditPrecaution = ({
         {({ errors, handleSubmit, isSubmitting, isValid, values }) => (
           <Form onSubmit={handleSubmit}>
             <FormGroup>
-              <Select
-                name="cible"
-                options={cibles.map((cible) => ({
-                  default: cible.id === cibles[0].id,
-                  value: cible.id,
-                  label: cible.label,
-                }))}
-                withFeedback
-                withLoading
-              />
+              <Select name="cible" withFeedback withFormik withLoading>
+                {cibles.map((cible) => (
+                  <option value={cible.id}>{cible.label}</option>
+                ))}
+              </Select>
             </FormGroup>
             {values.cible.startsWith('principe-actifs') && (
               <FormGroup>
                 <Select
                   className="mt-1"
                   name="voie_administration"
-                  options={[
+                  withFeedback
+                  withFormik
+                  withLoading
+                >
+                  {[
                     { value: '0', label: "Toutes les voies d'administration" },
                     ...Object.keys(voiesAdministration).map((id) => ({
                       value: id,
                       label: voiesAdministration[id],
                     })),
-                  ]}
-                  withFeedback
-                  withLoading
-                />
+                  ].map((voieAdministration) => (
+                    <option value={voieAdministration.value}>
+                      {voieAdministration.label}
+                    </option>
+                  ))}
+                </Select>
               </FormGroup>
             )}
             <FormGroup>
@@ -88,13 +90,12 @@ const EditPrecaution = ({
                 name="population"
                 placeholder="Population visée (optionnel)"
                 withFeedback
+                withFormik
                 withLoading
               />
             </FormGroup>
             <FormGroup>
-              <Field
-                as={Textarea}
-                autoSize
+              <TextArea
                 className={classNames({
                   'form-control mt-1': true,
                   'is-invalid': errors.commentaire !== undefined,
@@ -103,6 +104,7 @@ const EditPrecaution = ({
                 name="commentaire"
                 placeholder="Commentaire"
                 withFeedback
+                withFormik
                 withLoading
               />
             </FormGroup>
@@ -110,7 +112,6 @@ const EditPrecaution = ({
               <Submit
                 color="green"
                 disabled={!isValid || isSubmitting}
-                size="sm"
                 withLoading
               >
                 Enregistrer
@@ -119,7 +120,6 @@ const EditPrecaution = ({
                 color="red"
                 disabled={isSubmitting}
                 onClick={() => api.removeOne(precaution)}
-                size="sm"
                 type="button"
               >
                 Supprimer
@@ -167,4 +167,4 @@ const EditPrecaution = ({
   );
 };
 
-export default EditPrecaution;
+export default observer(EditPrecaution);

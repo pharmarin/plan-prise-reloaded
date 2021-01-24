@@ -1,3 +1,5 @@
+import { IMetaMixin, IModelConstructor } from '@datx/core';
+import { IJsonapiModel } from '@datx/jsonapi';
 import { useAsync } from '@react-hook/async';
 import Dropdown from 'components/Dropdown';
 import Chevron from 'components/Icons/Chevron';
@@ -6,8 +8,6 @@ import Input from 'components/Input';
 import Pagination from 'components/Pagination';
 import Spinner from 'components/Spinner';
 import Table from 'components/Table';
-import { IMetaMixin, IModelConstructor } from 'datx';
-import { IJsonapiModel } from 'datx-jsonapi';
 import { useApi } from 'hooks/use-store';
 import { debounce } from 'lodash';
 import { observer } from 'mobx-react-lite';

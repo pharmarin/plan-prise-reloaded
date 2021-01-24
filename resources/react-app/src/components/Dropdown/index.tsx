@@ -45,7 +45,6 @@ const Dropdown: React.FC<{
                         )}
                         color="link"
                         onClick={item.action}
-                        size="sm"
                       >
                         {item.label}
                       </Button>
