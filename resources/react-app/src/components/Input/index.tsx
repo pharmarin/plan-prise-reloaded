@@ -14,6 +14,7 @@ interface IWithFormik {
 
 const inputClasses = (props: any) => [
   'block rounded-md border-gray-300 shadow-sm',
+  'checked:bg-green-700',
   {
     'focus:border-green-300 focus:ring-2 focus:ring-green-200 focus:ring-opacity-50': !props.readOnly,
     'bg-gray-50 focus:border-gray-300 focus:ring-0 cursor-not-allowed':

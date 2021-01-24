@@ -30,6 +30,7 @@ module.exports = {
   },
   variants: {
     extend: {
+      backgroundColor: ['checked'],
       borderRadius: ['first', 'last'],
       borderWidth: ['last'],
     },
