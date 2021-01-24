@@ -83,11 +83,6 @@ class PlanPrise extends jsonapi(Model) {
       laboratoire,
       Object
     );
-
-    console.log(
-      'laboratoire: ',
-      this.custom_data[medicament.uid].conservation_duree
-    );
   }
 
   setPosologieValue(
