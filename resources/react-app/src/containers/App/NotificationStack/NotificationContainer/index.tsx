@@ -1,5 +1,6 @@
 import { Transition } from '@headlessui/react';
 import Button from 'components/Button';
+import Spinner from 'components/Spinner';
 import { observer } from 'mobx-react-lite';
 import Notification from 'models/Notification';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -7,7 +8,6 @@ import {
   BsFillExclamationDiamondFill,
   BsFillExclamationOctagonFill,
 } from 'react-icons/bs';
-import { Spinner } from 'reactstrap';
 
 const NotificationContainer = ({
   notification,
@@ -38,7 +38,7 @@ const NotificationContainer = ({
   const getIcon = (icon?: string) => {
     switch (icon) {
       case 'spinner':
-        return <Spinner size="sm" />;
+        return <Spinner />;
       case 'warning':
         return <BsFillExclamationDiamondFill className="text-warning" />;
       case 'danger':
