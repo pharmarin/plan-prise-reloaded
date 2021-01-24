@@ -12,8 +12,14 @@ interface IWithFormik {
   withLoading?: boolean;
 }
 
-const INPUT_CLASSES =
-  'block rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50';
+const inputClasses = (props: any) => [
+  'block rounded-md border-gray-300 shadow-sm',
+  {
+    'focus:border-green-300 focus:ring-2 focus:ring-green-200 focus:ring-opacity-50': !props.readOnly,
+    'bg-gray-50 focus:border-gray-300 focus:ring-0 cursor-not-allowed':
+      props.readOnly,
+  },
+];
 
 const Feedback: React.FC = ({ children }) => (
   <span className="text-red-600 text-xs">{children}</span>
@@ -63,7 +69,7 @@ const TextAreaComponent = (
 ) => (
   <TextareaAutoSize
     {...props}
-    className={joinClassNames('w-full', INPUT_CLASSES, props.className)}
+    className={joinClassNames('w-full', inputClasses(props), props.className)}
     style={{
       resize: 'none',
       ...props.style,
@@ -131,7 +137,7 @@ const SelectComponent = ({
 }: React.ComponentPropsWithRef<'select'>) => (
   <select
     {...props}
-    className={joinClassNames('w-full', INPUT_CLASSES, props.className)}
+    className={joinClassNames('w-full', inputClasses(props), props.className)}
   >
     {children}
   </select>
@@ -205,7 +211,7 @@ const InputComponent = ({
         {
           'w-full': props.type !== 'radio' && props.type !== 'checkbox',
         },
-        INPUT_CLASSES,
+        inputClasses(props),
         props.className
       )}
       key={props.name}
