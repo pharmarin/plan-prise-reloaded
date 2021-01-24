@@ -73,6 +73,15 @@ class PlanPrise extends jsonapi(Model) {
     }, {}) as { [id: string]: typeof posologies[0] & { display: boolean } };
   }
 
+  setIndication(medicament: Medicament, indication: string) {
+    setWith(
+      this.custom_data,
+      [medicament.uid, 'indications'],
+      [indication],
+      Object
+    );
+  }
+
   setConservationDuree(
     medicament: Medicament,
     laboratoire: string | undefined

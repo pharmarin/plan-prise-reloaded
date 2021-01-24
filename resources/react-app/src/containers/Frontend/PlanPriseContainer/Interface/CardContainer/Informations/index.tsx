@@ -58,7 +58,13 @@ const Informations = ({
                   block
                   className="rounded-none first:rounded-t-md last:rounded-b-md border-b-0 last:border-b"
                   color="white"
-                  onClick={(e) => console.log(e.currentTarget.value)}
+                  onClick={action(
+                    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+                      planPrise.setIndication(
+                        medicament,
+                        event.currentTarget.innerHTML
+                      )
+                  )}
                 >
                   {indication}
                 </Button>
@@ -67,7 +73,10 @@ const Informations = ({
           ) : (
             <TextArea
               name="indications"
-              onChange={(e) => console.log(e.currentTarget.value)}
+              onChange={action(
+                (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  planPrise.setIndication(medicament, event.currentTarget.value)
+              )}
               value={indications?.[0] || ''}
             />
           )}
