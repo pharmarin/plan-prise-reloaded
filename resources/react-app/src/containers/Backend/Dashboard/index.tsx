@@ -3,7 +3,6 @@ import Card from 'components/Card';
 import Chart from 'components/Chart';
 import SplashScreen from 'components/SplashScreen';
 import Title from 'components/Title';
-import { requestUrl } from 'helpers/hooks/use-json-api';
 import { useNavigation } from 'hooks/use-store';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -18,7 +17,7 @@ const Dashboard = () => {
     });
   });
 
-  const [{ loading, error, data }] = useAxios(requestUrl('dashboard').url);
+  const [{ loading, error, data }] = useAxios('/api/v1/dashboard');
 
   if (loading)
     return <SplashScreen type="load" message="Chargement en cours..." />;
