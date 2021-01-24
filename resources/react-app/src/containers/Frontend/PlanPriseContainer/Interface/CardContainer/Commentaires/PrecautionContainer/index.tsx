@@ -1,8 +1,8 @@
+import { IRawModel } from '@datx/core';
 import Button from 'components/Button';
 import FormGroup from 'components/FormGroup';
 import Input, { TextArea } from 'components/Input';
 import Label from 'components/Label';
-import { IRawModel } from 'datx';
 import { action } from 'mobx';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';

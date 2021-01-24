@@ -1,6 +1,6 @@
+import { Collection } from '@datx/core';
+import { config, jsonapi } from '@datx/jsonapi';
 import { AxiosRequestConfig } from 'axios';
-import { Collection } from 'datx';
-import { config, jsonapi } from 'datx-jsonapi';
 import axios from 'helpers/axios-clients';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';

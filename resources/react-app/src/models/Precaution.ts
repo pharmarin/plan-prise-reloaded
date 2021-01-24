@@ -1,5 +1,5 @@
-import { Attribute, Model } from 'datx';
-import { jsonapi } from 'datx-jsonapi';
+import { Attribute, Model } from '@datx/core';
+import { jsonapi } from '@datx/jsonapi';
 
 class Precaution extends jsonapi(Model) {
   static type = 'precautions';

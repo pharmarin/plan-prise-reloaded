@@ -1,5 +1,5 @@
-import { Attribute, Model } from 'datx';
-import { jsonapi } from 'datx-jsonapi';
+import { Attribute, Model } from '@datx/core';
+import { jsonapi } from '@datx/jsonapi';
 import ApiMedicament from 'models/ApiMedicament';
 import Precaution from 'models/Precaution';
 import PrincipeActif from 'models/PrincipeActif';

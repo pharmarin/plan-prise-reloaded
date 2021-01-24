@@ -1,5 +1,5 @@
-import { Attribute, IRawModel, Model } from 'datx';
-import { jsonapi } from 'datx-jsonapi';
+import { Attribute, IRawModel, Model } from '@datx/core';
+import { jsonapi } from '@datx/jsonapi';
 import { setWith, uniqueId } from 'lodash-es';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
