@@ -17,7 +17,7 @@ const Dashboard = () => {
     });
   });
 
-  const [{ loading, error, data }] = useAxios('/api/v1/dashboard');
+  const [{ loading, error, data }] = useAxios('dashboard');
 
   if (loading)
     return <SplashScreen type="load" message="Chargement en cours..." />;
