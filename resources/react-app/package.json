@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.0.0",
-    "@datx/core": "^2.0.1",
+    "@datx/core": "^2.0.4",
     "@datx/jsonapi": "^2.0.0",
     "@headlessui/react": "^0.2.0",
     "@mariusmarais/tailwind-cascade": "https://github.com/pharmarin/tailwind-cascade.git#with-dist",
