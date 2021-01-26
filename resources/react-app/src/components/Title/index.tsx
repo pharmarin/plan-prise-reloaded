@@ -27,10 +27,12 @@ const Title: React.FC<
               'text-yellow-600': color === 'yellow',
             },
         {
-          'text-5xl mb-4': level === 1,
-          'text-4xl mb-4': level === 2,
-          'text-3xl mb-4': level === 3,
-          'text-2xl mb-4': level === 4,
+          'text-3xl mb-4': level === 1,
+          'text-2xl mb-4': level === 2,
+          'text-1xl mb-4': level === 3,
+          'text-lg mb-4': level === 4,
+          'text-sm mb-4': level === 5,
+          'text-xs mb-4': level === 6,
         },
         'mb-4',
         className

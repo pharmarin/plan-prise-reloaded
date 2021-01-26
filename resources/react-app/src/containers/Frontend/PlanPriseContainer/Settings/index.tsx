@@ -5,6 +5,7 @@ import Input from 'components/Input';
 import Label from 'components/Label';
 import Modal from 'components/Modal';
 import Submit from 'components/Submit';
+import Title from 'components/Title';
 import { Formik } from 'formik';
 import { ceil, chunk } from 'lodash-es';
 import { runInAction } from 'mobx';
@@ -59,7 +60,7 @@ const Settings = ({
         >
           {({ resetForm }) => (
             <Form withFormik>
-              <h4>Colonnes à afficher</h4>
+              <Title level={4}>Colonnes à afficher</Title>
               <div className="flex flex-row space-x-10">
                 {chunk(
                   defaults?.posologies || [],
