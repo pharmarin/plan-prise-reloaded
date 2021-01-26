@@ -80,11 +80,6 @@ const App = () => {
               <NavigationBar />
               <Container>
                 <Switch>
-                  <Route path="/">
-                    <ErrorBoundary returnTo="/">
-                      <Frontend />
-                    </ErrorBoundary>
-                  </Route>
                   <Route path="/admin">
                     <ProtectedRoute admin>
                       <ErrorBoundary returnTo="/">
@@ -100,6 +95,11 @@ const App = () => {
                         </Suspense>
                       </ErrorBoundary>
                     </ProtectedRoute>
+                  </Route>
+                  <Route path="/">
+                    <ErrorBoundary returnTo="/">
+                      <Frontend />
+                    </ErrorBoundary>
                   </Route>
                 </Switch>
               </Container>
