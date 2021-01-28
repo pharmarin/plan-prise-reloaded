@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
-import useConfig from 'helpers/hooks/use-config';
 import { typeToInt } from 'helpers/type-switcher';
+import useConfig from 'hooks/use-config';
 import { get } from 'lodash-es';
 import switchVoiesAdministration from 'utility/switch-voie-administration';
 

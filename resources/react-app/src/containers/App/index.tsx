@@ -8,7 +8,7 @@ import Frontend from 'containers/Frontend';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import ProtectedRoute from 'containers/Utility/ProtectedRoute';
 import axios from 'helpers/axios-clients';
-import useConfig, { storeConfig } from 'helpers/hooks/use-config';
+import useConfig, { storeConfig } from 'hooks/use-config';
 import LRU from 'lru-cache';
 import React, { Suspense, useEffect, useState } from 'react';
 import { Provider } from 'react-redux';

@@ -9,7 +9,7 @@ import Submit from 'components/Submit';
 import debounce from 'debounce-promise';
 import { Field, FieldArray, Formik } from 'formik';
 import axios from 'helpers/axios-clients';
-import useConfig from 'helpers/hooks/use-config';
+import useConfig from 'hooks/use-config';
 import { useApi } from 'hooks/use-store';
 import { observer } from 'mobx-react-lite';
 import ApiMedicament from 'models/ApiMedicament';

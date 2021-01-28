@@ -6,7 +6,7 @@ import FormGroup from 'components/FormGroup';
 import Input, { Select, TextArea } from 'components/Input';
 import Submit from 'components/Submit';
 import { Formik } from 'formik';
-import useConfig from 'helpers/hooks/use-config';
+import useConfig from 'hooks/use-config';
 import { useApi } from 'hooks/use-store';
 import { observer } from 'mobx-react-lite';
 import Precaution from 'models/Precaution';
