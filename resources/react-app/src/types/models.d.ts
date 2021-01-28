@@ -45,6 +45,9 @@ declare namespace Models {
           default?: boolean;
           color: string;
         }[];
+        voies_administration: {
+          [id: number]: string;
+        };
       };
     }
     interface Notification {

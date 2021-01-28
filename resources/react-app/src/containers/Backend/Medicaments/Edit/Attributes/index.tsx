@@ -9,8 +9,8 @@ import Submit from 'components/Submit';
 import debounce from 'debounce-promise';
 import { Field, FieldArray, Formik } from 'formik';
 import axios from 'helpers/axios-clients';
+import getConfig from 'helpers/get-config';
 import reactSelectOptions from 'helpers/react-select-options';
-import useConfig from 'hooks/use-config';
 import { useApi } from 'hooks/use-store';
 import { observer } from 'mobx-react-lite';
 import ApiMedicament from 'models/ApiMedicament';
@@ -36,7 +36,12 @@ const EditAttributes = ({ medicament }: { medicament: Medicament }) => {
   const [CISInputValue, setCISInputValue] = useState(medicament.denomination);
   const [isCreatingOption, setCreatingOption] = useState(false);
 
-  const voiesAdministration = useConfig('default.voies_administration');
+  const defaults = getConfig('default');
+
+  if (!defaults)
+    throw new Error(
+      'Un erreur est survenue lors du chargement de la configutation'
+    );
 
   const loadPrincipeActifs = debounce(async (query) => {
     return await api
@@ -70,7 +75,7 @@ const EditAttributes = ({ medicament }: { medicament: Medicament }) => {
           voies_administration: (medicament.voies_administration || []).map(
             (voieAdministration) => ({
               value: String(voieAdministration),
-              label: voiesAdministration[voieAdministration],
+              label: defaults.voies_administration[voieAdministration],
             })
           ),
           indications: medicament.indications || [],
@@ -271,10 +276,12 @@ const EditAttributes = ({ medicament }: { medicament: Medicament }) => {
                 onChange={(options: Option[]) =>
                   setFieldValue('voies_administration', options)
                 }
-                options={Object.keys(voiesAdministration).map((i) => ({
-                  value: String(i),
-                  label: voiesAdministration[i],
-                }))}
+                options={Object.keys(defaults.voies_administration).map(
+                  (i) => ({
+                    value: String(i),
+                    label: defaults.voies_administration[Number(i)],
+                  })
+                )}
                 {...reactSelectOptions}
               />
             </FormGroup>

@@ -6,7 +6,7 @@ import FormGroup from 'components/FormGroup';
 import Input, { Select, TextArea } from 'components/Input';
 import Submit from 'components/Submit';
 import { Formik } from 'formik';
-import useConfig from 'hooks/use-config';
+import getConfig from 'helpers/get-config';
 import { useApi } from 'hooks/use-store';
 import { observer } from 'mobx-react-lite';
 import Precaution from 'models/Precaution';
@@ -22,9 +22,14 @@ const EditPrecaution = ({
   precaution: Precaution;
   save: any;
 }) => {
-  const voiesAdministration = useConfig('default.voies_administration');
-
   const api = useApi();
+
+  const defaults = getConfig('default');
+
+  if (!defaults)
+    throw new Error(
+      'Un erreur est survenue lors du chargement de la configutation'
+    );
 
   return (
     <Card className="mb-4" style={{ breakInside: 'avoid' }}>
@@ -72,9 +77,9 @@ const EditPrecaution = ({
                 >
                   {[
                     { value: '0', label: "Toutes les voies d'administration" },
-                    ...Object.keys(voiesAdministration).map((id) => ({
-                      value: id,
-                      label: voiesAdministration[id],
+                    ...Object.keys(defaults.voies_administration).map((id) => ({
+                      value: String(id),
+                      label: defaults.voies_administration[Number(id)],
                     })),
                   ].map((voieAdministration) => (
                     <option value={voieAdministration.value}>

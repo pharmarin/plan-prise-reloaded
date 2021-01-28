@@ -8,7 +8,7 @@ import Frontend from 'containers/Frontend';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import ProtectedRoute from 'containers/Utility/ProtectedRoute';
 import axios from 'helpers/axios-clients';
-import useConfig, { storeConfig } from 'hooks/use-config';
+import getConfig, { storeConfig } from 'helpers/get-config';
 import LRU from 'lru-cache';
 import React, { Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -31,7 +31,7 @@ configure({ axios, cache });
 const App = () => {
   const [needUpdate, setNeedUpdate] = useState(false);
 
-  const config = useConfig();
+  const version = getConfig('version');
 
   const [{ loading, error, data }] = useAxios('/preload');
 
@@ -40,13 +40,13 @@ const App = () => {
       return;
     }
 
-    if (!config || config.version !== data.version) {
-      if (config) {
+    if (!version || version !== data.version) {
+      if (version) {
         setNeedUpdate(true);
       }
       storeConfig(data);
     }
-  }, [config, data]);
+  }, [version, data]);
 
   if (error) {
     throw new Error(
@@ -54,7 +54,7 @@ const App = () => {
     );
   }
 
-  if (!config && loading)
+  if (!version && loading)
     return <SplashScreen type="load" message="Chargement en cours..." />;
 
   return (
