@@ -1,4 +1,4 @@
-import useLoadAsync from 'helpers/hooks/use-load-async';
+import useLoadList from 'hooks/use-load-list';
 import { useApi } from 'hooks/use-store';
 import { runInAction } from 'mobx';
 import ApiMedicament from 'models/ApiMedicament';
@@ -13,7 +13,7 @@ import {
 import reactSelectOptions from 'utility/react-select-options';
 
 const Select = ({ planPrise }: { planPrise?: PlanPrise }) => {
-  const { loadGeneric } = useLoadAsync();
+  const { loadGeneric } = useLoadList();
 
   const api = useApi();
 

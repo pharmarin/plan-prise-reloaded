@@ -1,22 +1,26 @@
 import { useApi } from 'hooks/use-store';
 import { groupBy, toString } from 'lodash-es';
+import ApiMedicament from 'models/ApiMedicament';
+import Medicament from 'models/Medicament';
 import JsonApiStore from 'store/json-api';
 
 export const loadGeneric = async (query: string, api: JsonApiStore) => {
   try {
-    const response = await api.request(`/generic/?query=${query}`);
+    const response = await api.request<Medicament | ApiMedicament>(
+      `generic/?query=${query}`
+    );
 
     if (Array.isArray(response.data) && response.data.length > 0) {
       const grouped = groupBy(
-        response.data.map((m: any) => ({
-          value: toString(m.id),
+        response.data.map((m) => ({
+          value: toString(m.meta.id),
           label: m.denomination,
-          type: m.type,
+          type: m.meta.type,
         })),
         'type'
       );
 
-      return [
+      const options = [
         {
           label: 'Médicaments de plandeprise.fr',
           options: grouped['medicaments'],
@@ -26,6 +30,8 @@ export const loadGeneric = async (query: string, api: JsonApiStore) => {
           options: grouped['api-medicaments'],
         },
       ];
+
+      return options;
     }
     return [];
   } catch (thrown) {

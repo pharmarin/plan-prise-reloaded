@@ -14,11 +14,11 @@ class GenericController extends Controller
    */
   public function index(Request $request)
   {
-    return response()->json([
-      'data' => \App\Repositories\GenericRepository::search(
-        $request->input('query')
-      ),
-    ]);
+    return json_api()
+      ->encoder()
+      ->encodeData(
+        \App\Repositories\GenericRepository::search($request->input('query'))
+      );
   }
 
   /**

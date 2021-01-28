@@ -17,12 +17,15 @@ class GenericRepository
   {
     $query = $request . '%';
     $limit = 10;
+
     $medicaments = Medicament::where('denomination', 'LIKE', $query)
       ->take($limit)
       ->get(['id', 'denomination']);
+
     $api_medicaments = ApiMedicament::where('denomination', $query)->take(
       $limit
     );
+    
     return [...$medicaments, ...$api_medicaments];
   }
 
