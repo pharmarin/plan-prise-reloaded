@@ -1,5 +1,5 @@
 import React from 'react';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 
 const FormGroup: React.FC<
   React.ComponentPropsWithoutRef<'div'> & { check?: boolean }

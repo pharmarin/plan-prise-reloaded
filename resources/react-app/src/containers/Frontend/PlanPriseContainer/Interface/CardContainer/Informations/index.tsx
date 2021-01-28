@@ -7,7 +7,7 @@ import { observer } from 'mobx-react-lite';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import React from 'react';
-import forceArray from 'utility/force-array';
+import forceArray from 'tools/force-array';
 
 const Informations = ({
   medicament,

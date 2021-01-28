@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react';
 import React from 'react';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 
 const ModalContent: React.FC<{ className?: string; icon?: string }> = ({
   children,

@@ -1,3 +1,4 @@
+import reactSelectOptions from 'helpers/react-select-options';
 import useLoadList from 'hooks/use-load-list';
 import { useApi } from 'hooks/use-store';
 import { runInAction } from 'mobx';
@@ -10,7 +11,6 @@ import {
   AsyncPaginate,
   reduceGroupedOptions,
 } from 'react-select-async-paginate';
-import reactSelectOptions from 'utility/react-select-options';
 
 const Select = ({ planPrise }: { planPrise?: PlanPrise }) => {
   const { loadGeneric } = useLoadList();

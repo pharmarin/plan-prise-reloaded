@@ -1,5 +1,5 @@
 import React from 'react';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 
 const Icon: React.FC<React.ComponentPropsWithoutRef<'svg'>> = ({
   children,

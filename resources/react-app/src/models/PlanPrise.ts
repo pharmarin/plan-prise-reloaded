@@ -1,9 +1,9 @@
 import { Attribute, IRawModel, Model } from '@datx/core';
 import { jsonapi } from '@datx/jsonapi';
+import getConfig from 'helpers/get-config';
 import { setWith, uniqueId } from 'lodash-es';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
-import getConfig from 'utility/get-config';
 
 interface ICustomData {
   conservation_duree?: string;

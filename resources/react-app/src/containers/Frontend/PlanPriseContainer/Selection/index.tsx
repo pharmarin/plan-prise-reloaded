@@ -10,7 +10,7 @@ import PlanPrise from 'models/PlanPrise';
 import React, { useEffect, useState } from 'react';
 import ReactPlaceholder from 'react-placeholder';
 import { Link, Redirect } from 'react-router-dom';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 
 const TextFit: React.FC<{ text: string }> = observer(({ text }) => {
   const length = text.length;

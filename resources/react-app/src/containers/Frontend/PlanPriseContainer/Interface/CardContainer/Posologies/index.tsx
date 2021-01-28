@@ -7,7 +7,7 @@ import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import React from 'react';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 
 const Posologies = ({
   medicament,

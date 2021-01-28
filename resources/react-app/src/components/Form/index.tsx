@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { Form as FormikForm } from 'formik';
 import React from 'react';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 
 const FormText: React.FC<{ className?: string }> = ({
   children,

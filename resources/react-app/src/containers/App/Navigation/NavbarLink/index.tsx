@@ -2,7 +2,7 @@ import Arrow from 'components/Icons/Arrow';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 
 const NavbarLink = ({
   className,

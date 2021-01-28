@@ -7,10 +7,10 @@ import Modal from 'components/Modal';
 import Submit from 'components/Submit';
 import Title from 'components/Title';
 import { Formik } from 'formik';
+import getConfig from 'helpers/get-config';
 import { ceil, chunk } from 'lodash-es';
 import { runInAction } from 'mobx';
 import PlanPrise from 'models/PlanPrise';
-import getConfig from 'utility/get-config';
 
 const Settings = ({
   planPrise,

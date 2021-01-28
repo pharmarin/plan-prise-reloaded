@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 
 const TableBody: React.FC = ({ children }) => {
   return <tbody>{children}</tbody>;

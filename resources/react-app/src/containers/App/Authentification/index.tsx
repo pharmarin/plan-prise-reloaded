@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import React, { useContext, useEffect } from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 import ConnectionForm from './ConnectionForm';
 import InscriptionForm from './InscriptionForm';
 

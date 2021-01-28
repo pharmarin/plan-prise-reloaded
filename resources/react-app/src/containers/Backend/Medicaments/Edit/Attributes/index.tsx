@@ -9,6 +9,7 @@ import Submit from 'components/Submit';
 import debounce from 'debounce-promise';
 import { Field, FieldArray, Formik } from 'formik';
 import axios from 'helpers/axios-clients';
+import reactSelectOptions from 'helpers/react-select-options';
 import useConfig from 'hooks/use-config';
 import { useApi } from 'hooks/use-store';
 import { observer } from 'mobx-react-lite';
@@ -20,7 +21,6 @@ import Select, { InputActionTypes } from 'react-select';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 import { Option } from 'react-select/src/filters';
-import reactSelectOptions from 'utility/react-select-options';
 import * as yup from 'yup';
 
 yup.setLocale({

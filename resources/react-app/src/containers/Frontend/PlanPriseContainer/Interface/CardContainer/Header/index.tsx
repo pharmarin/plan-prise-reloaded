@@ -1,10 +1,10 @@
 import Button from 'components/Button';
 import Input from 'components/Input';
+import switchVoieAdministration from 'helpers/switch-voie-administration';
 import { observer } from 'mobx-react-lite';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import React from 'react';
-import switchVoieAdministration from 'utility/switch-voie-administration';
 
 const Header = ({ medicament }: { medicament: Medicament | ApiMedicament }) => {
   return (

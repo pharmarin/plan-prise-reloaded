@@ -1,5 +1,5 @@
 import React from 'react';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 
 const Card: React.FC<
   { className?: string } & React.ComponentPropsWithRef<'div'>

@@ -3,7 +3,7 @@ import { FieldInputProps, useField, useFormikContext } from 'formik';
 import { uniqueId } from 'lodash-es';
 import React from 'react';
 import TextareaAutoSize from 'react-textarea-autosize';
-import joinClassNames from 'utility/class-names';
+import joinClassNames from 'tools/class-names';
 
 interface IWithFormik {
   name: string;
