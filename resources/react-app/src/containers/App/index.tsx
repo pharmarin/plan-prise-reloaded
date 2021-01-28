@@ -11,11 +11,8 @@ import axios from 'helpers/axios-clients';
 import useConfig, { storeConfig } from 'hooks/use-config';
 import LRU from 'lru-cache';
 import React, { Suspense, useEffect, useState } from 'react';
-import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Sanctum } from 'react-sanctum';
-import { PersistGate } from 'redux-persist/es/integration/react';
-import { persistor, store } from 'store/store';
 import ContextProvider from './ContextProvider';
 
 const sanctumConfig = {
@@ -61,53 +58,46 @@ const App = () => {
     return <SplashScreen type="load" message="Chargement en cours..." />;
 
   return (
-    <Provider store={store}>
-      <PersistGate
-        loading={<SplashScreen type="load" message="Chargement en cours..." />}
-        persistor={persistor}
-      >
-        <ContextProvider>
-          <NotificationStack />
-          <Sanctum config={sanctumConfig}>
-            <Router basename="/">
-              {needUpdate && (
-                <SplashScreen
-                  type="info"
-                  message="Une mise à jour est disponible"
-                  button={{ label: 'Recharger', path: 'refresh' }}
-                />
-              )}
-              <NavigationBar />
-              <Container>
-                <Switch>
-                  <Route path="/admin">
-                    <ProtectedRoute admin>
-                      <ErrorBoundary returnTo="/">
-                        <Suspense
-                          fallback={
-                            <SplashScreen
-                              type="load"
-                              message="Chargement du module"
-                            />
-                          }
-                        >
-                          <Backend />
-                        </Suspense>
-                      </ErrorBoundary>
-                    </ProtectedRoute>
-                  </Route>
-                  <Route path="/">
-                    <ErrorBoundary returnTo="/">
-                      <Frontend />
-                    </ErrorBoundary>
-                  </Route>
-                </Switch>
-              </Container>
-            </Router>
-          </Sanctum>
-        </ContextProvider>
-      </PersistGate>
-    </Provider>
+    <ContextProvider>
+      <NotificationStack />
+      <Sanctum config={sanctumConfig}>
+        <Router basename="/">
+          {needUpdate && (
+            <SplashScreen
+              type="info"
+              message="Une mise à jour est disponible"
+              button={{ label: 'Recharger', path: 'refresh' }}
+            />
+          )}
+          <NavigationBar />
+          <Container>
+            <Switch>
+              <Route path="/admin">
+                <ProtectedRoute admin>
+                  <ErrorBoundary returnTo="/">
+                    <Suspense
+                      fallback={
+                        <SplashScreen
+                          type="load"
+                          message="Chargement du module"
+                        />
+                      }
+                    >
+                      <Backend />
+                    </Suspense>
+                  </ErrorBoundary>
+                </ProtectedRoute>
+              </Route>
+              <Route path="/">
+                <ErrorBoundary returnTo="/">
+                  <Frontend />
+                </ErrorBoundary>
+              </Route>
+            </Switch>
+          </Container>
+        </Router>
+      </Sanctum>
+    </ContextProvider>
   );
 };
 

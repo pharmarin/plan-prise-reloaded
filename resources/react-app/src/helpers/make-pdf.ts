@@ -3,11 +3,6 @@ import {
   DynamicContent,
   TDocumentDefinitions,
 } from 'pdfmake/interfaces';
-import {
-  makeUniqueSelectorInstance,
-  selectPlanPriseColumns,
-  selectPlanPriseID,
-} from 'store/plan-prise/selectors/plan-prise';
 
 const pageMargins = 20;
 
@@ -20,28 +15,12 @@ export const generate = async (document: TDocumentDefinitions) => {
   pdfMake.createPdf(document).open();
 };
 
-export const fromPlanPrise = (
-  state: Redux.State,
-  user: Models.App.User
-): TDocumentDefinitions => {
-  const planPriseContent = (
-    state.planPrise.content.data?.medicaments || []
-  ).map((medicament) =>
-    makeUniqueSelectorInstance()(state, {
-      type: medicament.type,
-      id: medicament.id,
-    })
-  );
+export const fromPlanPrise = (user: Models.App.User): TDocumentDefinitions => {
+  const planPriseContent: any[] = [];
 
-  if (planPriseContent.includes(null)) {
-    throw new Error(
-      'Un contenu est manquant. Impossible de générer le plan de prise'
-    );
-  }
+  const planPriseColumns: any[] = [];
 
-  const planPriseColumns = selectPlanPriseColumns(state);
-
-  const planPriseId = selectPlanPriseID(state);
+  const planPriseId = '';
 
   const planPriseHeader: ContentStack = {
     stack: [
