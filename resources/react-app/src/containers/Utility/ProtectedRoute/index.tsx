@@ -1,10 +1,11 @@
 import SplashScreen from 'components/SplashScreen';
+import { useNotifications } from 'hooks/use-store';
+import { runInAction } from 'mobx';
+import Notification from 'models/Notification';
 import React, { useContext } from 'react';
-import { useDispatch } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
 import { ContextProps } from 'react-sanctum/build/SanctumContext';
-import { addNotification } from 'store/app';
 
 type ProtectedRouteProps = Props.Frontend.App.ProtectedRoute;
 
@@ -17,7 +18,7 @@ const ProtectedRoute = ({ admin, children }: ProtectedRouteProps) => {
 
   const { pathname } = useLocation();
 
-  const dispatch = useDispatch();
+  const notifications = useNotifications();
 
   if (authenticated === false) {
     return (
@@ -35,13 +36,15 @@ const ProtectedRoute = ({ admin, children }: ProtectedRouteProps) => {
 
   if (authenticated === true) {
     if (admin && user?.data.attributes.admin !== true) {
-      dispatch(
-        addNotification({
-          header: 'Action non autorisée',
-          content: "Vous n'êtes pas autorisé à accéder à ce contenu",
-          timer: 3000,
-          icon: 'danger',
-        })
+      runInAction(() =>
+        notifications.add(
+          new Notification({
+            title: 'Action non autorisée',
+            message: "Vous n'êtes pas autorisé à accéder à ce contenu",
+            timer: 3000,
+            icon: 'danger',
+          })
+        )
       );
 
       return <Redirect to="/" />;
