@@ -16,15 +16,7 @@ const Posologies = ({
   medicament: Medicament | ApiMedicament;
   planPrise: PlanPrise;
 }) => {
-  const columns = planPrise.getColumns();
-
-  const posologies = Object.keys(columns)
-    .filter((posologieID) => columns[posologieID].display)
-    .map((posologieID) => ({
-      ...columns[posologieID],
-      value:
-        planPrise.custom_data[medicament.uid]?.posologies?.[posologieID] || '',
-    }));
+  const posologies = planPrise.getPosologies(medicament);
 
   return (
     <div

@@ -23,7 +23,7 @@ const Settings = ({
 }) => {
   const defaults = getConfig('default');
 
-  const initialValues = Object.entries(planPrise.getColumns()).reduce(
+  const initialValues = Object.entries(planPrise.columns).reduce(
     (result: { [id: string]: boolean }, [posologieID, posologieValues]) => {
       result[posologieID] = posologieValues.display;
       return result;

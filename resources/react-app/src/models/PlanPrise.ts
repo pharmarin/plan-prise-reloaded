@@ -2,6 +2,7 @@ import { Attribute, IRawModel, Model } from '@datx/core';
 import { jsonapi } from '@datx/jsonapi';
 import getConfig from 'helpers/get-config';
 import { setWith, uniqueId } from 'lodash-es';
+import { computed } from 'mobx';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 
@@ -65,7 +66,8 @@ class PlanPrise extends jsonapi(Model) {
     setWith(this.custom_settings, key, value);
   }
 
-  getColumns() {
+  @computed
+  get columns() {
     const defaults = getConfig('default');
     const posologies = defaults?.posologies || [];
 
@@ -102,6 +104,17 @@ class PlanPrise extends jsonapi(Model) {
     );
   }
 
+  @computed
+  getPosologies(medicament: Medicament | ApiMedicament) {
+    return Object.keys(this.columns)
+      .filter((posologieID) => this.columns[posologieID].display)
+      .map((posologieID) => ({
+        ...this.columns[posologieID],
+        value:
+          this.custom_data[medicament.uid]?.posologies?.[posologieID] || '',
+      }));
+  }
+
   setPosologieValue(
     medicament: Medicament | ApiMedicament,
     posologieId: string,
@@ -115,6 +128,7 @@ class PlanPrise extends jsonapi(Model) {
     );
   }
 
+  @computed
   getPrecautions(medicament: Medicament | ApiMedicament) {
     return medicament.isMedicament()
       ? medicament.precautions.map((precaution) => ({
@@ -156,6 +170,7 @@ class PlanPrise extends jsonapi(Model) {
     );
   }
 
+  @computed
   getCustomPrecautions(medicament: Medicament | ApiMedicament) {
     return Object.entries(
       this.custom_data?.[medicament.uid]?.custom_precautions || {}
