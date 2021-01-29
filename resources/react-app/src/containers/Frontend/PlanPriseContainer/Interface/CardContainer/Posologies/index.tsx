@@ -12,20 +12,21 @@ import joinClassNames from 'tools/class-names';
 const Posologies = ({
   medicament,
   planPrise,
+  showDetails,
 }: {
   medicament: Medicament | ApiMedicament;
   planPrise: PlanPrise;
+  showDetails: boolean;
 }) => {
   const posologies = planPrise.getPosologies(medicament);
 
   return (
     <div
-      className={joinClassNames(
-        'flex md:flex-col w-full md:w-3/6 space-x-2 md:space-x-0 md:space-y-2',
-        {
-          'w-full md:w-1/6': medicament.isMedicament(),
-        }
-      )}
+      className={joinClassNames('flex', {
+        'md:flex-col w-full md:w-3/6 space-x-2 md:space-x-0 md:space-y-2': showDetails,
+        'w-full md:w-1/6': showDetails && medicament.isMedicament(),
+        'w-full flew-row space-x-2': !showDetails,
+      })}
     >
       {posologies.map((posologie) => (
         <div

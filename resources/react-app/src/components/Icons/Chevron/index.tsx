@@ -4,6 +4,7 @@ import {
   BiChevronRight,
   BiChevronsLeft,
   BiChevronsRight,
+  BiChevronUp,
 } from 'react-icons/bi';
 
 const Chevron = {
@@ -11,7 +12,7 @@ const Chevron = {
     Down: { Medium: undefined, Small: BiChevronDown },
     Left: { Medium: undefined, Small: BiChevronLeft },
     Right: { Medium: undefined, Small: BiChevronRight },
-    Up: { Medium: undefined, Small: undefined },
+    Up: { Medium: undefined, Small: BiChevronUp },
   },
   Double: {
     Down: { Medium: undefined, Small: undefined },

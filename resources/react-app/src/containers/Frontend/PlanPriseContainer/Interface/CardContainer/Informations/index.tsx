@@ -7,14 +7,18 @@ import { observer } from 'mobx-react-lite';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import React from 'react';
+import joinClassNames from 'tools/class-names';
 import forceArray from 'tools/force-array';
 
 const Informations = ({
   medicament,
   planPrise,
+  showDetails,
 }: {
   medicament: Medicament;
   planPrise: PlanPrise;
+
+  showDetails: boolean;
 }) => {
   const indications = forceArray(
     planPrise.custom_data?.[medicament.uid]?.indications ||
@@ -45,8 +49,8 @@ const Informations = ({
     data: string[];
   };
 
-  return (
-    <div className="w-full md:w-2/6 space-y-2">
+  return showDetails ? (
+    <div className={joinClassNames('w-full md:w-2/6 space-y-2')}>
       <div>
         <Label>Indication</Label>
         <FormGroup>
@@ -128,7 +132,7 @@ const Informations = ({
         </div>
       )}
     </div>
-  );
+  ) : null;
 };
 
 export default observer(Informations);

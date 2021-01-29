@@ -12,15 +12,17 @@ import PrecautionContainer from './PrecautionContainer';
 const Commentaires = ({
   medicament,
   planPrise,
+  showDetails,
 }: {
   medicament: Medicament | ApiMedicament;
   planPrise: PlanPrise;
+  showDetails: boolean;
 }) => {
   const precautions = planPrise.getPrecautions(medicament);
   const customPrecautions = planPrise.getCustomPrecautions(medicament);
 
-  return (
-    <div className="w-full md:w-3/6">
+  return showDetails ? (
+    <div className={'w-full md:w-3/6'}>
       <Label>Commentaires</Label>
       <FormGroup>
         {precautions.map((precaution) => (
@@ -52,7 +54,7 @@ const Commentaires = ({
         </div>
       </FormGroup>
     </div>
-  );
+  ) : null;
 };
 
 export default observer(Commentaires);
