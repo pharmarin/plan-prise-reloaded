@@ -136,7 +136,7 @@ class PlanPrise extends jsonapi(Model) {
           id: precaution.meta.id,
           checked:
             this.custom_data[medicament.uid]?.precautions?.[precaution.meta.id]
-              ?.checked || false, // TODO: Ajouter la valeur du boolean en fonction de la population
+              ?.checked || precaution.population !== undefined,
           commentaire:
             this.custom_data[medicament.uid]?.precautions?.[precaution.meta.id]
               ?.commentaire || precaution.commentaire,
