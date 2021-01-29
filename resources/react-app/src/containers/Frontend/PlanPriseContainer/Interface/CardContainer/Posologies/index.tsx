@@ -28,15 +28,18 @@ const Posologies = ({
 
   return (
     <div
-      className={joinClassNames('space-y-2 w-3/6', {
-        'w-1/6': medicament.isMedicament(),
-      })}
+      className={joinClassNames(
+        'flex md:flex-col w-full md:w-3/6 space-x-2 md:space-x-0 md:space-y-2',
+        {
+          'w-full md:w-1/6': medicament.isMedicament(),
+        }
+      )}
     >
       {posologies.map((posologie) => (
         <div
           key={posologie.id}
           className={joinClassNames('w-1/2', {
-            'w-full': medicament.isMedicament(),
+            'w-1/3 md:w-full': medicament.isMedicament(),
           })}
         >
           <Label>{posologie.label}</Label>

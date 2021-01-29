@@ -46,7 +46,7 @@ const Informations = ({
   };
 
   return (
-    <div className="w-2/6 space-y-2">
+    <div className="w-full md:w-2/6 space-y-2">
       <div>
         <Label>Indication</Label>
         <FormGroup>

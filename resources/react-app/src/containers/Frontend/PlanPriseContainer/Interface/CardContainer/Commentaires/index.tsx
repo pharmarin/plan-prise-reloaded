@@ -20,7 +20,7 @@ const Commentaires = ({
   const customPrecautions = planPrise.getCustomPrecautions(medicament);
 
   return (
-    <div className="w-3/6">
+    <div className="w-full md:w-3/6">
       <Label>Commentaires</Label>
       <FormGroup>
         {precautions.map((precaution) => (
