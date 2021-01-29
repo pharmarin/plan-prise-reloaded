@@ -23,8 +23,6 @@ const ConservationDuree = ({
     return null;
   }
 
-  console.log('conservationDuree.custom: ', conservationDuree.custom);
-
   if (
     !showDetails &&
     conservationDuree.custom &&
