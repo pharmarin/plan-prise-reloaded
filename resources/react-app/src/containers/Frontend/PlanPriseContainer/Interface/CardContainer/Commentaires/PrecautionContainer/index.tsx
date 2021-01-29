@@ -1,6 +1,7 @@
 import { IRawModel } from '@datx/core';
 import Button from 'components/Button';
 import FormGroup from 'components/FormGroup';
+import Times from 'components/Icons/Times';
 import Input, { TextArea } from 'components/Input';
 import Label from 'components/Label';
 import { action } from 'mobx';
@@ -28,13 +29,13 @@ const PrecautionContainer = ({
       <div className="flex flex-row items-center space-x-4">
         {custom ? (
           <Button
-            className="px-0 pl-1"
+            className="px-0 pl-0.5"
             color="link"
             onClick={action('removeCustomPrecaution', () => {
               planPrise.removeCustomPrecaution(medicament, precaution);
             })}
           >
-            X
+            <Times.Regular.Medium />
           </Button>
         ) : (
           <Input
