@@ -28,7 +28,7 @@ const CardContainer = ({
       <div
         className={joinClassNames('flex pt-2', {
           'flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4': showDetails,
-          'flex-col': !showDetails,
+          'flex-col-reverse': !showDetails,
         })}
       >
         {medicament.isMedicament() && (

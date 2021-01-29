@@ -5,6 +5,7 @@ import { setWith, uniqueId } from 'lodash-es';
 import { computed } from 'mobx';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
+import forceArray from 'tools/force-array';
 
 interface ICustomData {
   conservation_duree?: string;
@@ -83,6 +84,13 @@ class PlanPrise extends jsonapi(Model) {
     }, {}) as { [id: string]: typeof posologies[0] & { display: boolean } };
   }
 
+  @computed
+  getIndications(medicament: Medicament) {
+    return forceArray(
+      this.custom_data?.[medicament.uid]?.indications || medicament.indications
+    );
+  }
+
   setIndication(medicament: Medicament, indication: string) {
     setWith(
       this.custom_data,
@@ -90,6 +98,30 @@ class PlanPrise extends jsonapi(Model) {
       [indication],
       Object
     );
+  }
+
+  @computed
+  getConservationDuree(medicament: Medicament) {
+    const source = medicament?.conservation_duree || [];
+    const custom = this.custom_data?.[medicament.uid]
+      ?.conservation_duree;
+    
+    const isCustom = typeof custom === "string" && custom.length > 0
+
+    return {
+      custom: isCustom,
+      data:
+        source.length === 1
+          ? [source[0].duree]
+          : isCustom
+          ? [
+              (source.find((i) => i.laboratoire === custom) || source[0]).duree,
+            ] || []
+          : source.map((i) => i.laboratoire) || [],
+    } as {
+      custom: boolean;
+      data: string[];
+    };
   }
 
   setConservationDuree(
