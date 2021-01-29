@@ -131,16 +131,24 @@ class PlanPrise extends jsonapi(Model) {
   @computed
   getPrecautions(medicament: Medicament | ApiMedicament) {
     return medicament.isMedicament()
-      ? medicament.precautions.map((precaution) => ({
-          ...precaution.toJSON(),
-          id: precaution.meta.id,
-          checked:
-            this.custom_data[medicament.uid]?.precautions?.[precaution.meta.id]
-              ?.checked || precaution.population !== undefined,
-          commentaire:
-            this.custom_data[medicament.uid]?.precautions?.[precaution.meta.id]
-              ?.commentaire || precaution.commentaire,
-        }))
+      ? medicament.precautions.map((precaution) => {
+          const customChecked = this.custom_data[medicament.uid]?.precautions?.[
+            precaution.meta.id
+          ]?.checked;
+          return {
+            ...precaution.toJSON(),
+            id: precaution.meta.id,
+            checked:
+              customChecked !== undefined
+                ? customChecked
+                : precaution.population === undefined ||
+                  precaution.population === '',
+            commentaire:
+              this.custom_data[medicament.uid]?.precautions?.[
+                precaution.meta.id
+              ]?.commentaire || precaution.commentaire,
+          };
+        })
       : [];
   }
 
