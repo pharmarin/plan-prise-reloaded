@@ -22,44 +22,44 @@ const Header = ({
   return (
     <div className="flex flex-row">
       <div className="d-flex flex-column flex-grow">
-        <div className="d-flex">
-          <div className="font-semibold text-truncate">
-            {medicament.denomination}
+        <div className="font-semibold text-truncate">
+          {medicament.denomination}
+        </div>
+        <div className="flex flex-row space-x-1">
+          <div className="text-gray-500 text-truncate">
+            <small>
+              {(('composition' in medicament && medicament.composition) || [])
+                .map((principeActif) => principeActif.denomination)
+                .join(' + ')}
+            </small>
           </div>
-        </div>
-        <div className="text-gray-500 text-truncate">
-          <small>
-            {(('composition' in medicament && medicament.composition) || [])
-              .map((principeActif) => principeActif.denomination)
-              .join(' + ')}
-          </small>
-        </div>
-        <div className="text-gray-500 italic text-truncate">
-          {(() => {
-            const voies_administration =
-              ('voies_administration' in medicament &&
-                medicament.voies_administration) ||
-              [];
-            if (voies_administration.length === 1) {
-              return (
-                <small>
-                  Voie {switchVoieAdministration(voies_administration[0])}
-                </small>
-              );
-            } else if (voies_administration.length > 1) {
-              return (
-                <Input name="voie_administration" type="select">
-                  {voies_administration.map((voieAdministration) => (
-                    <option>
-                      {switchVoieAdministration(voieAdministration)}
-                    </option>
-                  ))}
-                </Input>
-              );
-            } else {
-              return null;
-            }
-          })()}
+          <div className="text-gray-500 italic text-truncate">
+            {(() => {
+              const voies_administration =
+                ('voies_administration' in medicament &&
+                  medicament.voies_administration) ||
+                [];
+              if (voies_administration.length === 1) {
+                return (
+                  <small>
+                    (Voie {switchVoieAdministration(voies_administration[0])})
+                  </small>
+                );
+              } else if (voies_administration.length > 1) {
+                return (
+                  <Input name="voie_administration" type="select">
+                    {voies_administration.map((voieAdministration) => (
+                      <option>
+                        ({switchVoieAdministration(voieAdministration)})
+                      </option>
+                    ))}
+                  </Input>
+                );
+              } else {
+                return null;
+              }
+            })()}
+          </div>
         </div>
       </div>
       <div className="d-flex flex-grow-0 flex-column space-y-1">
