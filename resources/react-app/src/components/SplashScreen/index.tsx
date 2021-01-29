@@ -16,9 +16,7 @@ const SplashScreen = ({
           {type === 'load' && (
             <Spinner className="p-3 h-20 w-20 flex-shrink-0" strokeWidth={2} />
           )}
-          {type === 'danger' && (
-            <Danger className="h-20 w-20 flex-shrink-0 text-red-600" fill />
-          )}
+          {type === 'danger' && <Danger.Triangle.Outlined />}
           <span className="font-light">{message}</span>
         </div>
         {button && (

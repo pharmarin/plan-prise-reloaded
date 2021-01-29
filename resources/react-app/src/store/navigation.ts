@@ -1,9 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 
-interface INavigationItem {
+export interface INavigationItem {
   label?: string;
   component?: {
-    name: 'arrowLeft';
+    name: 'arrowLeft' | 'options';
     props?: any;
   };
   path?: string;

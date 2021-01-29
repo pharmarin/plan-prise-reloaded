@@ -8,6 +8,7 @@ import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
 import React, { useEffect, useState } from 'react';
+import { INavigationItem } from 'store/navigation';
 import Settings from '../Settings';
 
 const Interface = ({
@@ -42,9 +43,11 @@ const Interface = ({
             ? []
             : [
                 {
-                  label: 'Options',
+                  component: {
+                    name: 'options',
+                  },
                   event: 'toggleSettings',
-                },
+                } as INavigationItem,
               ]),
         ]
       )

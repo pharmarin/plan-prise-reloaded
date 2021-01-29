@@ -1,4 +1,5 @@
 import Button from 'components/Button';
+import Times from 'components/Icons/Times';
 import Input from 'components/Input';
 import switchVoieAdministration from 'helpers/switch-voie-administration';
 import { observer } from 'mobx-react-lite';
@@ -53,14 +54,15 @@ const Header = ({ medicament }: { medicament: Medicament | ApiMedicament }) => {
       <div className="d-flex flex-grow-0 flex-column">
         <Button
           block={true}
-          className="rounded-full text-red-600 py-0"
+          className="rounded-full text-red-600 py-0 space-x-1"
           tabIndex={-1}
           color="white"
           onClick={() => {
             alert('Delete medicament');
           }}
         >
-          <small className="mr-1">Supprimer la ligne</small> X
+          <small className="mr-1">Supprimer la ligne</small>
+          <Times.Regular.Small />
         </Button>
       </div>
     </div>

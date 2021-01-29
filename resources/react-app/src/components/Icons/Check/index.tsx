@@ -1,26 +1,5 @@
-import Icon from 'components/Icons';
-import React from 'react';
+import { HiCheck } from 'react-icons/hi';
 
-const Check: React.FC<React.ComponentPropsWithoutRef<'svg'>> = ({
-  className,
-  strokeWidth = 2,
-}) => {
-  return (
-    <Icon
-      className={className}
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={strokeWidth}
-        d="M5 13l4 4L19 7"
-      />
-    </Icon>
-  );
-};
+const Check = HiCheck;
 
 export default Check;
