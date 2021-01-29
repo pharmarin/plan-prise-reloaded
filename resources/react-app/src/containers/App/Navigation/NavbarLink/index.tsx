@@ -20,7 +20,7 @@ const NavbarLink = ({
   const isActive = location === path;
 
   const components: { [key: string]: React.FC<{ className?: string }> } = {
-    arrowLeft: Arrow.Regular.Left.Small,
+    arrowLeft: Arrow.Regular.Left,
     options: Options.Connected,
   };
 

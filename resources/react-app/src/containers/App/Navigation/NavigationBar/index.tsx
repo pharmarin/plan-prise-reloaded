@@ -29,12 +29,14 @@ const NavigationBar = () => {
         </Navbar.Brand>
         <Navbar.Content>
           {navigation.returnTo && <NavbarLink {...navigation.returnTo} />}
-          <div className="flex flex-grow min-w-0 justify-center">
+          <div className="flex flex-grow min-w-0 justify-center items-center">
             <Navbar.Title>{navigation.title}</Navbar.Title>
-            {navigation.options &&
-              navigation.options.map((option) => (
-                <NavbarLink key={option.path || option.event} {...option} />
-              ))}
+            <div className="ml-4">
+              {navigation.options &&
+                navigation.options.map((option) => (
+                  <NavbarLink key={option.path || option.event} {...option} />
+                ))}
+            </div>
           </div>
           <div></div>
         </Navbar.Content>
