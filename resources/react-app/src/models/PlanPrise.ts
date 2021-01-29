@@ -53,6 +53,14 @@ class PlanPrise extends jsonapi(Model) {
     this.save();
   }
 
+  removeMedicament(medicament: Medicament | ApiMedicament) {
+    this.medicaments = this.medicaments.filter(
+      (medicamentInArray) => medicamentInArray !== medicament
+    );
+
+    this.save();
+  }
+
   setCustomSettings(key: string, value: any) {
     setWith(this.custom_settings, key, value);
   }

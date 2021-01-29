@@ -17,7 +17,7 @@ const CardContainer = ({
 }) => {
   return (
     <Card className="space-y-2 divide-y">
-      <Header medicament={medicament} />
+      <Header medicament={medicament} planPrise={planPrise} />
       <div className="flex flex-col md:flex-row pt-2 space-y-4 md:space-y-0 md:space-x-4">
         {medicament.isMedicament() && (
           <Informations medicament={medicament} planPrise={planPrise} />

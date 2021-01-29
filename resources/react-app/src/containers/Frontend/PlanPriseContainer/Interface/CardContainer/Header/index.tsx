@@ -2,12 +2,20 @@ import Button from 'components/Button';
 import Times from 'components/Icons/Times';
 import Input from 'components/Input';
 import switchVoieAdministration from 'helpers/switch-voie-administration';
+import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
+import PlanPrise from 'models/PlanPrise';
 import React from 'react';
 
-const Header = ({ medicament }: { medicament: Medicament | ApiMedicament }) => {
+const Header = ({
+  medicament,
+  planPrise,
+}: {
+  medicament: Medicament | ApiMedicament;
+  planPrise: PlanPrise;
+}) => {
   return (
     <div className="flex flex-row">
       <div className="d-flex flex-column flex-grow">
@@ -57,9 +65,11 @@ const Header = ({ medicament }: { medicament: Medicament | ApiMedicament }) => {
           className="rounded-full text-red-600 py-0 space-x-1"
           tabIndex={-1}
           color="white"
-          onClick={() => {
-            alert('Delete medicament');
-          }}
+          onClick={() =>
+            action('removeMedicament', () =>
+              planPrise.removeMedicament(medicament)
+            )
+          }
         >
           <small className="mr-1">Supprimer la ligne</small>
           <Times.Regular.Small />
