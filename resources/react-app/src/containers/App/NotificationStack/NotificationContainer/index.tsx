@@ -1,13 +1,10 @@
 import { Transition } from '@headlessui/react';
 import Button from 'components/Button';
+import Danger from 'components/Icons/Danger';
 import Spinner from 'components/Spinner';
 import { observer } from 'mobx-react-lite';
 import Notification from 'models/Notification';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  BsFillExclamationDiamondFill,
-  BsFillExclamationOctagonFill,
-} from 'react-icons/bs';
 
 const NotificationContainer = ({
   notification,
@@ -40,9 +37,9 @@ const NotificationContainer = ({
       case 'spinner':
         return <Spinner />;
       case 'warning':
-        return <BsFillExclamationDiamondFill className="text-warning" />;
+        return <Danger.Triangle.Filled className="text-warning" />;
       case 'danger':
-        return <BsFillExclamationOctagonFill className="text-danger" />;
+        return <Danger.Circle.Filled className="text-danger" />;
       default:
         return null;
     }
@@ -61,7 +58,7 @@ const NotificationContainer = ({
     >
       <div className="w-80 bg-white rounded-lg border-gray-300 border p-3 shadow-lg">
         <div className="flex flex-row">
-          <div className="px-2">Icon</div>
+          <div className="px-2">{getIcon(notification.type)}</div>
           <div className="ml-2 mr-6 w-full">
             <span className="font-semibold">{notification.title}</span>
             <span className="block text-gray-500">{notification.message}</span>

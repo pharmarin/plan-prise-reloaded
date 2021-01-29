@@ -1,8 +1,12 @@
-import { HiOutlineExclamation } from 'react-icons/hi';
+import {
+  HiExclamation,
+  HiExclamationCircle,
+  HiOutlineExclamation,
+} from 'react-icons/hi';
 
 const Danger = {
-  Circle: { Filled: undefined, Outlined: undefined },
-  Triangle: { Outlined: HiOutlineExclamation },
+  Circle: { Filled: HiExclamationCircle },
+  Triangle: { Filled: HiExclamation, Outlined: HiOutlineExclamation },
   Shield: {},
 };
 
