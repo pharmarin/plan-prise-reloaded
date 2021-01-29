@@ -184,7 +184,7 @@ const ToggleComponent = ({
       <div
         className={joinClassNames([
           'toggle-circle',
-          'absolute top-0.8 left-1',
+          'absolute top-0.8 -left-2.5 sm:left-1',
           'w-3.5 h-3.5',
           'bg-white shadow',
           'rounded-full',
