@@ -151,12 +151,14 @@ class PlanPrise extends jsonapi(Model) {
     posologieId: string,
     value: string
   ) {
-    setWith(
-      this.custom_data,
-      [medicament.uid, 'posologies', posologieId],
-      value,
-      Object
-    );
+    this.custom_data = {
+      ...setWith(
+        this.custom_data,
+        [medicament.uid, 'posologies', posologieId],
+        value,
+        Object
+      ),
+    };
   }
 
   @computed
@@ -188,12 +190,14 @@ class PlanPrise extends jsonapi(Model) {
     precaution: IRawModel,
     checked: boolean
   ) {
-    setWith(
-      this.custom_data,
-      [medicament.uid, 'precautions', precaution.id, 'checked'],
-      checked,
-      Object
-    );
+    this.custom_data = {
+      ...setWith(
+        this.custom_data,
+        [medicament.uid, 'precautions', precaution.id, 'checked'],
+        checked,
+        Object
+      ),
+    };
   }
 
   setPrecautionCommentaire(
@@ -201,12 +205,14 @@ class PlanPrise extends jsonapi(Model) {
     precaution: IRawModel,
     value: string
   ) {
-    setWith(
-      this.custom_data,
-      [medicament.uid, 'precautions', precaution.id, 'commentaire'],
-      value,
-      Object
-    );
+    this.custom_data = {
+      ...setWith(
+        this.custom_data,
+        [medicament.uid, 'precautions', precaution.id, 'commentaire'],
+        value,
+        Object
+      ),
+    };
   }
 
   @computed
@@ -217,17 +223,19 @@ class PlanPrise extends jsonapi(Model) {
   }
 
   addCustomPrecaution(medicament: Medicament | ApiMedicament) {
-    setWith(
-      this.custom_data,
-      [
-        medicament.uid,
-        'custom_precautions',
-        uniqueId('custom_precaution_'),
-        'commentaire',
-      ],
-      '',
-      Object
-    );
+    this.custom_data = {
+      ...setWith(
+        this.custom_data,
+        [
+          medicament.uid,
+          'custom_precautions',
+          uniqueId('custom_precaution_'),
+          'commentaire',
+        ],
+        '',
+        Object
+      ),
+    };
   }
 
   removeCustomPrecaution(
@@ -244,17 +252,19 @@ class PlanPrise extends jsonapi(Model) {
     customPrecaution: IRawModel,
     value: string
   ) {
-    setWith(
-      this.custom_data,
-      [
-        medicament.uid,
-        'custom_precautions',
-        customPrecaution.id,
-        'commentaire',
-      ],
-      value,
-      Object
-    );
+    this.custom_data = {
+      ...setWith(
+        this.custom_data,
+        [
+          medicament.uid,
+          'custom_precautions',
+          customPrecaution.id,
+          'commentaire',
+        ],
+        value,
+        Object
+      ),
+    };
   }
 }
 
