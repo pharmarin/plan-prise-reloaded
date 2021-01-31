@@ -1,6 +1,6 @@
 import reactSelectOptions from 'helpers/react-select-options';
 import useLoadList from 'hooks/use-load-list';
-import { useApi } from 'hooks/use-store';
+import { useApi, useNotifications } from 'hooks/use-store';
 import { runInAction } from 'mobx';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
@@ -16,6 +16,7 @@ const Select = ({ planPrise }: { planPrise?: PlanPrise }) => {
   const { loadGeneric } = useLoadList();
 
   const api = useApi();
+  const notifications = useNotifications();
 
   if (!planPrise) return <p>Chargement en cours</p>;
 
@@ -83,10 +84,18 @@ const Select = ({ planPrise }: { planPrise?: PlanPrise }) => {
                 medicament.meta.id === value.value
             ).length > 0
           ) {
-            throw new Error(
-              'Ce médicament est déjà dans le plan de prise (Erreur 302)'
-            );
+            notifications.addNotification({
+              title: 'Ce médicament est déjà dans le plan de prise',
+              type: 'warning',
+              timer: 2000,
+            });
+            return;
           }
+
+          const notification = notifications.addNotification({
+            title: `Ajout de ${value.label} en cours`,
+            type: 'spinner',
+          });
 
           runInAction(() =>
             api
@@ -99,6 +108,9 @@ const Select = ({ planPrise }: { planPrise?: PlanPrise }) => {
                 runInAction(() =>
                   planPrise.addMedicament(response.data as typeof model)
                 );
+              })
+              .finally(() => {
+                notifications.removeOne(notification);
               })
           );
         }

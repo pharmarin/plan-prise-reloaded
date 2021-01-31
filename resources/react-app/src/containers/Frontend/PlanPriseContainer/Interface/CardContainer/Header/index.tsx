@@ -3,6 +3,7 @@ import Chevron from 'components/Icons/Chevron';
 import Times from 'components/Icons/Times';
 import Input from 'components/Input';
 import switchVoieAdministration from 'helpers/switch-voie-administration';
+import { useNotifications } from 'hooks/use-store';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import ApiMedicament from 'models/ApiMedicament';
@@ -19,6 +20,8 @@ const Header = ({
   planPrise: PlanPrise;
   useDetails: [boolean, (value: boolean) => void];
 }) => {
+  const notifications = useNotifications();
+
   return (
     <div className="flex flex-row">
       <div className="d-flex flex-column flex-grow">
@@ -68,11 +71,15 @@ const Header = ({
           className="rounded-full text-red-600 py-0 space-x-1"
           tabIndex={-1}
           color="white"
-          onClick={() =>
-            action('removeMedicament', () =>
-              planPrise.removeMedicament(medicament)
-            )
-          }
+          onClick={action('removeMedicament', () => {
+            const notification = notifications.addNotification({
+              title: `Suppression de ${medicament.denomination} en cours`,
+              type: 'spinner',
+            });
+            planPrise.removeMedicament(medicament).finally(() => {
+              notifications.removeOne(notification);
+            });
+          })}
         >
           <small className="mr-1">Supprimer la ligne</small>
           <Times.Regular.Small />
