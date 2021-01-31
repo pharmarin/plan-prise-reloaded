@@ -73,7 +73,7 @@ class PlanPrise extends jsonapi(Model) {
   }
 
   setCustomSettings(key: string, value: any) {
-    setWith(this.custom_settings, key, value);
+    this.custom_settings = { ...setWith(this.custom_settings, key, value) };
   }
 
   @computed
@@ -101,12 +101,14 @@ class PlanPrise extends jsonapi(Model) {
   }
 
   setIndication(medicament: Medicament, indication: string) {
-    setWith(
-      this.custom_data,
-      [medicament.uid, 'indications'],
-      [indication],
-      Object
-    );
+    this.custom_data = {
+      ...setWith(
+        this.custom_data,
+        [medicament.uid, 'indications'],
+        [indication],
+        Object
+      ),
+    };
   }
 
   @computed
@@ -136,12 +138,14 @@ class PlanPrise extends jsonapi(Model) {
     medicament: Medicament,
     laboratoire: string | undefined
   ) {
-    setWith(
-      this.custom_data,
-      [medicament.uid, 'conservation_duree'],
-      laboratoire,
-      Object
-    );
+    this.custom_data = {
+      ...setWith(
+        this.custom_data,
+        [medicament.uid, 'conservation_duree'],
+        laboratoire,
+        Object
+      ),
+    };
   }
 
   @computed
