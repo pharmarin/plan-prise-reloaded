@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import RootStore from './root';
 
 export interface INavigationItem {
   label?: string;
@@ -17,6 +18,8 @@ interface INavigation {
 }
 
 class Navigation {
+  rootStore;
+
   title: INavigation['title'] = '';
   returnTo: INavigation['returnTo'] = {
     path: '/',
@@ -24,8 +27,10 @@ class Navigation {
   };
   options: INavigation['options'] = undefined;
 
-  constructor() {
+  constructor(rootStore: RootStore) {
     makeAutoObservable(this);
+
+    this.rootStore = rootStore;
   }
 
   setNavigation(

@@ -1,13 +1,7 @@
 import React, { createContext } from 'react';
-import JsonApiStore from 'store/json-api';
-import Navigation from 'store/navigation';
-import NotificationBag from 'store/notification-bag';
+import RootStore from 'store/root';
 
-const store = {
-  api: new JsonApiStore(),
-  navigation: new Navigation(),
-  notifications: new NotificationBag(),
-};
+const store = new RootStore();
 
 export const StoreContext = createContext(store);
 

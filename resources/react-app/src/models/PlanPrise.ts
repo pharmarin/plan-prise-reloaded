@@ -1,10 +1,11 @@
-import { Attribute, IRawModel, Model } from '@datx/core';
+import { Attribute, IRawModel, Model, PureCollection } from '@datx/core';
 import { jsonapi } from '@datx/jsonapi';
 import getConfig from 'helpers/get-config';
 import { setWith, uniqueId } from 'lodash-es';
 import { computed } from 'mobx';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
+import JsonApiStore from 'store/json-api';
 import forceArray from 'tools/force-array';
 
 interface ICustomData {
@@ -33,7 +34,15 @@ interface ICustomSettings {
 }
 
 class PlanPrise extends jsonapi(Model) {
+  notifications;
+
   static type = 'plan-prises';
+
+  constructor(data?: IRawModel, collection?: PureCollection) {
+    super(data, collection);
+
+    this.notifications = (collection as JsonApiStore).rootStore.notifications;
+  }
 
   @Attribute({
     toMany: (data: any) =>
