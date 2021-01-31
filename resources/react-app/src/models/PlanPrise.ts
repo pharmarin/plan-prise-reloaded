@@ -52,7 +52,7 @@ class PlanPrise extends jsonapi(Model) {
   addMedicament(medicament: Medicament | ApiMedicament) {
     this.medicaments.push(medicament);
 
-    this.save();
+    return this.save();
   }
 
   removeMedicament(medicament: Medicament | ApiMedicament) {
@@ -60,7 +60,7 @@ class PlanPrise extends jsonapi(Model) {
       (medicamentInArray) => medicamentInArray !== medicament
     );
 
-    this.save();
+    return this.save();
   }
 
   setCustomSettings(key: string, value: any) {
@@ -103,10 +103,9 @@ class PlanPrise extends jsonapi(Model) {
   @computed
   getConservationDuree(medicament: Medicament) {
     const source = medicament?.conservation_duree || [];
-    const custom = this.custom_data?.[medicament.uid]
-      ?.conservation_duree;
-    
-    const isCustom = typeof custom === "string" && custom.length > 0
+    const custom = this.custom_data?.[medicament.uid]?.conservation_duree;
+
+    const isCustom = typeof custom === 'string' && custom.length > 0;
 
     return {
       custom: isCustom,
