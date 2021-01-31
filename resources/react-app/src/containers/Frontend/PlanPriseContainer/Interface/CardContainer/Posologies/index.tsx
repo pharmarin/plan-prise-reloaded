@@ -40,6 +40,7 @@ const Posologies = ({
             <TextArea
               name={posologie.id}
               onChange={action(
+                'setPosologie',
                 (event: React.ChangeEvent<HTMLTextAreaElement>) =>
                   planPrise.setPosologieValue(
                     medicament,
