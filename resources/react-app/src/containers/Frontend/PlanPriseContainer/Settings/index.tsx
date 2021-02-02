@@ -49,8 +49,12 @@ const Settings = ({
                 )
                 .filter((posologie) => posologie[0] !== undefined)
             );
-            runInAction(() =>
-              planPrise.setCustomSettings('posologies', changed)
+            runInAction(
+              () =>
+                (planPrise.customSettings = {
+                  key: 'posologies',
+                  value: changed,
+                })
             );
             resetForm({
               values,

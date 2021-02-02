@@ -18,7 +18,7 @@ const Posologies = ({
   planPrise: PlanPrise;
   showDetails: boolean;
 }) => {
-  const posologies = planPrise.getPosologies(medicament);
+  const posologies = planPrise.posologies(medicament);
 
   return (
     <div
@@ -42,11 +42,11 @@ const Posologies = ({
               onChange={action(
                 'setPosologie',
                 (event: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  planPrise.setPosologieValue(
+                  (planPrise.posologie = {
                     medicament,
-                    posologie.id,
-                    event.currentTarget.value
-                  )
+                    posologieId: posologie.id,
+                    value: event.currentTarget.value,
+                  })
               )}
               value={posologie.value}
             />

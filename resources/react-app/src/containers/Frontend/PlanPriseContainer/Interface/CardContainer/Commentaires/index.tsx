@@ -18,8 +18,8 @@ const Commentaires = ({
   planPrise: PlanPrise;
   showDetails: boolean;
 }) => {
-  const precautions = planPrise.getPrecautions(medicament);
-  const customPrecautions = planPrise.getCustomPrecautions(medicament);
+  const precautions = planPrise.precautions(medicament);
+  const customPrecautions = planPrise.customPrecautions(medicament);
 
   return showDetails ? (
     <div className={'w-full md:w-3/6'}>

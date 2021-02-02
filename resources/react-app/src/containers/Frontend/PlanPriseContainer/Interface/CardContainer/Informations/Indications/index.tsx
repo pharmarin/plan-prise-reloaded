@@ -16,7 +16,7 @@ const Indications = ({
   planPrise: PlanPrise;
   showDetails: boolean;
 }) => {
-  const indications = planPrise.getIndications(medicament);
+  const indications = planPrise.indications(medicament);
 
   if (!showDetails && indications.length < 2) {
     return null;
@@ -36,10 +36,10 @@ const Indications = ({
                 color="white"
                 onClick={action(
                   (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
-                    planPrise.setIndication(
+                    (planPrise.indication = {
                       medicament,
-                      event.currentTarget.innerHTML
-                    )
+                      indication: event.currentTarget.innerHTML,
+                    })
                 )}
               >
                 {indication}
@@ -49,8 +49,12 @@ const Indications = ({
         ) : (
           <TextArea
             name="indications"
-            onChange={action((event: React.ChangeEvent<HTMLTextAreaElement>) =>
-              planPrise.setIndication(medicament, event.currentTarget.value)
+            onChange={action(
+              (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                (planPrise.indication = {
+                  medicament,
+                  indication: event.currentTarget.value,
+                })
             )}
             value={indications?.[0] || ''}
           />

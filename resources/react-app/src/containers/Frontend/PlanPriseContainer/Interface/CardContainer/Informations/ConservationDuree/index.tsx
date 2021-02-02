@@ -17,7 +17,7 @@ const ConservationDuree = ({
   planPrise: PlanPrise;
   showDetails: boolean;
 }) => {
-  const conservationDuree = planPrise.getConservationDuree(medicament);
+  const conservationDuree = planPrise.conservationsDuree(medicament);
 
   if (conservationDuree.data.length === 0) {
     return null;
@@ -39,8 +39,12 @@ const ConservationDuree = ({
           <Button
             className="flex-initial px-1 py-0"
             color="link"
-            onClick={action(() =>
-              planPrise.setConservationDuree(medicament, undefined)
+            onClick={action(
+              () =>
+                (planPrise.conservationDuree = {
+                  medicament,
+                  laboratoire: undefined,
+                })
             )}
           >
             <Times.Regular.Small />
@@ -64,8 +68,13 @@ const ConservationDuree = ({
                   block
                   className="rounded-none first:rounded-t-md last:rounded-b-md border-b-0 last:border-b"
                   color="white"
-                  onClick={action('setConservationDuree', () =>
-                    planPrise.setConservationDuree(medicament, laboratoire)
+                  onClick={action(
+                    'setConservationDuree',
+                    () =>
+                      (planPrise.conservationDuree = {
+                        medicament,
+                        laboratoire,
+                      })
                   )}
                 >
                   {laboratoire}

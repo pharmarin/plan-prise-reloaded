@@ -23,6 +23,7 @@
     "lru-cache": "^6.0.0",
     "mobx": "^6.0.4",
     "mobx-react-lite": "^3.1.6",
+    "mobx-utils": "^6.0.3",
     "pdfmake": "^0.1.65",
     "postcss": "^7",
     "react": "^17.0.1",

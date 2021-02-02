@@ -45,11 +45,11 @@ const PrecautionContainer = ({
             onChange={action('setPrecautionChecked', () => {
               if (!medicament.isMedicament()) return;
 
-              planPrise.setPrecautionChecked(
+              planPrise.precautionChecked = {
                 medicament,
                 precaution,
-                !precaution.checked
-              );
+                checked: !precaution.checked,
+              };
             })}
           />
         )}
@@ -59,17 +59,17 @@ const PrecautionContainer = ({
             'setPrecautionCommentaire',
             (event: React.ChangeEvent<HTMLTextAreaElement>) => {
               if (custom) {
-                planPrise.setCustomPrecautionCommentaire(
+                planPrise.customPrecautionCommentaire = {
                   medicament,
-                  precaution,
-                  event.currentTarget.value
-                );
+                  customPrecaution: precaution,
+                  value: event.currentTarget.value,
+                };
               } else if (medicament.isMedicament()) {
-                planPrise.setPrecautionCommentaire(
+                planPrise.precautionCommentaire = {
                   medicament,
                   precaution,
-                  event.currentTarget.value
-                );
+                  value: event.currentTarget.value,
+                };
               } else {
                 return;
               }
