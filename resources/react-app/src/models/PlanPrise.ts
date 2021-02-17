@@ -8,7 +8,7 @@ import {
 import { IRequestOptions, jsonapi } from '@datx/jsonapi';
 import debounce from 'debounce-promise';
 import getConfig from 'helpers/get-config';
-import { setWith, uniqueId } from 'lodash-es';
+import { isPlainObject, setWith, uniqueId } from 'lodash-es';
 import { computed, reaction, toJS } from 'mobx';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
@@ -53,6 +53,11 @@ class PlanPrise extends jsonapi(Model) {
     reaction(
       () => toJS(this.custom_data),
       (custom_data, previousValue) => {
+        console.log(
+          'custom_data: ',
+          custom_data,
+          isAttributeDirty(this, 'custom_data')
+        );
         if (!isAttributeDirty(this, 'custom_data')) return;
 
         if (JSON.stringify(custom_data) === JSON.stringify(previousValue))
@@ -98,6 +103,9 @@ class PlanPrise extends jsonapi(Model) {
   };
 
   setCustomData(path: string[], value: any) {
+    if (!isPlainObject(this.custom_data[path[0]]))
+      this.custom_data[path[0]] = {}; // Fix #53
+
     this.assign(
       'custom_data',
       setWith(toJS(this.custom_data), path, value, Object)
