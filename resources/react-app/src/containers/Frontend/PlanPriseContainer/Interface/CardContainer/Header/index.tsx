@@ -73,9 +73,11 @@ const Header = ({
           color="white"
           onClick={action('removeMedicament', () => {
             const notification = notifications.addNotification({
-              title: `Suppression de ${medicament.denomination} en cours`,
-              type: 'spinner',
+              title: 'Suppression du médicament',
+              message: medicament.denomination,
+              type: 'loading',
             });
+
             planPrise.removeMedicament(medicament).finally(() => {
               notifications.removeOne(notification);
             });
