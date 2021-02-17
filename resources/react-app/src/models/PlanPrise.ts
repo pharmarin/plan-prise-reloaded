@@ -52,14 +52,7 @@ class PlanPrise extends jsonapi(Model) {
 
     reaction(
       () => toJS(this.custom_data),
-      (custom_data, previousValue, reaction) => {
-        console.log(
-          'change',
-          toJS(custom_data),
-          toJS(previousValue),
-          isAttributeDirty(this, 'custom_data')
-        );
-
+      (custom_data, previousValue) => {
         if (!isAttributeDirty(this, 'custom_data')) return;
 
         if (JSON.stringify(custom_data) === JSON.stringify(previousValue))
