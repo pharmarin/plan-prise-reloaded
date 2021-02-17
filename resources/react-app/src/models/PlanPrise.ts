@@ -6,6 +6,7 @@ import {
   PureCollection,
 } from '@datx/core';
 import { jsonapi } from '@datx/jsonapi';
+import debounce from 'debounce-promise';
 import getConfig from 'helpers/get-config';
 import { setWith, uniqueId } from 'lodash-es';
 import { computed, reaction, toJS } from 'mobx';
@@ -64,10 +65,12 @@ class PlanPrise extends jsonapi(Model) {
         if (JSON.stringify(custom_data) === JSON.stringify(previousValue))
           return;
 
-        this.save();
+        this.debouncedSave();
       }
     );
   }
+
+  debouncedSave = debounce(this.save, 2000);
 
   @Attribute({
     toMany: (data: any) =>
