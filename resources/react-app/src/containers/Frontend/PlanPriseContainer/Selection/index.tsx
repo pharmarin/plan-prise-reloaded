@@ -113,32 +113,30 @@ const Selection = observer(
 
     return (
       <div className="flex flex-col space-y-4">
-        <div className="mx-auto">
-          <ReactPlaceholder
-            type="textRow"
-            showLoadingAnimation={true}
-            ready={status === 'success'}
-          >
-            <Form onSubmit={handleSearchSubmit}>
-              <FormGroup>
-                <div className="absolute mt-2 ml-2 text-gray-500">
-                  Accès rapide au plan de prise #
-                </div>
-                <Input
-                  autoFocus
-                  className={joinClassNames('pl-60 text-center', {
-                    'border-green-600 text-green-600': search && searchSuccess,
-                    'border-red-600 text-red-600': search && !searchSuccess,
-                  })}
-                  name="search"
-                  onChange={handleSearch}
-                  type="number"
-                  value={search || ''}
-                />
-              </FormGroup>
-            </Form>
-          </ReactPlaceholder>
-        </div>
+        <ReactPlaceholder
+          className="animate-pulse"
+          ready={status === 'success'}
+          type="textRow"
+        >
+          <Form className="mx-auto" onSubmit={handleSearchSubmit}>
+            <FormGroup>
+              <div className="absolute mt-2 ml-2 text-gray-500">
+                Accès rapide au plan de prise #
+              </div>
+              <Input
+                autoFocus
+                className={joinClassNames('pl-60 text-center', {
+                  'border-green-600 text-green-600': search && searchSuccess,
+                  'border-red-600 text-red-600': search && !searchSuccess,
+                })}
+                name="search"
+                onChange={handleSearch}
+                type="number"
+                value={search || ''}
+              />
+            </FormGroup>
+          </Form>
+        </ReactPlaceholder>
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
           <Card className="h-32 w-32 m-auto p-2">
             <Link to="/plan-prise/nouveau">
@@ -154,10 +152,9 @@ const Selection = observer(
               className="h-32 w-32 m-auto p-2"
             >
               <ReactPlaceholder
-                type="rect"
-                showLoadingAnimation={true}
+                className="animate-pulse m-0"
                 ready={status === 'success'}
-                className="m-0"
+                type="rect"
               >
                 <Link
                   key={planPrise.meta.id}
