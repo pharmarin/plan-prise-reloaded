@@ -65,7 +65,7 @@ const Header = ({
           </div>
         </div>
       </div>
-      <div className="d-flex flex-grow-0 flex-column space-y-1">
+      <div className="d-flex flex-grow-0 flex-shrink-0 flex-column space-y-1">
         <Button
           block={true}
           className="rounded-full text-red-600 py-0 space-x-1"
@@ -81,7 +81,9 @@ const Header = ({
             });
           })}
         >
-          <small className="mr-1">Supprimer la ligne</small>
+          <small className="mr-auto">
+            Supprimer<span className="hidden sm:inline"> la ligne</span>
+          </small>
           <Times.Regular.Small />
         </Button>
         <Button
@@ -91,8 +93,9 @@ const Header = ({
           color="white"
           onClick={() => setShowDetails(!showDetails)}
         >
-          <small className="mr-1">
-            {showDetails ? 'Masquer les détails' : 'Afficher les détails'}
+          <small className="mr-auto">
+            {showDetails ? 'Masquer' : 'Afficher'}
+            <span className="hidden sm:inline"> les détails</span>
           </small>
           {showDetails ? (
             <Chevron.Single.Up.Small />
