@@ -8,6 +8,7 @@ import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
 import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import { INavigationItem } from 'store/navigation';
 import Settings from '../Settings';
 
@@ -23,6 +24,15 @@ const Interface = ({
   const [showSettings, setShowSettings] = useState(false);
 
   const navigation = useNavigation();
+
+  const { id } = useParams<{ action?: string; id?: string }>();
+  const history = useHistory();
+
+  useEffect(() => {
+    if (Number(planPrise?.meta.id) > 0 && planPrise?.meta.id !== id) {
+      history.push(`/plan-prise/${planPrise?.meta.id}`);
+    }
+  });
 
   useEffect(() => {
     runInAction(() =>

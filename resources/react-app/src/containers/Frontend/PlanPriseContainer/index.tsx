@@ -25,6 +25,9 @@ const PlanPriseContainer = () => {
   //const isPdfRoute = action === 'export';
 
   const planPrise = useAsyncEffect(async () => {
+    if (id === 'nouveau') {
+      return api.add({}, PlanPrise);
+    }
     if (id) {
       const planPrise = await runInAction(() =>
         api.getOne(PlanPrise, id || '', {

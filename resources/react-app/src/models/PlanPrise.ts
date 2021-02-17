@@ -92,12 +92,15 @@ class PlanPrise extends jsonapi(Model) {
   };
 
   @Attribute({
+    defaultValue: [],
     toMany: (data: any) =>
       data && data?.type === 'api-medicaments' ? ApiMedicament : Medicament,
   })
   medicaments!: (Medicament | ApiMedicament)[];
 
-  @Attribute()
+  @Attribute({
+    defaultValue: {},
+  })
   custom_data!: {
     [uid: string]: ICustomData;
   };
@@ -112,7 +115,9 @@ class PlanPrise extends jsonapi(Model) {
     );
   }
 
-  @Attribute()
+  @Attribute({
+    defaultValue: {},
+  })
   custom_settings!: ICustomSettings;
 
   addMedicament(medicament: Medicament | ApiMedicament) {
