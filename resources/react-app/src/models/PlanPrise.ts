@@ -61,6 +61,18 @@ class PlanPrise extends jsonapi(Model) {
         this.debouncedSave();
       }
     );
+
+    reaction(
+      () => toJS(this.custom_settings),
+      (custom_settings, previousValue) => {
+        if (!isAttributeDirty(this, 'custom_settings')) return;
+
+        if (JSON.stringify(custom_settings) === JSON.stringify(previousValue))
+          return;
+
+        this.save();
+      }
+    );
   }
 
   debouncedSave = debounce(this.save, 2000);
@@ -101,7 +113,10 @@ class PlanPrise extends jsonapi(Model) {
   }
 
   setCustomSettings(key: string, value: any) {
-    this.custom_settings = { ...setWith(this.custom_settings, key, value) };
+    this.assign(
+      'custom_settings',
+      setWith(toJS(this.custom_settings), key, value, Object)
+    );
   }
 
   @computed
