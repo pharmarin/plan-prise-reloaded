@@ -5,7 +5,7 @@ import {
   Model,
   PureCollection,
 } from '@datx/core';
-import { jsonapi } from '@datx/jsonapi';
+import { IRequestOptions, jsonapi } from '@datx/jsonapi';
 import debounce from 'debounce-promise';
 import getConfig from 'helpers/get-config';
 import { setWith, uniqueId } from 'lodash-es';
@@ -58,7 +58,7 @@ class PlanPrise extends jsonapi(Model) {
         if (JSON.stringify(custom_data) === JSON.stringify(previousValue))
           return;
 
-        this.debouncedSave();
+        debounce(this.savePlanPrise, 2000)();
       }
     );
 
@@ -70,12 +70,21 @@ class PlanPrise extends jsonapi(Model) {
         if (JSON.stringify(custom_settings) === JSON.stringify(previousValue))
           return;
 
-        this.save();
+        this.savePlanPrise();
       }
     );
   }
 
-  debouncedSave = debounce(this.save, 2000);
+  savePlanPrise = async (options?: IRequestOptions | undefined) => {
+    const notification = this.notifications.addNotification({
+      title: 'Sauvegarde en cours',
+      type: 'loading',
+    });
+
+    await this.save(options);
+
+    this.notifications.removeOne(notification);
+  };
 
   @Attribute({
     toMany: (data: any) =>

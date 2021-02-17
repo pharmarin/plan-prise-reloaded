@@ -17,7 +17,7 @@ class NotificationBag extends Collection {
     title: string;
     message?: string;
     timer?: number;
-    type?: string;
+    type?: typeof Notification.type;
   }) {
     const notificationRef = new Notification(notification);
     this.add(notificationRef);

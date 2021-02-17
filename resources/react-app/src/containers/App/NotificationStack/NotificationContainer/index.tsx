@@ -33,9 +33,9 @@ const NotificationContainer = ({
     }
   }, [notification.timer, transitionBeforeDelete]);
 
-  const getIcon = (icon?: string) => {
+  const getIcon = (icon?: typeof notification.type) => {
     switch (icon) {
-      case 'spinner':
+      case 'loading':
         return <Spinner className="text-gray-600" />;
       case 'warning':
         return <Danger.Triangle.Filled className="text-yellow-600" />;
@@ -57,22 +57,26 @@ const NotificationContainer = ({
       leaveFrom="opacity-100 scale-100"
       leaveTo="opacity-0 scale-75"
     >
-      <div className="w-80 bg-white rounded-lg border-gray-300 border p-3 shadow-lg">
+      <div className="w-72 bg-white rounded-lg border-gray-300 border p-3 shadow-lg">
         <div className="flex flex-row">
-          <div className="flex pt-1 text-2xl">{getIcon(notification.type)}</div>
+          <div className="flex pt-0.5 text-2xl">
+            {getIcon(notification.type)}
+          </div>
           <div className="ml-2 mr-4 w-full">
             <span className="font-semibold text-sm">{notification.title}</span>
             <span className="block text-gray-500">{notification.message}</span>
           </div>
-          <div>
-            <Button
-              color="white"
-              className="p-1 text-gray-500"
-              onClick={() => transitionBeforeDelete()}
-            >
-              <Times.Regular.Medium />
-            </Button>
-          </div>
+          {notification.type !== 'loading' && (
+            <div>
+              <Button
+                color="white"
+                className="p-1 text-gray-500"
+                onClick={() => transitionBeforeDelete()}
+              >
+                <Times.Regular.Medium />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </Transition>
