@@ -70,14 +70,17 @@ class Schema extends SchemaProvider
         self::DATA => function () use ($resource) {
           return array_filter(
             array_map(function ($r) {
-              switch ($r['type']) {
+              $type = $r['type'];
+              $id = $r['id'];
+
+              switch ($type) {
                 case 'medicaments':
-                  return Medicament::find($r['id']);
+                  return Medicament::find($id);
                 case 'api-medicaments':
-                  return ApiMedicament::find($r['id']);
+                  return ApiMedicament::find($id);
                 default:
                   Log::alert(
-                    "Type de médicament inconnu - type: {$r['type']} - id: {$r['id']}"
+                    "Type de médicament inconnu - type: {$type} - id: {$id}"
                   );
                   return null;
               }
