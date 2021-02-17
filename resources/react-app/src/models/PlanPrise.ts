@@ -40,8 +40,9 @@ class PlanPrise extends jsonapi(Model) {
 
   constructor(data?: IRawModel, collection?: PureCollection) {
     super(data, collection);
+    console.log('collection: ', collection);
 
-    this.notifications = (collection as JsonApiStore).rootStore.notifications;
+    this.notifications = (collection as JsonApiStore)?.rootStore?.notifications;
   }
 
   @Attribute({
