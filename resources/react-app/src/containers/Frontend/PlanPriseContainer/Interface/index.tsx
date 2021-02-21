@@ -3,13 +3,14 @@ import Information from 'components/Information';
 import Card from 'containers/Frontend/PlanPriseContainer/Interface/CardContainer';
 import Select from 'containers/Frontend/PlanPriseContainer/Interface/Select';
 import useEventListener from 'hooks/use-event-listener';
-import { useNavigation } from 'hooks/use-store';
+import { useApi, useNavigation } from 'hooks/use-store';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { INavigationItem } from 'store/navigation';
+import { mutate } from 'swr';
 import Settings from '../Settings';
 
 const Interface = ({
@@ -22,11 +23,13 @@ const Interface = ({
   status: AsyncStatus;
 }) => {
   const [showSettings, setShowSettings] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const navigation = useNavigation();
-
   const { id } = useParams<{ action?: string; id?: string }>();
   const history = useHistory();
+
+  const api = useApi();
 
   useEffect(() => {
     if (Number(planPrise?.meta.id) > 0 && planPrise?.meta.id !== id) {
@@ -58,6 +61,12 @@ const Interface = ({
                   },
                   event: 'toggleSettings',
                 } as INavigationItem,
+                {
+                  component: {
+                    name: 'trash',
+                  },
+                  event: 'deletePP',
+                } as INavigationItem,
               ]),
         ]
       )
@@ -65,6 +74,30 @@ const Interface = ({
   }, [navigation, planPrise, planPrise?.meta.id]);
 
   useEventListener('toggleSettings', () => setShowSettings(!showSettings));
+
+  useEventListener('deletePP', () => {
+    if (!planPrise) {
+      throw new Error("Ce plan de prise n'existe pas");
+    }
+
+    setIsDeleting(true);
+    api
+      .removeOne(planPrise, true)
+      .then(() => {
+        mutate('plan-prise/list');
+        history.push('/plan-prise');
+      })
+      .finally(() => setIsDeleting(false));
+  });
+
+  if (isDeleting) {
+    return (
+      <Information
+        type="loading"
+        title="Suppression du plan de prise en cours"
+      />
+    );
+  }
 
   if (status === 'loading' || status === 'idle') {
     return (

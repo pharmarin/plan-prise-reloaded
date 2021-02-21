@@ -4,12 +4,13 @@ import Interface from 'containers/Frontend/PlanPriseContainer/Interface';
 import Selection from 'containers/Frontend/PlanPriseContainer/Selection';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import { useApi } from 'hooks/use-store';
-import { runInAction } from 'mobx';
+import { action, runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
 import React, { useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { SanctumContext } from 'react-sanctum';
+import useSWR from 'swr';
 
 const PlanPriseContainer = () => {
   const { user } = useContext(SanctumContext);
@@ -47,51 +48,21 @@ const PlanPriseContainer = () => {
     }
   }, [id]);
 
-  const list = useAsyncEffect(async () => {
-    const planPrises = await runInAction(() =>
-      api.getMany(PlanPrise, {
-        queryParams: {
-          filter: { user: user.data.id },
-        },
-      })
-    );
-    return runInAction(() => planPrises.data as PlanPrise[]);
-  }, []);
-
-  useEffect(() => {
-    /* navigation.setNavigation(
-      getTitle(id),
-      isNumber(Number(id))
-        ? {
-            path: '/plan-prise',
-            component: { name: 'arrowLeft' },
-          }
-        : undefined,
-      isNumber(Number(id)) && isLoaded
-        ? [
-            {
-              path: 'settings',
-              label: 'cog',
-            },
-            {
-              path: 'pp-delete',
-              label: 'trash',
-              args: {
-                id,
-              },
-            },
-            ...(!isEmpty
-              ? [
-                  {
-                    path: `/plan-prise/${id}/export`,
-                    label: 'pdf',
-                  },
-                ]
-              : []),
-          ]
-        : undefined
-    ); */
-  }, []);
+  const { data: list, isValidating } = useSWR(
+    'plan-prise/list',
+    action(() =>
+      api
+        .getMany(PlanPrise, {
+          queryParams: {
+            filter: { user: user.data.id },
+          },
+          cacheOptions: {
+            cachingStrategy: 1,
+          },
+        })
+        .then((response) => response.data as PlanPrise[])
+    )
+  );
 
   useEffect(() => {
     /* if (!routeIdParam) {
@@ -121,7 +92,7 @@ const PlanPriseContainer = () => {
   }, []);
 
   if (!id) {
-    return <Selection list={list.value} status={list.status} />;
+    return <Selection list={list} isValidating={isValidating} />;
   }
 
   if (false)

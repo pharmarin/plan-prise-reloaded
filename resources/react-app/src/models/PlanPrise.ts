@@ -13,6 +13,7 @@ import { computed, reaction, toJS } from 'mobx';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import JsonApiStore from 'store/json-api';
+import { mutate } from 'swr';
 import forceArray from 'tools/force-array';
 
 interface ICustomData {
@@ -51,13 +52,17 @@ class PlanPrise extends jsonapi(Model) {
     this.notifications = (collection as JsonApiStore)?.rootStore?.notifications;
 
     reaction(
+      () => this.meta.id,
+      (id, previousID) => {
+        if (id > 0 && previousID < 0) {
+          mutate('plan-prise/list');
+        }
+      }
+    );
+
+    reaction(
       () => toJS(this.custom_data),
       (custom_data, previousValue) => {
-        console.log(
-          'custom_data: ',
-          custom_data,
-          isAttributeDirty(this, 'custom_data')
-        );
         if (!isAttributeDirty(this, 'custom_data')) return;
 
         if (JSON.stringify(custom_data) === JSON.stringify(previousValue))
@@ -92,7 +97,6 @@ class PlanPrise extends jsonapi(Model) {
   };
 
   @Attribute({
-    defaultValue: [],
     toMany: (data: any) =>
       data && data?.type === 'api-medicaments' ? ApiMedicament : Medicament,
   })
@@ -121,7 +125,7 @@ class PlanPrise extends jsonapi(Model) {
   custom_settings!: ICustomSettings;
 
   addMedicament(medicament: Medicament | ApiMedicament) {
-    this.medicaments.push(medicament);
+    (this.medicaments || []).push(medicament);
 
     return this.save();
   }
