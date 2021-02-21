@@ -1,4 +1,3 @@
-import SplashScreen from 'components/SplashScreen';
 import Interface from 'containers/Frontend/PlanPriseContainer/Interface';
 import Selection from 'containers/Frontend/PlanPriseContainer/Selection';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
@@ -72,10 +71,6 @@ const PlanPriseContainer = () => {
   if (!id) {
     return <Selection list={list} isLoading={isValidatingList} />;
   }
-
-  if (false)
-    //isDeleting
-    return <SplashScreen type="warning" message="Suppression en cours" />;
 
   return (
     <ErrorBoundary returnTo="/plan-prise">
