@@ -1,4 +1,3 @@
-import { AsyncStatus } from '@react-hook/async';
 import Information from 'components/Information';
 import Card from 'containers/Frontend/PlanPriseContainer/Interface/CardContainer';
 import Select from 'containers/Frontend/PlanPriseContainer/Interface/Select';
@@ -15,12 +14,13 @@ import Settings from '../Settings';
 
 const Interface = ({
   error,
+
   planPrise,
-  status,
+  isLoading,
 }: {
   error?: Error;
   planPrise?: PlanPrise;
-  status: AsyncStatus;
+  isLoading: boolean;
 }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -31,8 +31,10 @@ const Interface = ({
 
   const api = useApi();
 
+  //console.log('error, planPrise, isLoading: ', error, planPrise, isLoading);
+
   useEffect(() => {
-    if (Number(planPrise?.meta.id) > 0 && planPrise?.meta.id !== id) {
+    if (Number(planPrise?.meta.id) > 0 && id === 'nouveau') {
       history.push(`/plan-prise/${planPrise?.meta.id}`);
     }
   });
@@ -99,7 +101,7 @@ const Interface = ({
     );
   }
 
-  if (status === 'loading' || status === 'idle') {
+  if (isLoading) {
     return (
       <Information
         type="loading"
@@ -108,8 +110,8 @@ const Interface = ({
     );
   }
 
-  if (status !== 'success') {
-    console.log('status: ', status, error);
+  if (error) {
+    console.log('error: ', error);
     throw new Error(
       "Une erreur est survenue lors de l'affichage de ce plan de prise. <br/>" +
         error?.message

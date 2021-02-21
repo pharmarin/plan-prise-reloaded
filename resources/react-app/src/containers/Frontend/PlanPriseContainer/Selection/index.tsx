@@ -13,13 +13,13 @@ import { Link, Redirect } from 'react-router-dom';
 import joinClassNames from 'tools/class-names';
 
 const Selection = observer(
-  ({ list, isValidating }: { list?: PlanPrise[]; isValidating: boolean }) => {
+  ({ list, isLoading }: { list?: PlanPrise[]; isLoading: boolean }) => {
     const [search, setSearch] = useState<string | undefined>(undefined);
     const [redirect, setRedirect] = useState(false);
 
     const navigation = useNavigation();
 
-    const isReady = !isValidating && list !== undefined;
+    const isReady = !isLoading && list !== undefined;
 
     useEffect(() => {
       navigation.setNavigation(
