@@ -22,6 +22,7 @@ const EditPrecaution = ({
   precaution: Precaution;
   save: any;
 }) => {
+  console.log('cibles: ', cibles);
   const api = useApi();
 
   const defaults = getConfig('default');

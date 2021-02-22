@@ -177,8 +177,9 @@ const EditAttributes = ({ medicament }: { medicament: Medicament }) => {
               <Input
                 name="denomination"
                 placeholder="Dénomination"
-                withLoading
                 withFeedback
+                withFormik
+                withLoading
               />
             </FormGroup>
             <FormGroup>
@@ -302,6 +303,7 @@ const EditAttributes = ({ medicament }: { medicament: Medicament }) => {
                             name={`indications.${index}`}
                             placeholder="Indication"
                             withFeedback
+                            withFormik
                             withLoading
                           />
                         </div>
@@ -348,6 +350,7 @@ const EditAttributes = ({ medicament }: { medicament: Medicament }) => {
                     name="conservation_frigo"
                     type="checkbox"
                     withFeedback
+                    withFormik
                     withLoading
                   />
                   <div>Se conserve au frigo avant ouverture</div>
@@ -367,12 +370,14 @@ const EditAttributes = ({ medicament }: { medicament: Medicament }) => {
                               className="pl-2"
                               name={`conservation_duree.${index}.laboratoire`}
                               placeholder="Laboratoire"
+                              withFormik
                               withLoading
                             />
                             <Input
                               className="border-left pl-2"
                               name={`conservation_duree.${index}.duree`}
                               placeholder="Durée de conservation après ouverture"
+                              withFormik
                               withLoading
                             />
                           </div>
