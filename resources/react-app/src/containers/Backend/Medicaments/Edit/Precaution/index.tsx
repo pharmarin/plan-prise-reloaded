@@ -22,7 +22,6 @@ const EditPrecaution = ({
   precaution: Precaution;
   save: any;
 }) => {
-  console.log('cibles: ', cibles);
   const api = useApi();
 
   const defaults = getConfig('default');
@@ -43,8 +42,8 @@ const EditPrecaution = ({
         }}
         onSubmit={(values, { setSubmitting }) => {
           setSubmitting(true);
-          console.log(values);
-          save().finally(() => setSubmitting(false));
+          precaution.update(values);
+          precaution.save().finally(() => setSubmitting(false));
         }}
         validationSchema={yup.object().shape({
           cible: yup.string().required(),
@@ -63,7 +62,9 @@ const EditPrecaution = ({
             <FormGroup>
               <Select name="cible" withFeedback withFormik withLoading>
                 {cibles.map((cible) => (
-                  <option value={cible.id}>{cible.label}</option>
+                  <option key={cible.id} value={cible.id}>
+                    {cible.label}
+                  </option>
                 ))}
               </Select>
             </FormGroup>
