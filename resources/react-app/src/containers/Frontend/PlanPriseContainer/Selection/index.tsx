@@ -1,8 +1,8 @@
-import { AsyncStatus } from '@react-hook/async';
 import Card from 'components/Card';
 import Form from 'components/Form';
 import FormGroup from 'components/FormGroup';
 import Input from 'components/Input';
+import TextFit from 'components/TextFit';
 import { useNavigation } from 'hooks/use-store';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -12,73 +12,18 @@ import ReactPlaceholder from 'react-placeholder';
 import { Link, Redirect } from 'react-router-dom';
 import joinClassNames from 'tools/class-names';
 
-const TextFit: React.FC<{ text: string }> = observer(({ text }) => {
-  const length = text.length;
-  const fontSize = 100 - 14 * length;
-  return (
-    <svg
-      className={joinClassNames('fill-current text-indigo-600', {
-        'text-green-500': text === 'new',
-      })}
-      viewBox={`0 0 100 100`}
-    >
-      {text === 'new' ? (
-        [
-          <text
-            key="+"
-            x="50"
-            y="30"
-            style={{
-              fontSize: 80,
-              dominantBaseline: 'central',
-              textAnchor: 'middle',
-            }}
-          >
-            +
-          </text>,
-          <text
-            key="new"
-            x="50"
-            y="80"
-            style={{
-              fontSize: 20,
-              dominantBaseline: 'central',
-              textAnchor: 'middle',
-            }}
-          >
-            Nouveau
-          </text>,
-        ]
-      ) : (
-        <text
-          key={text}
-          x="50"
-          y="50"
-          style={{
-            fontSize: fontSize,
-            dominantBaseline: 'central',
-            textAnchor: 'middle',
-          }}
-        >
-          {text}
-        </text>
-      )}
-    </svg>
-  );
-});
-
 const Selection = observer(
-  ({ list, status }: { list?: PlanPrise[]; status: AsyncStatus }) => {
-    const navigation = useNavigation();
-
+  ({ list, isLoading }: { list?: PlanPrise[]; isLoading: boolean }) => {
     const [search, setSearch] = useState<string | undefined>(undefined);
     const [redirect, setRedirect] = useState(false);
 
+    const navigation = useNavigation();
+
+    const isReady = !isLoading && list !== undefined;
+
     useEffect(() => {
       navigation.setNavigation(
-        status === 'success'
-          ? 'Que voulez-vous faire ?'
-          : 'Chargement en cours',
+        isReady ? 'Que voulez-vous faire ?' : 'Chargement en cours',
         {
           component: {
             name: 'arrowLeft',
@@ -86,7 +31,7 @@ const Selection = observer(
           path: '/',
         }
       );
-    }, [navigation, status]);
+    }, [navigation, isReady]);
 
     const searchSuccess =
       search &&
@@ -113,32 +58,30 @@ const Selection = observer(
 
     return (
       <div className="flex flex-col space-y-4">
-        <div className="mx-auto">
-          <ReactPlaceholder
-            type="textRow"
-            showLoadingAnimation={true}
-            ready={status === 'success'}
-          >
-            <Form onSubmit={handleSearchSubmit}>
-              <FormGroup>
-                <div className="absolute mt-2 ml-2 text-gray-500">
-                  Accès rapide au plan de prise #
-                </div>
-                <Input
-                  autoFocus
-                  className={joinClassNames('pl-60 text-center', {
-                    'border-green-600 text-green-600': search && searchSuccess,
-                    'border-red-600 text-red-600': search && !searchSuccess,
-                  })}
-                  name="search"
-                  onChange={handleSearch}
-                  type="number"
-                  value={search || ''}
-                />
-              </FormGroup>
-            </Form>
-          </ReactPlaceholder>
-        </div>
+        <ReactPlaceholder
+          className="animate-pulse"
+          ready={isReady}
+          type="textRow"
+        >
+          <Form className="mx-auto" onSubmit={handleSearchSubmit}>
+            <FormGroup>
+              <div className="absolute mt-2 ml-2 text-gray-500">
+                Accès rapide au plan de prise #
+              </div>
+              <Input
+                autoFocus
+                className={joinClassNames('pl-60 text-center', {
+                  'border-green-600 text-green-600': search && searchSuccess,
+                  'border-red-600 text-red-600': search && !searchSuccess,
+                })}
+                name="search"
+                onChange={handleSearch}
+                type="number"
+                value={search || ''}
+              />
+            </FormGroup>
+          </Form>
+        </ReactPlaceholder>
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
           <Card className="h-32 w-32 m-auto p-2">
             <Link to="/plan-prise/nouveau">
@@ -154,10 +97,9 @@ const Selection = observer(
               className="h-32 w-32 m-auto p-2"
             >
               <ReactPlaceholder
+                className="animate-pulse m-0"
+                ready={isReady}
                 type="rect"
-                showLoadingAnimation={true}
-                ready={status === 'success'}
-                className="m-0"
               >
                 <Link
                   key={planPrise.meta.id}

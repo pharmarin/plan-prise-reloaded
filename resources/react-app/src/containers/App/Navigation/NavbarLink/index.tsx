@@ -1,5 +1,6 @@
 import Arrow from 'components/Icons/Arrow';
 import Options from 'components/Icons/Options';
+import Trash from 'components/Icons/Trash';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -22,6 +23,7 @@ const NavbarLink = ({
   const components: { [key: string]: React.FC<{ className?: string }> } = {
     arrowLeft: Arrow.Regular.Left,
     options: Options.Connected,
+    trash: Trash,
   };
 
   const defaultClassNames = 'text-sm font-medium text-green-100';

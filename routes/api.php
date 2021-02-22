@@ -32,6 +32,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
       $api->resource('api-medicaments')->only('index', 'read');
       $api
         ->resource('plan-prises')
+        ->controller('\App\JsonApi\PlanPrises\Controller')
         ->only('index', 'read', 'update', 'delete', 'create');
       $api->resource('principe-actifs')->only('index', 'create');
       $api->resource('precautions')->only('read', 'update');

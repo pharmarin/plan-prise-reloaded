@@ -4,7 +4,7 @@ class Notification extends withMeta(Model) {
   static type = 'notification';
 
   @Attribute()
-  type!: 'danger' | 'info' | 'warning';
+  type!: 'danger' | 'info' | 'warning' | 'loading';
 
   @Attribute()
   title!: string;

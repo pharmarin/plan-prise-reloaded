@@ -65,7 +65,7 @@ const Header = ({
           </div>
         </div>
       </div>
-      <div className="d-flex flex-grow-0 flex-column space-y-1">
+      <div className="d-flex flex-grow-0 flex-shrink-0 flex-column space-y-1">
         <Button
           block={true}
           className="rounded-full text-red-600 py-0 space-x-1"
@@ -73,15 +73,19 @@ const Header = ({
           color="white"
           onClick={action('removeMedicament', () => {
             const notification = notifications.addNotification({
-              title: `Suppression de ${medicament.denomination} en cours`,
-              type: 'spinner',
+              title: 'Suppression du médicament',
+              message: medicament.denomination,
+              type: 'loading',
             });
+
             planPrise.removeMedicament(medicament).finally(() => {
               notifications.removeOne(notification);
             });
           })}
         >
-          <small className="mr-1">Supprimer la ligne</small>
+          <small className="mr-auto">
+            Supprimer<span className="hidden sm:inline"> la ligne</span>
+          </small>
           <Times.Regular.Small />
         </Button>
         <Button
@@ -91,8 +95,9 @@ const Header = ({
           color="white"
           onClick={() => setShowDetails(!showDetails)}
         >
-          <small className="mr-1">
-            {showDetails ? 'Masquer les détails' : 'Afficher les détails'}
+          <small className="mr-auto">
+            {showDetails ? 'Masquer' : 'Afficher'}
+            <span className="hidden sm:inline"> les détails</span>
           </small>
           {showDetails ? (
             <Chevron.Single.Up.Small />

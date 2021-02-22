@@ -1,28 +1,43 @@
-import { AsyncStatus } from '@react-hook/async';
 import Information from 'components/Information';
 import Card from 'containers/Frontend/PlanPriseContainer/Interface/CardContainer';
 import Select from 'containers/Frontend/PlanPriseContainer/Interface/Select';
 import useEventListener from 'hooks/use-event-listener';
-import { useNavigation } from 'hooks/use-store';
+import { useApi, useNavigation } from 'hooks/use-store';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
 import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import { INavigationItem } from 'store/navigation';
+import { mutate } from 'swr';
 import Settings from '../Settings';
 
 const Interface = ({
   error,
+
   planPrise,
-  status,
+  isLoading,
 }: {
   error?: Error;
   planPrise?: PlanPrise;
-  status: AsyncStatus;
+  isLoading: boolean;
 }) => {
   const [showSettings, setShowSettings] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const navigation = useNavigation();
+  const { id } = useParams<{ action?: string; id?: string }>();
+  const history = useHistory();
+
+  const api = useApi();
+
+  //console.log('error, planPrise, isLoading: ', error, planPrise, isLoading);
+
+  useEffect(() => {
+    if (Number(planPrise?.meta.id) > 0 && id === 'nouveau') {
+      history.push(`/plan-prise/${planPrise?.meta.id}`);
+    }
+  });
 
   useEffect(() => {
     runInAction(() =>
@@ -48,6 +63,12 @@ const Interface = ({
                   },
                   event: 'toggleSettings',
                 } as INavigationItem,
+                {
+                  component: {
+                    name: 'trash',
+                  },
+                  event: 'deletePP',
+                } as INavigationItem,
               ]),
         ]
       )
@@ -56,7 +77,31 @@ const Interface = ({
 
   useEventListener('toggleSettings', () => setShowSettings(!showSettings));
 
-  if (status === 'loading' || status === 'idle') {
+  useEventListener('deletePP', () => {
+    if (!planPrise) {
+      throw new Error("Ce plan de prise n'existe pas");
+    }
+
+    setIsDeleting(true);
+    api
+      .removeOne(planPrise, true)
+      .then(() => {
+        mutate('plan-prise/list');
+        history.push('/plan-prise');
+      })
+      .finally(() => setIsDeleting(false));
+  });
+
+  if (isDeleting) {
+    return (
+      <Information
+        type="loading"
+        title="Suppression du plan de prise en cours"
+      />
+    );
+  }
+
+  if (isLoading) {
     return (
       <Information
         type="loading"
@@ -65,8 +110,8 @@ const Interface = ({
     );
   }
 
-  if (status !== 'success') {
-    console.log('status: ', status, error);
+  if (error) {
+    console.log('error: ', error);
     throw new Error(
       "Une erreur est survenue lors de l'affichage de ce plan de prise. <br/>" +
         error?.message

@@ -93,8 +93,9 @@ const Select = ({ planPrise }: { planPrise?: PlanPrise }) => {
           }
 
           const notification = notifications.addNotification({
-            title: `Ajout de ${value.label} en cours`,
-            type: 'spinner',
+            title: 'Ajout du médicament',
+            message: value.label,
+            type: 'loading',
           });
 
           runInAction(() =>
