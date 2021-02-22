@@ -10,6 +10,7 @@ import debounce from 'debounce-promise';
 import getConfig from 'helpers/get-config';
 import { isPlainObject, setWith, uniqueId } from 'lodash-es';
 import { computed, reaction, toJS } from 'mobx';
+import { computedFn } from 'mobx-utils';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
 import JsonApiStore from 'store/json-api';
@@ -138,7 +139,7 @@ class PlanPrise extends jsonapi(Model) {
     return this.save();
   }
 
-  setCustomSettings(key: string, value: any) {
+  set customSettings({ key, value }: { key: string; value: any }) {
     this.assign(
       'custom_settings',
       setWith(toJS(this.custom_settings), key, value, Object)
@@ -163,18 +164,24 @@ class PlanPrise extends jsonapi(Model) {
   }
 
   @computed
-  getIndications(medicament: Medicament) {
-    return forceArray(
+  indications = computedFn((medicament: Medicament) =>
+    forceArray(
       this.custom_data?.[medicament.uid]?.indications || medicament.indications
-    );
-  }
+    )
+  );
 
-  setIndication(medicament: Medicament, indication: string) {
+  set indication({
+    indication,
+    medicament,
+  }: {
+    medicament: Medicament;
+    indication: string;
+  }) {
     this.setCustomData([medicament.uid, 'indications'], [indication]);
   }
 
   @computed
-  getConservationDuree(medicament: Medicament) {
+  conservationsDuree = computedFn((medicament: Medicament) => {
     const source = medicament?.conservation_duree || [];
     const custom = this.custom_data?.[medicament.uid]?.conservation_duree;
 
@@ -194,37 +201,44 @@ class PlanPrise extends jsonapi(Model) {
       custom: boolean;
       data: string[];
     };
-  }
+  });
 
-  setConservationDuree(
-    medicament: Medicament,
-    laboratoire: string | undefined
-  ) {
+  set conservationDuree({
+    laboratoire,
+    medicament,
+  }: {
+    medicament: Medicament;
+    laboratoire: string | undefined;
+  }) {
     this.setCustomData([medicament.uid, 'conservation_duree'], laboratoire);
   }
 
   @computed
-  getPosologies(medicament: Medicament | ApiMedicament) {
-    return Object.keys(this.columns)
+  posologies = computedFn((medicament: Medicament | ApiMedicament) =>
+    Object.keys(this.columns)
       .filter((posologieID) => this.columns[posologieID].display)
       .map((posologieID) => ({
         ...this.columns[posologieID],
         value:
           this.custom_data[medicament.uid]?.posologies?.[posologieID] || '',
-      }));
-  }
+      }))
+  );
 
-  setPosologieValue(
-    medicament: Medicament | ApiMedicament,
-    posologieId: string,
-    value: string
-  ) {
+  set posologie({
+    medicament,
+    posologieId,
+    value,
+  }: {
+    medicament: Medicament | ApiMedicament;
+    posologieId: string;
+    value: string;
+  }) {
     this.setCustomData([medicament.uid, 'posologies', posologieId], value);
   }
 
   @computed
-  getPrecautions(medicament: Medicament | ApiMedicament) {
-    return medicament.isMedicament()
+  precautions = computedFn((medicament: Medicament | ApiMedicament) =>
+    medicament.isMedicament()
       ? medicament.precautions.map((precaution) => {
           const customChecked = this.custom_data[medicament.uid]?.precautions?.[
             precaution.meta.id
@@ -243,25 +257,33 @@ class PlanPrise extends jsonapi(Model) {
               ]?.commentaire || precaution.commentaire,
           };
         })
-      : [];
-  }
+      : []
+  );
 
-  setPrecautionChecked(
-    medicament: Medicament,
-    precaution: IRawModel,
-    checked: boolean
-  ) {
+  set precautionChecked({
+    checked,
+    medicament,
+    precaution,
+  }: {
+    medicament: Medicament;
+    precaution: IRawModel;
+    checked: boolean;
+  }) {
     this.setCustomData(
       [medicament.uid, 'precautions', precaution.id, 'checked'],
       checked
     );
   }
 
-  setPrecautionCommentaire(
-    medicament: Medicament,
-    precaution: IRawModel,
-    value: string
-  ) {
+  set precautionCommentaire({
+    medicament,
+    precaution,
+    value,
+  }: {
+    medicament: Medicament;
+    precaution: IRawModel;
+    value: string;
+  }) {
     this.setCustomData(
       [medicament.uid, 'precautions', precaution.id, 'commentaire'],
       value
@@ -269,11 +291,11 @@ class PlanPrise extends jsonapi(Model) {
   }
 
   @computed
-  getCustomPrecautions(medicament: Medicament | ApiMedicament) {
-    return Object.entries(
+  customPrecautions = computedFn((medicament: Medicament | ApiMedicament) =>
+    Object.entries(
       this.custom_data?.[medicament.uid]?.custom_precautions || {}
-    ).map(([id, customPrecaution]) => ({ ...customPrecaution, id }));
-  }
+    ).map(([id, customPrecaution]) => ({ ...customPrecaution, id }))
+  );
 
   addCustomPrecaution(medicament: Medicament | ApiMedicament) {
     this.setCustomData(
@@ -296,11 +318,15 @@ class PlanPrise extends jsonapi(Model) {
     ];
   }
 
-  setCustomPrecautionCommentaire(
-    medicament: Medicament | ApiMedicament,
-    customPrecaution: IRawModel,
-    value: string
-  ) {
+  set customPrecautionCommentaire({
+    customPrecaution,
+    medicament,
+    value,
+  }: {
+    medicament: Medicament | ApiMedicament;
+    customPrecaution: IRawModel;
+    value: string;
+  }) {
     this.setCustomData(
       [
         medicament.uid,
