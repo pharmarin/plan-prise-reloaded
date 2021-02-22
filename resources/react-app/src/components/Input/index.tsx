@@ -13,7 +13,8 @@ interface IWithFormik {
 }
 
 const inputClasses = (props: any) => [
-  'block rounded-md border-gray-300 shadow-sm',
+  'block rounded-md border border-gray-300 shadow-sm',
+  'px-2 py-1',
   'checked:bg-green-700',
   {
     'focus:border-green-300 focus:ring-2 focus:ring-green-200 focus:ring-opacity-50': !props.readOnly,
@@ -145,6 +146,7 @@ const SelectComponent = ({
 );
 
 export const Select = ({
+  children,
   withFormik,
   ...props
 }: React.ComponentPropsWithRef<'select'> & IWithFormik) => {
@@ -152,7 +154,7 @@ export const Select = ({
     return (
       <FormikContext {...props}>
         {(formikProps: typeof props & FieldInputProps<any>) => (
-          <SelectComponent {...formikProps} />
+          <SelectComponent {...formikProps} children={children} />
         )}
       </FormikContext>
     );
