@@ -1,4 +1,5 @@
 import Button from 'components/Button';
+import Information from 'components/Information';
 import SplashScreen from 'components/SplashScreen';
 import { useApi, useNavigation } from 'hooks/use-store';
 import { action } from 'mobx';
@@ -39,7 +40,7 @@ const Edit = observer(({ id }: { id: string }) => {
   }, [medicament, navigation]);
 
   if (isValidating) {
-    return <p>Chargement en cours</p>;
+    return <Information type="loading" title="Chargement en cours" />;
   }
 
   if (error) {
