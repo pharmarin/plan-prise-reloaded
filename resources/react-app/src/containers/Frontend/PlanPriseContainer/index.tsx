@@ -28,12 +28,13 @@ const PlanPriseContainer = () => {
     error: planPriseError,
     isValidating: isValidatingPlanPrise,
   } = useSWR(
-    id ? `plan-prise/plan-prise/${id}` : null,
-    action(() => {
+    id ? ['plan-prise/plan-prise', id] : null,
+    action((_: string, id: string) => {
       if (id === 'nouveau') {
         return api.add({}, PlanPrise);
       }
       if (id) {
+        console.log('id: ', id);
         return api
           .getOne(PlanPrise, id || '', {
             queryParams: {
@@ -49,7 +50,10 @@ const PlanPriseContainer = () => {
       } else {
         return undefined;
       }
-    })
+    }),
+    {
+      revalidateOnFocus: false,
+    }
   );
 
   const { data: list, isValidating: isValidatingList } = useSWR(
