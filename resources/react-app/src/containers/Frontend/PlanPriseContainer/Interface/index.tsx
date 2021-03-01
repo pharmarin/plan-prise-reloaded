@@ -1,13 +1,17 @@
 import Information from 'components/Information';
+import { SanctumProps } from 'containers/App/ContextProvider';
 import Card from 'containers/Frontend/PlanPriseContainer/Interface/CardContainer';
 import Select from 'containers/Frontend/PlanPriseContainer/Interface/Select';
 import useEventListener from 'hooks/use-event-listener';
+import usePdf from 'hooks/use-pdf';
 import { useApi, useNavigation } from 'hooks/use-store';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
-import React, { useEffect, useState } from 'react';
+import User from 'models/User';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { SanctumContext } from 'react-sanctum';
 import { INavigationItem } from 'store/navigation';
 import { mutate } from 'swr';
 import Settings from '../Settings';
@@ -30,6 +34,9 @@ const Interface = ({
   const history = useHistory();
 
   const api = useApi();
+  const { user: rawUser } = useContext<SanctumProps>(SanctumContext);
+
+  const { generate, fromPlanPrise } = usePdf();
 
   //console.log('error, planPrise, isLoading: ', error, planPrise, isLoading);
 
@@ -37,6 +44,35 @@ const Interface = ({
     if (Number(planPrise?.meta.id) > 0 && id === 'nouveau') {
       history.push(`/plan-prise/${planPrise?.meta.id}`);
     }
+  });
+
+  const settingsEvent = useEventListener('plan-prise/settings', () =>
+    setShowSettings(!showSettings)
+  );
+
+  const deleteEvent = useEventListener('plan-prise/delete', () => {
+    if (!planPrise) {
+      throw new Error("Ce plan de prise n'existe pas");
+    }
+
+    setIsDeleting(true);
+    api
+      .removeOne(planPrise, true)
+      .then(() => {
+        mutate('plan-prise/list');
+        history.push('/plan-prise');
+      })
+      .finally(() => setIsDeleting(false));
+  });
+
+  const exportEvent = useEventListener('plan-prise/export', () => {
+    if (!planPrise) {
+      throw new Error("Impossible d'exporter un plan de prise non chargé");
+    }
+
+    const document = fromPlanPrise(planPrise, api.sync(rawUser) as User);
+    console.log('document: ', document);
+    generate(document);
   });
 
   useEffect(() => {
@@ -61,36 +97,32 @@ const Interface = ({
                   component: {
                     name: 'options',
                   },
-                  event: 'toggleSettings',
+                  event: settingsEvent,
+                } as INavigationItem,
+                {
+                  component: {
+                    name: 'download',
+                  },
+                  event: exportEvent,
                 } as INavigationItem,
                 {
                   component: {
                     name: 'trash',
                   },
-                  event: 'deletePP',
+                  event: deleteEvent,
                 } as INavigationItem,
               ]),
         ]
       )
     );
-  }, [navigation, planPrise, planPrise?.meta.id]);
-
-  useEventListener('toggleSettings', () => setShowSettings(!showSettings));
-
-  useEventListener('deletePP', () => {
-    if (!planPrise) {
-      throw new Error("Ce plan de prise n'existe pas");
-    }
-
-    setIsDeleting(true);
-    api
-      .removeOne(planPrise, true)
-      .then(() => {
-        mutate('plan-prise/list');
-        history.push('/plan-prise');
-      })
-      .finally(() => setIsDeleting(false));
-  });
+  }, [
+    deleteEvent,
+    exportEvent,
+    navigation,
+    planPrise,
+    planPrise?.meta.id,
+    settingsEvent,
+  ]);
 
   if (isDeleting) {
     return (

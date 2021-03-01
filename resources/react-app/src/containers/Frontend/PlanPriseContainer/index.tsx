@@ -34,7 +34,6 @@ const PlanPriseContainer = () => {
         return api.add({}, PlanPrise);
       }
       if (id) {
-        console.log('id: ', id);
         return api
           .getOne(PlanPrise, id || '', {
             queryParams: {

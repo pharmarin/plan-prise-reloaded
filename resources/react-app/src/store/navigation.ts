@@ -4,7 +4,7 @@ import RootStore from './root';
 export interface INavigationItem {
   label?: string;
   component?: {
-    name: 'arrowLeft' | 'options' | 'trash';
+    name: 'arrowLeft' | 'download' | 'options' | 'trash';
     props?: any;
   };
   path?: string;

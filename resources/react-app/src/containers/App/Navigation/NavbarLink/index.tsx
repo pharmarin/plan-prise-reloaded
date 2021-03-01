@@ -1,4 +1,5 @@
 import Arrow from 'components/Icons/Arrow';
+import Download from 'components/Icons/Download';
 import Options from 'components/Icons/Options';
 import Trash from 'components/Icons/Trash';
 import { observer } from 'mobx-react-lite';
@@ -22,6 +23,7 @@ const NavbarLink = ({
 
   const components: { [key: string]: React.FC<{ className?: string }> } = {
     arrowLeft: Arrow.Regular.Left,
+    download: Download.Fill,
     options: Options.Connected,
     trash: Trash,
   };

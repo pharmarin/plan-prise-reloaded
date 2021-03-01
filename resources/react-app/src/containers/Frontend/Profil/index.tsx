@@ -1,4 +1,5 @@
 import Card from 'components/Card';
+import { SanctumProps } from 'containers/App/ContextProvider';
 import DeleteUser from 'containers/Frontend/Profil/DeleteUser';
 import EditInformations from 'containers/Frontend/Profil/EditInformations';
 import EditPassword from 'containers/Frontend/Profil/EditPassword';
@@ -6,11 +7,6 @@ import { useApi, useNavigation } from 'hooks/use-store';
 import User from 'models/User';
 import React, { useContext, useEffect } from 'react';
 import { SanctumContext } from 'react-sanctum';
-import { ContextProps } from 'react-sanctum/build/SanctumContext';
-
-interface SanctumProps extends Partial<ContextProps> {
-  user?: IServerResponse<Models.App.User>;
-}
 
 const Profil = () => {
   const { setUser, user: rawUser } = useContext<SanctumProps>(SanctumContext);

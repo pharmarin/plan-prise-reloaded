@@ -36,6 +36,8 @@ function useEventListener<T extends HTMLElement = HTMLDivElement>(
       targetElement.removeEventListener(eventName, eventListener);
     };
   }, [eventName, element, handler]);
+
+  return eventName;
 }
 
 export default useEventListener;
