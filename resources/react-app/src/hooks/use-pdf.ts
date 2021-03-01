@@ -163,7 +163,7 @@ const usePdf = () => {
               }),
             ],
             widths: [
-              '20%',
+              '25%',
               ...columns.filter((i) => i.id.startsWith('poso_')).map(() => 40),
               '*',
             ],
