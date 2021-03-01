@@ -1,7 +1,7 @@
-import { BsGearWideConnected } from 'react-icons/bs';
+import { BiCog } from 'react-icons/bi';
 
 const Options = {
-  Connected: BsGearWideConnected,
+  Connected: BiCog,
 };
 
 export default Options;
