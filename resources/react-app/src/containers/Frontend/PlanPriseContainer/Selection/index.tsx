@@ -70,7 +70,7 @@ const Selection = observer(
               </div>
               <Input
                 autoFocus
-                className={joinClassNames('pl-60 text-center', {
+                className={joinClassNames('h-10 pl-60 text-center', {
                   'border-green-600 text-green-600': search && searchSuccess,
                   'border-red-600 text-red-600': search && !searchSuccess,
                 })}
