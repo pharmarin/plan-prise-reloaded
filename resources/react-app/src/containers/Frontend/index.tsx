@@ -1,11 +1,12 @@
 import Authentification, { Role } from 'containers/App/Authentification';
 import Accueil from 'containers/Frontend/Accueil';
-import PlanPrises from 'containers/Frontend/PlanPriseContainer';
+import PlanPriseContainer from 'containers/Frontend/PlanPriseContainer';
 import Profil from 'containers/Frontend/Profil';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import ProtectedRoute from 'containers/Utility/ProtectedRoute';
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import CalendarContainer from './CalendarContainer';
 
 const Frontend = () => {
   return (
@@ -36,7 +37,14 @@ const Frontend = () => {
       <Route path="/plan-prise/:id?/:action?">
         <ProtectedRoute>
           <ErrorBoundary returnTo="/">
-            <PlanPrises />
+            <PlanPriseContainer />
+          </ErrorBoundary>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/calendrier/:id?/:action?">
+        <ProtectedRoute>
+          <ErrorBoundary returnTo="/">
+            <CalendarContainer />
           </ErrorBoundary>
         </ProtectedRoute>
       </Route>
