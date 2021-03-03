@@ -70,9 +70,7 @@ const Interface = ({
       throw new Error("Impossible d'exporter un plan de prise non chargé");
     }
 
-    const document = fromPlanPrise(planPrise, api.sync(rawUser) as User);
-    console.log('document: ', document);
-    generate(document);
+    generate(fromPlanPrise(planPrise, user));
   });
 
   useEffect(() => {
