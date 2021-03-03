@@ -36,8 +36,6 @@ const Interface = ({
 
   const { generate, fromPlanPrise } = usePdf();
 
-  //console.log('error, planPrise, isLoading: ', error, planPrise, isLoading);
-
   useEffect(() => {
     if (Number(planPrise?.meta.id) > 0 && id === 'nouveau') {
       history.push(`/plan-prise/${planPrise?.meta.id}`);
