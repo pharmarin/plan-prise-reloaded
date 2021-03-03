@@ -20,14 +20,19 @@ const NavigationBar = () => {
   const { authenticated, user } = useContext<SanctumProps>(SanctumContext);
 
   const navigation = useNavigation();
+  const location = useLocation();
+
+  const isHome = location.pathname === '/';
 
   return (
     <Navbar>
       <Navbar.Left>
         <Navbar.Brand>
-          <Logo /> <Navbar.BrandName>{NAVBAR_TITLE}</Navbar.BrandName>
+          <Logo />{' '}
+          {isHome && <Navbar.BrandName>{NAVBAR_TITLE}</Navbar.BrandName>}
         </Navbar.Brand>
         <Navbar.Content>
+          {!isHome && <NavbarLink component={{ name: 'home' }} path="/" />}
           {navigation.returnTo && <NavbarLink {...navigation.returnTo} />}
           <div className="flex flex-grow min-w-0 justify-center items-center">
             <Navbar.Title>{navigation.title}</Navbar.Title>
