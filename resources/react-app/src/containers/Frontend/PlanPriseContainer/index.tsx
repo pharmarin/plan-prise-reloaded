@@ -1,3 +1,4 @@
+import { CachingStrategy } from '@datx/jsonapi';
 import Interface from 'containers/Frontend/PlanPriseContainer/Interface';
 import Selection from 'containers/Frontend/PlanPriseContainer/Selection';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
@@ -20,7 +21,7 @@ const PlanPriseContainer = () => {
     error: planPriseError,
     isValidating: isValidatingPlanPrise,
   } = useSWR(
-    id ? ['plan-prise/plan-prise', id] : null,
+    ['plan-prise/plan-prise', id],
     action((_: string, id: string) => {
       if (id === 'nouveau') {
         return api.add({}, PlanPrise);
@@ -56,7 +57,7 @@ const PlanPriseContainer = () => {
             filter: { user: String(user?.meta.id) },
           },
           cacheOptions: {
-            cachingStrategy: 1,
+            cachingStrategy: CachingStrategy.NetworkOnly,
           },
         })
         .then((response) => response.data as PlanPrise[])

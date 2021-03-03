@@ -16,7 +16,6 @@ import Settings from '../Settings';
 
 const Interface = ({
   error,
-
   planPrise,
   isLoading,
 }: {
@@ -37,8 +36,10 @@ const Interface = ({
   const { generate, fromPlanPrise } = usePdf();
 
   useEffect(() => {
-    if (Number(planPrise?.meta.id) > 0 && id === 'nouveau') {
+    if (!isLoading && Number(planPrise?.meta.id) > 0 && id === 'nouveau') {
       history.push(`/plan-prise/${planPrise?.meta.id}`);
+      // Réinitialise le "nouveau" plan de prise
+      mutate(['plan-prise/plan-prise', 'nouveau'], undefined);
     }
   });
 
