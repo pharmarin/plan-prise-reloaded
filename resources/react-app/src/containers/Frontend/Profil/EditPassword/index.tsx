@@ -64,6 +64,7 @@ const EditPassword = observer(({ user }: { user: User }) => {
                 placeholder="Mot de passe actuel"
                 type="password"
                 withFeedback
+                withFormik
                 withLoading
               />
               {error &&
@@ -81,6 +82,7 @@ const EditPassword = observer(({ user }: { user: User }) => {
                 placeholder="Nouveau mot de passe"
                 type="password"
                 withFeedback
+                withFormik
                 withLoading
               />
             </div>
@@ -94,6 +96,7 @@ const EditPassword = observer(({ user }: { user: User }) => {
                 placeholder="Confirmation du nouveau mot de passe"
                 type="password"
                 withFeedback
+                withFormik
                 withLoading
               />
             </div>

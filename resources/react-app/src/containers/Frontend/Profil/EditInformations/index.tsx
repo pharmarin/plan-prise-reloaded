@@ -90,6 +90,7 @@ const EditInformations = observer(
                   placeholder="Nom"
                   required
                   withFeedback
+                  withFormik
                   withLoading
                 />
               </div>
@@ -103,6 +104,7 @@ const EditInformations = observer(
                   placeholder="Prénom"
                   required
                   withFeedback
+                  withFormik
                   withLoading
                 />
               </div>
@@ -135,6 +137,7 @@ const EditInformations = observer(
                     name="rpps"
                     placeholder="N° RPPS"
                     withFeedback
+                    withFormik
                     withLoading
                   />
                 </div>
@@ -148,6 +151,7 @@ const EditInformations = observer(
                   name="display_name"
                   placeholder="Nom de la structure"
                   withFeedback
+                  withFormik
                   withLoading
                 />
                 <Form.Text>
@@ -165,6 +169,7 @@ const EditInformations = observer(
                   placeholder="Adresse mail"
                   type="email"
                   withFeedback
+                  withFormik
                   withLoading
                 />
               </div>
