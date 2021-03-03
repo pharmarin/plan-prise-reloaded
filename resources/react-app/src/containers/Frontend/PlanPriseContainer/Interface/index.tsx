@@ -90,9 +90,8 @@ const Interface = ({
           path: '/plan-prise',
         },
         [
-          ...(planPrise === undefined
-            ? []
-            : [
+          ...((planPrise?.medicaments || []).length > 0
+            ? [
                 {
                   component: {
                     name: 'options',
@@ -105,13 +104,18 @@ const Interface = ({
                   },
                   event: exportEvent,
                 } as INavigationItem,
+              ]
+            : []),
+          ...((planPrise?.meta.id || 0) > 0
+            ? [
                 {
                   component: {
                     name: 'trash',
                   },
                   event: deleteEvent,
                 } as INavigationItem,
-              ]),
+              ]
+            : []),
         ]
       )
     );
@@ -120,6 +124,7 @@ const Interface = ({
     exportEvent,
     navigation,
     planPrise,
+    planPrise?.medicaments,
     planPrise?.meta.id,
     settingsEvent,
   ]);
