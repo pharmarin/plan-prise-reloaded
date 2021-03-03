@@ -68,7 +68,10 @@ const PlanPriseContainer = () => {
           },
         })
         .then((response) => response.data as PlanPrise[])
-    )
+    ),
+    {
+      revalidateOnFocus: false,
+    }
   );
 
   if (!id) {
