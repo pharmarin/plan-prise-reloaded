@@ -85,25 +85,28 @@ const Selection = observer(
           {(
             list ||
             Array.from({ length: 4 }, () => runInAction(() => new PlanPrise()))
-          ).map((planPrise, key) => (
-            <Card
-              key={planPrise.meta.id || key + '_'}
-              className="h-32 w-32 m-auto p-2"
-            >
-              <ReactPlaceholder
-                className="animate-pulse m-0"
-                ready={isReady}
-                type="rect"
+          )
+            .slice()
+            .reverse()
+            .map((planPrise, key) => (
+              <Card
+                key={planPrise.meta.id || key + '_'}
+                className="h-32 w-32 m-auto p-2"
               >
-                <Link
-                  key={planPrise.meta.id}
-                  to={`/plan-prise/${planPrise.meta.id}`}
+                <ReactPlaceholder
+                  className="animate-pulse m-0"
+                  ready={isReady}
+                  type="rect"
                 >
-                  <TextFit text={`#${planPrise.meta.id}`} />
-                </Link>
-              </ReactPlaceholder>
-            </Card>
-          ))}
+                  <Link
+                    key={planPrise.meta.id}
+                    to={`/plan-prise/${planPrise.meta.id}`}
+                  >
+                    <TextFit text={`#${planPrise.meta.id}`} />
+                  </Link>
+                </ReactPlaceholder>
+              </Card>
+            ))}
         </div>
       </div>
     );
