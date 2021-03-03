@@ -1,9 +1,9 @@
 import Information from 'components/Information';
+import Select from 'components/Select';
 import Card from 'containers/Frontend/PlanPriseContainer/Interface/CardContainer';
-import Select from 'containers/Frontend/PlanPriseContainer/Interface/Select';
 import useEventListener from 'hooks/use-event-listener';
 import usePdf from 'hooks/use-pdf';
-import { useApi, useNavigation } from 'hooks/use-store';
+import { useApi, useNavigation, useNotifications } from 'hooks/use-store';
 import useUser from 'hooks/use-user';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -27,13 +27,12 @@ const Interface = ({
   const [showSettings, setShowSettings] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const notifications = useNotifications();
   const navigation = useNavigation();
   const { id } = useParams<{ action?: string; id?: string }>();
   const history = useHistory();
-
   const api = useApi();
   const { user } = useUser();
-
   const { generate, fromPlanPrise } = usePdf();
 
   useEffect(() => {
@@ -167,13 +166,58 @@ const Interface = ({
             />
           ))}
       </div>
-      <Select planPrise={planPrise} />
       {planPrise && (
-        <Settings
-          planPrise={planPrise}
-          showSettings={showSettings}
-          toggleSettings={() => setShowSettings(!showSettings)}
-        />
+        <>
+          <Select
+            onAdd={(value, valueType) => {
+              const model = new valueType();
+
+              if (
+                planPrise.medicaments.filter(
+                  (medicament) =>
+                    medicament.meta.type === value.type &&
+                    medicament.meta.id === value.value
+                ).length > 0
+              ) {
+                notifications.addNotification({
+                  title: 'Ce médicament est déjà dans le plan de prise',
+                  type: 'warning',
+                  timer: 2000,
+                });
+                return;
+              }
+
+              const notification = notifications.addNotification({
+                title: 'Ajout du médicament',
+                message: value.label,
+                type: 'loading',
+              });
+
+              runInAction(() =>
+                api
+                  .getOne(valueType, value.value, {
+                    queryParams: {
+                      include: ['bdpm', 'composition', 'precautions'],
+                    },
+                  })
+                  .then((response) => {
+                    runInAction(() =>
+                      planPrise.addMedicament(response.data as typeof model)
+                    );
+                  })
+                  .finally(() => {
+                    notifications.removeOne(notification);
+                  })
+              );
+            }}
+            placeholder="Ajoutez un médicament au plan de prise"
+          />
+          <Settings
+            planPrise={planPrise}
+            showSettings={showSettings}
+            toggleSettings={() => setShowSettings(!showSettings)}
+          />
+        </>
       )}
     </div>
   );

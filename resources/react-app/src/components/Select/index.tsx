@@ -1,10 +1,7 @@
 import reactSelectOptions from 'helpers/react-select-options';
 import useLoadList from 'hooks/use-load-list';
-import { useApi, useNotifications } from 'hooks/use-store';
-import { runInAction } from 'mobx';
 import ApiMedicament from 'models/ApiMedicament';
 import Medicament from 'models/Medicament';
-import PlanPrise from 'models/PlanPrise';
 import React from 'react';
 import { ActionMeta, ValueType } from 'react-select';
 import {
@@ -12,20 +9,28 @@ import {
   reduceGroupedOptions,
 } from 'react-select-async-paginate';
 
-const Select = ({ planPrise }: { planPrise?: PlanPrise }) => {
+const Select = ({
+  onAdd,
+  placeholder,
+}: {
+  onAdd: (
+    value: {
+      label: string;
+      value: string;
+      type: Models.MedicamentIdentity['type'];
+    },
+    valueType: typeof ApiMedicament | typeof Medicament
+  ) => void;
+  placeholder: string;
+}) => {
   const { loadGeneric } = useLoadList();
-
-  const api = useApi();
-  const notifications = useNotifications();
-
-  if (!planPrise) return <p>Chargement en cours</p>;
 
   return (
     <AsyncPaginate
       cacheOptions={true}
       className="mb-4"
       debounceTimeout={500}
-      loadingMessage={() => 'Chargement des résultats en cours'}
+      loadingMessage={() => 'Chargement des médicaments en cours'}
       loadOptionsOnMenuOpen={false}
       loadOptions={async (inputValue) => {
         return {
@@ -70,53 +75,15 @@ const Select = ({ planPrise }: { planPrise?: PlanPrise }) => {
                 return ApiMedicament;
               default:
                 throw new Error(
-                  "Impossible d'ajouter un médicament de type inconnu au plan de prise (Erreur 300)"
+                  "Impossible d'ajouter un médicament de type inconnu (Erreur 300)"
                 );
             }
           })();
 
-          const model = new valueType();
-
-          if (
-            planPrise.medicaments.filter(
-              (medicament) =>
-                medicament.meta.type === value.type &&
-                medicament.meta.id === value.value
-            ).length > 0
-          ) {
-            notifications.addNotification({
-              title: 'Ce médicament est déjà dans le plan de prise',
-              type: 'warning',
-              timer: 2000,
-            });
-            return;
-          }
-
-          const notification = notifications.addNotification({
-            title: 'Ajout du médicament',
-            message: value.label,
-            type: 'loading',
-          });
-
-          runInAction(() =>
-            api
-              .getOne(valueType, value.value, {
-                queryParams: {
-                  include: ['bdpm', 'composition', 'precautions'],
-                },
-              })
-              .then((response) => {
-                runInAction(() =>
-                  planPrise.addMedicament(response.data as typeof model)
-                );
-              })
-              .finally(() => {
-                notifications.removeOne(notification);
-              })
-          );
+          onAdd(value, valueType);
         }
       }}
-      placeholder="Ajouter un médicament au plan de prise"
+      placeholder={placeholder}
       reduceOptions={reduceGroupedOptions}
       value={null}
       {...reactSelectOptions}

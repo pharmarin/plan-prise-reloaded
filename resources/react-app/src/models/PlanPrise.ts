@@ -126,7 +126,11 @@ class PlanPrise extends jsonapi(Model) {
   custom_settings!: ICustomSettings;
 
   addMedicament(medicament: Medicament | ApiMedicament) {
-    (this.medicaments || []).push(medicament);
+    if (!this.medicaments) {
+      this.medicaments = [];
+    }
+
+    this.medicaments.push(medicament);
 
     return this.save();
   }
