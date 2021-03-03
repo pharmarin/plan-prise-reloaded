@@ -1,20 +1,15 @@
 import SplashScreen from 'components/SplashScreen';
 import { useNotifications } from 'hooks/use-store';
+import useUser from 'hooks/use-user';
 import { runInAction } from 'mobx';
 import Notification from 'models/Notification';
-import React, { useContext } from 'react';
+import React from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
-import { SanctumContext } from 'react-sanctum';
-import { ContextProps } from 'react-sanctum/build/SanctumContext';
 
 type ProtectedRouteProps = Props.Frontend.App.ProtectedRoute;
 
-interface SanctumProps extends Partial<ContextProps> {
-  user?: IServerResponse<Models.App.User>;
-}
-
 const ProtectedRoute = ({ admin, children }: ProtectedRouteProps) => {
-  const { authenticated, user } = useContext<SanctumProps>(SanctumContext);
+  const { authenticated, user } = useUser();
 
   const { pathname } = useLocation();
 
@@ -35,7 +30,7 @@ const ProtectedRoute = ({ admin, children }: ProtectedRouteProps) => {
   }
 
   if (authenticated === true) {
-    if (admin && user?.data.attributes.admin !== true) {
+    if (admin && user?.admin !== true) {
       runInAction(() =>
         notifications.add(
           new Notification({

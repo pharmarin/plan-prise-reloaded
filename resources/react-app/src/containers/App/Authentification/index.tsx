@@ -1,9 +1,9 @@
 import Spinner from 'components/Spinner';
 import { useNavigation } from 'hooks/use-store';
+import useUser from 'hooks/use-user';
 import { observer } from 'mobx-react-lite';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
-import { SanctumContext } from 'react-sanctum';
 import joinClassNames from 'tools/class-names';
 import ConnectionForm from './ConnectionForm';
 import InscriptionForm from './InscriptionForm';
@@ -21,7 +21,7 @@ type AuthentificationProps = {
 };
 
 const Authentification = ({ role }: AuthentificationProps) => {
-  const { authenticated, signOut } = useContext(SanctumContext);
+  const { authenticated, signOut } = useUser();
 
   const navigation = useNavigation();
 

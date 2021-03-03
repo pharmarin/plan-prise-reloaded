@@ -23,13 +23,7 @@ const Selection = observer(
 
     useEffect(() => {
       navigation.setNavigation(
-        isReady ? 'Que voulez-vous faire ?' : 'Chargement en cours',
-        {
-          component: {
-            name: 'arrowLeft',
-          },
-          path: '/',
-        }
+        isReady ? 'Que voulez-vous faire ?' : 'Chargement en cours'
       );
     }, [navigation, isReady]);
 

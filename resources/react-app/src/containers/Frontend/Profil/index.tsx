@@ -1,20 +1,14 @@
 import Card from 'components/Card';
-import { SanctumProps } from 'containers/App/ContextProvider';
 import DeleteUser from 'containers/Frontend/Profil/DeleteUser';
 import EditInformations from 'containers/Frontend/Profil/EditInformations';
 import EditPassword from 'containers/Frontend/Profil/EditPassword';
-import { useApi, useNavigation } from 'hooks/use-store';
-import User from 'models/User';
-import React, { useContext, useEffect } from 'react';
-import { SanctumContext } from 'react-sanctum';
+import { useNavigation } from 'hooks/use-store';
+import useUser from 'hooks/use-user';
+import React, { useEffect } from 'react';
 
 const Profil = () => {
-  const { setUser, user: rawUser } = useContext<SanctumProps>(SanctumContext);
-
-  const api = useApi();
   const navigation = useNavigation();
-
-  const user = api.sync(rawUser) as User;
+  const { setUser, user } = useUser();
 
   if (!user || !setUser)
     throw new Error("L'utilisateur n'a pas pu être chargé");

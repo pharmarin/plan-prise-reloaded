@@ -7,12 +7,12 @@ import Submit from 'components/Submit';
 import Logo from 'containers/App/Logo';
 import { Formik } from 'formik';
 import errors from 'helpers/error-messages.json';
-import React, { useContext } from 'react';
-import { SanctumContext } from 'react-sanctum';
+import useUser from 'hooks/use-user';
+import React from 'react';
 import * as yup from 'yup';
 
 const ConnectionForm = ({ message }: Props.Frontend.App.ConnectionForm) => {
-  const { signIn } = useContext(SanctumContext);
+  const { signIn } = useUser();
 
   if (!signIn) throw new Error('Sanctum props are missing');
 

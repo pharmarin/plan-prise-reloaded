@@ -4,21 +4,16 @@ import Navbar from 'components/Navbar';
 import Spinner from 'components/Spinner';
 import Logo from 'containers/App/Logo';
 import { useNavigation } from 'hooks/use-store';
+import useUser from 'hooks/use-user';
 import { observer } from 'mobx-react-lite';
-import React, { useContext } from 'react';
-import { SanctumContext } from 'react-sanctum';
-import { ContextProps } from 'react-sanctum/build/SanctumContext';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 import NavbarLink from '../NavbarLink';
 
 const NAVBAR_TITLE = 'plandeprise.fr';
 
-interface SanctumProps extends Partial<ContextProps> {
-  user?: IServerResponse<Models.App.User>;
-}
-
 const NavigationBar = () => {
-  const { authenticated, user } = useContext<SanctumProps>(SanctumContext);
-
+  const { authenticated, user } = useUser();
   const navigation = useNavigation();
   const location = useLocation();
 
@@ -61,8 +56,8 @@ const NavigationBar = () => {
                 <React.Fragment>
                   <span className="sr-only">Ouvrir le menu utilisateur</span>
                   <Avatar
-                    firstName={user?.data.attributes.first_name || ''}
-                    lastName={user?.data.attributes.last_name || ''}
+                    firstName={user?.first_name || ''}
+                    lastName={user?.last_name || ''}
                   />
                 </React.Fragment>
               }

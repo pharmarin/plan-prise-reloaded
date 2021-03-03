@@ -1,17 +1,15 @@
 import Information from 'components/Information';
-import { SanctumProps } from 'containers/App/ContextProvider';
 import Card from 'containers/Frontend/PlanPriseContainer/Interface/CardContainer';
 import Select from 'containers/Frontend/PlanPriseContainer/Interface/Select';
 import useEventListener from 'hooks/use-event-listener';
 import usePdf from 'hooks/use-pdf';
 import { useApi, useNavigation } from 'hooks/use-store';
+import useUser from 'hooks/use-user';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
-import User from 'models/User';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { SanctumContext } from 'react-sanctum';
 import { INavigationItem } from 'store/navigation';
 import { mutate } from 'swr';
 import Settings from '../Settings';
@@ -34,7 +32,7 @@ const Interface = ({
   const history = useHistory();
 
   const api = useApi();
-  const { user: rawUser } = useContext<SanctumProps>(SanctumContext);
+  const { user } = useUser();
 
   const { generate, fromPlanPrise } = usePdf();
 
@@ -66,6 +64,12 @@ const Interface = ({
   });
 
   const exportEvent = useEventListener('plan-prise/export', () => {
+    if (!user) {
+      throw new Error(
+        "Impossible d'exporter un plan de prise si l'utilisateur n'est pas chargé"
+      );
+    }
+
     if (!planPrise) {
       throw new Error("Impossible d'exporter un plan de prise non chargé");
     }

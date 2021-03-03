@@ -2,16 +2,16 @@ import Interface from 'containers/Frontend/PlanPriseContainer/Interface';
 import Selection from 'containers/Frontend/PlanPriseContainer/Selection';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import { useApi } from 'hooks/use-store';
+import useUser from 'hooks/use-user';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import PlanPrise from 'models/PlanPrise';
-import React, { useContext } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { SanctumContext } from 'react-sanctum';
 import useSWR from 'swr';
 
 const PlanPriseContainer = () => {
-  const { user } = useContext(SanctumContext);
+  const { user } = useUser();
 
   //const navigation = useNavigation();
 
@@ -61,7 +61,7 @@ const PlanPriseContainer = () => {
       api
         .getMany(PlanPrise, {
           queryParams: {
-            filter: { user: user.data.id },
+            filter: { user: String(user?.meta.id) },
           },
           cacheOptions: {
             cachingStrategy: 1,
