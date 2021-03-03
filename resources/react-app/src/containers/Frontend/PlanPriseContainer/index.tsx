@@ -12,16 +12,8 @@ import useSWR from 'swr';
 
 const PlanPriseContainer = () => {
   const { user } = useUser();
-
-  //const navigation = useNavigation();
-
   const api = useApi();
-
   const { id } = useParams<{ action?: string; id?: string }>();
-
-  //const history = useHistory();
-
-  //const isPdfRoute = action === 'export';
 
   const {
     data: planPrise,
