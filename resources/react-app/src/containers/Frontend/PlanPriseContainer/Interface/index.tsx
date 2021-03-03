@@ -26,6 +26,7 @@ const Interface = ({
 }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoadingMedicament, setIsLoadingMedicament] = useState(false);
 
   const notifications = useNotifications();
   const navigation = useNavigation();
@@ -169,7 +170,10 @@ const Interface = ({
       {planPrise && (
         <>
           <Select
-            onAdd={(value, valueType) => {
+            disabled={isLoadingMedicament}
+            onAdd={async (value, valueType) => {
+              setIsLoadingMedicament(true);
+
               const model = new valueType();
 
               if (
@@ -193,7 +197,7 @@ const Interface = ({
                 type: 'loading',
               });
 
-              runInAction(() =>
+              await runInAction(() =>
                 api
                   .getOne(valueType, value.value, {
                     queryParams: {
@@ -205,10 +209,10 @@ const Interface = ({
                       planPrise.addMedicament(response.data as typeof model)
                     );
                   })
-                  .finally(() => {
-                    notifications.removeOne(notification);
-                  })
               );
+
+              notifications.removeOne(notification);
+              setIsLoadingMedicament(false);
             }}
             placeholder="Ajoutez un médicament au plan de prise"
           />

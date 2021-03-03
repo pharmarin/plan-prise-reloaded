@@ -10,9 +10,11 @@ import {
 } from 'react-select-async-paginate';
 
 const Select = ({
+  disabled,
   onAdd,
   placeholder,
 }: {
+  disabled?: boolean;
   onAdd: (
     value: {
       label: string;
@@ -30,11 +32,13 @@ const Select = ({
       cacheOptions={true}
       className="mb-4"
       debounceTimeout={500}
+      isDisabled={disabled}
       loadingMessage={() => 'Chargement des médicaments en cours'}
       loadOptionsOnMenuOpen={false}
       loadOptions={async (inputValue) => {
+        const options = await loadGeneric(inputValue);
         return {
-          options: await loadGeneric(inputValue),
+          options,
           hasMore: false,
         };
       }}
