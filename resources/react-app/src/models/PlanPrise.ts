@@ -3,7 +3,7 @@ import {
   IRawModel,
   isAttributeDirty,
   Model,
-  PureCollection
+  PureCollection,
 } from '@datx/core';
 import { IRequestOptions, jsonapi } from '@datx/jsonapi';
 import debounce from 'debounce-promise';

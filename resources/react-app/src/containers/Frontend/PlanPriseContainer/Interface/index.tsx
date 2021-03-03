@@ -148,6 +148,15 @@ const Interface = ({
     );
   }
 
+  if (
+    (planPrise?.meta.id || 0) < 1 &&
+    (planPrise?.medicaments || []).length > 0
+  ) {
+    return (
+      <Information type="loading" title="Création du plan de prise en cours" />
+    );
+  }
+
   if (error) {
     console.log('error: ', error);
     throw new Error(
