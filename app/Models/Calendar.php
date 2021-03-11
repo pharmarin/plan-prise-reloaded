@@ -22,13 +22,13 @@ class Calendar extends Model
   protected $table = 'calendars';
 
   protected $attributes = [
-    'medicaments' => '[]',
+    'medic_data' => '[]',
     'custom_data' => '{}',
     'custom_settings' => '{}',
   ];
 
   protected $casts = [
-    'medicaments' => 'json',
+    'medic_data' => 'json',
     'custom_data' => 'object', // if set to json, returns an array on api call
     'custom_settings' => 'object', // if set to json, returns an array on api call
   ];
@@ -40,7 +40,7 @@ class Calendar extends Model
     return $this->belongsTo('App\Models\User');
   }
 
-  public function medicaments()
+  public function medic_data()
   {
     return $this->hasMany(Medicament::class);
   }

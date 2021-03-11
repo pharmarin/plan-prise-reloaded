@@ -84,7 +84,7 @@ class Schema extends SchemaProvider
                   );
                   return null;
               }
-            }, $resource->medicaments)
+            }, $resource->medic_data)
           );
         },
       ],

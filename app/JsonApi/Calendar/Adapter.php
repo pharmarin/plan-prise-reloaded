@@ -18,7 +18,7 @@ class Adapter extends AbstractAdapter
    *
    * @var array
    */
-  protected $includePaths = ['medicaments'];
+  protected $includePaths = ['medicaments' => 'medic_data'];
 
   /**
    * Mapping of JSON API filter names to model scopes.
@@ -59,7 +59,7 @@ class Adapter extends AbstractAdapter
 
   public function medicaments()
   {
-    return new GenericRelation('medicaments');
+    return new GenericRelation('medic_data');
   }
 
   protected function searchAll($query)

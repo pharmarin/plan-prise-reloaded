@@ -20,7 +20,7 @@ class CreateCalendarsTable extends Migration
         ->foreignId('user_id')
         ->constrained()
         ->onDelete('cascade');
-      $table->text('medicaments');
+      $table->text('medic_data');
       $table->text('custom_data')->nullable();
       $table->text('custom_settings')->nullable();
       $table->timestamps();
