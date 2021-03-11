@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\Precautions;
+namespace App\JsonApi\Precaution;
 
 use Neomerx\JsonApi\Schema\SchemaProvider;
 
@@ -9,7 +9,7 @@ class Schema extends SchemaProvider
   /**
    * @var string
    */
-  protected $resourceType = 'precautions';
+  protected $resourceType = 'precaution';
 
   /**
    * @param \\App\Models\Precaution $resource
@@ -29,7 +29,8 @@ class Schema extends SchemaProvider
   public function getAttributes($resource)
   {
     return [
-      'cible' => (new $resource->precaution_cible_type())->type .
+      'cible' =>
+        (new $resource->precaution_cible_type())->type .
         '_' .
         $resource->precaution_cible_id,
       'commentaire' => $resource->commentaire,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\Medicaments;
+namespace App\JsonApi\Medicament;
 
 use CloudCreativity\LaravelJsonApi\Validation\AbstractValidators;
 

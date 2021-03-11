@@ -5,7 +5,7 @@ import Precaution from 'models/Precaution';
 import PrincipeActif from 'models/PrincipeActif';
 
 class Medicament extends jsonapi(Model) {
-  static type = 'medicaments';
+  static type = 'medicament';
 
   public uid = '1-' + this.meta.id;
 

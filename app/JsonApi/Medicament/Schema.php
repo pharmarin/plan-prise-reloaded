@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\Medicaments;
+namespace App\JsonApi\Medicament;
 
 use App\Models\ApiMedicament;
 use Neomerx\JsonApi\Schema\SchemaProvider;
@@ -10,7 +10,7 @@ class Schema extends SchemaProvider
   /**
    * @var string
    */
-  protected $resourceType = 'medicaments';
+  protected $resourceType = 'medicament';
 
   /**
    * @param \\App\Models\Medicament $resource

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\Users;
+namespace App\JsonApi\User;
 
 use CloudCreativity\LaravelJsonApi\Contracts\Validation\ValidatorInterface;
 use CloudCreativity\LaravelJsonApi\Document\Error\Error;
@@ -65,7 +65,7 @@ class Validators extends AbstractValidators
       'email' => [
         'required',
         'email',
-        isset($data['email']) ? 'unique:users,email' : '',
+        isset($data['email']) ? 'unique:user,email' : '',
       ],
       'name' => ['required', 'string', 'min:3', 'max:50'],
       'rpps' => ['required_if:status,pharmacist', 'integer', 'digits:11'],

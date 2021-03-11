@@ -45,7 +45,7 @@ interface ICustomSettings {
 class PlanPrise extends jsonapi(Model) {
   notifications;
 
-  static type = 'plan-prises';
+  static type = 'plan-prise';
 
   constructor(data?: IRawModel, collection?: PureCollection) {
     super(data, collection);

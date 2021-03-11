@@ -1,12 +1,11 @@
 <?php
 
-namespace App\JsonApi\ApiMedicaments;
+namespace App\JsonApi\Precaution;
 
 use CloudCreativity\LaravelJsonApi\Validation\AbstractValidators;
 
 class Validators extends AbstractValidators
 {
-
   /**
    * The include paths a client is allowed to request.
    *
@@ -29,22 +28,20 @@ class Validators extends AbstractValidators
    * @var string[]|null
    *      the allowed filters, an empty array for none allowed, or null to allow all.
    */
-  protected $allowedFilteringParameters = ['denomination'];
+  protected $allowedFilteringParameters = [];
 
   /**
    * Get resource validation rules.
    *
    * @param mixed|null $record
    *      the record being updated, or null if creating a resource.
-   * @param array $data
-   *      the data being validated
-   * @return array
+   * @return mixed
    */
-  protected function rules($record, array $data): array
+  protected function rules($record = null, array $data): array
   {
     return [
-      //
-    ];
+        //
+      ];
   }
 
   /**
@@ -55,7 +52,7 @@ class Validators extends AbstractValidators
   protected function queryRules(): array
   {
     return [
-      //
-    ];
+        //
+      ];
   }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\PlanPrises;
+namespace App\JsonApi\PlanPrise;
 
 use App\JsonApi\CustomRelations\GenericRelation;
 use App\Models\PlanPrise;
@@ -27,7 +27,7 @@ class Adapter extends AbstractAdapter
    * @var array
    */
   protected $filterScopes = [
-    'user' => 'user_id'
+    'user' => 'user_id',
   ];
 
   protected $relationships = ['medicaments'];

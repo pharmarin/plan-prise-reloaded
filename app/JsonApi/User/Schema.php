@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\Users;
+namespace App\JsonApi\User;
 
 use Neomerx\JsonApi\Schema\SchemaProvider;
 
@@ -9,7 +9,7 @@ class Schema extends SchemaProvider
   /**
    * @var string
    */
-  protected $resourceType = 'users';
+  protected $resourceType = 'user';
 
   /**
    * @param \\App\Models\User $resource
@@ -37,7 +37,7 @@ class Schema extends SchemaProvider
       'email' => $resource->email,
       'status' => $resource->status,
       'rpps' => $resource->rpps,
-      'created_at' => $resource->created_at
+      'created_at' => $resource->created_at,
     ];
   }
 }

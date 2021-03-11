@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\ApiMedicaments;
+namespace App\JsonApi\ApiMedicament;
 
 use App\Models\ApiMedicament;
 use CloudCreativity\LaravelJsonApi\Document\ResourceObject;

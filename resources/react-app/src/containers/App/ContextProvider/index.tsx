@@ -14,7 +14,7 @@ const sanctumConfig = {
   csrf_cookie_route: 'csrf-cookie',
   signin_route: 'login',
   signout_route: 'logout',
-  user_object_route: 'user',
+  user_object_route: 'current-user',
 };
 
 export interface SanctumProps extends Partial<ContextProps> {

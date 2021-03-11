@@ -1,11 +1,13 @@
 <?php
 
-namespace App\JsonApi\Precautions;
+namespace App\JsonApi\User;
 
+use App\Models\User;
 use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
 use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Hash;
 
 class Adapter extends AbstractAdapter
 {
@@ -23,6 +25,11 @@ class Adapter extends AbstractAdapter
    */
   protected $filterScopes = [];
 
+  protected function deserializePasswordField($value)
+  {
+    return Hash::make($value);
+  }
+
   /**
    * Adapter constructor.
    *
@@ -30,7 +37,7 @@ class Adapter extends AbstractAdapter
    */
   public function __construct(StandardStrategy $paging)
   {
-    parent::__construct(new \App\Models\Utility\Precaution(), $paging);
+    parent::__construct(new User(), $paging);
   }
 
   /**
@@ -40,11 +47,12 @@ class Adapter extends AbstractAdapter
    */
   protected function filter($query, Collection $filters)
   {
-    $this->filterWithScopes($query, $filters);
-  }
-
-  protected function precautionCible()
-  {
-    return $this->belongsTo();
+    if ($name = $filters->get('name')) {
+      $query
+        ->where('user.last_name', 'like', "{$name}%")
+        ->orWhere('user.first_name', 'like', "{$name}%");
+    } else {
+      $this->filterWithScopes($query, $filters);
+    }
   }
 }

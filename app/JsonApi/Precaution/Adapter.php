@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\PrincipeActifs;
+namespace App\JsonApi\Precaution;
 
 use CloudCreativity\LaravelJsonApi\Eloquent\AbstractAdapter;
 use CloudCreativity\LaravelJsonApi\Pagination\StandardStrategy;
@@ -30,7 +30,7 @@ class Adapter extends AbstractAdapter
    */
   public function __construct(StandardStrategy $paging)
   {
-    parent::__construct(new \App\Models\Utility\PrincipeActif(), $paging);
+    parent::__construct(new \App\Models\Utility\Precaution(), $paging);
   }
 
   /**
@@ -40,12 +40,11 @@ class Adapter extends AbstractAdapter
    */
   protected function filter($query, Collection $filters)
   {
-    if ($denomination = $filters->get('denomination')) {
-      $query->where(
-        'principes_actifs.denomination',
-        'like',
-        "{$denomination}%"
-      );
-    }
+    $this->filterWithScopes($query, $filters);
+  }
+
+  protected function precautionCible()
+  {
+    return $this->belongsTo();
   }
 }

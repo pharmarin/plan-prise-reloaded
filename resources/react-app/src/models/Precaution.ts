@@ -2,7 +2,7 @@ import { Attribute, Model } from '@datx/core';
 import { jsonapi } from '@datx/jsonapi';
 
 class Precaution extends jsonapi(Model) {
-  static type = 'precautions';
+  static type = 'precaution';
 
   @Attribute()
   commentaire!: string;

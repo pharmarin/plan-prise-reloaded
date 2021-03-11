@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi\PlanPrises;
+namespace App\JsonApi\PlanPrise;
 
 use Carbon\Carbon;
 use CloudCreativity\LaravelJsonApi\Contracts\Store\StoreInterface;

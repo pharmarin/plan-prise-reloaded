@@ -73,13 +73,13 @@ return [
     | `'posts' => App\Post::class`
     */
   'resources' => [
-    'api-medicaments' => ApiMedicament::class,
+    'api-medicament' => ApiMedicament::class,
     'calendar' => Calendar::class,
-    'medicaments' => Medicament::class,
-    'plan-prises' => PlanPrise::class,
-    'precautions' => Precaution::class,
-    'principe-actifs' => PrincipeActif::class,
-    'users' => User::class,
+    'medicament' => Medicament::class,
+    'plan-prise' => PlanPrise::class,
+    'precaution' => Precaution::class,
+    'principe-actif' => PrincipeActif::class,
+    'user' => User::class,
   ],
 
   /*
