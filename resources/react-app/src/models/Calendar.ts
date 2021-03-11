@@ -11,6 +11,9 @@ class Calendar extends Model {
   })
   medicaments?: (Medicament | ApiMedicament)[];
 
+  @Attribute({})
+  recurrences?: { recurrence?: number; quantity: number }[];
+
   addMedicament(medicament: Medicament | ApiMedicament) {
     (this.medicaments || []).push(medicament);
     console.log('this.medicaments: ', this.medicaments);
