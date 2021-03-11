@@ -1,6 +1,6 @@
 import { CachingStrategy } from '@datx/jsonapi';
-import Interface from 'containers/Frontend/PlanPriseContainer/Interface';
-import Selection from 'containers/Frontend/PlanPriseContainer/Selection';
+import Interface from 'containers/Frontend/Applications/PlanPriseContainer/Interface';
+import Selection from 'containers/Frontend/Applications/Selection';
 import ErrorBoundary from 'containers/Utility/ErrorBoundary';
 import { useApi } from 'hooks/use-store';
 import useUser from 'hooks/use-user';
@@ -14,7 +14,7 @@ import useSWR from 'swr';
 const PlanPriseContainer = () => {
   const { user } = useUser();
   const api = useApi();
-  const { id } = useParams<{ action?: string; id?: string }>();
+  const { id } = useParams<{ id?: string }>();
 
   const {
     data: planPrise,
@@ -68,7 +68,14 @@ const PlanPriseContainer = () => {
   );
 
   if (!id) {
-    return <Selection list={list} isLoading={isValidatingList} />;
+    return (
+      <Selection
+        baseUrl="plan-prise"
+        list={list}
+        name="plan de prise"
+        isLoading={isValidatingList}
+      />
+    );
   }
 
   return (

@@ -1,6 +1,6 @@
 import Information from 'components/Information';
 import Select from 'components/Select';
-import Card from 'containers/Frontend/PlanPriseContainer/Interface/CardContainer';
+import Card from 'containers/Frontend/Applications/PlanPriseContainer/Interface/CardContainer';
 import useEventListener from 'hooks/use-event-listener';
 import usePdf from 'hooks/use-pdf';
 import { useApi, useNavigation, useNotifications } from 'hooks/use-store';

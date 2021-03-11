@@ -1,3 +1,4 @@
+import { CachingStrategy } from '@datx/network';
 import Card from 'components/Card';
 import Form from 'components/Form';
 import Input from 'components/Input';
@@ -5,14 +6,50 @@ import Select from 'components/Select';
 import Title from 'components/Title';
 import { Formik } from 'formik';
 import { useApi } from 'hooks/use-store';
-import { runInAction } from 'mobx';
+import useUser from 'hooks/use-user';
+import { action, runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import Calendar from 'models/Calendar';
+import { useParams } from 'react-router';
+import useSWR from 'swr';
+import Selection from '../Selection';
 
 const calendar = new Calendar();
 
 const CalendarContainer = () => {
   const api = useApi();
+  const { user } = useUser();
+  const { id } = useParams<{ id?: string }>();
+
+  const { data: list, isValidating: isValidatingList } = useSWR(
+    'calendar/list',
+    action(() =>
+      api
+        .getMany(Calendar, {
+          queryParams: {
+            filter: { user: String(user?.meta.id) },
+          },
+          cacheOptions: {
+            cachingStrategy: CachingStrategy.NetworkOnly,
+          },
+        })
+        .then((response) => response.data as Calendar[])
+    ),
+    {
+      revalidateOnFocus: false,
+    }
+  );
+
+  if (!id) {
+    return (
+      <Selection
+        baseUrl="plan-prise"
+        list={list}
+        name="plan de prise"
+        isLoading={isValidatingList}
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">

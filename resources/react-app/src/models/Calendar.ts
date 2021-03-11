@@ -1,8 +1,9 @@
 import { Attribute, Model } from '@datx/core';
+import { jsonapi } from '@datx/jsonapi';
 import ApiMedicament from './ApiMedicament';
 import Medicament from './Medicament';
 
-class Calendar extends Model {
+class Calendar extends jsonapi(Model) {
   static type = 'calendars';
 
   @Attribute({

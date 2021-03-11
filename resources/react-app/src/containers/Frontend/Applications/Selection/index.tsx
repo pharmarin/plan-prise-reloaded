@@ -1,3 +1,4 @@
+import { Model } from '@datx/core';
 import Card from 'components/Card';
 import Form from 'components/Form';
 import FormGroup from 'components/FormGroup';
@@ -6,14 +7,23 @@ import TextFit from 'components/TextFit';
 import { useNavigation } from 'hooks/use-store';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import PlanPrise from 'models/PlanPrise';
 import React, { useEffect, useState } from 'react';
 import ReactPlaceholder from 'react-placeholder';
 import { Link, Redirect } from 'react-router-dom';
 import joinClassNames from 'tools/class-names';
 
 const Selection = observer(
-  ({ list, isLoading }: { list?: PlanPrise[]; isLoading: boolean }) => {
+  ({
+    baseUrl,
+    list,
+    name,
+    isLoading,
+  }: {
+    baseUrl: string;
+    list?: Model[];
+    name: string;
+    isLoading: boolean;
+  }) => {
     const [search, setSearch] = useState<string | undefined>(undefined);
     const [redirect, setRedirect] = useState(false);
 
@@ -47,7 +57,7 @@ const Selection = observer(
 
     if (search) {
       if (searchSuccess && redirect)
-        return <Redirect to={`/plan-prise/${search}`} />;
+        return <Redirect to={`/${baseUrl}/${search}`} />;
     }
 
     return (
@@ -78,19 +88,19 @@ const Selection = observer(
         </ReactPlaceholder>
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
           <Card className="h-32 w-32 m-auto p-2">
-            <Link to="/plan-prise/nouveau">
+            <Link to={`/${baseUrl}/nouveau`}>
               <TextFit text="new" />
             </Link>
           </Card>
           {(
             list ||
-            Array.from({ length: 4 }, () => runInAction(() => new PlanPrise()))
+            Array.from({ length: 4 }, () => runInAction(() => new Model()))
           )
             .slice()
             .reverse()
-            .map((planPrise, key) => (
+            .map((item, key) => (
               <Card
-                key={planPrise.meta.id || key + '_'}
+                key={item.meta.id || key + '_'}
                 className="h-32 w-32 m-auto p-2"
               >
                 <ReactPlaceholder
@@ -98,11 +108,8 @@ const Selection = observer(
                   ready={isReady}
                   type="rect"
                 >
-                  <Link
-                    key={planPrise.meta.id}
-                    to={`/plan-prise/${planPrise.meta.id}`}
-                  >
-                    <TextFit text={`#${planPrise.meta.id}`} />
+                  <Link key={item.meta.id} to={`/${baseUrl}/${item.meta.id}`}>
+                    <TextFit text={`#${item.meta.id}`} />
                   </Link>
                 </ReactPlaceholder>
               </Card>
