@@ -70,7 +70,7 @@ const Selection = observer(
           <Form className="mx-auto" onSubmit={handleSearchSubmit}>
             <FormGroup>
               <div className="absolute mt-2 ml-2 text-gray-500">
-                Accès rapide au plan de prise #
+                Accès rapide au {name} #
               </div>
               <Input
                 autoFocus

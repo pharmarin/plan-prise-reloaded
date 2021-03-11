@@ -43,9 +43,9 @@ const CalendarContainer = () => {
   if (!id) {
     return (
       <Selection
-        baseUrl="plan-prise"
+        baseUrl="calendar"
         list={list}
-        name="plan de prise"
+        name="calendrier"
         isLoading={isValidatingList}
       />
     );

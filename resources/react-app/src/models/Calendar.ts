@@ -4,7 +4,7 @@ import ApiMedicament from './ApiMedicament';
 import Medicament from './Medicament';
 
 class Calendar extends jsonapi(Model) {
-  static type = 'calendars';
+  static type = 'calendar';
 
   @Attribute({
     toMany: (data: any) =>

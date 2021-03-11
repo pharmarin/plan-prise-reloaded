@@ -4,6 +4,7 @@ use App\Models\User;
 use App\Models\PlanPrise;
 use App\Models\Medicament;
 use App\Models\ApiMedicament;
+use App\Models\Calendar;
 use App\Models\Utility\Precaution;
 use App\Models\Utility\PrincipeActif;
 
@@ -73,6 +74,7 @@ return [
     */
   'resources' => [
     'api-medicaments' => ApiMedicament::class,
+    'calendar' => Calendar::class,
     'medicaments' => Medicament::class,
     'plan-prises' => PlanPrise::class,
     'precautions' => Precaution::class,
