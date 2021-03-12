@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { FieldInputProps, useField, useFormikContext } from 'formik';
 import { uniqueId } from 'lodash-es';
 import React from 'react';
@@ -109,7 +108,7 @@ export const File = ({
       {(formikProps: typeof props & FieldInputProps<any>) => (
         <div className="relative">
           <input
-            className={classNames(
+            className={joinClassNames(
               'relative w-full h-10 m-0 opacity-0 z-10',
               props.className
             )}
@@ -210,7 +209,7 @@ const InputComponent = ({
   return (
     <input
       {...props}
-      className={classNames(
+      className={joinClassNames(
         {
           'w-full': props.type !== 'radio' && props.type !== 'checkbox',
         },

@@ -60,8 +60,6 @@ const Selection = observer(
         return <Redirect to={`/${baseUrl}/${search}`} />;
     }
 
-    console.log('list: ', list);
-
     return (
       <div className="flex flex-col space-y-4">
         <ReactPlaceholder
