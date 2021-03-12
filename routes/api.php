@@ -34,7 +34,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'web'], function () {
         ->resource('plan-prise')
         ->controller('\App\JsonApi\PlanPrise\Controller')
         ->only('index', 'read', 'update', 'delete', 'create');
-      $api->resource('calendar')->only('index');
+      $api->resource('calendar')->only('create', 'index', 'read');
       $api->resource('principe-actif')->only('index', 'create');
       $api->resource('precaution')->only('read', 'update');
       $api->resource('user')->only('index', 'read', 'update', 'delete');

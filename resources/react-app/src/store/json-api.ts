@@ -3,6 +3,7 @@ import { config, jsonapi } from '@datx/jsonapi';
 import { AxiosRequestConfig } from 'axios';
 import axios from 'helpers/axios-clients';
 import ApiMedicament from 'models/ApiMedicament';
+import Calendar from 'models/Calendar';
 import Medicament from 'models/Medicament';
 import PlanPrise from 'models/PlanPrise';
 import Precaution from 'models/Precaution';
@@ -30,6 +31,7 @@ class JsonApiStore extends jsonapi(Collection) {
 
   static types = [
     ApiMedicament,
+    Calendar,
     Medicament,
     PlanPrise,
     Precaution,
