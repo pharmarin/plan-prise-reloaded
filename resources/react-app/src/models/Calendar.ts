@@ -83,8 +83,8 @@ class Calendar extends jsonapi(Model) {
 
   /**
    * Adds a default recurrence at the index passed as parameter
-   * @param index index in recurrences array
-   * @param medicament medicament of the recurrence
+   * @param index Index defining where the recurrence has to be added in the recurrences array
+   * @param medicament
    */
   addRecurrenceAtIndex(index: number, medicament: Medicament | ApiMedicament) {
     this.secureRecurrencesFor(medicament);
@@ -92,6 +92,32 @@ class Calendar extends jsonapi(Model) {
     this.recurrences![medicament.uid].splice(index, 0, {
       quantity: 1,
     });
+  }
+
+  /**
+   * Removes recurrences at the index passed as parameter
+   * @param index Index of recurrence to delete
+   * @param medicament
+   */
+  removeRecurrenceAtIndex(
+    index: number,
+    medicament: Medicament | ApiMedicament
+  ) {
+    this.recurrences![medicament.uid].splice(index, 1);
+  }
+
+  setRecurrenceValueAtIndex(
+    index: number,
+    medicament: Medicament | ApiMedicament,
+    key: 'quantity' | 'recurrence',
+    value: string
+  ) {
+    this.secureRecurrencesFor(medicament);
+
+    this.recurrences![medicament.uid][index] = {
+      ...this.recurrences![medicament.uid][index],
+      [key]: value,
+    };
   }
 }
 

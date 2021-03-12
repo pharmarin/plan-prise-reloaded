@@ -150,18 +150,40 @@ const CalendarContainer = () => {
                   <Input
                     name="quantity"
                     className="p-0 text-center text-blue-600 text-5xl font-bold border-0 border-b-2 border-dashed border-blue-700 rounded-none shadow-none"
-                    onChange={() => {}}
-                    value={recurrence.quantity}
+                    onChange={action((event) =>
+                      calendar.setRecurrenceValueAtIndex(
+                        index,
+                        medicament,
+                        'quantity',
+                        event.currentTarget.value
+                      )
+                    )}
+                    value={recurrence.quantity || ''}
                   />
                   unité(s) tous les
                   <Input
                     name="recurrence"
                     className="p-0 text-center text-green-600 text-5xl font-bold border-0 border-b-2 border-dashed border-green-700 rounded-none shadow-none"
-                    onChange={() => {}}
-                    value={recurrence.recurrence}
+                    onChange={action((event) =>
+                      calendar.setRecurrenceValueAtIndex(
+                        index,
+                        medicament,
+                        'recurrence',
+                        event.currentTarget.value
+                      )
+                    )}
+                    value={recurrence.recurrence || ''}
                   />
                   jour(s)
-                  <Button block color="link" className="mt-auto text-red-600">
+                  <Button
+                    block
+                    color="link"
+                    className="mt-auto text-red-600"
+                    disabled={calendar?.recurrencesFor(medicament).length < 2}
+                    onClick={action(() =>
+                      calendar.removeRecurrenceAtIndex(index, medicament)
+                    )}
+                  >
                     Supprimer
                   </Button>
                 </Card>
