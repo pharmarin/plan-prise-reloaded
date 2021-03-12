@@ -37,6 +37,7 @@ const Button: React.FC<
                 'px-6 py-3': size === 'lg',
                 'bg-gray-300 hover:bg-gray-200 active:bg-gray-400  focus:border-gray-400':
                   color === 'light',
+                'hover:bg-transparent': color === 'link',
                 'bg-transparent text-green-600': color === 'link',
                 'bg-gray-800 hover:bg-gray-700 active:bg-gray-900  focus:border-gray-900':
                   color === 'gray',
