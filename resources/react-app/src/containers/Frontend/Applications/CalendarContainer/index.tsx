@@ -73,7 +73,7 @@ const CalendarContainer = () => {
     runInAction(() =>
       navigation.setNavigation(
         calendar === undefined
-          ? 'Chargement en cours'
+          ? ''
           : calendar.meta.id > 0
           ? `Calendrier n°${calendar.meta.id}`
           : 'Nouveau calendrier',
@@ -99,7 +99,9 @@ const CalendarContainer = () => {
   }
 
   if (!calendar || isValidatingCalendar) {
-    return <Information type="loading" title="Chargement en cours" />;
+    return (
+      <Information type="loading" title="Chargement du calendrier en cours" />
+    );
   }
 
   if (calendarError) {

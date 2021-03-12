@@ -80,7 +80,7 @@ const Interface = ({
     runInAction(() =>
       navigation.setNavigation(
         planPrise === undefined
-          ? 'Chargement en cours'
+          ? ''
           : planPrise.meta.id > 0
           ? `Plan de prise n°${planPrise.meta.id}`
           : 'Nouveau plan de prise',
