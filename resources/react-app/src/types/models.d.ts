@@ -50,16 +50,9 @@ declare namespace Models {
         };
       };
     }
-    interface Notification {
-      id: string;
-      header?: string;
-      content?: string;
-      icon?: string;
-      timer?: number;
-    }
     interface User {
       id: string;
-      type: 'users';
+      type: 'user';
       attributes: {
         admin: boolean;
         first_name: string;
@@ -73,18 +66,9 @@ declare namespace Models {
       };
     }
   }
-  namespace ApiMedicament {
-    interface Entity extends MedicamentIdentity {
-      type: 'api-medicaments';
-      attributes: {
-        denomination: string;
-      };
-    }
-    type Extracted = ExtractModel<ApiMedicament.Entity>;
-  }
   namespace Medicament {
     interface Entity extends MedicamentIdentity {
-      type: 'medicaments';
+      type: 'medicament';
       attributes: {
         conservation_duree: { laboratoire: string; duree: string }[];
         conservation_frigo: boolean;
@@ -106,58 +90,5 @@ declare namespace Models {
   }
   interface MedicamentIdentityWithLoading extends MedicamentIdentity {
     loading?: boolean;
-  }
-  namespace PlanPrise {
-    interface Entity {
-      id: string;
-      type: 'plan-prises';
-      attributes: {
-        custom_data: {
-          [id: string]: {
-            [field: string]: string;
-          };
-        };
-        custom_settings: {
-          inputs: {
-            [inputName: string]: {
-              checked: boolean;
-            };
-          };
-        };
-      };
-      relationships: {
-        medicaments: { data: MedicamentIdentityWithLoading[] };
-      };
-    }
-    type Extracted = ExtractModel<PlanPrise.Entity>;
-  }
-  interface Posologie {
-    // TODO: Delte
-    id: string;
-    label: string;
-    default?: boolean;
-    color: string;
-  }
-  namespace Precaution {
-    interface Entity {
-      id: string;
-      type: 'precautions';
-      attributes: {
-        commentaire: string;
-        population: string;
-        voie_administration: number;
-      };
-    }
-    type Extracted = ExtractModel<Precaution.Entity>;
-  }
-  namespace PrincipeActif {
-    interface Entity {
-      id: string;
-      type: 'principe-actifs';
-      attributes: {
-        denomination: string;
-      };
-    }
-    type Extracted = ExtractModel<PrincipeActif.Entity>;
   }
 }

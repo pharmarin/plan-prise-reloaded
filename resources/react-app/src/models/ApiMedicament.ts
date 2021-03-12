@@ -2,7 +2,7 @@ import { Attribute, Model } from '@datx/core';
 import { jsonapi } from '@datx/jsonapi';
 
 class ApiMedicament extends jsonapi(Model) {
-  static type = 'api-medicament';
+  static type: 'api-medicament' = 'api-medicament';
 
   public uid = '2-' + this.meta.id;
 

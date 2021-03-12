@@ -87,7 +87,9 @@ const Dashboard = () => {
               key={index}
               className="px-6 flex flex-col justify-center space-y-1"
             >
-              {col.map((med: Models.Medicament.Extracted) => (
+              {col.map((
+                med: Models.Medicament.Extracted // TODO: Passer sur datx
+              ) => (
                 <Link key={med.id} to={`/admin/medicaments/${med.id}`}>
                   {med.denomination}
                 </Link>

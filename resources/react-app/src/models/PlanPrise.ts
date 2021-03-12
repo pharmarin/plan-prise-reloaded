@@ -99,7 +99,7 @@ class PlanPrise extends jsonapi(Model) {
 
   @Attribute({
     toMany: (data: any) =>
-      data && data?.type === 'api-medicaments' ? ApiMedicament : Medicament,
+      data && data?.type === ApiMedicament.type ? ApiMedicament : Medicament,
   })
   medicaments!: (Medicament | ApiMedicament)[];
 

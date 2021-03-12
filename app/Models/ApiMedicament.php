@@ -26,24 +26,28 @@ class ApiMedicament extends Model
 
   static function find(int $cis)
   {
-    return new ApiMedicament(Cache::remember(static::getCacheID($cis), 6000, function () use ($cis) {
-      $response = static::init()->get("/medicaments/${cis}");
+    return new ApiMedicament(
+      Cache::remember(static::getCacheID($cis), 6000, function () use ($cis) {
+        $response = static::init()->get("/medicaments/${cis}");
 
-      if ($response->getStatusCode() === 200) {
-        $json = $response->getBody()->getContents();
-        $object = json_decode($json);
-        return [
-          'id' => $cis,
-          'denomination' => $object->denomination,
-          'loaded' => true,
-        ];
-      } else {
-        throw new JsonApiException(Error::fromArray([
-          'title' => 'Impossible d\'accéder au serveur',
-          'status' => '500',
-        ]));
-      }
-    }));
+        if ($response->getStatusCode() === 200) {
+          $json = $response->getBody()->getContents();
+          $object = json_decode($json);
+          return [
+            'id' => $cis,
+            'denomination' => $object->denomination,
+            'loaded' => true,
+          ];
+        } else {
+          throw new JsonApiException(
+            Error::fromArray([
+              'title' => 'Impossible d\'accéder au serveur',
+              'status' => '500',
+            ])
+          );
+        }
+      })
+    );
   }
 
   static function where($field, $query)
@@ -60,10 +64,12 @@ class ApiMedicament extends Model
         ]);
       });
     }
-    throw new JsonApiException(Error::fromArray([
-      'title' => 'Impossible d\'accéder au serveur',
-      'status' => '500',
-    ]));
+    throw new JsonApiException(
+      Error::fromArray([
+        'title' => 'Impossible d\'accéder au serveur',
+        'status' => '500',
+      ])
+    );
   }
 
   public function to_medicament()
@@ -73,6 +79,6 @@ class ApiMedicament extends Model
 
   public function getTypeAttribute()
   {
-    return 'api-medicaments';
+    return 'api-medicament';
   }
 }

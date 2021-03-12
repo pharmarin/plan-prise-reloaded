@@ -74,9 +74,9 @@ class Schema extends SchemaProvider
               $id = $r['id'];
 
               switch ($type) {
-                case 'medicaments':
+                case 'medicament':
                   return Medicament::find($id);
-                case 'api-medicaments':
+                case 'api-medicament':
                   return ApiMedicament::find($id);
                 default:
                   Log::alert(

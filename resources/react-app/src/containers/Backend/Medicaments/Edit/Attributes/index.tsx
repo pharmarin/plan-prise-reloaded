@@ -93,7 +93,7 @@ const EditAttributes = ({ medicament }: { medicament: Medicament }) => {
             .patch(`/medicaments/${medicament.meta.id}`, {
               data: {
                 id: String(medicament.meta.id),
-                type: 'medicaments',
+                type: 'medicament',
                 attributes: {
                   conservation_duree: values.conservation_duree || [],
                   conservation_frigo: values.conservation_frigo || false,
@@ -108,13 +108,13 @@ const EditAttributes = ({ medicament }: { medicament: Medicament }) => {
                 relationships: {
                   bdpm: {
                     data: (values.bdpm || []).map((bdpm) => ({
-                      type: 'api-medicaments',
+                      type: ApiMedicament.type,
                       id: bdpm.value,
                     })),
                   },
                   composition: {
                     data: (values.composition || []).map((composition) => ({
-                      type: 'principe-actifs',
+                      type: PrincipeActif.type,
                       id: composition.value,
                     })),
                   },

@@ -23,11 +23,11 @@ export const loadGeneric = async (query: string, api: JsonApiStore) => {
       const options = [
         {
           label: 'Médicaments de plandeprise.fr',
-          options: grouped['medicaments'],
+          options: grouped[Medicament.type],
         },
         {
           label: 'Médicaments issus de la base de données publique',
-          options: grouped['api-medicaments'],
+          options: grouped[ApiMedicament.type],
         },
       ];
 

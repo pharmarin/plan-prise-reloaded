@@ -5,7 +5,7 @@ import Precaution from 'models/Precaution';
 import PrincipeActif from 'models/PrincipeActif';
 
 class Medicament extends jsonapi(Model) {
-  static type = 'medicament';
+  static type: 'medicament' = 'medicament';
 
   public uid = '1-' + this.meta.id;
 
@@ -24,13 +24,13 @@ class Medicament extends jsonapi(Model) {
   @Attribute()
   conservation_duree!: { laboratoire?: string; duree: string }[];
 
-  @Attribute({ toMany: 'principe-actifs' })
+  @Attribute({ toMany: PrincipeActif.type })
   composition!: PrincipeActif[];
 
-  @Attribute({ toMany: 'precautions' })
+  @Attribute({ toMany: Precaution.type })
   precautions!: Precaution[];
 
-  @Attribute({ toMany: 'api-medicaments' })
+  @Attribute({ toMany: ApiMedicament.type })
   bdpm!: ApiMedicament[];
 
   public isMedicament(): this is Medicament {

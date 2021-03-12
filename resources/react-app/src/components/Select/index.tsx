@@ -19,7 +19,7 @@ const Select = ({
     value: {
       label: string;
       value: string;
-      type: Models.MedicamentIdentity['type'];
+      type: typeof ApiMedicament['type'] | typeof Medicament['type'];
     },
     valueType: typeof ApiMedicament | typeof Medicament
   ) => void;
@@ -53,7 +53,7 @@ const Select = ({
           {
             label: string;
             value: string;
-            type: Models.MedicamentIdentity['type'];
+            type: typeof ApiMedicament['type'] | typeof Medicament['type'];
           },
           false
         >,
@@ -73,9 +73,9 @@ const Select = ({
 
           const valueType = (() => {
             switch (value.type) {
-              case 'medicaments':
+              case Medicament.type:
                 return Medicament;
-              case 'api-medicaments':
+              case ApiMedicament.type:
                 return ApiMedicament;
               default:
                 throw new Error(
